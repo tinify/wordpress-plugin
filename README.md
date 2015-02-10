@@ -1,3 +1,6 @@
+{<img src="https://travis-ci.org/TinyPNG/tiny-compress-images.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/TinyPNG/tiny-compress-images]
+
+
 # TinyPNG image compression for WordPress
 Make your website faster by compressing your JPEG and PNG images.
 
