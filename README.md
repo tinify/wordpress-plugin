@@ -15,7 +15,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Prerequisites
 * A working docker installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
-* PHPUnit (https://phar.phpunit.de/phpunit.phar).
+* PHPUnit (https://phpunit.de/getting-started.html).
 * Selenium Server (http://www.seleniumhq.org/download/).
 * Mysql client and admin tools.
 * Java runtime.
