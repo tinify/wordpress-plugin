@@ -49,7 +49,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         }
 
         $response = stream_get_contents($request);
-        $output_url = self::parse_location_header(stream_get_meta_data($request)['wrapper_data']);
+        $meta_data = stream_get_meta_data($request);
+        $output_url = self::parse_location_header($meta_data['wrapper_data']);
         fclose($request);
 
         return array(self::decode($response), $output_url);
