@@ -1,4 +1,4 @@
-=== Tiny Compress Images ===
+=== Plugin Name ===
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
 Tags: compress, optimize, shrink, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, smush, save, bandwidth, website, speed, faster, performance, panda
