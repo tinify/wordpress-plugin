@@ -19,7 +19,8 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         self::$driver->findElement(WebDriverBy::xpath('//input[@value="Upload"]'))->click();
         $path_elements = explode('/', $path);
         $file_name = array_pop($path_elements);
-        $image_name = explode('.', $file_name)[0];
+        $image_elements = explode('.', $file_name);
+        $image_name = $image_elements[0];
         self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath('//img[contains(@src, "' . $image_name . '")]')));
     }
 

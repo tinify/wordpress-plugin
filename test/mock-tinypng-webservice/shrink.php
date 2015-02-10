@@ -25,8 +25,10 @@ function mock_jpg_response() {
     return json_encode($response);
 }
 
-$basic_auth = base64_decode(str_replace('Basic ', '', apache_request_headers()['Authorization']));
-$api_key = explode(':', $basic_auth)[1];
+$request_headers = apache_request_headers();
+$basic_auth = base64_decode(str_replace('Basic ', '', $request_headers['Authorization']));
+$api_key_elements = explode(':', $basic_auth);
+$api_key = $api_key_elements[1];
 header('HTTP/1.1 201 Created');
 
 if ($api_key == 'PNG123') {

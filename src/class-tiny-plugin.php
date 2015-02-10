@@ -80,7 +80,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
 
         $path_info = pathinfo($metadata['file']);
-        $prefix = wp_upload_dir()['basedir'] . '/' . $path_info['dirname'] . '/';
+        $upload_dir = wp_upload_dir();
+        $prefix = $upload_dir['basedir'] . '/' . $path_info['dirname'] . '/';
 
         if (!$tiny_metadata->is_compressed()) {
             try {
