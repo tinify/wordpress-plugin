@@ -1,0 +1,5 @@
+{
+  "require": {
+    "facebook/webdriver": "0.5.*"
+  }
+}

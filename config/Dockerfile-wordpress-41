@@ -1,0 +1,12 @@
+FROM wordpress:4
+
+EXPOSE 80
+
+RUN curl -Os https://phar.phpunit.de/phpunit.phar && chmod +x phpunit.phar && mv phpunit.phar /usr/local/bin/phpunit
+
+ENV WORDPRESS_VERSION 4.1
+ENV WORDPRESS_UPSTREAM_VERSION 4.1
+ENV WORDPRESS_SHA1 f0437c96ae3d8acaba3579566f1346f4cd06468e
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["apache2-foreground"]

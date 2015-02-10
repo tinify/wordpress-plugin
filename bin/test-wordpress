@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+display_usage() {
+  echo -e "Usage:\n\t$0 <version> \n\nExample:\n\t$0 41"
+}
+
+if [ $# -ne 1 ]
+then
+  display_usage
+  exit 1
+fi
+
+version="$1"
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $DIR/docker-functions
+
+# docker exec -it "wordpress$1" phpunit wp-content/plugins/tinypng-image-compression/test/unit
+
+# build_phantomjs_image
+# run_phantomjs
+# docker build -t wordpress-plugin-tests $DIR/../config
+# docker run -it --rm --name wordpress-plugin-tests \
+#   --volume="$DIR/../test":/usr/src/wordpress-plugin-tests \
+#   --volume="$DIR/../vendor":/usr/local/lib/php/vendor \
+#   --link phantomjs:phantomjs \
+#   --link mysql-wordpress:mysql \
+#   --link wordpress$version:wordpress \
+#   -e WORDPRESS_VERSION=$version \
+#   -e WORDPRESS_DATABASE=wordpress_$version \
+#   -e MYSQL_ROOT_PASSWORD=root \
+#   -e HOST_IP=$(boot2docker ip) \
+#   -e HOST_PORT=80$version \
+#   -e WORDPRESS_URL=http://wordpress \
+#   wordpress-plugin-tests
+
+WORDPRESS_VERSION=$version WORDPRESS_DATABASE=wordpress_$version \
+  MYSQL_ROOT_PASSWORD=root \
+  HOST_IP=$(boot2docker ip) HOST_PORT=80$version \
+  WORDPRESS_URL=http://$(boot2docker ip):$HOST_PORT phpunit test/integration
