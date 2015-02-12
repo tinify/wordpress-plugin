@@ -1,0 +1,8 @@
+{
+  "require": {
+    "facebook/webdriver": "0.5.*"
+  },
+  "require-dev": {
+    "mockery/mockery": "dev-master"
+  }
+}

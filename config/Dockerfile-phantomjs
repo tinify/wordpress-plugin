@@ -1,0 +1,17 @@
+FROM ubuntu:14.04
+
+EXPOSE 8910
+
+ENV PHANTOM_JS_VERSION 1.9.7-linux-x86_64
+
+RUN apt-get update
+RUN apt-get install -yqq curl libfreetype6 libfontconfig
+  # make ruby python git g++ flex bison gperf perl \
+  # libfontconfig1-dev libicu-dev libfreetype6 \
+  # libssl-dev libpng-dev libjpeg-dev
+# RUN git clone git://github.com/ariya/phantomjs.git && cd phantomjs && ./build.sh && send "y\n"
+
+RUN curl -sSL https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOM_JS_VERSION.tar.bz2 | tar xjC /
+RUN ln -s phantomjs-$PHANTOM_JS_VERSION /phantomjs
+
+CMD ["/phantomjs/bin/phantomjs", "--webdriver=8910"]

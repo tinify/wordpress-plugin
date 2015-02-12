@@ -1,0 +1,47 @@
+msgid "PNG and JPEG compression"
+msgstr "PNG- en JPEG-compressie"
+
+msgid "TinyPNG API key"
+msgstr "TinyPNG API sleutel"
+
+msgid "Visit"
+msgstr "Bezoek de"
+
+msgid "TinyPNG Developer section"
+msgstr "TinyPNG Developer pagina"
+
+msgid "to gain an API key"
+msgstr "om een API sleutel te krijgen"
+
+msgid "File compression"
+msgstr "Bestandscompressie"
+
+msgid "You can choose to compress different image sizes created by WordPress here"
+msgstr "Je kunt hier kiezen welke afmetingen je wilt comprimeren van de afbeeldingen"
+
+msgid "Remember each additional image size will affect your TinyPNG monthly usage"
+msgstr "Elke afmetingen zal apart worden gecomprimeerd en telt mee voor je verbruik"
+
+msgid "Compression"
+msgstr "Compressie"
+
+msgid "Compress"
+msgstr "Comprimeer"
+
+msgid "Compress all uncompressed sizes"
+msgstr "Comprimeer alle ongecomprimeerde afmetingen"
+
+msgid "Compressed %d out of %d sizes"
+msgstr "%d van de %d afmetingen zijn gecomprimeerd"
+
+msgid "Original size"
+msgstr "Oorspronkelijke grootte"
+
+msgid "Compressed size"
+msgstr "Gecomprimeerde grootte"
+
+msgid "Latest error"
+msgstr "Laatste fout"
+
+msgid "Credentials are invalid"
+msgstr "Ongeldige API sleutel"

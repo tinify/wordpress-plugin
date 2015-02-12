@@ -1,0 +1,10 @@
+In order to release a new version of the plugin to wordpress.org, perform the following steps:
+
+1. Change the 'Stable tag' in readme.txt to the new release number.
+2. Commit and push to GitHub.
+3. Create a new release in GitHub and pull it in.
+4. Locally, checkout the new tag: `git checkout <tagged version>`.
+5. If not already done so, checkout the plugin's Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
+6. Manually copy the Git release to the local Subversion repo: `cp -R . <path-to-local-svn-repo>/trunk/`.
+7. Commit the trunk to Subversion: `svn add trunk/* && svn ci -m "<message>".
+8. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.

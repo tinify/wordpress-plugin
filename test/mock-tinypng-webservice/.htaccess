@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^shrink$ shrink.php [last]
+RewriteRule ^output/.+$ output.php [last]
