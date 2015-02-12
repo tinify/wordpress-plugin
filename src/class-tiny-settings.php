@@ -105,11 +105,10 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function render_api_key() {
         $field = self::get_prefixed_name('api_key');
         $value = get_option($field, '');
+        $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
 ?>
 <input type="text" id="<?php echo $field; ?>" name="<?php echo $field; ?>" value="<?php echo htmlspecialchars($value); ?>" size="40"/>
-<br/><?php echo self::translate_escape('Visit') . ' '; ?>
-<a href="https://tinypng.com/developers"><?php echo self::translate_escape('TinyPNG Developer section'); ?></a>
-<?php echo self::translate_escape('to gain an API key') . '.';
+<br/><?php printf(self::translate_escape('Visit %s to gain an API key') . '.', $link);
     }
 
     public function render_sizes() {
