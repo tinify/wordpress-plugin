@@ -1,0 +1,74 @@
+msgid "PNG and JPEG compression"
+msgstr "PNG- en JPEG-compressie"
+
+msgid "Visit %s to gain an API key"
+msgstr "Bezoek de %s om een API-sleutel te krijgen"
+
+msgid "TinyPNG Developer section"
+msgstr "TinyPNG Developer pagina"
+
+msgid "File compression"
+msgstr "Bestandscompressie"
+
+msgid "You can choose to compress different image sizes created by WordPress here"
+msgstr "Je kunt hier kiezen welke afmetingen je wilt comprimeren van de afbeeldingen"
+
+msgid "Remember each additional image size will affect your TinyPNG monthly usage"
+msgstr "Elke afmetingen zal apart worden gecomprimeerd en telt mee voor je verbruik"
+
+msgid "Compression"
+msgstr "Compressie"
+
+msgid "Compress"
+msgstr "Comprimeer"
+
+msgid "Compress all uncompressed sizes"
+msgstr "Comprimeer alle ongecomprimeerde afmetingen"
+
+msgid "Compressed %d out of %d sizes"
+msgstr "%d van de %d afmetingen zijn gecomprimeerd"
+
+msgid "Original size"
+msgstr "Oorspronkelijke grootte"
+
+msgid "Compressed size"
+msgstr "Gecomprimeerde grootte"
+
+msgid "Latest error"
+msgstr "Laatste fout"
+
+msgid "Credentials are invalid"
+msgstr "Ongeldige API-sleutel"
+
+msgid "File is empty"
+msgstr "Bestand is leeg"
+
+msgid "Does not appear to be a PNG or JPEG file"
+msgstr "Lijkt geen PNG- of JPEG-bestand te zijn"
+
+msgid "CMYK color space is not supported"
+msgstr "CMYK-kleurruimte wordt niet ondersteund"
+
+msgid "Image appears corrupt"
+msgstr "Bestand lijkt corrupt"
+
+msgid "Compression failed"
+msgstr "Compressie gefaald"
+
+msgid "No HTTP client is available (cURL or fopen)"
+msgstr "Geen HTTP-client beschikbaar (cURL of fopen)"
+
+msgid "Could not find output url"
+msgstr "Kon geen outputlocatie vinden"
+
+msgid "Could not download output"
+msgstr "Kon output niet downloaden"
+
+msgid "File does not exists"
+msgstr "Bestand bestaat niet"
+
+msgid "Could not decode JSON"
+msgstr "Kon JSON niet decoderen"
+
+msgid "Could not compress, enable cURL for detailed error"
+msgstr "Kon niet comprimeren, schakel cURL in voor een preciezere foutmelding"
