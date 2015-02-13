@@ -20,7 +20,15 @@
 
 abstract class Tiny_WP_Base {
     const NAME = 'tiny-compress-images';
-    const VERSION = '1.0.0';
+
+    public static function plugin_version() {
+        $plugin_data = get_plugin_data(dirname(__FILE__) . '/../tiny-compress-images.php');
+        return $plugin_data['Version'];
+    }
+
+    public static function plugin_identification() {
+        return 'Wordpress/' . $GLOBALS['wp_version'] . ' Tiny/' . self::plugin_version() . ' cURL';
+    }
 
     protected static function translate($phrase) {
         return translate($phrase, self::NAME);

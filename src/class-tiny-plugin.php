@@ -60,11 +60,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function enqueue_scripts() {
         wp_enqueue_style(self::NAME .'_admin', plugins_url('/styles/admin.css', __FILE__),
-            array(), self::VERSION);
+            array(), self::plugin_version());
 
         $handle = self::NAME .'_admin';
         wp_register_script($handle, plugins_url('/scripts/admin.js', __FILE__),
-            array(), self::VERSION, true);
+            array(), self::plugin_version(), true);
         wp_localize_script($handle, 'tinypngImageCompressL10n', array(
             'bulkAction' => self::translate('Compress all uncompressed sizes'),
         ));
