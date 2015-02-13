@@ -108,7 +108,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
 ?>
 <input type="text" id="<?php echo $field; ?>" name="<?php echo $field; ?>" value="<?php echo htmlspecialchars($value); ?>" size="40"/>
-<br/><?php printf(self::translate_escape('Visit %s to gain an API key') . '.', $link);
+<p><?php printf(self::translate_escape('Visit %s to gain an API key') . '.', $link);?></p><?php
     }
 
     public function render_sizes() {
