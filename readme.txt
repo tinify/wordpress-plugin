@@ -22,11 +22,15 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 = Getting started =
 
-Install this plugin and obtain your free API key from https://tinypng.com/developers. The first 500 compressed images are completely free, no strings attached! If you’re a heavy user, you can compress additional images for a small additional fee per image.
+Install this plugin and obtain your free API key from https://tinypng.com/developers. The first 500 compressed images per month are completely free, no strings attached! If you’re a heavy user, you can compress additional images for a small additional fee per image.
 
 = Contact us =
 
-Got questions or feedback? Let us know! Contact us at support@tinypng.com.
+Got questions or feedback? Let us know! Contact us at support@tinypng.com or find us on [Twitter @tinypng](https://twitter.com/tinypng).
+
+= Contributors =
+
+Want to contribute? Checkout our [GitHub page](https://github.com/TinyPNG/wordpress-plugin).
 
 == Installation ==
 
@@ -47,6 +51,13 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 4. Register for an API key on https://tinypng.com/developers.
 5. Configure the API key in the Settings -> Media page.
 6. Upload an image and see it be compressed!
+
+== Screenshots ==
+
+1. Enter your TinyPNG or TinyJPG API key and configure the image sizes you would like to have compressed.
+2. See how much space TinyPNG has saved you from the media browser!
+3. Bulk compress existing images after installing the plugin or when additional sizes have to be compressed.
+4. Compress individual images in case additional sizes have to be compressed.
 
 == Changelog ==
 
