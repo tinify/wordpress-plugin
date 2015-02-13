@@ -3,7 +3,7 @@
 # TinyPNG image compression for WordPress
 Make your website faster by compressing your JPEG and PNG images.
 
-This plugin automatically optimizes your images by integrating with the popular image compression services TinyJPG and TinyPNG.
+This plugin automatically optimizes your images by integrating with the popular image compression services TinyJPG and TinyPNG. You can download the plugin from https://wordpress.org/plugins/tiny-compress-images/.
 
 Learn more about TinyPNG at https://tinypng.com.
 
