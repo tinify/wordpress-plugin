@@ -27,7 +27,7 @@ abstract class Tiny_WP_Base {
     }
 
     public static function plugin_identification() {
-        return 'Wordpress/' . $GLOBALS['wp_version'] . ' Tiny/' . self::plugin_version() . ' cURL';
+        return 'Wordpress/' . $GLOBALS['wp_version'] . ' Tiny/' . self::plugin_version();
     }
 
     protected static function translate($phrase) {

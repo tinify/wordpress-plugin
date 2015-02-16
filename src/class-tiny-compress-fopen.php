@@ -26,7 +26,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
                 'header' => array(
                     'Content-type: image/png',
                     'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
-                    'User-Agent: ' . Tiny_WP_Base::plugin_identification(),
+                    'User-Agent: ' . Tiny_WP_Base::plugin_identification() . ' fopen',
                  ),
                 'content' => $input
             ),
