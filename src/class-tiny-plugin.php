@@ -53,19 +53,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function admin_init() {
         add_filter('manage_media_columns', $this->get_method('add_media_columns'));
         add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
-        add_action('wp_ajax_tinypng_compress_image', $this->get_method('compress_image'));
-        add_action('admin_action_tinypng_bulk_compress', $this->get_method('bulk_compress'));
+        add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
+        add_action('admin_action_tiny_bulk_compress', $this->get_method('bulk_compress'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
     }
 
-    public function enqueue_scripts() {
+    public function enqueue_scripts($hook) {
         wp_enqueue_style(self::NAME .'_admin', plugins_url('/styles/admin.css', __FILE__),
             array(), self::plugin_version());
 
         $handle = self::NAME .'_admin';
         wp_register_script($handle, plugins_url('/scripts/admin.js', __FILE__),
             array(), self::plugin_version(), true);
-        wp_localize_script($handle, 'tinypngImageCompressL10n', array(
+
+        wp_localize_script($handle, 'tinyCompressL10n', array(
             'bulkAction' => self::translate('Compress all uncompressed sizes'),
         ));
         wp_enqueue_script($handle);
@@ -167,7 +168,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 if (($error = $tiny_metadata->get_latest_error())) {
                     echo '<span class="error">' . self::translate_escape('Latest error') . ': '. self::translate_escape($error) .'<br/>';
                 }
-                echo '<button type="button" class="tinypng-compress" data-id="' . $id . '">' .
+                echo '<button type="button" class="tiny-compress" data-id="' . $id . '">' .
                     self::translate_escape('Compress') . '</button>';
                 echo '<div class="spinner"></div>';
             } else {
