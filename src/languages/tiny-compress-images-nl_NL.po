@@ -1,11 +1,14 @@
 msgid "PNG and JPEG compression"
 msgstr "PNG- en JPEG-compressie"
 
-msgid "Visit %s to gain an API key"
+msgid "Visit %s to get an API key"
 msgstr "Bezoek de %s om een API-sleutel te krijgen"
 
 msgid "TinyPNG Developer section"
 msgstr "TinyPNG Developer pagina"
+
+msgid "TinyPNG API key"
+msgstr "TinyPNG API-sleutel"
 
 msgid "File compression"
 msgstr "Bestandscompressie"
