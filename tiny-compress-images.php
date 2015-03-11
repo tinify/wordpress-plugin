@@ -8,6 +8,15 @@
  * License: GPLv2 or later
  */
 
+
+function tiny_is_network_activated() {
+    if (!function_exists('is_plugin_active_for_network')) {
+        require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+    }
+
+    return is_plugin_active_for_network(plugin_basename( __FILE__ ));
+}
+
 require (dirname(__FILE__) . '/src/class-tiny-php.php');
 require (dirname(__FILE__) . '/src/class-tiny-wp-base.php');
 require (dirname(__FILE__) . '/src/class-tiny-exception.php');

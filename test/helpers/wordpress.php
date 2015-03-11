@@ -45,6 +45,8 @@ class WordPressStubs {
         $this->addMethod('add_settings_section');
         $this->addMethod('add_settings_field');
         $this->addMethod('get_option');
+        $this->addMethod('get_site_option');
+        $this->addMethod('update_site_option');
         $this->addMethod('get_post_meta');
         $this->addMethod('update_post_meta');
         $this->addMethod('get_intermediate_image_sizes');
@@ -53,6 +55,7 @@ class WordPressStubs {
         $this->addMethod('get_post_mime_type');
         $this->addMethod('wp_upload_dir');
         $this->addMethod('plugin_basename');
+        $this->addMethod('is_multisite');
         $this->defaults();
     }
 
