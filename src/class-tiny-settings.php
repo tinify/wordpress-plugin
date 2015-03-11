@@ -200,10 +200,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_api_key() {
         $field = self::get_prefixed_name('api_key');
-        $value = $this->get_api_key();
+        $key = $this->get_api_key();
         if (tiny_is_network_activated()) {
-            if (empty($this->get_multisite_api_key())) {
-                if (empty($value)) {
+            $multisite_key = $this->get_multisite_api_key();
+            if (empty($multisite_key)) {
+                if (empty($key)) {
                     echo '<p>' . self::translate('Your Network Admin has not configured an API key yet.') . '</p>';
                 } else {
                     echo '<p>' . self::translate('You have an API key configured. Your Network Admin can change the key.') . '</p>';
@@ -212,8 +213,8 @@ class Tiny_Settings extends Tiny_WP_Base {
                 echo '<p>' . self::translate('The API key has been installed by the Network Admin.') . '</p>';
             }
         } else {
-            echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($value) . '" size="40" />';
-            if (empty($value)) {
+            echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+            if (empty($key)) {
                 echo '<p>';
                 $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
                 printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
