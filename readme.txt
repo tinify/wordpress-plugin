@@ -22,7 +22,7 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 = Getting started =
 
-Install this plugin and obtain your free API key from https://tinypng.com/developers. Depending on the number of image sizes you configure to be processed by the plugin, you can convert up to 500 images for free per month. Realistically, if you have 3 extra image sizes configured to be processed, you can convert 125 images for free per month. If you’re a heavy user, you can compress additional images for a small additional fee per image.
+Install this plugin and obtain your free API key from https://tinypng.com/developers. The first 500 compressions per month are completely free, so roughly 100 images can be uploaded to WordPress for free, no strings attached! You can also change which of the generated thumbnail sizes should be compressed, because each one of them counts as a compression. And if you’re a heavy user, you can compress additional images for a small additional fee per image.
 
 = Contact us =
 
