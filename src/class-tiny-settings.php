@@ -190,7 +190,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '/>';
         echo '<p>';
         if (defined('TINY_API_KEY')) {
-            echo self::translate('The API key has been configured in wp-config.php.');
+            echo sprintf(self::translate('The API key has been configured in %s'), 'wp-config.php') . '.';
         } else {
             $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
             printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
@@ -205,12 +205,12 @@ class Tiny_Settings extends Tiny_WP_Base {
             $multisite_key = $this->get_multisite_api_key();
             if (empty($multisite_key)) {
                 if (empty($key)) {
-                    echo '<p>' . self::translate('Your Network Admin has not configured an API key yet.') . '</p>';
+                    echo '<p>' . self::translate('Your Network Admin has not configured an API key yet') . '.</p>';
                 } else {
-                    echo '<p>' . self::translate('You have an API key configured. Your Network Admin can change the key.') . '</p>';
+                    echo '<p>' . self::translate('You have an API key configured') . '. ' . self::translate('Your Network Admin can change the key') . '.</p>';
                 }
             } else {
-                echo '<p>' . self::translate('The API key has been installed by the Network Admin.') . '</p>';
+                echo '<p>' . self::translate('The API key has been installed by the Network Admin') . '.</p>';
             }
         } else {
             echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';

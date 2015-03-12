@@ -112,16 +112,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function compress_image() {
         $id = $_POST['id'];
         if (!current_user_can('upload_files')) {
-            echo self::translate("You don't have permission to work with uploaded files.");
+            echo self::translate("You don't have permission to work with uploaded files") . '.';
             exit();
         }
         if (!$id) {
-            echo self::translate("Not a valid media file.");
+            echo self::translate("Not a valid media file") . '.';
             exit();
         }
         $metadata = wp_get_attachment_metadata($id);
         if (!$metadata) {
-            echo self::translate("Could not find metadata of media file.");
+            echo self::translate("Could not find metadata of media file") . '.';
         }
 
         $this->compress_attachment($metadata, $id);

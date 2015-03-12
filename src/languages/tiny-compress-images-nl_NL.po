@@ -1,6 +1,9 @@
 msgid "PNG and JPEG compression"
 msgstr "PNG- en JPEG-compressie"
 
+msgid "Multisite PNG and JPEG compression"
+msgstr "Multisite PNG- en JPEG-compressie"
+
 msgid "Visit %s to get an API key"
 msgstr "Bezoek de %s om een API-sleutel te krijgen"
 
@@ -9,6 +12,9 @@ msgstr "TinyPNG Developer pagina"
 
 msgid "TinyPNG API key"
 msgstr "TinyPNG API-sleutel"
+
+msgid "Multisite API key"
+msgstr "Multisite API-sleutel"
 
 msgid "File compression"
 msgstr "Bestandscompressie"
@@ -75,3 +81,27 @@ msgstr "Kon JSON niet decoderen"
 
 msgid "Could not compress, enable cURL for detailed error"
 msgstr "Kon niet comprimeren, schakel cURL in voor een preciezere foutmelding"
+
+msgid "You don't have permission to work with uploaded files"
+msgstr "Je hebt niet de permissies om met geüploade bestanden te werken"
+
+msgid "Not a valid media file"
+msgstr "Geen geldig media-bestand"
+
+msgid "Could not find metadata of media file"
+msgstr "Kon de metadata niet vinden van het bestand"
+
+msgid "The API key has been configured in %s"
+msgstr "De API-sleutel is geconfigureerd in %s"
+
+msgid "Your Network Admin has not configured an API key yet"
+msgstr "Je netwerkbeheerder heeft nog geen API-sleutel geconfigureerd"
+
+msgid "You have an API key configured"
+msgstr "Je hebt een API-sleutel geconfigureerd"
+
+msgid "Your Network Admin can change the key"
+msgstr "Je netwerkbeheerder kan de sleutel wijzigen"
+
+msgid "The API key has been installed by the Network Admin"
+msgstr "De API-sleutel is geïnstalleerd door de netwerkbeheerder"
