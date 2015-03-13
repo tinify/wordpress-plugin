@@ -30,10 +30,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function __construct() {
         parent::__construct();
-        if (is_multisite()) {
-            add_action('network_admin_menu', $this->get_method('register_multisite_settings'));
-            add_action('network_admin_edit_save_tinypng_multisite_settings', $this->get_method('save_multisite_settings'), 10, 0);
-        }
+        // if (is_multisite()) {
+        //     add_action('network_admin_menu', $this->get_method('register_multisite_settings'));
+        //     add_action('network_admin_edit_save_tinypng_multisite_settings', $this->get_method('save_multisite_settings'), 10, 0);
+        // }
     }
 
     public function admin_init() {
@@ -55,33 +55,21 @@ class Tiny_Settings extends Tiny_WP_Base {
         add_settings_field($field, self::translate('File compression'), $this->get_method('render_sizes'), 'media', $section);
     }
 
-    public function register_multisite_settings() {
-        add_submenu_page('settings.php', self::translate('Multisite PNG and JPEG compression'),
-            self::translate('PNG and JPEG compression'), 'manage_network_plugins',
-            self::get_prefixed_name('multisite_settings'), $this->get_method('render_multisite_settings'));
-    }
-
     public function get_api_key() {
-        $key = $this->get_multisite_api_key();
-        if (empty($key)) {
-            return get_option(self::get_prefixed_name('api_key'));
+        if (defined('TINY_API_KEY')) {
+            return TINY_API_KEY;
         } else {
-            return $key;
+            return get_option(self::get_prefixed_name('api_key'));
         }
     }
 
     public function get_multisite_api_key() {
-        if (tiny_is_network_activated()) {
-            if (defined('TINY_API_KEY')) {
-                return TINY_API_KEY;
-            } else {
-                $key = get_site_option(self::get_prefixed_name('api_key'));
-                if (!empty($key)) {
-                    return $key;
-                } else {
-                    return NULL;
-                }
-            }
+        if (is_multisite()) {
+             if (defined('TINY_API_KEY')) {
+                 return TINY_API_KEY;
+             } else {
+                 return NULL;
+             }
         } else {
             return NULL;
         }
@@ -144,65 +132,12 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function render_section() {
     }
 
-    public function render_multisite_settings() {
-        echo '<h2>' . self::translate('PNG and JPEG compression') . '</h2>';
-
-        echo '<div class="wrap">';
-
-        $section = self::get_prefixed_name('multisite_settings');
-        add_settings_section($section, '', $this->get_method('render_section'), self::get_prefixed_name('multisite_settings'));
-
-        if ( isset( $_GET['updated'] ) ) {
-            ?><div id="message" class="updated"><p><?php _e( 'Options saved.' ) ?></p></div><?php
-        }
-
-        echo '<form method="post" action="edit.php?action=save_tinypng_multisite_settings">';
-        settings_fields(self::get_prefixed_name('multisite_settings'));
-
-        $field = self::get_prefixed_name('multisite_api_key');
-        add_settings_field($field, self::translate('Multisite API key'), $this->get_method('render_multisite_api_key'), self::get_prefixed_name('multisite_settings'), $section, array('label_for' => $field));
-
-        do_settings_sections(self::get_prefixed_name('multisite_settings'));
-
-        if (!defined('TINY_API_KEY')) {
-            submit_button();
-        }
-        echo '</form>';
-        echo '</div>';
-    }
-
-    public function save_multisite_settings() {
-        $options = array('page' => self::get_prefixed_name('multisite_settings'));
-        if (array_key_exists(self::get_prefixed_name('api_key'), $_POST)) {
-            $key = filter_var($_POST[self::get_prefixed_name('api_key')], FILTER_SANITIZE_STRING);
-            update_site_option(self::get_prefixed_name('api_key'), $key);
-            $options['updated'] = 'true';
-        }
-        wp_redirect(add_query_arg($options, network_admin_url('settings.php')));
-        exit();
-    }
-
-    public function render_multisite_api_key() {
-        $field = self::get_prefixed_name('api_key');
-        $value = $this->get_multisite_api_key();
-        echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($value) . '" size="40" ';
-        if (defined('TINY_API_KEY')) { echo 'readonly = "readonly"'; }
-        echo '/>';
-        echo '<p>';
-        if (defined('TINY_API_KEY')) {
-            echo sprintf(self::translate('The API key has been configured in %s'), 'wp-config.php') . '.';
-        } else {
-            $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
-            printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
-        }
-        echo '</p>';
-    }
-
     public function render_api_key() {
         $field = self::get_prefixed_name('api_key');
         $key = $this->get_api_key();
+        $multisite_key = $this->get_multisite_api_key();
+
         if (tiny_is_network_activated()) {
-            $multisite_key = $this->get_multisite_api_key();
             if (empty($multisite_key)) {
                 if (empty($key)) {
                     echo '<p>' . self::translate('Your Network Admin has not configured an API key yet') . '.</p>';
@@ -213,12 +148,16 @@ class Tiny_Settings extends Tiny_WP_Base {
                 echo '<p>' . self::translate('The API key has been installed by the Network Admin') . '.</p>';
             }
         } else {
-            echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
-            if (empty($key)) {
-                echo '<p>';
-                $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
-                printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
-                echo '</p>';
+            if (is_multisite() && !empty($multisite_key)) {
+                echo '<p>' . self::translate('The API key has been installed by the Network Admin') . '.</p>';
+            } else {
+                echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+                if (empty($key)) {
+                    echo '<p>';
+                    $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
+                    printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
+                    echo '</p>';
+                }
             }
         }
     }
