@@ -151,7 +151,11 @@ class Tiny_Settings extends Tiny_WP_Base {
             if (is_multisite() && !empty($multisite_key)) {
                 echo '<p>' . self::translate('The API key has been installed by the Network Admin') . '.</p>';
             } else {
-                echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+                if (defined('TINY_API_KEY')) {
+                    echo '<p>' . self::translate('The API key has been configured in wp-config.php') . '.</p>';
+                } else {
+                    echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+                }
                 if (empty($key)) {
                     echo '<p>';
                     $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';

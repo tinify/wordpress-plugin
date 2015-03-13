@@ -105,3 +105,6 @@ msgstr "Je netwerkbeheerder kan de sleutel wijzigen"
 
 msgid "The API key has been installed by the Network Admin"
 msgstr "De API-sleutel is geïnstalleerd door de netwerkbeheerder"
+
+msgid "The API key has been configured in wp-config.php"
+msgstr "De API-sleutel is geconfigureerd in wp-config.php"
