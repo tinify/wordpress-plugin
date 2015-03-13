@@ -20,6 +20,7 @@
 
 class Tiny_Settings extends Tiny_WP_Base {
     const PREFIX = 'tinypng_';
+    const DUMMY_SIZE = '_tiny_dummy';
 
     protected static function get_prefixed_name($name) {
         return self::PREFIX . $name;
@@ -27,14 +28,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     private $sizes;
     private $tinify_sizes;
-
-    public function __construct() {
-        parent::__construct();
-        // if (is_multisite()) {
-        //     add_action('network_admin_menu', $this->get_method('register_multisite_settings'));
-        //     add_action('network_admin_edit_save_tinypng_multisite_settings', $this->get_method('save_multisite_settings'), 10, 0);
-        // }
-    }
 
     public function admin_init() {
         $section = self::get_prefixed_name('settings');
@@ -100,10 +93,18 @@ class Tiny_Settings extends Tiny_WP_Base {
             return $this->sizes;
         }
 
-        $this->sizes = array();
         $setting = get_option(self::get_prefixed_name('sizes'));
 
+        $size = Tiny_Metadata::ORIGINAL;
+        $this->sizes = array($size => array(
+            'width' => null, 'height' => null,
+            'tinify' => !is_array($setting) || (isset($setting[$size]) && $setting[$size] === 'on'),
+        ));
+
         foreach (get_intermediate_image_sizes() as $size) {
+            if ($size === self::DUMMY_SIZE) {
+                continue;
+            }
             list($width, $height) = self::get_intermediate_size($size);
             if ($width && $height) {
                 $this->sizes[$size] = array(
@@ -168,14 +169,24 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_sizes() {
         echo '<p>' . self::translate_escape('You can choose to compress different image sizes created by WordPress here') . '.<br/>';
-        echo self::translate_escape('Remember each additional image size will affect your TinyPNG monthly usage') . "!</p>\n";
-        foreach ($this->get_sizes() as $size => $option) {
-            $id = self::get_prefixed_name("sizes_$size");
-            $field = self::get_prefixed_name("sizes[$size]");
-?>
-<p><input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $field ?>" value="on" <?php if ($option['tinify']) { echo ' checked="checked"'; } ?>/>
-<label for="<?php echo $id; ?>"><?php echo $size . " - ${option['width']}x${option['height']}"; ?></label></p>
+        echo self::translate_escape('Remember each additional image size will affect your TinyPNG monthly usage') . "!";?>
+<input type="hidden" name="<?php echo self::get_prefixed_name('sizes[' . self::DUMMY_SIZE .']'); ?>" value="on"/></p>
 <?php
+        foreach ($this->get_sizes() as $size => $option) {
+            $this->render_size_checkbox($size, $option);
         }
+    }
+
+    private function render_size_checkbox($size, $option) {
+        $id = self::get_prefixed_name("sizes_$size");
+        $field = self::get_prefixed_name("sizes[$size]");
+        if ($size === Tiny_Metadata::ORIGINAL) {
+            $label = self::translate_escape("original");
+        } else {
+            $label = $size . " - ${option['width']}x${option['height']}";
+        }?>
+<p><input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $field ?>" value="on" <?php if ($option['tinify']) { echo ' checked="checked"'; } ?>/>
+<label for="<?php echo $id; ?>"><?php echo $label; ?></label></p>
+<?php
     }
 }

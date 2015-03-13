@@ -19,6 +19,9 @@ msgstr "Multisite API-sleutel"
 msgid "File compression"
 msgstr "Bestandscompressie"
 
+msgid "original"
+msgstr "origineel"
+
 msgid "You can choose to compress different image sizes created by WordPress here"
 msgstr "Je kunt hier kiezen welke afmetingen je wilt comprimeren van de afbeeldingen"
 

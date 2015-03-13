@@ -30,12 +30,13 @@ class Tiny_Settings_Test extends TinyTestCase {
         ), $this->wp->getCalls('add_settings_field'));
     }
 
-    public function testShouldRetrieveSizes() {
+    public function testShouldRetrieveOnlyAvailableSizes() {
         $this->wp->addImageSize('post-thumbnail', array('width' => 825, 'height' => 510));
         $this->wp->addImageSize('wrong', null);
         $this->wp->addImageSize('missing',  array('width' => 825));
 
         $this->assertEquals(array(
+            0 => array('width' => null, 'height' => null, 'tinify' => true),
             'thumbnail' => array('width' => 150, 'height' => 150, 'tinify' => true),
             'medium' => array('width' => 300, 'height' => 300, 'tinify' => true),
             'large' => array('width' => 1024, 'height' => 1024, 'tinify' => true),
@@ -44,6 +45,7 @@ class Tiny_Settings_Test extends TinyTestCase {
     }
 
     public function testShouldRetrieveSizesWithSettings() {
+        $this->wp->addOption("tinypng_sizes[0]", "on");
         $this->wp->addOption("tinypng_sizes[medium]", "on");
         $this->wp->addOption("tinypng_sizes[post-thumbnail]", "on");
         $this->wp->addImageSize('post-thumbnail', array('width' => 825, 'height' => 510));
@@ -53,10 +55,33 @@ class Tiny_Settings_Test extends TinyTestCase {
 
         $this->subject->get_sizes();
         $this->assertEquals(array(
+            0 => array('width' => null, 'height' => null, 'tinify' => true),
             'thumbnail' => array('width' => 150, 'height' => 150, 'tinify' => false),
             'medium' => array('width' => 300, 'height' => 300, 'tinify' => true),
             'large' => array('width' => 1024, 'height' => 1024, 'tinify' => false),
             'post-thumbnail' => array('width' => 825, 'height' => 510, 'tinify' => true)
+        ), $this->subject->get_sizes());
+    }
+
+    public function testShouldSkipDummySize() {
+        $this->wp->addOption("tinypng_sizes[tiny_dummy]", "on");
+
+        $this->subject->get_sizes();
+        $this->assertEquals(array(
+            0 => array('width' => null, 'height' => null, 'tinify' => false),
+            'thumbnail' => array('width' => 150, 'height' => 150, 'tinify' => false),
+            'medium' => array('width' => 300, 'height' => 300, 'tinify' => false),
+            'large' => array('width' => 1024, 'height' => 1024, 'tinify' => false),
+        ), $this->subject->get_sizes());
+    }
+
+    public function testShouldSetAllSizesOnWithoutConfiguration() {
+        $this->subject->get_sizes();
+        $this->assertEquals(array(
+            0 => array('width' => null, 'height' => null, 'tinify' => true),
+            'thumbnail' => array('width' => 150, 'height' => 150, 'tinify' => true),
+            'medium' => array('width' => 300, 'height' => 300, 'tinify' => true),
+            'large' => array('width' => 1024, 'height' => 1024, 'tinify' => true),
         ), $this->subject->get_sizes());
     }
 }

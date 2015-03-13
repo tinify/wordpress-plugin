@@ -36,12 +36,16 @@ function restore_wordpress() {
     restore_webservice_url();
 }
 
+function mysql_dump_file() {
+    return dirname(__FILE__) . '/../../tmp/mysqldump_' . getenv('WORDPRESS_DATABASE') . '.sql.gz';
+}
+
 function restore_wordpress_site() {
-    shell_exec('mysql -h ' . getenv('HOST_IP') . ' -u root -p' . getenv('MYSQL_ROOT_PASSWORD') . ' ' . getenv('WORDPRESS_DATABASE') . ' < /tmp/mysqldump_' . getenv('WORDPRESS_DATABASE') . '.sql');
+    shell_exec('gunzip -c < ' . mysql_dump_file() . ' | mysql -h ' . getenv('HOST_IP') . ' -u root -p' . getenv('MYSQL_ROOT_PASSWORD') . ' ' . getenv('WORDPRESS_DATABASE'));
 }
 
 function backup_wordpress_site() {
-    shell_exec('mysqldump -h ' . getenv('HOST_IP') . ' -u root -p' . getenv('MYSQL_ROOT_PASSWORD') . ' ' . getenv('WORDPRESS_DATABASE') . ' > /tmp/mysqldump_' . getenv('WORDPRESS_DATABASE') . '.sql');
+    shell_exec('mysqldump -h ' . getenv('HOST_IP') . ' -u root -p' . getenv('MYSQL_ROOT_PASSWORD') . ' ' . getenv('WORDPRESS_DATABASE') . ' | gzip -c > ' . mysql_dump_file());
 }
 
 function set_test_webservice_url() {

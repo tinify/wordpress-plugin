@@ -30,6 +30,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $elements = self::$driver->findElements(
             WebDriverBy::xpath('//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]'));
         $size_ids = array_map('elementName', $elements);
+        $this->assertContains('tinypng_sizes[0]', $size_ids);
         $this->assertContains('tinypng_sizes[thumbnail]', $size_ids);
         $this->assertContains('tinypng_sizes[medium]', $size_ids);
         $this->assertContains('tinypng_sizes[large]', $size_ids);
@@ -38,13 +39,29 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     public function testShouldPersistSizes() {
         $element = self::$driver->findElement(WebDriverBy::id('tinypng_sizes_medium'));
         $element->click();
+        $element = self::$driver->findElement(WebDriverBy::id('tinypng_sizes_0'));
+        $element->click();
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
 
         $elements = self::$driver->findElements(
             WebDriverBy::xpath('//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]'));
         $size_ids = array_map('elementName', $elements);
+        $this->assertNotContains('tinypng_sizes[0]', $size_ids);
         $this->assertContains('tinypng_sizes[thumbnail]', $size_ids);
         $this->assertNotContains('tinypng_sizes[medium]', $size_ids);
         $this->assertContains('tinypng_sizes[large]', $size_ids);
+    }
+
+    public function testShouldPersistNoSizes() {
+        $elements = self::$driver->findElements(
+            WebDriverBy::xpath('//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]'));
+        foreach ($elements as $element) {
+            $element->click();
+        }
+        self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
+
+        $elements = self::$driver->findElements(
+            WebDriverBy::xpath('//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]'));
+        $this->assertEquals(0, count(array_map('elementName', $elements)));
     }
 }

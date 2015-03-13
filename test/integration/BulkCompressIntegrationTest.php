@@ -9,7 +9,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function tearDown() {
-        $this->enable_compression_sizes(array('thumbnail', 'medium', 'large', 'post-thumbnail'));
+        $this->enable_compression_sizes(array('0', 'thumbnail', 'medium', 'large', 'post-thumbnail'));
         clear_uploads(self::$driver);
     }
 

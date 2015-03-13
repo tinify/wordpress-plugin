@@ -16,7 +16,10 @@ version="$1"
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source $DIR/docker-functions
 
-WORDPRESS_VERSION=$version WORDPRESS_DATABASE=wordpress_$version \
-  MYSQL_ROOT_PASSWORD=root \
-  HOST_IP=$(boot2docker ip) HOST_PORT=80$version \
-  WORDPRESS_URL=http://$(boot2docker ip):$HOST_PORT phpunit test/integration
+export WORDPRESS_VERSION=$version
+export WORDPRESS_DATABASE=wordpress_$version
+export MYSQL_ROOT_PASSWORD=root
+export HOST_IP=$(boot2docker ip)
+export HOST_PORT=80$version
+export WORDPRESS_URL=http://$(boot2docker ip):$HOST_PORT
+phpunit test/integration

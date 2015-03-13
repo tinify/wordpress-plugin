@@ -14,6 +14,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $this->wp->stub('wp_upload_dir', create_function('', 'return array("basedir" => "/root/wp-content/upload");'));
         $this->wp->addOption("tinypng_api_key", "test123");
+        $this->wp->addOption("tinypng_sizes[0]", "on");
         $this->wp->addOption("tinypng_sizes[large]", "on");
         $this->wp->addOption("tinypng_sizes[post-thumbnail]", "on");
 
