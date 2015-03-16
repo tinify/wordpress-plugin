@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress, optimize, shrink, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda
 Requires at least: 3.0.6
 Tested up to: 4.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,10 @@ After you upload an image to your WordPress site, each resized image is uploaded
 = Getting started =
 
 Install this plugin and obtain your free API key from https://tinypng.com/developers. The first 500 compressions per month are completely free, so roughly 100 images can be uploaded to WordPress for free, no strings attached! You can also change which of the generated thumbnail sizes should be compressed, because each one of them counts as a compression. And if you’re a heavy user, you can compress additional images for a small additional fee per image.
+
+= Multisite support =
+
+The API key can optionally be configured in wp-config.php. This removes the need to set a key on each site individually in your multisite network.
 
 = Contact us =
 
@@ -52,6 +56,10 @@ Want to contribute? Checkout our [GitHub page](https://github.com/TinyPNG/wordpr
 5. Configure the API key in the Settings -> Media page.
 6. Upload an image and see it be compressed!
 
+= Optional configuration =
+
+The API key can also be configured in wp-config.php. You can add a TINY_API_KEY constant with your API key. Once set up you will see a message on the media settings page. This will work for normal and multisite WordPress installations.
+
 == Screenshots ==
 
 1. Enter your TinyPNG or TinyJPG API key and configure the image sizes you would like to have compressed.
@@ -63,3 +71,8 @@ Want to contribute? Checkout our [GitHub page](https://github.com/TinyPNG/wordpr
 
 = 1.0.0 =
 * Initial version.
+
+= 1.1.0 =
+* The API key can now be set with the TINY_API_KEY constant in wp-config.php. This will work for normal and multisite WordPress installations.
+* You can now enable or disable compression of the original uploaded image. If you upgrade the plugin from version 1.0 you may need to go to media settings to include it for compression.
+* Improved display of original sizes and compressed sizes showing the total size of all compressed images.
