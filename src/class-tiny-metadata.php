@@ -76,4 +76,20 @@ class Tiny_Metadata {
         }
         return $message;
     }
+
+    public function get_savings() {
+        $result = array(
+            'input' => 0,
+            'output' => 0,
+            'count' => 0
+        );
+        foreach ($this->values as $key => $details) {
+            if (isset($details['input']) && isset($details['output'])) {
+                $result['count']++;
+                $result['input'] += $details['input']['size'];
+                $result['output'] += $details['output']['size'];
+            }
+        }
+        return $result;
+    }
 }

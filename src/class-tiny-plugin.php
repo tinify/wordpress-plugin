@@ -175,11 +175,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 echo '<div class="spinner"></div>';
             } else {
                 printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
-                $details = $tiny_metadata->get_value();
-                if ($details && isset($details['input'])) {
+                $savings = $tiny_metadata->get_savings();
+                if ($savings['count'] > 0) {
                     echo '<br/>';
-                    echo self::translate_escape('Original size') . ': ' . size_format($details['input']['size']) . '<br/>';
-                    echo self::translate_escape('Compressed size') . ': ' . size_format($details['output']['size']);
+                    echo self::translate_escape('Total size') . ': ' . size_format($savings['input']) . '<br/>';
+                    echo self::translate_escape('Compressed size') . ': ' . size_format($savings['output']);
                 }
             }
         }

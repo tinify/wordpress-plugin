@@ -40,8 +40,8 @@ msgstr "Comprimeer alle ongecomprimeerde afmetingen"
 msgid "Compressed %d out of %d sizes"
 msgstr "%d van de %d afmetingen zijn gecomprimeerd"
 
-msgid "Original size"
-msgstr "Oorspronkelijke grootte"
+msgid "Total size"
+msgstr "Totale grootte"
 
 msgid "Compressed size"
 msgstr "Gecomprimeerde grootte"
