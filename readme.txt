@@ -69,10 +69,10 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial version.
-
 = 1.1.0 =
 * The API key can now be set with the TINY_API_KEY constant in wp-config.php. This will work for normal and multisite WordPress installations.
 * You can now enable or disable compression of the original uploaded image. If you upgrade the plugin from version 1.0 you may need to go to media settings to include it for compression.
-* Improved display of original sizes and compressed sizes showing the total size of all compressed images.
+* Improved display of original sizes and compressed sizes showing the total size of all compressed images in media library list view.
+
+= 1.0.0 =
+* Initial version.

@@ -126,7 +126,11 @@ class Tiny_Settings extends Tiny_WP_Base {
         }
         echo '<p>';
         $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
-        printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
+        if (empty($key)) {
+            printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
+        } else {
+            printf(self::translate_escape('Visit %s to view your usage or upgrade your account') . '.', $link);
+        }
         echo '</p>';
     }
 

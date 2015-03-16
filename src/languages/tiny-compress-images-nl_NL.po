@@ -7,6 +7,9 @@ msgstr "Multisite PNG- en JPEG-compressie"
 msgid "Visit %s to get an API key"
 msgstr "Bezoek de %s om een API-sleutel te krijgen"
 
+msgid "Visit %s to view your usage or upgrade your account"
+msgstr "Bezoek de %s om je verbruik te bekijken of je account aan te passen"
+
 msgid "TinyPNG Developer section"
 msgstr "TinyPNG Developer pagina"
 
