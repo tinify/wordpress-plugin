@@ -33,15 +33,9 @@ class Tiny_Settings extends Tiny_WP_Base {
         $section = self::get_prefixed_name('settings');
         add_settings_section($section, self::translate('PNG and JPEG compression'), $this->get_method('render_section'), 'media');
 
-        if (tiny_is_network_activated()) {
-            $field = self::get_prefixed_name('api_key');
-            register_setting('media', $field);
-            add_settings_field($field, self::translate('Multisite API key'), $this->get_method('render_api_key'), 'media', $section, array('label_for' => $field));
-        } else {
-            $field = self::get_prefixed_name('api_key');
-            register_setting('media', $field);
-            add_settings_field($field, self::translate('TinyPNG API key'), $this->get_method('render_api_key'), 'media', $section, array('label_for' => $field));
-        }
+        $field = self::get_prefixed_name('api_key');
+        register_setting('media', $field);
+        add_settings_field($field, self::translate('TinyPNG API key'), $this->get_method('render_api_key'), 'media', $section, array('label_for' => $field));
 
         $field = self::get_prefixed_name('sizes');
         register_setting('media', $field);
@@ -53,18 +47,6 @@ class Tiny_Settings extends Tiny_WP_Base {
             return TINY_API_KEY;
         } else {
             return get_option(self::get_prefixed_name('api_key'));
-        }
-    }
-
-    public function get_multisite_api_key() {
-        if (is_multisite()) {
-             if (defined('TINY_API_KEY')) {
-                 return TINY_API_KEY;
-             } else {
-                 return NULL;
-             }
-        } else {
-            return NULL;
         }
     }
 
@@ -136,35 +118,16 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function render_api_key() {
         $field = self::get_prefixed_name('api_key');
         $key = $this->get_api_key();
-        $multisite_key = $this->get_multisite_api_key();
 
-        if (tiny_is_network_activated()) {
-            if (empty($multisite_key)) {
-                if (empty($key)) {
-                    echo '<p>' . self::translate('Your Network Admin has not configured an API key yet') . '.</p>';
-                } else {
-                    echo '<p>' . self::translate('You have an API key configured') . '. ' . self::translate('Your Network Admin can change the key') . '.</p>';
-                }
-            } else {
-                echo '<p>' . self::translate('The API key has been installed by the Network Admin') . '.</p>';
-            }
+        if (defined('TINY_API_KEY')) {
+            echo '<p>' . self::translate('The API key has been configured in wp-config.php') . '.</p>';
         } else {
-            if (is_multisite() && !empty($multisite_key)) {
-                echo '<p>' . self::translate('The API key has been installed by the Network Admin') . '.</p>';
-            } else {
-                if (defined('TINY_API_KEY')) {
-                    echo '<p>' . self::translate('The API key has been configured in wp-config.php') . '.</p>';
-                } else {
-                    echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
-                }
-                if (empty($key)) {
-                    echo '<p>';
-                    $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
-                    printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
-                    echo '</p>';
-                }
-            }
+            echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
         }
+        echo '<p>';
+        $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
+        printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
+        echo '</p>';
     }
 
     public function render_sizes() {

@@ -15,10 +15,6 @@ function plugin_autoloader($class) {
 
 spl_autoload_register('plugin_autoloader');
 
-function tiny_is_network_activated() {
-    return false;
-}
-
 abstract class TinyTestCase extends PHPUnit_Framework_TestCase {
     protected $wp;
 

@@ -52,6 +52,9 @@ msgstr "Laatste fout"
 msgid "Credentials are invalid"
 msgstr "Ongeldige API-sleutel"
 
+msgid "Your monthly limit has been exceeded"
+msgstr "Je maandelijks limiet is bereikt"
+
 msgid "File is empty"
 msgstr "Bestand is leeg"
 
@@ -96,18 +99,3 @@ msgstr "Kon de metadata niet vinden van het bestand"
 
 msgid "The API key has been configured in %s"
 msgstr "De API-sleutel is geconfigureerd in %s"
-
-msgid "Your Network Admin has not configured an API key yet"
-msgstr "Je netwerkbeheerder heeft nog geen API-sleutel geconfigureerd"
-
-msgid "You have an API key configured"
-msgstr "Je hebt een API-sleutel geconfigureerd"
-
-msgid "Your Network Admin can change the key"
-msgstr "Je netwerkbeheerder kan de sleutel wijzigen"
-
-msgid "The API key has been installed by the Network Admin"
-msgstr "De API-sleutel is geïnstalleerd door de netwerkbeheerder"
-
-msgid "The API key has been configured in wp-config.php"
-msgstr "De API-sleutel is geconfigureerd in wp-config.php"
