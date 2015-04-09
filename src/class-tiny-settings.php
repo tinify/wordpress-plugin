@@ -19,27 +19,21 @@
 */
 
 class Tiny_Settings extends Tiny_WP_Base {
-    const PREFIX = 'tinypng_';
     const DUMMY_SIZE = '_tiny_dummy';
-
-    protected static function get_prefixed_name($name) {
-        return self::PREFIX . $name;
-    }
 
     private $sizes;
     private $tinify_sizes;
     private $compressor;
 
-    public function __construct() {
-        parent::__construct();
-        try {
-            $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('set_compression_count'));
-        } catch (Tiny_Exception $e) {
-            $this->add_admin_notice(self::translate_escape($e->getMessage()));
-        }
-    }
-
     public function admin_init() {
+        parent::admin_init();
+
+        try {
+            $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
+        } catch (Tiny_Exception $e) {
+            $this->add_admin_notice('compressor_exception', self::translate_escape($e->getMessage()), true);
+        }
+
         $section = self::get_prefixed_name('settings');
         add_settings_section($section, self::translate('PNG and JPEG compression'), $this->get_method('render_section'), 'media');
 
@@ -63,9 +57,12 @@ class Tiny_Settings extends Tiny_WP_Base {
         exit();
     }
 
-
     public function get_compressor() {
         return $this->compressor;
+    }
+
+    public function set_compressor($compressor) {
+        $this->compressor = $compressor;
     }
 
     protected function get_api_key() {
@@ -188,9 +185,18 @@ class Tiny_Settings extends Tiny_WP_Base {
         return get_option($field);
     }
 
-    public function set_compression_count($new_count) {
-        $field = self::get_prefixed_name('status');
-        update_option($field, $new_count);
+    public function after_compress_callback($details, $headers) {
+        if(isset($headers["Compression-Count"])) {
+            $field = self::get_prefixed_name('status');
+            update_option($field, $headers["Compression-Count"]);
+
+            if (isset($details['error']) && $details['error'] == 'TooManyRequests') {
+                $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API subscription') . '</a>';
+                $this->add_admin_notice('limit_reached', sprintf(self::translate_escape('You have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images') . '.', $headers["Compression-Count"], $link));
+            } else {
+                $this->remove_admin_notice('limit_reached');
+            }
+        }
     }
 
     public function render_status() {
@@ -199,25 +205,23 @@ class Tiny_Settings extends Tiny_WP_Base {
                 echo '<p><img src="images/yes.png"> ' . self::translate_escape('API connection successful') . '</p>';
                 break;
             case Tiny_Compressor_Status::Yellow:
-                echo '<p>' . self::translate_escape('API status could not be checked, enable cURL for more information.') . '</p>';
+                echo '<p>' . self::translate_escape('API status could not be checked, enable cURL for more information') . '.</p>';
                 return;
             case Tiny_Compressor_Status::Red:
                 echo '<p><img src="images/no.png"> ' . self::translate_escape('API connection unsuccessful') . '</p>';
                 return;
         }
 
-
         $compressions = self::get_compression_count();
         echo '<p>';
         // We currently have no way to check if a user is free or flexible.
         if ($compressions == 500) {
             $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API subscription') . '</a>';
-            printf('You have reached your limit of 500 compressions this month' . '.');
+            printf(self::translate_escape('You have reached your limit of %s compressions this month') . '.', $compressions);
             echo '<br>';
-            printf(self::translate_escape('If you need to compress more images you can change your %s' . '.'), $link);
-        }
-        else {
-           printf('You have made %s compressions this month' . '.', self::get_compression_count());
+            printf(self::translate_escape('If you need to compress more images you can change your %s') . '.', $link);
+        } else {
+           printf(self::translate_escape('You have made %s compressions this month') . '.', self::get_compression_count());
         }
         echo '</p>';
     }

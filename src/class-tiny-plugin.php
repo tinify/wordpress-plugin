@@ -23,7 +23,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
     const MEDIA_COLUMN_HEADER = 'Compression';
 
     private $settings;
-    private $compressor;
 
     public static function jpeg_quality() {
           return 95;
@@ -32,11 +31,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function __construct() {
         parent::__construct();
         $this->settings = new Tiny_Settings();
-        $this->compressor = $this->settings->get_compressor();
     }
 
     public function set_compressor($compressor) {
-        $this->compressor = $compressor;
+        $this->settings->set_compressor($compressor);
     }
 
     public function init() {
@@ -72,7 +70,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $mime_type = get_post_mime_type($attachment_id);
         $tiny_metadata = new Tiny_Metadata($attachment_id);
 
-        if ($this->compressor === null || strpos($mime_type, 'image/') !== 0) {
+        if ($this->settings->get_compressor() === null || strpos($mime_type, 'image/') !== 0) {
             return $metadata;
         }
 
@@ -84,7 +82,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         if ($settings[Tiny_Metadata::ORIGINAL]['tinify'] && !$tiny_metadata->is_compressed()) {
             try {
-                $response = $this->compressor->compress_file("$prefix${path_info['basename']}");
+                $response = $this->settings->get_compressor()->compress_file("$prefix${path_info['basename']}");
                 $tiny_metadata->add_response($response);
             } catch (Tiny_Exception $e) {
                 $tiny_metadata->add_exception($e);
@@ -94,7 +92,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         foreach ($metadata['sizes'] as $size => $info) {
             if (isset($settings[$size]) && $settings[$size]['tinify'] && !$tiny_metadata->is_compressed($size)) {
                 try {
-                    $response = $this->compressor->compress_file("$prefix${info['file']}");
+                    $response = $this->settings->get_compressor()->compress_file("$prefix${info['file']}");
                     $tiny_metadata->add_response($response, $size);
                 } catch (Tiny_Exception $e) {
                     $tiny_metadata->add_exception($e, $size);

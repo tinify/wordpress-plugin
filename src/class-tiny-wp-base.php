@@ -20,6 +20,8 @@
 
 abstract class Tiny_WP_Base {
     const NAME = 'tiny-compress-images';
+    const PREFIX = 'tinypng_';
+
 
     public static function plugin_version() {
         $plugin_data = get_plugin_data(dirname(__FILE__) . '/../tiny-compress-images.php');
@@ -28,6 +30,10 @@ abstract class Tiny_WP_Base {
 
     public static function plugin_identification() {
         return 'Wordpress/' . $GLOBALS['wp_version'] . ' Tiny/' . self::plugin_version();
+    }
+
+    protected static function get_prefixed_name($name) {
+        return self::PREFIX . $name;
     }
 
     protected static function translate($phrase) {
@@ -55,9 +61,63 @@ abstract class Tiny_WP_Base {
     }
 
     public function admin_init() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $notices_name = self::get_prefixed_name('admin_notices');
+        $notices = get_option($notices_name);
+
+        if ($notices) {
+            $user_id = wp_get_current_user()->ID;
+
+            foreach ($notices as $name => $message) {
+                if (isset($_GET[$name]) && $_GET[$name] == 0) {
+                    add_user_meta($user_id, $name, 'true', true);
+                    continue;
+                }
+
+                if (!get_user_meta($user_id, $name)) {
+                    $this->show_admin_notice($name, $message);
+                }
+            }
+        }
     }
 
-    public function add_admin_notice($message) {
-        add_action('admin_notices', create_function('', "echo '<div class=\"error\"><p>Tiny Compress Images: $message</p></div>';"));
+    public function add_admin_notice($name, $message, $force = false) {
+        $name = self::get_prefixed_name($name);
+        $notices_name = self::get_prefixed_name('admin_notices');
+        $notices = get_option($notices_name);
+
+        if (!$notices) {
+            $notices = array();
+        }
+        $notices[$name] = $message;
+        update_option($notices_name, $notices);
+
+        if ($force) {
+            $user_id = wp_get_current_user()->ID;
+            delete_user_meta($user_id, $name);
+        }
+    }
+
+    public function remove_admin_notice($name) {
+        $name = self::get_prefixed_name($name);
+        $notices_name = self::get_prefixed_name('admin_notices');
+        $notices = get_option($notices_name);
+        unset($notices[$name]);
+
+        if ($notices) {
+            update_option($notices_name, $notices);
+        } else {
+            delete_option($notices_name);
+        }
+
+        $user_id = wp_get_current_user()->ID;
+        delete_user_meta($user_id, $name);
+    }
+
+    private function show_admin_notice($name, $message) {
+        add_action('admin_notices', create_function('', "echo '<div class=\"error\"><p>Tiny Compress Images: $message | <a href=\"?$name=0\">Dismiss</a></p></div>';"));
     }
 }

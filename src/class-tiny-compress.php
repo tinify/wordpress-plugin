@@ -20,24 +20,24 @@
 
 abstract class Tiny_Compress {
     protected $api_key;
-    protected $count_callback;
+    protected $after_compress_callback;
 
     public static function get_ca_file() {
         return dirname(__FILE__) . '/cacert.pem';
     }
 
-    public static function get_compressor($api_key, $count_callback=null) {
+    public static function get_compressor($api_key, $after_compress_callback=null) {
         if (Tiny_PHP::is_curl_available()) {
-            return new Tiny_Compress_Curl($api_key, $count_callback);
+            return new Tiny_Compress_Curl($api_key, $after_compress_callback);
         } elseif (Tiny_PHP::is_fopen_available()) {
-            return new Tiny_Compress_Fopen($api_key, $count_callback);
+            return new Tiny_Compress_Fopen($api_key, $after_compress_callback);
         }
         throw new Tiny_Exception('No HTTP client is available (cURL or fopen)', 'NoHttpClient');
     }
 
-    protected function __construct($api_key, $count_callback) {
+    protected function __construct($api_key, $after_compress_callback) {
         $this->api_key = $api_key;
-        $this->count_callback = $count_callback;
+        $this->after_compress_callback = $after_compress_callback;
     }
 
     abstract protected function shrink($input);
@@ -45,8 +45,9 @@ abstract class Tiny_Compress {
 
     public function get_status() {
         list($details, $headers) = $this->shrink(null);
-        $this->update_compression_count($headers);
-        if ($details["error"] == 'InputMissing') {
+
+        $this->call_after_compress_callback($details, $headers);
+        if ($details["error"] == 'InputMissing' || $details["error"] == 'TooManyRequests') {
             return Tiny_Compressor_Status::Green;
         } else {
             return Tiny_Compressor_Status::Red;
@@ -55,7 +56,7 @@ abstract class Tiny_Compress {
 
     public function compress($input) {
         list($details, $headers) = $this->shrink($input);
-        $this->update_compression_count($headers);
+        $this->call_after_compress_callback($details, $headers);
         $outputUrl = $headers["Location"];
         if (isset($details['error']) && $details['error']) {
             throw new Tiny_Exception($details['message'], $details['error']);
@@ -78,9 +79,9 @@ abstract class Tiny_Compress {
         return $details;
     }
 
-    protected function update_compression_count($headers) {
-        if ($this->count_callback && isset($headers["Compression-Count"])) {
-            call_user_func($this->count_callback, $headers["Compression-Count"]);
+    protected function call_after_compress_callback($details, $headers) {
+        if ($this->after_compress_callback) {
+            call_user_func($this->after_compress_callback, $details, $headers);
         }
     }
 

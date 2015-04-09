@@ -102,3 +102,30 @@ msgstr "Kon de metadata niet vinden van het bestand"
 
 msgid "The API key has been configured in %s"
 msgstr "De API-sleutel is geconfigureerd in %s"
+
+msgid "Connection status"
+msgstr "Verbinding status"
+
+msgid "TinyPNG API subscription"
+msgstr "TinyPNG API subscription"
+
+msgid "API connection successful"
+msgstr "API-verbinding succesvol"
+
+msgid "API connection unsuccessful"
+msgstr "API-verbinding onsuccesvol"
+
+msgid "API status could not be checked, enable cURL for more information"
+msgstr "API-status kon niet worden gecontroleerd, schakel cURL in voor meer informatie"
+
+msgid "You have made %s compressions this month"
+msgstr "Je hebt deze maand %s compressies gedaan"
+
+msgid "You have reached your limit of %s compressions this month"
+msgstr "Je hebt je maandelijkse limiet van %s compressies bereikt"
+
+msgid "If you need to compress more images you can change your %s"
+msgstr "Als je meer plaatjes wilt comprimeren kun je je %s aanpassen"
+
+msgid "You have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images"
+msgstr "Je hebt je maandelijkse limiet van %s compressies bereikt. Upgrade je %s als je meer plaatjes wilt comprimeren"

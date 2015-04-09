@@ -46,6 +46,17 @@ function mock_fail_status_response() {
     return json_encode($response);
 }
 
+function mock_limit_reached_response() {
+    header("Content-Type: application/json; charset=utf-8");
+    header("Compression-Count: 500");
+
+    $response = array(
+            "error" => "TooManyRequests",
+            "message" => "Your monthly limit has been exceeded"
+    );
+    return json_encode($response);
+}
+
 $request_headers = apache_request_headers();
 $basic_auth = base64_decode(str_replace('Basic ', '', $request_headers['Authorization']));
 $api_key_elements = explode(':', $basic_auth);
@@ -60,6 +71,8 @@ if ($api_key == 'PNG123') {
     print_r(mock_ok_status_response());
 } else if ($api_key == 'INVALID123') {
     print_r(mock_fail_status_response());
+} else if ($api_key == 'LIMIT123') {
+    print_r(mock_limit_reached_response());
 } else {
     header('HTTP/1.1 401 Unauthorized');
     print_r(json_encode(array(

@@ -56,6 +56,7 @@ class WordPressStubs {
         $this->addMethod('wp_upload_dir');
         $this->addMethod('plugin_basename');
         $this->addMethod('is_multisite');
+        $this->addMethod('current_user_can');
         $this->defaults();
     }
 
