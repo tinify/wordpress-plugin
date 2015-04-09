@@ -48,12 +48,10 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         }
 
         $header_size = curl_getinfo($request, CURLINFO_HEADER_SIZE);
-        if (curl_getinfo($request, CURLINFO_HTTP_CODE) === 201) {
-            $output_url = self::parse_location_header(substr($response, 0, $header_size));
-        }
+        $headers = self::parse_headers(substr($response, 0, $header_size));
         curl_close($request);
 
-        return array(self::decode(substr($response, $header_size)), $output_url);
+        return array(self::decode(substr($response, $header_size)), $headers);
     }
 
     protected function output_options($url) {

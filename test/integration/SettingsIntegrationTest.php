@@ -64,4 +64,19 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             WebDriverBy::xpath('//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]'));
         $this->assertEquals(0, count(array_map('elementName', $elements)));
     }
+
+    public function testStatusPresenceOK() {
+        $this->set_api_key('STATUS123');
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-status'))->findElements(WebDriverBy::tagName('p'));
+        $statuses = array_map('innerText', $elements);
+        $this->assertContains('API connection successful', $statuses);
+        $this->assertContains('You have made 6 compressions this month.', $statuses);
+    }
+
+    public function testStatusPresenseFail() {
+        $this->set_api_key('INVALID123');
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-status'))->findElements(WebDriverBy::tagName('p'));
+        $statuses = array_map('innerText', $elements);
+        $this->assertContains('API connection unsuccessful', $statuses);
+    }
 }

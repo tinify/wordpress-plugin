@@ -1,3 +1,8 @@
 .tiny-compress-images .spinner {
     display: none;
 }
+
+#tiny-compress-status .spinner {
+    display: inline;
+    float: left;
+}

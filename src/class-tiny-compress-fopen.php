@@ -51,10 +51,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
         $response = stream_get_contents($request);
         $meta_data = stream_get_meta_data($request);
-        $output_url = self::parse_location_header($meta_data['wrapper_data']);
+        $headers = self::parse_headers($meta_data['wrapper_data']);
         fclose($request);
 
-        return array(self::decode($response), $output_url);
+        return array(self::decode($response), $headers);
     }
 
     protected function output_options() {
@@ -81,5 +81,9 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         }
 
         return $response;
+    }
+
+    public function get_status() {
+        return Tiny_Compressor_Status::Yellow;
     }
 }

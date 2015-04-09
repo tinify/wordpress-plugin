@@ -32,11 +32,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function __construct() {
         parent::__construct();
         $this->settings = new Tiny_Settings();
-        try {
-            $this->compressor = Tiny_Compress::get_compressor($this->settings->get_api_key());
-        } catch (Tiny_Exception $e) {
-            $this->add_admin_notice(self::translate_escape($e->getMessage()));
-        }
+        $this->compressor = $this->settings->get_compressor();
     }
 
     public function set_compressor($compressor) {

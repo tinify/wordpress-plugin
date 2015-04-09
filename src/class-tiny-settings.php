@@ -28,6 +28,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     private $sizes;
     private $tinify_sizes;
+    private $compressor;
+
+    public function __construct() {
+        parent::__construct();
+        try {
+            $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('set_compression_count'));
+        } catch (Tiny_Exception $e) {
+            $this->add_admin_notice(self::translate_escape($e->getMessage()));
+        }
+    }
 
     public function admin_init() {
         $section = self::get_prefixed_name('settings');
@@ -40,9 +50,25 @@ class Tiny_Settings extends Tiny_WP_Base {
         $field = self::get_prefixed_name('sizes');
         register_setting('media', $field);
         add_settings_field($field, self::translate('File compression'), $this->get_method('render_sizes'), 'media', $section);
+
+        $field = self::get_prefixed_name('status');
+        register_setting('media', $field);
+        add_settings_field($field, self::translate('Connection status'), $this->get_method('render_pending_status'), 'media', $section);
+
+        add_action('wp_ajax_tiny_compress_status', $this->get_method('get_status'));
     }
 
-    public function get_api_key() {
+    public function get_status() {
+        $this->render_status();
+        exit();
+    }
+
+
+    public function get_compressor() {
+        return $this->compressor;
+    }
+
+    protected function get_api_key() {
         if (defined('TINY_API_KEY')) {
             return TINY_API_KEY;
         } else {
@@ -125,7 +151,7 @@ class Tiny_Settings extends Tiny_WP_Base {
             echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
         }
         echo '<p>';
-        $link = '<a href="https://tinypng.com/developers">' . self::translate_escape('TinyPNG Developer section') . '</a>';
+        $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG Developer section') . '</a>';
         if (empty($key)) {
             printf(self::translate_escape('Visit %s to get an API key') . '.', $link);
         } else {
@@ -155,5 +181,48 @@ class Tiny_Settings extends Tiny_WP_Base {
 <p><input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $field ?>" value="on" <?php if ($option['tinify']) { echo ' checked="checked"'; } ?>/>
 <label for="<?php echo $id; ?>"><?php echo $label; ?></label></p>
 <?php
+    }
+
+    public function get_compression_count() {
+        $field = self::get_prefixed_name('status');
+        return get_option($field);
+    }
+
+    public function set_compression_count($new_count) {
+        $field = self::get_prefixed_name('status');
+        update_option($field, $new_count);
+    }
+
+    public function render_status() {
+        switch ($this->compressor->get_status()) {
+            case Tiny_Compressor_Status::Green:
+                echo '<p><img src="images/yes.png"> ' . self::translate_escape('API connection successful') . '</p>';
+                break;
+            case Tiny_Compressor_Status::Yellow:
+                echo '<p>' . self::translate_escape('API status could not be checked, enable cURL for more information.') . '</p>';
+                return;
+            case Tiny_Compressor_Status::Red:
+                echo '<p><img src="images/no.png"> ' . self::translate_escape('API connection unsuccessful') . '</p>';
+                return;
+        }
+
+
+        $compressions = self::get_compression_count();
+        echo '<p>';
+        // We currently have no way to check if a user is free or flexible.
+        if ($compressions == 500) {
+            $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API subscription') . '</a>';
+            printf('You have reached your limit of 500 compressions this month' . '.');
+            echo '<br>';
+            printf(self::translate_escape('If you need to compress more images you can change your %s' . '.'), $link);
+        }
+        else {
+           printf('You have made %s compressions this month' . '.', self::get_compression_count());
+        }
+        echo '</p>';
+    }
+
+    public function render_pending_status() {
+        echo '<div id="tiny-compress-status"><div class="spinner"></div></div>';
     }
 }

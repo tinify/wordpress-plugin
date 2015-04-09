@@ -25,6 +25,27 @@ function mock_jpg_response() {
     return json_encode($response);
 }
 
+function mock_ok_status_response() {
+    header("Content-Type: application/json; charset=utf-8");
+    header("Compression-Count: 6");
+
+    $response = array(
+            "error" => "InputMissing",
+            "message" => "File is empty"
+    );
+    return json_encode($response);
+}
+
+function mock_fail_status_response() {
+    header("Content-Type: application/json; charset=utf-8");
+
+    $response = array(
+            "error" => "Unauthorized",
+            "message" => "Credentials are invalid"
+    );
+    return json_encode($response);
+}
+
 $request_headers = apache_request_headers();
 $basic_auth = base64_decode(str_replace('Basic ', '', $request_headers['Authorization']));
 $api_key_elements = explode(':', $basic_auth);
@@ -35,6 +56,10 @@ if ($api_key == 'PNG123') {
     print_r(mock_png_response());
 } else if ($api_key == 'JPG123') {
     print_r(mock_jpg_response());
+} else if ($api_key == 'STATUS123') {
+    print_r(mock_ok_status_response());
+} else if ($api_key == 'INVALID123') {
+    print_r(mock_fail_status_response());
 } else {
     header('HTTP/1.1 401 Unauthorized');
     print_r(json_encode(array(
