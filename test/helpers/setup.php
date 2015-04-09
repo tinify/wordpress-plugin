@@ -50,13 +50,13 @@ function backup_wordpress_site() {
 
 function set_test_webservice_url() {
     $config_dir = dirname(__FILE__) . '/../../src/config';
-    shell_exec('mv ' . $config_dir . '/tinypng-api.ini ' . $config_dir . '/tinypng-api.ini.bak');
-    shell_exec('cp ' . dirname(__FILE__) . '/../fixtures/tinypng-api.ini ' . $config_dir . '/tinypng-api.ini');
+    shell_exec('mv ' . $config_dir . '/tiny-config.php ' . $config_dir . '/tiny-config.php.bak');
+    shell_exec('cp ' . dirname(__FILE__) . '/../fixtures/tiny-config.php ' . $config_dir . '/tiny-config.php');
 }
 
 function restore_webservice_url() {
     $config_dir = dirname(__FILE__) . '/../../src/config';
-    shell_exec('test -f ' . $config_dir . '/tinypng-api.ini.bak && mv ' . $config_dir . '/tinypng-api.ini.bak ' . $config_dir . '/tinypng-api.ini');
+    shell_exec('test -f ' . $config_dir . '/tiny-config.php.bak && mv ' . $config_dir . '/tiny-config.php.bak ' . $config_dir . '/tiny-config.php');
 }
 
 function set_siteurl($site_url) {

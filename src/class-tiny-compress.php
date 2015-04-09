@@ -21,29 +21,23 @@
 abstract class Tiny_Compress {
     protected $api_key;
     protected $count_callback;
-    protected $config;
 
     public static function get_ca_file() {
         return dirname(__FILE__) . '/cacert.pem';
     }
 
-    public static function get_config() {
-        return parse_ini_file(dirname(__FILE__) . '/config/tinypng-api.ini', true);
-    }
-
     public static function get_compressor($api_key, $count_callback=null) {
         if (Tiny_PHP::is_curl_available()) {
-            return new Tiny_Compress_Curl($api_key, $count_callback, self::get_config());
+            return new Tiny_Compress_Curl($api_key, $count_callback);
         } elseif (Tiny_PHP::is_fopen_available()) {
-            return new Tiny_Compress_Fopen($api_key, $count_callback, self::get_config());
+            return new Tiny_Compress_Fopen($api_key, $count_callback);
         }
         throw new Tiny_Exception('No HTTP client is available (cURL or fopen)', 'NoHttpClient');
     }
 
-    protected function __construct($api_key, $count_callback, $config) {
+    protected function __construct($api_key, $count_callback) {
         $this->api_key = $api_key;
         $this->count_callback = $count_callback;
-        $this->config = $config;
     }
 
     abstract protected function shrink($input);

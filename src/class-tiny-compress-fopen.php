@@ -39,7 +39,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
     protected function shrink($input) {
         $context = stream_context_create($this->shrink_options($input));
-        $request = @fopen($this->config['api']['url'], 'r', false, $context);
+        $request = @fopen(Tiny_Config::URL, 'r', false, $context);
 
         if (!$request) {
             return array(array(
