@@ -91,9 +91,9 @@ abstract class Tiny_Compress {
         }
         $res = array();
         foreach ($headers as $header) {
-            list($key, $value) = explode(":", $header, 2);
-            if ($value) {
-                $res[$key] = trim($value);
+            $split = explode(":", $header, 2);
+            if (count($split) === 2) {
+                $res[$split[0]] = trim($split[1]);
             }
         }
         return $res;
