@@ -95,6 +95,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
             }
         }
 
+        if (!is_array($metadata['sizes'])) {
+            return $metadata;
+        }
+
         foreach ($metadata['sizes'] as $size => $info) {
             if (isset($settings[$size]) && $settings[$size]['tinify'] && !$tiny_metadata->is_compressed($size)) {
                 try {
