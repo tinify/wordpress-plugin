@@ -113,13 +113,13 @@ msgid "API connection successful"
 msgstr "API-verbinding succesvol"
 
 msgid "API connection unsuccessful"
-msgstr "API-verbinding onsuccesvol"
+msgstr "API-verbinding niet succesvol"
 
 msgid "API status could not be checked, enable cURL for more information"
 msgstr "API-status kon niet worden gecontroleerd, schakel cURL in voor meer informatie"
 
 msgid "You have made %s compressions this month"
-msgstr "Je hebt deze maand %s compressies gedaan"
+msgstr "Je hebt deze maand %s compressies uitgevoerd"
 
 msgid "You have reached your limit of %s compressions this month"
 msgstr "Je hebt je maandelijkse limiet van %s compressies bereikt"
