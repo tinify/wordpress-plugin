@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress, optimize, shrink, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda
 Requires at least: 3.0.6
 Tested up to: 4.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,12 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 4. Compress individual images in case additional sizes have to be compressed.
 
 == Changelog ==
+
+= 1.2.0 =
+* Display connection status and number of compressions this month on the settings page. This also allows you to check if you entered a valid API key.
+* Show a notice to administrators when reaching the monthly compression limit (in case you're on a fixed or free plan).
+* The plugin will now work when php's parse_ini_file is disabled on your host.
+* Bugfix that avoides a warning when no additional image sizes can be found in the metadata.
 
 = 1.1.0 =
 * The API key can now be set with the TINY_API_KEY constant in wp-config.php. This will work for normal and multisite WordPress installations.
