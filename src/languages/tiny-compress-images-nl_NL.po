@@ -106,6 +106,9 @@ msgstr "De API-sleutel is geconfigureerd in %s"
 msgid "Connection status"
 msgstr "Verbinding status"
 
+msgid "Dismiss"
+msgstr "Negeer"
+
 msgid "TinyPNG API subscription"
 msgstr "TinyPNG API subscription"
 
@@ -127,5 +130,5 @@ msgstr "Je hebt je maandelijkse limiet van %s compressies bereikt"
 msgid "If you need to compress more images you can change your %s"
 msgstr "Als je meer plaatjes wilt comprimeren kun je je %s aanpassen"
 
-msgid "You have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images"
-msgstr "Je hebt je maandelijkse limiet van %s compressies bereikt. Upgrade je %s als je meer plaatjes wilt comprimeren"
+msgid "you have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images"
+msgstr "je hebt je maandelijkse limiet van %s compressies bereikt. Upgrade je %s als je meer plaatjes wilt comprimeren"

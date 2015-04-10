@@ -191,8 +191,8 @@ class Tiny_Settings extends Tiny_WP_Base {
             update_option($field, $headers["Compression-Count"]);
 
             if (isset($details['error']) && $details['error'] == 'TooManyRequests') {
-                $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API subscription') . '</a>';
-                $this->add_admin_notice('limit_reached', sprintf(self::translate_escape('You have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images') . '.', $headers["Compression-Count"], $link));
+                $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('subscription') . '</a>';
+                $this->add_admin_notice('limit_reached', sprintf(self::translate_escape('you have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images') . '.', $headers["Compression-Count"], $link));
             } else {
                 $this->remove_admin_notice('limit_reached');
             }

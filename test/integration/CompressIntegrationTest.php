@@ -35,9 +35,14 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testLimitReached() {
         $this->set_api_key('LIMIT123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/example-tinypng.png');
-        $elements = self::$driver->findElement(WebDriverBy::className('error'))->findElements(WebDriverBy::tagName('p'));
+        $elements = self::$driver->findElement(WebDriverBy::className('updated'))->findElements(WebDriverBy::tagName('p'));
         $error_messages = array_map('innerText', $elements);
-        $this->assertContains('Tiny Compress Images: You have reached your limit of 500 compressions this month. Upgrade your TinyPNG API subscription if you like to compress more images. | Dismiss', $error_messages);
+        foreach ($error_messages as $error) {
+            if (strpos($error, 'you have reached your limit of 500 compressions this month')) {
+                return;
+            }
+        }
+        $this->fail('Admin notice has not been found');
     }
 
     public function testLimitReachedDismisses() {
@@ -45,8 +50,12 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/example-tinypng.png');
         $dismiss_links = self::$driver->findElements(WebDriverBy::xpath('//a[contains(@href, "tinypng_limit_reached=0")]'));
         $dismiss_links[0]->click();
-        $elements = self::$driver->findElement(WebDriverBy::className('error'))->findElements(WebDriverBy::tagName('p'));
+        $elements = self::$driver->findElements(WebDriverBy::xpath('//a[contains(@href, "tinypng_limit_reached=0")]'));
         $error_messages = array_map('innerText', $elements);
-        $this->assertNotContains('Tiny Compress Images: You have reached your limit of 500 compressions this month. Upgrade your TinyPNG API subscription if you like to compress more images. | Dismiss', $error_messages);
+        foreach ($error_messages as $error) {
+            if (strpos($error, 'Dismiss')) {
+                $this->fail('Admin notice should not be shown');
+            }
+        }
     }
 }

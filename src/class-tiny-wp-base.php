@@ -118,6 +118,6 @@ abstract class Tiny_WP_Base {
     }
 
     private function show_admin_notice($name, $message) {
-        add_action('admin_notices', create_function('', "echo '<div class=\"error\"><p>Tiny Compress Images: $message | <a href=\"?$name=0\">Dismiss</a></p></div>';"));
+        add_action('admin_notices', create_function('', "echo '<div class=\"updated\"><p>Compress JPEG & PNG images: $message &nbsp;<a href=\"?$name=0\">" . self::translate_escape('Dismiss') . "</a></p></div>';"));
     }
 }
