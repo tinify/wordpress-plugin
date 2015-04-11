@@ -89,7 +89,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
             }
         }
 
-        if (!is_array($metadata['sizes'])) {
+        if (!isset($metadata['sizes']) || !is_array($metadata['sizes'])) {
+            $tiny_metadata->update();
             return $metadata;
         }
 
@@ -103,8 +104,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 }
             }
         }
-        $tiny_metadata->update();
 
+        $tiny_metadata->update();
         return $metadata;
     }
 

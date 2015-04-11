@@ -119,4 +119,17 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $this->subject->compress_attachment($testmeta, 1);
     }
+
+    public function testWrongMetadataShouldSaveTinyMetadata() {
+        $this->wp->stub('get_post_mime_type', create_function('$i', 'return "image/png";'));
+        $this->compressor->expects($this->exactly(1))->method('compress_file')->will(
+            $this->returnCallback('compressTestFile')
+        );
+
+        $testmeta = getTestMetadata();
+        $testmeta['sizes'] = 0;
+
+        $this->subject->compress_attachment($testmeta, 1);
+        $this->assertEquals(1, count($this->wp->getCalls('update_post_meta')));
+    }
 }
