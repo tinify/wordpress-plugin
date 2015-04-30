@@ -186,13 +186,16 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function after_compress_callback($details, $headers) {
-        if(isset($headers["Compression-Count"])) {
+        if(isset($headers["compression-count"])) {
+            $count = $headers["compression-count"];
             $field = self::get_prefixed_name('status');
-            update_option($field, $headers["Compression-Count"]);
+            update_option($field, $count);
 
             if (isset($details['error']) && $details['error'] == 'TooManyRequests') {
-                $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('subscription') . '</a>';
-                $this->add_admin_notice('limit_reached', sprintf(self::translate_escape('you have reached your limit of %s compressions this month. Upgrade your %s if you like to compress more images') . '.', $headers["Compression-Count"], $link));
+                $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API account') . '</a>';
+                $this->add_admin_notice('limit_reached',
+                    sprintf(self::translate_escape('You have reached your limit of %s compressions this month'), $count) . '. ' .
+                    sprintf(self::translate_escape('Upgrade your %s if you like to compress more images'), $link) . '.');
             } else {
                 $this->remove_admin_notice('limit_reached');
             }
@@ -216,7 +219,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '<p>';
         // We currently have no way to check if a user is free or flexible.
         if ($compressions == 500) {
-            $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API subscription') . '</a>';
+            $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API account') . '</a>';
             printf(self::translate_escape('You have reached your limit of %s compressions this month') . '.', $compressions);
             echo '<br>';
             printf(self::translate_escape('If you need to compress more images you can change your %s') . '.', $link);
