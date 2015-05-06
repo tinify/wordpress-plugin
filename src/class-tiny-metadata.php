@@ -89,7 +89,9 @@ class Tiny_Metadata {
     }
 
     public function is_compressed($size=self::ORIGINAL) {
-        return isset($this->values[$size]) && isset($this->values[$size]['output']);
+        $filename = $this->get_filename($size);
+        return isset($this->values[$size]) && isset($this->values[$size]['output'])
+            && file_exists($filename) && filesize($filename) == $this->values[$size]['output']['size'];
     }
 
     public function get_sizes() {

@@ -2,6 +2,9 @@
 
 require_once(dirname(__FILE__) . "/TinyTestCase.php");
 
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\content\LargeFileContent;
+
 class Tiny_Plugin_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
@@ -21,7 +24,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
         $this->wp->createImages();
     }
 
-    public static function successCompress($file) {
+    public function successCompress($file) {
         if (preg_match('#[^-]+-([^.]+)[.](png|jpe?g)$#', basename($file), $match)) {
             $key = $match[1];
         } else {
@@ -41,6 +44,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
             default:
                 $output = 10000;
         }
+        $this->vfs->getChild(vfsStream::path($file))->truncate($output);
         return array('input' => array('size' => $input), 'output' => array('size' => $output));
 
     }
@@ -59,7 +63,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
             array($this->equalTo('vfs://root/wp-content/uploads/14/01/test.png')),
             array($this->equalTo('vfs://root/wp-content/uploads/14/01/test-large.png')),
             array($this->equalTo('vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png'))
-        )->will($this->returnCallback(array(get_class(), 'successCompress')));
+        )->will($this->returnCallback(array($this, 'successCompress')));
         $this->subject->compress_attachment($this->wp->getTestMetadata(), 1);
     }
 
@@ -74,14 +78,32 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $this->compressor->expects($this->once())->method('compress_file')->withConsecutive(
             array($this->equalTo('vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png'))
-        )->will($this->returnCallback(array(get_class(), 'successCompress')));
+        )->will($this->returnCallback(array($this, 'successCompress')));
+        $this->subject->compress_attachment($testmeta, 1);
+    }
+
+    public function testCompressWhenFileChanged() {
+        $this->wp->stub('get_post_mime_type', create_function('$i', 'return "image/png";'));
+
+        $testmeta = $this->wp->getTestMetadata();
+        $meta = new Tiny_Metadata(1, $testmeta);
+        $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
+        $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'), 'large');
+        $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png'), 'post-thumbnail');
+        $meta->update();
+
+        $this->vfs->getChild('wp-content/uploads/14/01/test-large.png')->truncate(100000);
+
+        $this->compressor->expects($this->once())->method('compress_file')->withConsecutive(
+            array($this->equalTo('vfs://root/wp-content/uploads/14/01/test-large.png'))
+        )->will($this->returnCallback(array($this, 'successCompress')));
         $this->subject->compress_attachment($testmeta, 1);
     }
 
     public function testCompressShouldUpdateMetadata() {
         $this->wp->stub('get_post_mime_type', create_function('$i', 'return "image/png";'));
         $this->compressor->expects($this->exactly(3))->method('compress_file')->will(
-            $this->returnCallback(array(get_class(), 'successCompress'))
+            $this->returnCallback(array($this, 'successCompress'))
         );
 
         $this->subject->compress_attachment($this->wp->getTestMetadata(), 1);
@@ -137,7 +159,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
     public function testWrongMetadataShouldNotShowWarnings() {
         $this->wp->stub('get_post_mime_type', create_function('$i', 'return "image/png";'));
         $this->compressor->expects($this->exactly(1))->method('compress_file')->will(
-            $this->returnCallback(array(get_class(), 'successCompress'))
+            $this->returnCallback(array($this, 'successCompress'))
         );
 
         $testmeta = $this->wp->getTestMetadata();
@@ -149,7 +171,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
     public function testWrongMetadataShouldSaveTinyMetadata() {
         $this->wp->stub('get_post_mime_type', create_function('$i', 'return "image/png";'));
         $this->compressor->expects($this->exactly(1))->method('compress_file')->will(
-            $this->returnCallback(array(get_class(), 'successCompress'))
+            $this->returnCallback(array($this, 'successCompress'))
         );
 
         $testmeta = $this->wp->getTestMetadata();
