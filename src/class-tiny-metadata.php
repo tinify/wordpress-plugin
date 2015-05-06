@@ -24,12 +24,39 @@ class Tiny_Metadata {
 
     private $id;
     private $values;
+    private $filenames;
 
-    public function __construct($id) {
+    public function __construct($id, $wp_metadata=null) {
         $this->id = $id;
+
+        if (is_null($wp_metadata)) {
+            $wp_metadata = wp_get_attachment_metadata($id);
+        }
+        $this->parse_wp_metadata($wp_metadata);
         $this->values = get_post_meta($id, self::META_KEY, true);
         if (!is_array($this->values)) {
             $this->values = array();
+        }
+    }
+
+    private function parse_wp_metadata($wp_metadata) {
+        $this->filenames = array();
+        if (!is_array($wp_metadata)) {
+            return;
+        }
+
+        $path_info = pathinfo($wp_metadata['file']);
+        $upload_dir = wp_upload_dir();
+        $prefix = $upload_dir['basedir'] . '/';
+        if (isset($path_info['dirname'])) {
+            $prefix .= $path_info['dirname'] .'/';
+        }
+
+        $this->filenames[self::ORIGINAL] = "$prefix${path_info['basename']}";
+        if (isset($wp_metadata['sizes']) && is_array($wp_metadata['sizes'])) {
+            foreach ($wp_metadata['sizes'] as $size => $info) {
+                $this->filenames[$size] = "$prefix${info['file']}";
+            }
         }
     }
 
@@ -53,6 +80,10 @@ class Tiny_Metadata {
         );
     }
 
+    public function get_filename($size=self::ORIGINAL) {
+        return isset($this->filenames[$size]) ? $this->filenames[$size] : null;
+    }
+
     public function get_value($size=self::ORIGINAL) {
         return isset($this->values[$size]) ? $this->values[$size] : null;
     }
@@ -61,8 +92,17 @@ class Tiny_Metadata {
         return isset($this->values[$size]) && isset($this->values[$size]['output']);
     }
 
-    public function get_missing_sizes($sizes) {
-        return array_diff($sizes, array_filter(array_keys($this->values), array($this, 'is_compressed')));
+    public function get_sizes() {
+        return array_keys($this->filenames);
+    }
+
+    public function get_success_sizes() {
+        return array_filter(array_keys($this->values), array($this, 'is_compressed'));
+    }
+
+    public function get_missing_sizes($tinify_sizes) {
+        $sizes = array_intersect($this->get_sizes(), $tinify_sizes);
+        return array_diff($sizes, $this->get_success_sizes());
     }
 
     public function get_latest_error() {

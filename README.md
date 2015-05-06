@@ -15,7 +15,6 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Prerequisites
 * A working docker installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
-* PHPUnit (https://phpunit.de/getting-started.html).
 * Selenium Server (http://www.seleniumhq.org/download/).
 * Mysql client and admin tools.
 * Java runtime.
@@ -25,7 +24,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 2. Use `docker ps` to check which port to use to connect to WordPress.
 
 ### Running the unit tests
-1. Run `phpunit --process-isolation test/unit`.
+1. Run `bin/unit-tests`.
 
 ### Running the integration tests
 1. Start Selenium server: `java -jar selenium-server-standalone-2.44.0.jar`.

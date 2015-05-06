@@ -1,5 +1,8 @@
 <?php
 
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\content\LargeFileContent;
+
 class WordPressOptions {
     private $values;
 
@@ -31,6 +34,9 @@ class WordPressOptions {
 }
 
 class WordPressStubs {
+    const UPLOAD_DIR = 'wp-content/uploads';
+
+    private $vfs;
     private $initFunctions;
     private $admin_initFunctions;
     private $options;
@@ -38,7 +44,9 @@ class WordPressStubs {
     private $calls;
     private $stubs;
 
-    public function __construct() {
+    public function __construct($vfs) {
+        $GLOBALS['wp'] = $this;
+        $this->vfs = $vfs;
         $this->addMethod('add_action');
         $this->addMethod('add_filter');
         $this->addMethod('register_setting');
@@ -57,7 +65,14 @@ class WordPressStubs {
         $this->addMethod('plugin_basename');
         $this->addMethod('is_multisite');
         $this->addMethod('current_user_can');
+        $this->addMethod('wp_get_attachment_metadata');
         $this->defaults();
+        $this->create_filesystem();
+    }
+
+    public function create_filesystem() {
+        vfsStream::newDirectory(self::UPLOAD_DIR)
+            ->at($this->vfs);
     }
 
     public function defaults() {
@@ -66,14 +81,6 @@ class WordPressStubs {
         $this->options = new WordPressOptions();
         $this->metadata = array();
         $GLOBALS['_wp_additional_image_sizes'] = array();
-    }
-
-    public function clear() {
-        $this->defaults();
-        foreach (array_keys($this->calls) as $method) {
-            $this->calls[$method] = array();
-            $this->stubs[$method] = array();
-        }
     }
 
     public function call($method, $args) {
@@ -95,6 +102,8 @@ class WordPressStubs {
             return call_user_func_array(array($this, 'updateMetadata'), $args);
         } elseif ('get_intermediate_image_sizes' === $method) {
             return array_merge(array('thumbnail', 'medium', 'large'), array_keys($GLOBALS['_wp_additional_image_sizes']));
+        } elseif ('wp_upload_dir' === $method) {
+            return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR);
         } elseif ($this->stubs[$method]) {
             return call_user_func_array($this->stubs[$method], $args);
         }
@@ -143,7 +152,38 @@ class WordPressStubs {
     public function stub($method, $func) {
         $this->stubs[$method] = $func;
     }
+
+    public function createImages($sizes=null, $original_size=12345, $path='14/01', $name='test') {
+        vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
+        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/$path");
+
+        vfsStream::newFile("$name.png")
+            ->withContent(new LargeFileContent($original_size))
+            ->at($dir);
+
+        if (is_null($sizes)) {
+            $sizes = array('thumbnail' => 100, 'medium' => 1000 , 'large' => 10000, 'post-thumbnail' => 1234);
+        }
+
+        foreach ($sizes as $key => $size) {
+            vfsStream::newFile("$name-$key.png")
+                ->withContent(new LargeFileContent($size))
+                ->at($dir);
+        }
+    }
+
+    public function getTestMetadata($path='14/01', $name='test') {
+        $metadata = array('file' => "$path/$name.png", 'sizes' => array());
+
+        $regex = '#^' . preg_quote($name) .'-([^.]+)[.](png|jpe?g)$#';
+        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/$path");
+        foreach ($dir->getChildren() as $child) {
+            $file = $child->getName();
+            if (preg_match($regex, $file, $match)) {
+                $metadata['sizes'][$match[1]] = array('file' => $file);
+            }
+        }
+
+        return $metadata;
+    }
 }
-
-
-$GLOBALS['wp'] = new WordPressStubs();

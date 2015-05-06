@@ -68,40 +68,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function compress_attachment($metadata, $attachment_id) {
         $mime_type = get_post_mime_type($attachment_id);
-        $tiny_metadata = new Tiny_Metadata($attachment_id);
+        $tiny_metadata = new Tiny_Metadata($attachment_id, $metadata);
 
         if ($this->settings->get_compressor() === null || strpos($mime_type, 'image/') !== 0) {
             return $metadata;
         }
 
-        $path_info = pathinfo($metadata['file']);
-        $upload_dir = wp_upload_dir();
-        $prefix = $upload_dir['basedir'] . '/' . $path_info['dirname'] . '/';
-
-        $settings = $this->settings->get_sizes();
-
-        if ($settings[Tiny_Metadata::ORIGINAL]['tinify'] && !$tiny_metadata->is_compressed()) {
+        $compressor = $this->settings->get_compressor();
+        $sizes = $this->settings->get_tinify_sizes();
+        foreach ($tiny_metadata->get_missing_sizes($sizes) as $size) {
             try {
-                $response = $this->settings->get_compressor()->compress_file("$prefix${path_info['basename']}");
-                $tiny_metadata->add_response($response);
+                $response = $compressor->compress_file($tiny_metadata->get_filename($size));
+                $tiny_metadata->add_response($response, $size);
             } catch (Tiny_Exception $e) {
-                $tiny_metadata->add_exception($e);
-            }
-        }
-
-        if (!isset($metadata['sizes']) || !is_array($metadata['sizes'])) {
-            $tiny_metadata->update();
-            return $metadata;
-        }
-
-        foreach ($metadata['sizes'] as $size => $info) {
-            if (isset($settings[$size]) && $settings[$size]['tinify'] && !$tiny_metadata->is_compressed($size)) {
-                try {
-                    $response = $this->settings->get_compressor()->compress_file("$prefix${info['file']}");
-                    $tiny_metadata->add_response($response, $size);
-                } catch (Tiny_Exception $e) {
-                    $tiny_metadata->add_exception($e, $size);
-                }
+                $tiny_metadata->add_exception($e, $size);
             }
         }
 
@@ -120,7 +100,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             exit();
         }
         $metadata = wp_get_attachment_metadata($id);
-        if (!$metadata) {
+        if (!is_array($metadata)) {
             echo self::translate("Could not find metadata of media file") . '.';
         }
 
@@ -139,7 +119,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         foreach ($_REQUEST['media'] as $id) {
             $metadata = wp_get_attachment_metadata($id);
-            if ($metadata) {
+            if (is_array($metadata)) {
                 $this->compress_attachment($metadata, $id);
             }
         }
@@ -152,16 +132,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function render_media_column($column, $id) {
         if ($column === self::MEDIA_COLUMN) {
-            $wp_metadata = wp_get_attachment_metadata($id);
-            $wp_sizes = isset($wp_metadata['sizes']) ? array_keys($wp_metadata['sizes']) : array();
-            $wp_sizes[] = Tiny_Metadata::ORIGINAL;
-
-            $sizes = array_intersect($wp_sizes, $this->settings->get_tinify_sizes());
-
             $tiny_metadata = new Tiny_Metadata($id);
-            $missing = $tiny_metadata->get_missing_sizes($sizes);
-            $total = count($sizes);
-            $success = $total - count($missing);
+            $missing = $tiny_metadata->get_missing_sizes($this->settings->get_tinify_sizes());
+            $success = count($tiny_metadata->get_success_sizes());
+            $total = count($missing) + $success;
 
             if (count($missing) > 0) {
                 printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
