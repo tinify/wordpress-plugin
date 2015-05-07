@@ -10,7 +10,8 @@ ENV WORDPRESS_SHA1 11d130c06ba9c55e7aa80c04c249a4f1b19accd6
 RUN curl -o wordpress.tar.gz -sSL https://wordpress.org/wordpress-${WORDPRESS_UPSTREAM_VERSION}.tar.gz \
   && echo "$WORDPRESS_SHA1 *wordpress.tar.gz" | sha1sum -c - \
   && tar -xzf wordpress.tar.gz -C /usr/src/ \
-  && rm wordpress.tar.gz
+  && rm wordpress.tar.gz \
+  && chown -R www-data:www-data /usr/src/wordpress
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
