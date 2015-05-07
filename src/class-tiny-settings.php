@@ -35,7 +35,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         try {
             $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
         } catch (Tiny_Exception $e) {
-            $this->notices->add('compressor_exception', self::translate_escape($e->getMessage()), false);
+            $this->notices->show('compressor_exception', self::translate_escape($e->getMessage()), false);
         }
 
         $section = self::get_prefixed_name('settings');
