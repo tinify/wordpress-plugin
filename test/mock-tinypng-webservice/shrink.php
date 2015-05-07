@@ -2,25 +2,37 @@
 ob_start();
 
 function mock_png_response() {
-    header("Location: http://webservice/output/2351zxcf2359.png");
+    header("Location: http://webservice/output/example.png");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: 1");
 
     $response = array(
-            "input" => array("size" => 12345, "type" => "image/png"),
-            "output" => array("size" => 1234, "type" => "image.png", "ratio" => 0.307)
+            "input" => array("size" => 161885, "type" => "image/png"),
+            "output" => array("size" => 151021, "type" => "image.png", "ratio" => 0.933)
     );
     return json_encode($response);
 }
 
 function mock_jpg_response() {
-    header("Location: http://webservice/output/2351zxcf2359.jpg");
+    header("Location: http://webservice/output/example.jpg");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: 1");
 
     $response = array(
-            "input" => array("size" => 12345, "type" => "image/jpg"),
-            "output" => array("size" => 1234, "type" => "image/jpg", "ratio" => 0.307)
+            "input" => array("size" => 15391, "type" => "image/jpg"),
+            "output" => array("size" => 13910, "type" => "image/jpg", "ratio" => 0.904)
+    );
+    return json_encode($response);
+}
+
+function mock_large_response() {
+    header("Location: http://webservice/output/large.png");
+    header("Content-Type: application/json; charset=utf-8");
+    header("Compression-Count: 1");
+
+    $response = array(
+            "input" => array("size" => 80506, "type" => "image/jpg"),
+            "output" => array("size" => 70200, "type" => "image/jpg", "ratio" => 0.872)
     );
     return json_encode($response);
 }

@@ -20,5 +20,6 @@ require (dirname(__FILE__) . '/src/class-tiny-compress-fopen.php');
 require (dirname(__FILE__) . '/src/class-tiny-metadata.php');
 require (dirname(__FILE__) . '/src/class-tiny-settings.php');
 require (dirname(__FILE__) . '/src/class-tiny-plugin.php');
+require (dirname(__FILE__) . '/src/class-tiny-notices.php');
 
 $tiny_plugin = new Tiny_Plugin();

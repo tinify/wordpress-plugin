@@ -15,7 +15,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
 
     public function testBulkCompressActionShouldBePresent()
     {
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/example-tinypng.png');
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
         $this->assertEquals('Compress all uncompressed sizes', self::$driver->findElement(
             WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]')
@@ -26,7 +26,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array('thumbnail'));
 
         $this->set_api_key('PNG123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/example-large.png');
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
 
         $this->enable_compression_sizes(array('thumbnail', 'medium'));
         media_bulk_action(self::$driver, 'tiny_bulk_compress');

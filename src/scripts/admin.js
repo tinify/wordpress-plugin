@@ -6,8 +6,8 @@
     element.closest('td').find('.spinner').css('display', 'inline')
     jQuery.post(
       ajaxurl, {
-        'action': 'tiny_compress_image',
-        'id': element.data('id') || element.attr('data-id')
+        action: 'tiny_compress_image',
+        id: element.data('id') || element.attr('data-id')
       }, function (response) {
         element.closest('td').html(response);
       }
@@ -32,6 +32,23 @@
   }
 
   if (adminpage === "options-media-php") {
-    jQuery("#tiny-compress-status").load(ajaxurl + "?action=tiny_compress_status")
+    jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
   }
+
+  jQuery('a.tiny-dismiss').click(function(event) {
+    var element = jQuery(event.target);
+    element.attr('disabled', 'disabled');
+    jQuery.post(
+      ajaxurl, {
+        action: 'tiny_dismiss_notice',
+        name: element.data('name') || element.attr('data-name')
+      }, function (response) {
+        if (response){
+          element.closest("div").remove()
+        }
+      }, "json"
+    );
+    return false;
+  })
+
 }).call();

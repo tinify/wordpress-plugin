@@ -57,67 +57,13 @@ abstract class Tiny_WP_Base {
         return array(get_class($this), $name);
     }
 
+    protected function get_user_id() {
+        return get_current_user_id();
+    }
+
     public function init() {
     }
 
     public function admin_init() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-
-        $notices_name = self::get_prefixed_name('admin_notices');
-        $notices = get_option($notices_name);
-
-        if ($notices) {
-            $user_id = wp_get_current_user()->ID;
-
-            foreach ($notices as $name => $message) {
-                if (isset($_GET[$name]) && $_GET[$name] == 0) {
-                    add_user_meta($user_id, $name, 'true', true);
-                    continue;
-                }
-
-                if (!get_user_meta($user_id, $name)) {
-                    $this->show_admin_notice($name, $message);
-                }
-            }
-        }
-    }
-
-    public function add_admin_notice($name, $message, $force = false) {
-        $name = self::get_prefixed_name($name);
-        $notices_name = self::get_prefixed_name('admin_notices');
-        $notices = get_option($notices_name);
-
-        if (!$notices) {
-            $notices = array();
-        }
-        $notices[$name] = $message;
-        update_option($notices_name, $notices);
-
-        if ($force) {
-            $user_id = wp_get_current_user()->ID;
-            delete_user_meta($user_id, $name);
-        }
-    }
-
-    public function remove_admin_notice($name) {
-        $name = self::get_prefixed_name($name);
-        $notices_name = self::get_prefixed_name('admin_notices');
-        $notices = get_option($notices_name);
-        unset($notices[$name]);
-
-        if ($notices) {
-            update_option($notices_name, $notices);
-        } else {
-            delete_option($notices_name);
-        }
-
-        $user_id = wp_get_current_user()->ID;
-        delete_user_meta($user_id, $name);
-    }
-
-    private function show_admin_notice($name, $message) {
-        add_action('admin_notices', create_function('', "echo '<div class=\"updated\"><p>Compress JPEG & PNG images: $message &nbsp;<a href=\"?$name=0\">" . self::translate_escape('Dismiss') . "</a></p></div>';"));
     }
 }

@@ -24,14 +24,18 @@ class Tiny_Settings extends Tiny_WP_Base {
     private $sizes;
     private $tinify_sizes;
     private $compressor;
+    private $notices;
+
+    public function __construct() {
+        parent::__construct();
+        $this->notices = new Tiny_Notices();
+    }
 
     public function admin_init() {
-        parent::admin_init();
-
         try {
             $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
         } catch (Tiny_Exception $e) {
-            $this->add_admin_notice('compressor_exception', self::translate_escape($e->getMessage()), true);
+            $this->notices->add('compressor_exception', self::translate_escape($e->getMessage()), false);
         }
 
         $section = self::get_prefixed_name('settings');
@@ -186,18 +190,18 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function after_compress_callback($details, $headers) {
-        if(isset($headers["compression-count"])) {
-            $count = $headers["compression-count"];
+        if (isset($headers['compression-count'])) {
+            $count = $headers['compression-count'];
             $field = self::get_prefixed_name('status');
             update_option($field, $count);
 
             if (isset($details['error']) && $details['error'] == 'TooManyRequests') {
                 $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API account') . '</a>';
-                $this->add_admin_notice('limit_reached',
+                $this->notices->add('limit-reached',
                     sprintf(self::translate_escape('You have reached your limit of %s compressions this month'), $count) . '. ' .
                     sprintf(self::translate_escape('Upgrade your %s if you like to compress more images'), $link) . '.');
             } else {
-                $this->remove_admin_notice('limit_reached');
+                $this->notices->remove('limit-reached');
             }
         }
     }
