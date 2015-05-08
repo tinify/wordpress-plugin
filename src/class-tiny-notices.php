@@ -20,54 +20,77 @@
 
 class Tiny_Notices extends Tiny_WP_Base {
 
-    public function admin_init() {
-        add_action('wp_ajax_tiny_dismiss_notice', $this->get_method('dismiss'));
-        if (current_user_can('manage_options')) {
-            $this->show_notices();
-        }
-    }
+    private $notices;
+    private $dismissals;
 
-    private function get_option_key() {
+    private static function get_option_key() {
         return self::get_prefixed_name('admin_notices');
     }
 
-    private function get_notices() {
-        $option = get_option(self::get_option_key());
-        return is_array($option) ? $option : array();
-    }
-
-    private function get_user_meta_key() {
+    private static function get_user_meta_key() {
         return self::get_prefixed_name('admin_notice_dismissals');
     }
 
-    private function get_dismissals() {
-        $meta = get_user_meta($this->get_user_id(), $this->get_user_meta_key(), true);
-        return is_array($meta) ? $meta : array();
+    public function admin_init() {
+        add_action('wp_ajax_tiny_dismiss_notice', $this->get_method('dismiss'));
+        if (current_user_can('manage_options')) {
+            $this->show_stored();
+        }
     }
 
-    private function show_notices() {
-        $dismissals = $this->get_dismissals();
-        foreach ($this->get_notices() as $name => $message) {
-            if (empty($dismissals[$name])) {
+    private function load_notices() {
+        if (is_array($this->notices)) {
+            return;
+        }
+        $option = get_option(self::get_option_key());
+        $this->notices = is_array($option) ? $option : array();
+    }
+
+    private function save_notices() {
+        update_option(self::get_option_key(), $this->notices);
+    }
+
+    private function load() {
+        $this->load_notices();
+        $this->load_dismissals();
+    }
+
+    private function load_dismissals() {
+        if (is_array($this->dismissals)) {
+            return;
+        }
+        $meta = get_user_meta($this->get_user_id(), $this->get_user_meta_key(), true);
+        $this->dismissals = is_array($meta) ? $meta : array();
+    }
+
+    private function save_dismissals() {
+        update_user_meta($this->get_user_id(), $this->get_user_meta_key(), $this->dismissals);
+    }
+
+    private function show_stored() {
+        $this->load();
+        foreach ($this->notices as $name => $message) {
+            if (empty($this->dismissals[$name])) {
                 $this->show($name, $message);
             }
         }
     }
 
     public function add($name, $message) {
-        $notices = $this->get_notices();
-        $notices[$name] = $message;
-        update_option(self::get_option_key(), $notices);
+        $this->load_notices();
+        $this->notices[$name] = $message;
+        $this->save_notices();
     }
 
     public function remove($name) {
-        $notices = get_option(self::get_option_key());
-        unset($notices[$name]);
-
-        if (count($notices) > 0) {
-            update_option(self::get_option_key(), $notices);
-        } else {
-            delete_option(self::get_option_key());
+        $this->load();
+        if (isset($this->notices[$name])) {
+            unset($this->notices[$name]);
+            $this->save_notices();
+        }
+        if (isset($this->dismissals[$name])) {
+            unset($this->dismissals[$name]);
+            $this->save_dismissals();
         }
     }
 
@@ -76,9 +99,9 @@ class Tiny_Notices extends Tiny_WP_Base {
             echo json_encode(false);
             exit();
         }
-        $dismissals = $this->get_dismissals();
-        $dismissals[$_POST['name']] = true;
-        update_user_meta($this->get_user_id(), $this->get_user_meta_key() , $dismissals);
+        $this->load_dismissals();
+        $this->dismissals[$_POST['name']] = true;
+        $this->save_dismissals();
         echo json_encode(true);
         exit();
     }
