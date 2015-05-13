@@ -9,8 +9,8 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function tearDown() {
-        $this->enable_compression_sizes(array('0', 'thumbnail', 'medium', 'large', 'post-thumbnail'));
-        clear_uploads(self::$driver);
+        clear_settings();
+        clear_uploads();
     }
 
     public function testBulkCompressActionShouldBePresent()
@@ -29,7 +29,12 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
 
         $this->enable_compression_sizes(array('thumbnail', 'medium'));
-        media_bulk_action(self::$driver, 'tiny_bulk_compress');
+
+        self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
+        $checkboxes = self::$driver->findElements(WebDriverBy::cssSelector('th input[type="checkbox"]'));
+        $checkboxes[0]->click();
+        self::$driver->findElement(WebDriverBy::cssSelector('select[name="action"] option[value="' . 'tiny_bulk_compress' . '"]'))->click();
+        self::$driver->findElement(WebDriverBy::cssSelector('div.actions input[value="Apply"]'))->click();
 
         $this->assertContains('Compressed 2 out of 2 sizes', self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }

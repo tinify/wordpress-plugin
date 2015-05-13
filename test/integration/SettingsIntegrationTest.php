@@ -9,6 +9,10 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         self::$driver->get(wordpress('/wp-admin/options-media.php'));
     }
 
+    public function tearDown() {
+        clear_settings();
+    }
+
     public function testTitlePresence()
     {
         $h3s = self::$driver->findElements(WebDriverBy::tagName('h3'));

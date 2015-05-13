@@ -66,6 +66,23 @@ function set_siteurl($site_url) {
     $statement->execute();
 }
 
+function clear_settings() {
+    $db = new mysqli(getenv('HOST_IP'), 'root', getenv('MYSQL_ROOT_PASSWORD'), getenv('WORDPRESS_DATABASE'));
+    $statement = $db->prepare("DELETE FROM wp_options WHERE option_name LIKE 'tinypng_%'");
+    $statement->execute();
+    $statement = $db->prepare("DELETE FROM wp_usermeta WHERE meta_key LIKE 'tinypng_%'");
+    $statement->execute();
+}
+
+function clear_uploads() {
+    $db = new mysqli(getenv('HOST_IP'), 'root', getenv('MYSQL_ROOT_PASSWORD'), getenv('WORDPRESS_DATABASE'));
+    $statement = $db->prepare("DELETE wp_postmeta FROM wp_postmeta JOIN wp_posts ON wp_posts.ID = wp_postmeta.post_id WHERE wp_posts.post_type = 'attachment'");
+    $statement->execute();
+    $statement = $db->prepare("DELETE FROM wp_posts WHERE wp_posts.post_type = 'attachment'");
+    $statement->execute();
+    shell_exec('docker exec -it wordpress' . getenv('WORDPRESS_VERSION') . ' rm -rf wp-content/uploads');
+}
+
 function is_wordpress_setup() {
     $db = new mysqli(getenv('HOST_IP'), 'root', getenv('MYSQL_ROOT_PASSWORD'));
     if ($result = $db->query("SELECT * FROM information_schema.tables WHERE table_schema = '" . getenv('WORDPRESS_DATABASE') . "'")) {
@@ -100,20 +117,6 @@ function setup_wordpress_site($driver) {
     }
 }
 
-function clear_uploads($driver) {
-    media_bulk_action($driver, 'delete');
-}
-
-function media_bulk_action($driver, $action) {
-    $driver->get(wordpress('/wp-admin/upload.php?mode=list'));
-    $checkboxes = $driver->findElements(WebDriverBy::cssSelector('th input[type="checkbox"]'));
-    if (count($checkboxes) > 0) {
-        $checkboxes[0]->click();
-        $driver->findElement(WebDriverBy::cssSelector('select[name="action"] option[value="' . $action . '"]'))->click();
-        $driver->findElement(WebDriverBy::cssSelector('div.actions input[value="Apply"]'))->click();
-    }
-}
-
 function login($driver) {
     $driver->get(wordpress('/wp-login.php'));
     $driver->findElement(WebDriverBy::tagName('body'))->click();
@@ -142,9 +145,15 @@ function activate_plugin($driver) {
     }
 }
 
+function close_webdriver() {
+    RemoteWebDriver::createBySessionId($GLOBALS['global_session_id'], $GLOBALS['global_webdriver_host'])->close();
+}
+
+$global_webdriver_host = 'http://127.0.0.1:4444/wd/hub';
+$global_driver = RemoteWebDriver::create($global_webdriver_host, DesiredCapabilities::firefox());
+$global_session_id = $global_driver->getSessionID();
+
+register_shutdown_function('close_webdriver');
 register_shutdown_function('restore_wordpress');
 
-$global_phantom_host = 'http://127.0.0.1:4444/wd/hub';
-$global_driver = RemoteWebDriver::create($global_phantom_host, DesiredCapabilities::firefox());
-$global_session_id = $global_driver->getSessionID();
 configure_wordpress_for_testing($global_driver);

@@ -8,7 +8,7 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
     protected static $driver;
 
     public static function setUpBeforeClass() {
-        self::$driver = RemoteWebDriver::createBySessionId($GLOBALS['global_session_id'], $GLOBALS['global_phantom_host']);
+        self::$driver = RemoteWebDriver::createBySessionId($GLOBALS['global_session_id'], $GLOBALS['global_webdriver_host']);
     }
 
     protected function upload_image($path) {

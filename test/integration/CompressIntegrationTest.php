@@ -9,7 +9,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function tearDown() {
-        clear_uploads(self::$driver);
+        clear_settings();
+        clear_uploads();
     }
 
     public function testInvalidCredentialsShouldStillUploadImage()
@@ -35,6 +36,19 @@ class CompressIntegrationTest extends IntegrationTestCase {
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
 
+    public function testCompressButton() {
+        $this->enable_compression_sizes(array('medium'));
+        $this->set_api_key('PNG123');
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->enable_compression_sizes(array('medium', 'large'));
+        self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
+        $this->assertContains('Compressed 1 out of 2 sizes',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images button'))->click();
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('td.tiny-compress-images'), 'Compressed 2 out of 2 sizes'));
+    }
+
     public function testLimitReached() {
         $this->set_api_key('LIMIT123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
@@ -46,6 +60,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->set_api_key('LIMIT123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->findElement(WebDriverBy::cssSelector('a.tiny-dismiss'))->click();
-        self::$driver->wait(2)->until(WebDriverExpectedCondition::invisibilityOfElementWithText(WebDriverBy::cssSelector('a.tiny-dismiss'), 'Dismiss'));
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::invisibilityOfElementWithText(
+             WebDriverBy::cssSelector('a.tiny-dismiss'), 'Dismiss'));
     }
 }
