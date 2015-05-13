@@ -25,6 +25,7 @@ class Tiny_Metadata {
     private $id;
     private $values;
     private $filenames;
+    private $urls;
 
     public function __construct($id, $wp_metadata=null) {
         $this->id = $id;
@@ -41,21 +42,26 @@ class Tiny_Metadata {
 
     private function parse_wp_metadata($wp_metadata) {
         $this->filenames = array();
+        $this->urls = array();
         if (!is_array($wp_metadata)) {
             return;
         }
 
         $path_info = pathinfo($wp_metadata['file']);
         $upload_dir = wp_upload_dir();
-        $prefix = $upload_dir['basedir'] . '/';
+        $path_prefix = $upload_dir['basedir'] . '/';
+        $url_prefix = $upload_dir['baseurl'] . '/';
         if (isset($path_info['dirname'])) {
-            $prefix .= $path_info['dirname'] .'/';
+            $path_prefix .= $path_info['dirname'] .'/';
+            $url_prefix .= $path_info['dirname'] .'/';
         }
 
-        $this->filenames[self::ORIGINAL] = "$prefix${path_info['basename']}";
+        $this->filenames[self::ORIGINAL] = "$path_prefix${path_info['basename']}";
+        $this->urls[self::ORIGINAL] = "$url_prefix${path_info['basename']}";
         if (isset($wp_metadata['sizes']) && is_array($wp_metadata['sizes'])) {
             foreach ($wp_metadata['sizes'] as $size => $info) {
-                $this->filenames[$size] = "$prefix${info['file']}";
+                $this->filenames[$size] = "$path_prefix${info['file']}";
+                $this->urls[$size] = "$url_prefix${info['file']}";
             }
         }
     }
@@ -82,6 +88,10 @@ class Tiny_Metadata {
 
     public function get_filename($size=self::ORIGINAL) {
         return isset($this->filenames[$size]) ? $this->filenames[$size] : null;
+    }
+
+    public function get_url($size=self::ORIGINAL) {
+        return isset($this->urls[$size]) ? $this->urls[$size] : null;
     }
 
     public function get_value($size=self::ORIGINAL) {

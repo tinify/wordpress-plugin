@@ -46,7 +46,9 @@ abstract class Tiny_WP_Base {
 
     public function __construct() {
         add_action('init', $this->get_method('init'));
-        add_action('admin_init', $this->get_method('admin_init'));
+        if (is_admin()) {
+            add_action('admin_init', $this->get_method('admin_init'));
+        }
     }
 
     protected function get_method($name) {

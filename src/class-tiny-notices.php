@@ -106,8 +106,8 @@ class Tiny_Notices extends Tiny_WP_Base {
         exit();
     }
 
-    public function show($name, $message, $dismissable=true) {
+    public function show($name, $message, $klass='error', $dismissable=true) {
         $link = $dismissable ? "&nbsp;<a href=\"#\" data-name=\"$name\" class=\"tiny-dismiss\">" . self::translate_escape('Dismiss') . '</a>' : '';
-        add_action('admin_notices', create_function('', "echo '<div class=\"updated\"><p>Compress JPEG & PNG images: $message$link</p></div>';"));
+        add_action('admin_notices', create_function('', "echo '<div class=\"$klass\"><p>Compress JPEG & PNG images: $message$link</p></div>';"));
     }
 }

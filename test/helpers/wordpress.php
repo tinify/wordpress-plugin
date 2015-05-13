@@ -66,6 +66,7 @@ class WordPressStubs {
         $this->addMethod('is_multisite');
         $this->addMethod('current_user_can');
         $this->addMethod('wp_get_attachment_metadata');
+        $this->addMethod('is_admin');
         $this->defaults();
         $this->create_filesystem();
     }
@@ -103,7 +104,9 @@ class WordPressStubs {
         } elseif ('get_intermediate_image_sizes' === $method) {
             return array_merge(array('thumbnail', 'medium', 'large'), array_keys($GLOBALS['_wp_additional_image_sizes']));
         } elseif ('wp_upload_dir' === $method) {
-            return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR);
+            return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR);
+        } elseif ('is_admin' === $method) {
+            return true;
         } elseif ($this->stubs[$method]) {
             return call_user_func_array($this->stubs[$method], $args);
         }

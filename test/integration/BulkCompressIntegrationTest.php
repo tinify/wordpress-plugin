@@ -17,7 +17,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
     {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
-        $this->assertEquals('Compress all uncompressed sizes', self::$driver->findElement(
+        $this->assertEquals('Compress all', self::$driver->findElement(
             WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]')
         )->getText());
     }

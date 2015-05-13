@@ -52,8 +52,8 @@ msgstr "Сжатие"
 msgid "Compress"
 msgstr "Сжать"
 
-msgid "Compress all uncompressed sizes"
-msgstr "Сжать все несжатые файлы"
+msgid "Compress all"
+msgstr "Сжать все"
 
 msgid "Compressed %d out of %d sizes"
 msgstr "Сжато %d из %d типоразмера(-ов)"
@@ -68,6 +68,9 @@ msgid "Latest error"
 msgstr "Последняя ошибка"
 
 msgid "Error"
+msgstr "Oшибка"
+
+msgid "Internal error"
 msgstr "Oшибка"
 
 msgid "Credentials are invalid"

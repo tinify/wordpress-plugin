@@ -32,10 +32,15 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function admin_init() {
+        if (current_user_can('manage_options') && empty($this->get_api_key())) {
+            $link = sprintf('<a href="options-media.php#%s">%s</a>', self::NAME,
+                self::translate_escape('Please fill in an API key to start compressing images'));
+            $this->notices->show('setting', $link, 'error', false);
+        }
         try {
             $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
         } catch (Tiny_Exception $e) {
-            $this->notices->show('compressor_exception', self::translate_escape($e->getMessage()), false);
+            $this->notices->show('compressor_exception', self::translate_escape($e->getMessage()), 'error', false);
         }
 
         $section = self::get_prefixed_name('settings');
@@ -53,10 +58,10 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, self::translate('Connection status'), $this->get_method('render_pending_status'), 'media', $section);
 
-        add_action('wp_ajax_tiny_compress_status', $this->get_method('get_status'));
+        add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
     }
 
-    public function get_status() {
+    public function connection_status() {
         $this->render_status();
         exit();
     }
@@ -67,6 +72,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function set_compressor($compressor) {
         $this->compressor = $compressor;
+    }
+
+    public function get_status() {
+        return intval(get_option(self::get_prefixed_name('status')));
     }
 
     protected function get_api_key() {
@@ -140,6 +149,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_section() {
+        echo '<span id="' . self::NAME . '"></span>';
     }
 
     public function render_api_key() {
@@ -208,7 +218,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_status() {
         $details = null;
-        $status = $this->compressor->get_status($details);
+        try {
+            $status = $this->compressor->get_status($details);
+        } catch (Tiny_Exception $e) {
+            $status = false;
+            $details = array('message' => $e->getMessage());
+        }
         if ($status) {
             echo '<p><img src="images/yes.png"> ' . self::translate_escape('API connection successful') . '</p>';
         } else {

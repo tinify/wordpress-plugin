@@ -37,8 +37,8 @@ msgstr "Compressie"
 msgid "Compress"
 msgstr "Comprimeer"
 
-msgid "Compress all uncompressed sizes"
-msgstr "Comprimeer alle ongecomprimeerde afmetingen"
+msgid "Compress all"
+msgstr "Comprimeer alles"
 
 msgid "Compressed %d out of %d sizes"
 msgstr "%d van de %d afmetingen zijn gecomprimeerd"
@@ -54,6 +54,9 @@ msgstr "Laatste fout"
 
 msgid "Error"
 msgstr "Fout"
+
+msgid "Internal error"
+msgstr "Interne fout"
 
 msgid "Credentials are invalid"
 msgstr "Ongeldige API-sleutel"
@@ -131,7 +134,52 @@ msgid "You have reached your limit of %s compressions this month"
 msgstr "Je hebt je maandelijkse limiet van %s compressies bereikt"
 
 msgid "If you need to compress more images you can change your %s"
-msgstr "Als je meer plaatjes wilt comprimeren kun je je %s aanpassen"
+msgstr "Als je meer afbeeldingen wilt comprimeren kun je je %s aanpassen"
 
 msgid "Upgrade your %s if you like to compress more images"
-msgstr "Upgrade je %s als je meer plaatjes wilt comprimeren"
+msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
+
+msgid "Please fill in an API key to start compressing images"
+msgstr "Vul een API-sleutel in om te starten met comprimeren"
+
+msgid "Compress all images"
+msgstr "Comprimeer afbeeldingen"
+
+msgid "Compress JPEG & PNG Images"
+msgstr "Comprimeer alle JPEG & PNG afbeeldingen"
+
+msgid "All images are processed"
+msgstr "Alle afbeeldingen zijn verwerkt"
+
+msgid "Compressions this month"
+msgstr "Compressies deze maand"
+
+msgid "Processing"
+msgstr "Bezig met"
+
+msgid "Waiting"
+msgstr "Wachten"
+
+msgid "Compressing"
+msgstr "Comprimeren"
+
+msgid "out of"
+msgstr "van de"
+
+msgid "Use this tool to compress all images via the Tiny API service"
+msgstr "Deze tool comprimeert alle afbeeldingen via de Tiny API-dienst"
+
+msgid "To begin, just press the button below"
+msgstr "Druk op de knop om te starten"
+
+msgid "Please be patient while the images are being compressed"
+msgstr "Even geduld terwijl de afbeeldingen worden gecomprimeerd"
+
+msgid "This can take a while if you have many images"
+msgstr "Het kan een poos duren als je veel afbeeldingen hebt"
+
+msgid "Do not navigate away from this page because it will stop the process"
+msgstr "Navigeer niet van deze pagina want daardoor stopt het proces"
+
+msgid "You will be notified via this page when the processing is done"
+msgstr "Je wordt genotificeerd op deze pagina bij voltooing"
