@@ -47,7 +47,7 @@ abstract class Tiny_Compress {
         list($details, $headers) = $this->shrink(null);
 
         $this->call_after_compress_callback($details, $headers);
-        if ($details["error"] == 'InputMissing' || $details["error"] == 'TooManyRequests') {
+        if (!isset($details['error']) || $details["error"] == 'InputMissing' || $details["error"] == 'TooManyRequests') {
             return true;
         } else {
             return false;

@@ -56,11 +56,11 @@
       }
       if (error) {
         row.find('.bar').addClass('failed')
-        row.find('.percent').html(tinyCompress.L10nError)
+        row.find('.percent').html(tinyCompress.L10nInternalError)
         row.find('.percent').attr("title", error.toString())
       } else if (data.error) {
         row.find('.bar').addClass('failed')
-        row.find('.percent').html(tinyCompress.L10nInternalError)
+        row.find('.percent').html(tinyCompress.L10nError)
         row.find('.percent').attr("title", data.error)
       } else if (data.failed > 0) {
         row.find('.bar').addClass('failed')

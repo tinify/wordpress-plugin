@@ -53,7 +53,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->set_api_key('LIMIT123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('You have reached your limit',
-            current(self::$driver->findElements(WebDriverBy::cssSelector('div.updated p')))->getText());
+            self::$driver->findElement(WebDriverBy::cssSelector('div.error p'))->getText());
     }
 
     public function testLimitReachedDismisses() {

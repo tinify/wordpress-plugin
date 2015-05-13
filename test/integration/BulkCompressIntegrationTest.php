@@ -11,10 +11,10 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
     public function tearDown() {
         clear_settings();
         clear_uploads();
+        reset_webservice();
     }
 
-    public function testBulkCompressActionShouldBePresent()
-    {
+    public function testBulkCompressActionShouldBePresentInMedia() {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
         $this->assertEquals('Compress all', self::$driver->findElement(
@@ -22,20 +22,35 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         )->getText());
     }
 
-    public function testBulkCompressShouldCompressUncompressedSizes() {
-        $this->enable_compression_sizes(array('thumbnail'));
-
+    private function prepare($normal=1, $large=0) {
         $this->set_api_key('PNG123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+        $this->enable_compression_sizes(array());
 
-        $this->enable_compression_sizes(array('thumbnail', 'medium'));
+        for ($i = 0; $i < $normal; $i++) {
+            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        }
+        for ($i = 0; $i < $large; $i++) {
+            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+        }
+
+        $this->enable_compression_sizes(array('thumbnail', 'medium', 'large'));
+    }
+
+    public function testBulkCompressShouldInMediaShouldRedirect() {
+        $this->prepare();
 
         self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
         $checkboxes = self::$driver->findElements(WebDriverBy::cssSelector('th input[type="checkbox"]'));
         $checkboxes[0]->click();
-        self::$driver->findElement(WebDriverBy::cssSelector('select[name="action"] option[value="' . 'tiny_bulk_compress' . '"]'))->click();
+
+        self::$driver->findElement(WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]'))->click();
         self::$driver->findElement(WebDriverBy::cssSelector('div.actions input[value="Apply"]'))->click();
 
-        $this->assertContains('Compressed 2 out of 2 sizes', self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('.updated'), 'All images are processed'));
+
+        $this->assertContains("tools.php?page=tiny-bulk-compress&ids=", self::$driver->getCurrentUrl());
     }
+
+    // TODO: More tests
 }

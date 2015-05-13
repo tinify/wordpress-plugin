@@ -146,7 +146,19 @@ function activate_plugin($driver) {
 }
 
 function close_webdriver() {
-    RemoteWebDriver::createBySessionId($GLOBALS['global_session_id'], $GLOBALS['global_webdriver_host'])->close();
+    if (isset($GLOBALS['global_session_id']) && isset($GLOBALS['global_webdriver_host'])) {
+        RemoteWebDriver::createBySessionId($GLOBALS['global_session_id'], $GLOBALS['global_webdriver_host'])->close();
+    }
+}
+
+function reset_webservice() {
+    $request = curl_init();
+    curl_setopt_array($request, array(
+        CURLOPT_URL => 'http://' . getenv('HOST_IP') .':8080/reset',
+    ));
+
+    $response = curl_exec($request);
+    curl_close($request);
 }
 
 $global_webdriver_host = 'http://127.0.0.1:4444/wd/hub';

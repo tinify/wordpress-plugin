@@ -81,11 +81,12 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     }
 
     public function testStatusPresenceOK() {
-        $this->set_api_key('STATUS123');
+        reset_webservice();
+        $this->set_api_key('PNG123');
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-status'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
         $this->assertContains('API connection successful', $statuses);
-        $this->assertContains('You have made 6 compressions this month.', $statuses);
+        $this->assertContains('You have made 0 compressions this month.', $statuses);
     }
 
     public function testStatusPresenseFail() {
