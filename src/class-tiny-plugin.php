@@ -60,8 +60,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_register_script($handle, plugins_url('/scripts/admin.js', __FILE__),
             array(), self::plugin_version(), true);
 
-        wp_localize_script($handle, 'tinyCompressL10n', array(
-            'bulkAction' => self::translate('Compress all uncompressed sizes'),
+        // Wordpress < 3.3 does not handle multi dimensional arrays
+        wp_localize_script($handle, 'tinyCompress', array(
+            'nonce' => wp_create_nonce('tiny-compress'),
+            'L10nBulkAction' => self::translate('Compress all uncompressed sizes'),
         ));
         wp_enqueue_script($handle);
     }
@@ -90,15 +92,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function compress_image() {
-        $id = $_POST['id'];
+        check_ajax_referer('tiny-compress');
+
         if (!current_user_can('upload_files')) {
             echo self::translate("You don't have permission to work with uploaded files") . '.';
             exit();
         }
-        if (!$id) {
+        if (empty($_POST['id'])) {
             echo self::translate("Not a valid media file") . '.';
             exit();
         }
+        $id = intval($_POST['id']);
         $metadata = wp_get_attachment_metadata($id);
         if (!is_array($metadata)) {
             echo self::translate("Could not find metadata of media file") . '.';

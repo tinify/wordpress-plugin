@@ -95,6 +95,8 @@ class Tiny_Notices extends Tiny_WP_Base {
     }
 
     public function dismiss() {
+        check_ajax_referer('tiny-compress');
+
         if (empty($_POST['name'])) {
             echo json_encode(false);
             exit();

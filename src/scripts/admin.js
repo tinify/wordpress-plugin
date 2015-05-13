@@ -6,6 +6,7 @@
     element.closest('td').find('.spinner').css('display', 'inline')
     jQuery.post(
       ajaxurl, {
+        _wpnonce: tinyCompress.nonce,
         action: 'tiny_compress_image',
         id: element.data('id') || element.attr('data-id')
       }, function (response) {
@@ -27,8 +28,8 @@
       jQuery('button.tiny-compress').attr('disabled', null)
     }
 
-    jQuery('<option>').val('tiny_bulk_compress').text(tinyCompressL10n.bulkAction).appendTo('select[name="action"]')
-    jQuery('<option>').val('tiny_bulk_compress').text(tinyCompressL10n.bulkAction).appendTo('select[name="action2"]')
+    jQuery('<option>').val('tiny_bulk_compress').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
+    jQuery('<option>').val('tiny_bulk_compress').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
   }
 
   if (adminpage === "options-media-php") {
@@ -40,6 +41,7 @@
     element.attr('disabled', 'disabled');
     jQuery.post(
       ajaxurl, {
+        _wpnonce: tinyCompress.nonce,
         action: 'tiny_dismiss_notice',
         name: element.data('name') || element.attr('data-name')
       }, function (response) {
