@@ -67,6 +67,9 @@ msgstr "Стало"
 msgid "Latest error"
 msgstr "Последняя ошибка"
 
+msgid "Error"
+msgstr "Oшибка"
+
 msgid "Credentials are invalid"
 msgstr "Параметры доступа некорректны"
 

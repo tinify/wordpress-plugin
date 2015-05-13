@@ -1,18 +1,49 @@
 (function() {
 
   function compress_image(event) {
-    var element = jQuery(event.target);
-    element.attr('disabled', 'disabled');
-    element.closest('td').find('.spinner').css('display', 'inline')
-    jQuery.post(
-      ajaxurl, {
-        _wpnonce: tinyCompress.nonce,
+    var element = jQuery(event.target)
+    element.attr('disabled', 'disabled')
+    element.closest('td').find('.spinner').removeClass('hidden')
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      data: {
+        _nonce: tinyCompress.nonce,
         action: 'tiny_compress_image',
         id: element.data('id') || element.attr('data-id')
-      }, function (response) {
-        element.closest('td').html(response);
+      },
+      success: function(response) {
+        element.closest('td').html(response)
+      },
+      error: function() {
+        element.removeAttr('disabled')
+        element.closest('td').find('.spinner').addClass('hidden')
       }
-    );
+    })
+  }
+
+  function dismiss_notice(event) {
+    var element = jQuery(event.target)
+    element.attr('disabled', 'disabled')
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      dataType: "json",
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_dismiss_notice',
+        name: element.data('name') || element.attr('data-name')
+      },
+      success: function(response) {
+        if (response) {
+          element.closest("div").remove()
+        }
+      },
+      error: function() {
+        element.removeAttr('disabled')
+      }
+    })
+    return false
   }
 
   if (adminpage === "upload-php") {
@@ -36,21 +67,6 @@
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
   }
 
-  jQuery('a.tiny-dismiss').click(function(event) {
-    var element = jQuery(event.target);
-    element.attr('disabled', 'disabled');
-    jQuery.post(
-      ajaxurl, {
-        _wpnonce: tinyCompress.nonce,
-        action: 'tiny_dismiss_notice',
-        name: element.data('name') || element.attr('data-name')
-      }, function (response) {
-        if (response){
-          element.closest("div").remove()
-        }
-      }, "json"
-    );
-    return false;
-  })
+  jQuery('a.tiny-dismiss').click(dismiss_notice)
 
-}).call();
+}).call()

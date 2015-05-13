@@ -207,16 +207,20 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_status() {
-        switch ($this->compressor->get_status()) {
-            case Tiny_Compressor_Status::Green:
-                echo '<p><img src="images/yes.png"> ' . self::translate_escape('API connection successful') . '</p>';
-                break;
-            case Tiny_Compressor_Status::Yellow:
-                echo '<p>' . self::translate_escape('API status could not be checked, enable cURL for more information') . '.</p>';
-                return;
-            case Tiny_Compressor_Status::Red:
+        $details = null;
+        $status = $this->compressor->get_status($details);
+        if ($status) {
+            echo '<p><img src="images/yes.png"> ' . self::translate_escape('API connection successful') . '</p>';
+        } else {
+            if ($status === false) {
                 echo '<p><img src="images/no.png"> ' . self::translate_escape('API connection unsuccessful') . '</p>';
-                return;
+                if (isset($details['message'])) {
+                    echo '<p>'. self::translate_escape('Error') . ': ' . self::translate_escape($details['message']) . '</p>';
+                }
+            } else {
+                echo '<p>' . self::translate_escape('API status could not be checked, enable cURL for more information') . '.</p>';
+            }
+            return;
         }
 
         $compressions = self::get_compression_count();

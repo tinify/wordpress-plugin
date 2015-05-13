@@ -61,6 +61,10 @@ abstract class Tiny_WP_Base {
         return get_current_user_id();
     }
 
+    protected function check_ajax_referer() {
+        return check_ajax_referer('tiny-compress', '_nonce', false);
+    }
+
     public function init() {
     }
 

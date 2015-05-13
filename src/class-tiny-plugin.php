@@ -92,8 +92,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function compress_image() {
-        check_ajax_referer('tiny-compress');
-
+        if (!$this->check_ajax_referer()) {
+            exit();
+        }
         if (!current_user_can('upload_files')) {
             echo self::translate("You don't have permission to work with uploaded files") . '.';
             exit();
@@ -145,11 +146,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
                 echo '<br/>';
                 if (($error = $tiny_metadata->get_latest_error())) {
-                    echo '<span class="error">' . self::translate_escape('Latest error') . ': '. self::translate_escape($error) .'<br/>';
+                    echo '<span class="error">' . self::translate_escape('Latest error') . ': '. self::translate_escape($error) .'</span><br/>';
                 }
                 echo '<button type="button" class="tiny-compress" data-id="' . $id . '">' .
                     self::translate_escape('Compress') . '</button>';
-                echo '<div class="spinner"></div>';
+                echo '<div class="spinner hidden"></div>';
             } else {
                 printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
                 $savings = $tiny_metadata->get_savings();

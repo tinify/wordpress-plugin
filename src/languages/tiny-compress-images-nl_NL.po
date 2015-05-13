@@ -52,6 +52,9 @@ msgstr "Gecomprimeerde grootte"
 msgid "Latest error"
 msgstr "Laatste fout"
 
+msgid "Error"
+msgstr "Fout"
+
 msgid "Credentials are invalid"
 msgstr "Ongeldige API-sleutel"
 

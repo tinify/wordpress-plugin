@@ -83,7 +83,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         return $response;
     }
 
-    public function get_status() {
-        return Tiny_Compressor_Status::Yellow;
+    public function get_status(&$details) {
+        return null;
     }
 }

@@ -43,14 +43,14 @@ abstract class Tiny_Compress {
     abstract protected function shrink($input);
     abstract protected function output($url);
 
-    public function get_status() {
+    public function get_status(&$details) {
         list($details, $headers) = $this->shrink(null);
 
         $this->call_after_compress_callback($details, $headers);
         if ($details["error"] == 'InputMissing' || $details["error"] == 'TooManyRequests') {
-            return Tiny_Compressor_Status::Green;
+            return true;
         } else {
-            return Tiny_Compressor_Status::Red;
+            return false;
         }
     }
 

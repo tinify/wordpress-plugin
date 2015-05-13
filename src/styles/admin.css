@@ -1,8 +1,20 @@
-.tiny-compress-images .spinner {
+.tiny-compress-images .spinner.hidden {
     display: none;
+    visibility: hidden;
+    float: none;
+    margin-top: 0;
+}
+
+.tiny-compress-images .spinner {
+    display: inline-block;
+    visibility: visible;
+    float: none;
+    margin-top: 0;
 }
 
 #tiny-compress-status .spinner {
     display: inline;
+    visibility: visible;
     float: left;
+    margin: 0;
 }
