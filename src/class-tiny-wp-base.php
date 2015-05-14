@@ -22,6 +22,9 @@ abstract class Tiny_WP_Base {
     const NAME = 'tiny-compress-images';
     const PREFIX = 'tinypng_';
 
+    public static function wp_version() {
+        return $GLOBALS['wp_version'];
+    }
 
     public static function plugin_version() {
         $plugin_data = get_plugin_data(dirname(__FILE__) . '/../tiny-compress-images.php');
@@ -29,7 +32,7 @@ abstract class Tiny_WP_Base {
     }
 
     public static function plugin_identification() {
-        return 'Wordpress/' . $GLOBALS['wp_version'] . ' Tiny/' . self::plugin_version();
+        return 'Wordpress/' . self::wp_version() . ' Tiny/' . self::plugin_version();
     }
 
     protected static function get_prefixed_name($name) {

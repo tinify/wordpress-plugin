@@ -59,8 +59,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testLimitReachedDismisses() {
         $this->set_api_key('LIMIT123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->findElement(WebDriverBy::cssSelector('a.tiny-dismiss'))->click();
+        self::$driver->findElement(WebDriverBy::cssSelector('.tiny-dismiss'))->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::invisibilityOfElementWithText(
-             WebDriverBy::cssSelector('a.tiny-dismiss'), 'Dismiss'));
+             WebDriverBy::cssSelector('.tiny-dismiss'), 'Dismiss'));
     }
 }

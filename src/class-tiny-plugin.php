@@ -147,7 +147,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $result['thumbnail'] = $tiny_metadata->get_url('thumbnail');
             echo json_encode($result);
         } else {
-            echo $this->render_media_column(self::MEDIA_COLUMN, $id);
+            echo $this->render_compress_details($tiny_metadata);
         }
 
         exit();
@@ -176,28 +176,31 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function render_media_column($column, $id) {
         if ($column === self::MEDIA_COLUMN) {
-            $tiny_metadata = new Tiny_Metadata($id);
-            $missing = $tiny_metadata->get_missing_sizes($this->settings->get_tinify_sizes());
-            $success = count($tiny_metadata->get_success_sizes());
-            $total = count($missing) + $success;
+            $this->render_compress_details(new Tiny_Metadata($id));
+        }
+    }
 
-            if (count($missing) > 0) {
-                printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
+    private function render_compress_details($tiny_metadata) {
+        $missing = $tiny_metadata->get_missing_sizes($this->settings->get_tinify_sizes());
+        $success = count($tiny_metadata->get_success_sizes());
+        $total = count($missing) + $success;
+
+        if (count($missing) > 0) {
+            printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
+            echo '<br/>';
+            if (($error = $tiny_metadata->get_latest_error())) {
+                echo '<span class="error">' . self::translate_escape('Latest error') . ': '. self::translate_escape($error) .'</span><br/>';
+            }
+            echo '<button type="button" class="tiny-compress" data-id="' . $tiny_metadata->get_id() . '">' .
+                self::translate_escape('Compress') . '</button>';
+            echo '<div class="spinner hidden"></div>';
+        } else {
+            printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
+            $savings = $tiny_metadata->get_savings();
+            if ($savings['count'] > 0) {
                 echo '<br/>';
-                if (($error = $tiny_metadata->get_latest_error())) {
-                    echo '<span class="error">' . self::translate_escape('Latest error') . ': '. self::translate_escape($error) .'</span><br/>';
-                }
-                echo '<button type="button" class="tiny-compress" data-id="' . $id . '">' .
-                    self::translate_escape('Compress') . '</button>';
-                echo '<div class="spinner hidden"></div>';
-            } else {
-                printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
-                $savings = $tiny_metadata->get_savings();
-                if ($savings['count'] > 0) {
-                    echo '<br/>';
-                    echo self::translate_escape('Total size') . ': ' . size_format($savings['input']) . '<br/>';
-                    echo self::translate_escape('Compressed size') . ': ' . size_format($savings['output']);
-                }
+                echo self::translate_escape('Total size') . ': ' . size_format($savings['input']) . '<br/>';
+                echo self::translate_escape('Compressed size') . ': ' . size_format($savings['output']);
             }
         }
     }

@@ -136,7 +136,7 @@
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
   }
 
-  jQuery('a.tiny-dismiss').click(dismiss_notice)
+  jQuery('.tiny-dismiss').click(dismiss_notice)
 
   window.tinyBulkCompress = bulk_compress
 }).call()

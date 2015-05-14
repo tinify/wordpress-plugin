@@ -86,6 +86,10 @@ class Tiny_Metadata {
         );
     }
 
+    public function get_id() {
+        return $this->id;
+    }
+
     public function get_filename($size=self::ORIGINAL) {
         return isset($this->filenames[$size]) ? $this->filenames[$size] : null;
     }

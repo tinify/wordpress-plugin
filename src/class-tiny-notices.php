@@ -106,8 +106,19 @@ class Tiny_Notices extends Tiny_WP_Base {
         exit();
     }
 
-    public function show($name, $message, $klass='error', $dismissable=true) {
-        $link = $dismissable ? "&nbsp;<a href=\"#\" data-name=\"$name\" class=\"tiny-dismiss\">" . self::translate_escape('Dismiss') . '</a>' : '';
-        add_action('admin_notices', create_function('', "echo '<div class=\"$klass\"><p>Compress JPEG & PNG images: $message$link</p></div>';"));
+    public function show($name, $message, $klass='error', $dismissible=true) {
+        $css = array($klass, 'notice');
+        if (!$dismissible) {
+            $add = '</p>';
+        } else if (self::wp_version() >= 4.2) {
+            $add = '</p><button class="notice-dismiss tiny-dismiss" type="button" data-name="'. $name .'">'
+                 . '<span class="screen-reader-text">' . self::translate_escape('Dismiss')
+                 . '</span></button>';
+            $css[] = 'is-dismissible';
+        } else {
+            $add = '&nbsp;<a href="#" data-name="' . $name .'" class="tiny-dismiss">' . self::translate_escape('Dismiss') . '</a></p>';
+        }
+        $css = implode(' ', $css);
+        add_action('admin_notices', create_function('', "echo '<div class=\"$css\"><p>Compress JPEG & PNG images: $message$add</div>';"));
     }
 }
