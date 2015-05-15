@@ -57,20 +57,19 @@
       if (error) {
         row.find('.bar').addClass('failed')
         row.find('.percent').html(tinyCompress.L10nInternalError)
-        row.find('.percent').attr("title", error.toString())
+        row.find('.progress').attr("title", error.toString())
       } else if (data.error) {
         row.find('.bar').addClass('failed')
         row.find('.percent').html(tinyCompress.L10nError)
-        row.find('.percent').attr("title", data.error)
+        row.find('.progress').attr("title", data.error)
       } else if (data.failed > 0) {
         row.find('.bar').addClass('failed')
         row.find('.bar').css('width', '100%')
-        row.find('.percent').html(
-            data.failed + " " + tinyCompress.L10nOutOf + " " + (data.success + data.failed))
+        row.find('.percent').html(data.success + " " + tinyCompress.L10nCompressions)
+        row.find('.progress').attr("title", data.message)
       } else {
         row.find('.bar').css('width', '100%')
-        row.find('.percent').html(
-            data.success + " " + tinyCompress.L10nOutOf + " " + (data.success + data.failed))
+        row.find('.percent').html(data.success + " " + tinyCompress.L10nCompressions)
       }
       if (data.status) {
         jQuery('#tiny-status span').html(data.status)

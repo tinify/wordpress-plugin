@@ -37,8 +37,8 @@ msgstr "Compressie"
 msgid "Compress"
 msgstr "Comprimeer"
 
-msgid "Compress all"
-msgstr "Comprimeer alles"
+msgid "Compress images"
+msgstr "Comprimeer afbeeldingen"
 
 msgid "Compressed %d out of %d sizes"
 msgstr "%d van de %d afmetingen zijn gecomprimeerd"
@@ -143,10 +143,10 @@ msgid "Please fill in an API key to start compressing images"
 msgstr "Vul een API-sleutel in om te starten met comprimeren"
 
 msgid "Compress all images"
-msgstr "Comprimeer afbeeldingen"
+msgstr "Comprimeer alle afbeeldingen"
 
 msgid "Compress JPEG & PNG Images"
-msgstr "Comprimeer alle JPEG & PNG afbeeldingen"
+msgstr "Comprimeer JPEG & PNG afbeeldingen"
 
 msgid "All images are processed"
 msgstr "Alle afbeeldingen zijn verwerkt"
@@ -163,11 +163,20 @@ msgstr "Wachten"
 msgid "Compressing"
 msgstr "Comprimeren"
 
+msgid "compressions"
+msgstr "compressies"
+
 msgid "out of"
 msgstr "van de"
 
-msgid "Use this tool to compress all images via the Tiny API service"
-msgstr "Deze tool comprimeert alle afbeeldingen via de Tiny API-dienst"
+msgid "Use this tool to compress all images in your media library"
+msgstr "Deze tool comprimeert alle afbeeldingen in je media-bibliotheek"
+
+msgid "Only images that have not been compressed will be compressed"
+msgstr "Dit geldt alleen voor de afbeeldingen die nog niet zijn gecomprimeerd"
+
+msgid "We have found %d images in your media library"
+msgstr "We hebben %d afbeeldingen in de media-bibliotheek gevonden"
 
 msgid "To begin, just press the button below"
 msgstr "Druk op de knop om te starten"

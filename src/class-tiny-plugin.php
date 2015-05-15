@@ -75,8 +75,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_localize_script($handle, 'tinyCompress', array(
             'nonce' => wp_create_nonce('tiny-compress'),
             'L10nAllDone' => self::translate('All images are processed'),
-            'L10nBulkAction' => self::translate('Compress all'),
+            'L10nBulkAction' => self::translate('Compress images'),
             'L10nCompressing' => self::translate('Compressing'),
+            'L10nCompressions' => self::translate('compressions'),
             'L10nError' => self::translate('Error'),
             'L10nInternalError' => self::translate('Internal error'),
             'L10nOutOf' => self::translate('out of'),
@@ -143,6 +144,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         list($tiny_metadata, $result) = $this->compress($metadata, $id);
         if ($json) {
+            $result['message'] = $tiny_metadata->get_latest_error();
             $result['status'] = $this->settings->get_status();
             $result['thumbnail'] = $tiny_metadata->get_url('thumbnail');
             echo json_encode($result);
@@ -206,16 +208,24 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function bulk_compress_page() {
+        global $wpdb;
+
         echo '<div class="wrap" id="tiny-bulk-compress">';
         echo '<h2>' . self::translate('Compress JPEG & PNG Images') . '</h2>';
         if (empty($_POST['tiny-bulk-compress']) && empty($_REQUEST['ids'])) {
-            echo '<p>' . self::translate_escape("Use this tool to compress all images via the Tiny API service") . '.</p>';
-            echo '<p>' . self::translate_escape("To begin, just press the button below") . '.</p>';
+            $result = $wpdb->get_results("SELECT COUNT(*) AS `count` FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' ORDER BY ID DESC", ARRAY_A);
+            $count = $result[0]['count'];
+
+            echo '<p>' . self::translate_escape("Use this tool to compress all images in your media library") . '. ';
+            echo self::translate_escape("Only images that have not been compressed will be compressed") . '.</p>';
+            echo '<p>' . sprintf(self::translate_escape("We have found %d images in your media library"), $count) . '. ';
+            echo self::translate_escape("To begin, just press the button below") . '.</p>';
 
             echo '<form method="POST" action="?page=tiny-bulk-compress">';
             echo '<input type="hidden" name="_wpnonce" value="' . wp_create_nonce('tiny-bulk-compress') . '">';
             echo '<input type="hidden" name="tiny-bulk-compress" value="1">';
-            echo '<p><button class="button" type="submit">'. self::translate_escape('Compress all images') .'</p>';
+            echo '<p><button class="button button-primary button-large" type="submit">' .
+                self::translate_escape('Compress all images') . '</p>';
             echo '</form>';
         } else {
             check_admin_referer('tiny-bulk-compress');
@@ -227,7 +237,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 $cond = "";
             }
 
-            global $wpdb;
             // Get all ids and names of the images and not the whole objects which will only fill memory
             $items = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' $cond ORDER BY ID DESC", ARRAY_A);
 
@@ -239,7 +248,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             echo "</p>";
 
             echo '<div id="tiny-status"><p>'. self::translate_escape('Compressions this month') . sprintf(' <span>%d</span></p></div>', $this->settings->get_status());
-            echo '<div id="tiny-progress"><p>'. self::translate_escape('Processing') . ': <span>0</span> ' . self::translate_escape('out of') . sprintf(' %d </p></div>', count($items));
+            echo '<div id="tiny-progress"><p>'. self::translate_escape('Processing') . ' <span>0</span> ' . self::translate_escape('out of') . sprintf(' %d </p></div>', count($items));
             echo '<div id="tiny-images">';
             echo '</div>';
 
