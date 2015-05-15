@@ -32,7 +32,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function admin_init() {
-        if (current_user_can('manage_options') && empty($this->get_api_key())) {
+        if (current_user_can('manage_options') && !$this->get_api_key()) {
             $link = sprintf('<a href="options-media.php#%s">%s</a>', self::NAME,
                 self::translate_escape('Please fill in an API key to start compressing images'));
             $this->notices->show('setting', $link, 'error', false);
