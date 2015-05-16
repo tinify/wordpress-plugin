@@ -37,8 +37,8 @@ msgstr "Compressie"
 msgid "Compress"
 msgstr "Comprimeer"
 
-msgid "Compress images"
-msgstr "Comprimeer afbeeldingen"
+msgid "Compress Images"
+msgstr "Comprimeer Afbeeldingen"
 
 msgid "Compressed %d out of %d sizes"
 msgstr "%d van de %d afmetingen zijn gecomprimeerd"
@@ -142,8 +142,8 @@ msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
 msgid "Please fill in an API key to start compressing images"
 msgstr "Vul een API-sleutel in om te starten met comprimeren"
 
-msgid "Compress all images"
-msgstr "Comprimeer alle afbeeldingen"
+msgid "Compress All Images"
+msgstr "Comprimeer Alle Afbeeldingen"
 
 msgid "Compress JPEG & PNG Images"
 msgstr "Comprimeer JPEG & PNG afbeeldingen"

@@ -57,7 +57,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function admin_menu() {
         add_management_page(
-            self::translate('Compress JPEG & PNG Images'), self::translate('Compress all images'),
+            self::translate('Compress JPEG & PNG Images'), self::translate('Compress All Images'),
             'upload_files', 'tiny-bulk-compress', $this->get_method('bulk_compress_page')
         );
 
@@ -75,7 +75,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_localize_script($handle, 'tinyCompress', array(
             'nonce' => wp_create_nonce('tiny-compress'),
             'L10nAllDone' => self::translate('All images are processed'),
-            'L10nBulkAction' => self::translate('Compress images'),
+            'L10nBulkAction' => self::translate('Compress Images'),
             'L10nCompressing' => self::translate('Compressing'),
             'L10nCompressions' => self::translate('compressions'),
             'L10nError' => self::translate('Error'),
@@ -225,7 +225,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             echo '<input type="hidden" name="_wpnonce" value="' . wp_create_nonce('tiny-bulk-compress') . '">';
             echo '<input type="hidden" name="tiny-bulk-compress" value="1">';
             echo '<p><button class="button button-primary button-large" type="submit">' .
-                self::translate_escape('Compress all images') . '</p>';
+                self::translate_escape('Compress All Images') . '</p>';
             echo '</form>';
         } else {
             check_admin_referer('tiny-bulk-compress');
