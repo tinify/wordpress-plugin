@@ -16,7 +16,6 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
 
     public function testBulkCompressActionShouldBePresentInMedia() {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
         $this->assertEquals('Compress Images', self::$driver->findElement(
             WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]')
         )->getText());
@@ -36,21 +35,42 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array('thumbnail', 'medium', 'large'));
     }
 
-    public function testBulkCompressShouldInMediaShouldRedirect() {
-        $this->prepare();
+    public function testBulkCompressShouldFromMediaShouldOnlyCompressSelected() {
+        $this->prepare(1, 2);
 
-        self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
-        $checkboxes = self::$driver->findElements(WebDriverBy::cssSelector('th input[type="checkbox"]'));
+        self::$driver->get(wordpress('/wp-admin/upload.php?orderby=title&order=asc'));
+        $checkboxes = self::$driver->findElements(WebDriverBy::cssSelector('tbody input[type="checkbox"]'));
         $checkboxes[0]->click();
 
         self::$driver->findElement(WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]'))->click();
         self::$driver->findElement(WebDriverBy::cssSelector('div.actions input[value="Apply"]'))->click();
 
+        self::$driver->wait(3)->until(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('.updated'), 'All images are processed'));
+
+        $this->assertEquals('1', self::$driver->findElement(WebDriverBy::cssSelector('#tiny-progress span'))->getText());
+        $this->assertEquals('input-example', self::$driver->findElement(WebDriverBy::cssSelector('.media-item .filename'))->getText());
+    }
+
+    public function testBulkCompressShouldCompressAll() {
+        $this->prepare(1, 1);
+
+        self::$driver->get(wordpress('/wp-admin/tools.php?page=tiny-bulk-compress.php'));
+        $elements = self::$driver->findElements(WebDriverBy::cssSelector('#tiny-bulk-compress p'));
+        $this->assertContains('2 images', $elements[1]->getText());
+
+        self::$driver->findElement(WebDriverBy::cssSelector('#tiny-bulk-compress button'))->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
             WebDriverBy::cssSelector('.updated'), 'All images are processed'));
 
-        $this->assertContains("tools.php?page=tiny-bulk-compress&ids=", self::$driver->getCurrentUrl());
-    }
+        $elements = self::$driver->findElements(WebDriverBy::cssSelector('.media-item .filename'));
+        $filenames = array_map('innerText', $elements);
 
-    // TODO: More tests
+        $this->assertEquals(2, count($filenames));
+        $this->assertContains('input-large', $filenames);
+        $this->assertContains('input-example', $filenames);
+
+        $this->assertEquals('2', self::$driver->findElement(WebDriverBy::cssSelector('#tiny-progress span'))->getText());
+        $this->assertEquals('5', self::$driver->findElement(WebDriverBy::cssSelector('#tiny-status span'))->getText());
+    }
 }

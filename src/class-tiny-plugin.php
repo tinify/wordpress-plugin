@@ -74,6 +74,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
         // Wordpress < 3.3 does not handle multi dimensional arrays
         wp_localize_script($handle, 'tinyCompress', array(
             'nonce' => wp_create_nonce('tiny-compress'),
+            'wpVersion' => self::wp_version(),
+            'pluginVersion' => self::plugin_version(),
             'L10nAllDone' => self::translate('All images are processed'),
             'L10nBulkAction' => self::translate('Compress Images'),
             'L10nCompressing' => self::translate('Compressing'),
@@ -249,7 +251,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
             echo '<div id="tiny-status"><p>'. self::translate_escape('Compressions this month') . sprintf(' <span>%d</span></p></div>', $this->settings->get_status());
             echo '<div id="tiny-progress"><p>'. self::translate_escape('Processing') . ' <span>0</span> ' . self::translate_escape('out of') . sprintf(' %d </p></div>', count($items));
-            echo '<div id="tiny-images">';
+            echo '<div id="media-items">';
             echo '</div>';
 
             echo '<script type="text/javascript">jQuery(function() { tinyBulkCompress('. json_encode($items) . ')})</script>';

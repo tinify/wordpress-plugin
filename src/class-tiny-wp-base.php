@@ -22,13 +22,32 @@ abstract class Tiny_WP_Base {
     const NAME = 'tiny-compress-images';
     const PREFIX = 'tinypng_';
 
+    private static $wp_version;
+    private static $plugin_version;
+
     public static function wp_version() {
-        return $GLOBALS['wp_version'];
+        if (is_null(self::$wp_version)) {
+            // Try to use unmodified version
+            include( ABSPATH . WPINC . '/version.php' );
+            if (isset($wp_version)) {
+                self::$wp_version = $wp_version;
+            } else {
+                self::$wp_version = $GLOBALS['wp_version'];
+            }
+        }
+        return self::$wp_version;
+    }
+
+    public static function check_wp_version($version) {
+        return floatval(self::wp_version()) >= $version;
     }
 
     public static function plugin_version() {
-        $plugin_data = get_plugin_data(dirname(__FILE__) . '/../tiny-compress-images.php');
-        return $plugin_data['Version'];
+        if (is_null(self::$plugin_version)) {
+            $plugin_data = get_plugin_data(dirname(__FILE__) . '/../tiny-compress-images.php');
+            self::$plugin_version = $plugin_data['Version'];
+        }
+        return self::$plugin_version;
     }
 
     public static function plugin_identification() {
