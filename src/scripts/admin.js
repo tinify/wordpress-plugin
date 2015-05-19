@@ -1,5 +1,9 @@
 (function() {
 
+  function check_wp_version(version) {
+    return parseFloat(tinyCompress.wpVersion) >= version
+  }
+
   function compress_image(event) {
     var element = jQuery(event.target)
     element.attr('disabled', 'disabled')
@@ -24,6 +28,7 @@
 
   function dismiss_notice(event) {
     var element = jQuery(event.target)
+    var notice = element.closest(".tiny-notice")
     element.attr('disabled', 'disabled')
     jQuery.ajax({
       url: ajaxurl,
@@ -32,11 +37,11 @@
       data: {
         _nonce: tinyCompress.nonce,
         action: 'tiny_dismiss_notice',
-        name: element.data('name') || element.attr('data-name')
+        name: notice.data('name') || notice.attr('data-name')
       },
       success: function(data) {
         if (data) {
-          element.closest('div').remove()
+          notice.remove()
         }
       },
       error: function() {
@@ -47,33 +52,45 @@
   }
 
   function bulk_compress_callback(error, data, items, i) {
-      var row = jQuery(jQuery('#tiny-images').children("div")[i])
+      var row = jQuery(jQuery('#media-items').children("div")[i])
+      var status
+
+      if (check_wp_version(3.3)) {
+        status = row.find('.bar')
+      } else {
+        row.find('.bar').remove()
+        status = row.find('.percent')
+      }
 
       if (data.thumbnail) {
         var img = jQuery('<img class="pinkynail">')
         img.attr("src", data.thumbnail)
         row.prepend(img)
       }
+
       if (error) {
-        row.find('.bar').addClass('failed')
+        status.addClass('failed')
         row.find('.percent').html(tinyCompress.L10nInternalError)
         row.find('.progress').attr("title", error.toString())
       } else if (data.error) {
-        row.find('.bar').addClass('failed')
+        status.addClass('failed')
         row.find('.percent').html(tinyCompress.L10nError)
         row.find('.progress').attr("title", data.error)
       } else if (data.failed > 0) {
-        row.find('.bar').addClass('failed')
+        status.addClass('failed')
         row.find('.bar').css('width', '100%')
         row.find('.percent').html(data.success + " " + tinyCompress.L10nCompressions)
         row.find('.progress').attr("title", data.message)
       } else {
+        status.addClass('success')
         row.find('.bar').css('width', '100%')
         row.find('.percent').html(data.success + " " + tinyCompress.L10nCompressions)
       }
+
       if (data.status) {
         jQuery('#tiny-status span').html(data.status)
       }
+
       if (items[++i]) {
         bulk_compress_item(items, i)
       } else {
@@ -85,7 +102,7 @@
 
   function bulk_compress_item(items, i) {
     var item = items[i]
-    var row = jQuery(jQuery('#tiny-images').children("div")[i])
+    var row = jQuery(jQuery('#media-items').children("div")[i])
     row.find('.percent').html(tinyCompress.L10nCompressing)
     jQuery.ajax({
       url: ajaxurl,
@@ -104,9 +121,14 @@
   }
 
   function bulk_compress(items) {
-    var list = jQuery('#tiny-images')
+    var list = jQuery('#media-items')
+    var row
     for (var i = 0; i < items.length; i++) {
-      row = jQuery('<div class="media-item"><div class="progress"><div class="percent"></div><div class="bar"></div></div><div class="filename"></div></div>')
+      if (check_wp_version(3.3)) {
+        row = jQuery('<div class="media-item"><div class="progress"><div class="percent"></div><div class="bar"></div></div><div class="filename"></div></div>')
+      } else {
+        row = jQuery('<div class="media-item" style="box-shadow: none"><div class="progress"><div class="bar"></div></div><div class="percent"></div><div class="filename"></div></div>')
+      }
       row.find('.percent').html(tinyCompress.L10nWaiting)
       row.find('.filename').html(items[i].post_title)
       list.append(row)
@@ -135,7 +157,10 @@
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
   }
 
-  jQuery('.tiny-dismiss').click(dismiss_notice)
+  jQuery('.tiny-notice a').click(dismiss_notice)
+  jQuery(function() {
+    jQuery('.tiny-notice button').unbind('click').click(dismiss_notice)
+  })
 
   window.tinyBulkCompress = bulk_compress
 }).call()

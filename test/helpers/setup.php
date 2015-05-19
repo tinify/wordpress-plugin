@@ -143,6 +143,7 @@ function activate_plugin($driver) {
         var_dump($driver->getPageSource());
         throw new UnexpectedValueException('Activating plugin failed.');
     }
+    $driver->get(wordpress('/wp-admin/upload.php?mode=list'));
 }
 
 function close_webdriver() {

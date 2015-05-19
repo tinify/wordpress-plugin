@@ -41,7 +41,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->set_api_key('PNG123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->enable_compression_sizes(array('medium', 'large'));
-        self::$driver->get(wordpress('/wp-admin/upload.php?mode=list'));
+
+        self::$driver->get(wordpress('/wp-admin/upload.php'));
         $this->assertContains('Compressed 1 out of 2 sizes',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
         self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images button'))->click();
@@ -59,8 +60,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testLimitReachedDismisses() {
         $this->set_api_key('LIMIT123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->findElement(WebDriverBy::cssSelector('.tiny-dismiss'))->click();
+        self::$driver->findElement(WebDriverBy::cssSelector('.tiny-notice button, .tiny-notice a'))->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::invisibilityOfElementWithText(
              WebDriverBy::cssSelector('.tiny-dismiss'), 'Dismiss'));
+
+        self::$driver->get(wordpress('/wp-admin/options-media.php'));
+        $this->assertEquals(0, count(self::$driver->findElements(WebDriverBy::cssSelector('div.error p'))));
     }
 }
