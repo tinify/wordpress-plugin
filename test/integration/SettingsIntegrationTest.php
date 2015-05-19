@@ -41,6 +41,12 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $this->assertEquals(0, count($elements));
     }
 
+    public function testNoApiKeyNoticeShouldLinkToSettings() {
+        self::$driver->findElement(WebDriverBy::cssSelector('.error a'))->click();
+        $this->assertStringEndsWith('options-media.php#tiny-compress-images', self::$driver->getCurrentURL());
+    }
+
+
     public function testDefaultSizesBeingCompressed() {
         $elements = self::$driver->findElements(
             WebDriverBy::xpath('//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]'));

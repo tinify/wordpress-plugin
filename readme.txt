@@ -70,7 +70,7 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 
 == Changelog ==
 
-= 1.3.0
+= 1.3.0 =
 * Improved bulk compressions from media library. You can now also bulk compress your whole media library in one step.
 * Intelligent detection if file is already compressed or was altered by another plugin and should be recompressed.
 
