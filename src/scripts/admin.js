@@ -157,7 +157,7 @@
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
   }
 
-  jQuery('.tiny-notice.is-dismissible a').click(dismiss_notice)
+  jQuery('.tiny-notice a.tiny-dismiss').click(dismiss_notice)
   jQuery(function() {
     jQuery('.tiny-notice.is-dismissible button').unbind('click').click(dismiss_notice)
   })
