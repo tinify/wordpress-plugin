@@ -1,4 +1,4 @@
-[<img src="https://travis-ci.org/TinyPNG/wordpress-plugin.svg?branch=master"  alt="Build Status">](https://travis-ci.org/TinyPNG/wordpress-plugin)
+[<img src="https://travis-ci.org/tinify/wordpress-plugin.svg?branch=master" alt="Build Status">](https://travis-ci.org/tinify/wordpress-plugin)
 
 # TinyPNG image compression for WordPress
 Make your website faster by compressing your JPEG and PNG images.
