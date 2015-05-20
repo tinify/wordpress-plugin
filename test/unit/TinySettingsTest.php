@@ -76,21 +76,27 @@ class Tiny_Settings_Test extends TinyTestCase {
     public function testShouldShowAdditionalSize() {
         $this->wp->addImageSize('additional_size_1', array('width' => 666, 'height' => 333));
         $this->subject->get_sizes();
-        $this->assertEquals(array('width' => 666, 'height' => 333, 'tinify' => true),
-            $this->subject->get_sizes()["additional_size_1"]);
+        $sizes = $this->subject->get_sizes();
+        $this->assertEquals(
+            array('width' => 666, 'height' => 333, 'tinify' => true),
+            $sizes["additional_size_1"]);
     }
 
     public function testShouldShowAdditionalSizeWithoutHeight() {
         $this->wp->addImageSize('additional_size_no_height', array('width' => 777));
         $this->subject->get_sizes();
-        $this->assertEquals(array('width' => 777, 'height' => 0, 'tinify' => true),
-            $this->subject->get_sizes()["additional_size_no_height"]);
+        $sizes = $this->subject->get_sizes();
+        $this->assertEquals(
+            array('width' => 777, 'height' => 0, 'tinify' => true),
+            $sizes["additional_size_no_height"]);
     }
 
     public function testShouldShowAdditionalSizeWithoutWidth() {
         $this->wp->addImageSize('additional_size_no_width', array('height' => 888));
         $this->subject->get_sizes();
-        $this->assertEquals(array('width' => 0, 'height' => 888, 'tinify' => true),
-            $this->subject->get_sizes()["additional_size_no_width"]);
+        $sizes = $this->subject->get_sizes();
+        $this->assertEquals(
+            array('width' => 0, 'height' => 888, 'tinify' => true),
+            $sizes["additional_size_no_width"]);
     }
 }
