@@ -124,7 +124,7 @@ class Tiny_Settings extends Tiny_WP_Base {
                 continue;
             }
             list($width, $height) = self::get_intermediate_size($size);
-            if ($width && $height) {
+            if ($width || $height) {
                 $this->sizes[$size] = array(
                     'width' => $width, 'height' => $height,
                     'tinify' => !is_array($setting) || (isset($setting[$size]) && $setting[$size] === 'on'),
