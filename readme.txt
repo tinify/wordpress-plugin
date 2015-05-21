@@ -34,7 +34,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com or fin
 
 = Contributors =
 
-Want to contribute? Checkout our [GitHub page](https://github.com/TinyPNG/wordpress-plugin).
+Want to contribute? Checkout our [GitHub page](https://github.com/tinify/wordpress-plugin).
 
 == Installation ==
 
