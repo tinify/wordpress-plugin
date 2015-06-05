@@ -16,6 +16,14 @@ Make your website faster by compressing your JPEG and PNG images.
 
 This plugin automatically optimizes your images by integrating with the popular image compression services TinyJPG and TinyPNG.
 
+= Features =
+
+* Compress all sizes.
+* Multisite support.
+* Bulk compress: compress your complete library with one click.
+* See your usage directly from the Media settings.
+* Detects automatically if an image should be recompressed.
+
 = How does it work? =
 
 After you upload an image to your WordPress site, each resized image is uploaded to the TinyJPG or TinyPNG service. Your image is analyzed to apply the best possible compression. Based on the content of your image an optimal strategy is chosen. The result is sent back to your WordPress site. On average JPEG images are compressed by 40-60% and PNG images by 50-80% without visible loss in quality. Your website will load faster for your visitors, and you’ll save storage space and bandwidth!
