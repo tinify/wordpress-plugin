@@ -1,5 +1,5 @@
 <?php
 
 class Tiny_Config {
-    const URL = 'http://api.tinify.com/shrink';
+    const URL = 'https://api.tinify.com/shrink';
 }
