@@ -72,7 +72,9 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $testmeta = $this->wp->getTestMetadata();
         $meta = new Tiny_Metadata(1, $testmeta);
+        $meta->add_request();
         $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
+        $meta->add_request('large');
         $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'), 'large');
         $meta->update();
 
@@ -87,8 +89,11 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $testmeta = $this->wp->getTestMetadata();
         $meta = new Tiny_Metadata(1, $testmeta);
+        $meta->add_request();
         $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
+        $meta->add_request('large');
         $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'), 'large');
+        $meta->add_request('post-thumbnail');
         $meta->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png'), 'post-thumbnail');
         $meta->update();
 
@@ -110,8 +115,9 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $metadata = $this->wp->getMetadata(1, 'tiny_compress_images', true);
         foreach ($metadata as $key => $values) {
-            $this->assertEquals(time(), $values['timestamp'], 2);
-            unset($metadata[$key]['timestamp']);
+            $this->assertEquals(time(), $values['end'], 2);
+            unset($metadata[$key]['end']);
+            unset($metadata[$key]['start']);
         }
         $this->assertEquals(array(
             0 => array('input' => array('size' => 12345), 'output' => array('size' => 10000)),
@@ -178,6 +184,6 @@ class Tiny_Plugin_Test extends TinyTestCase {
         $testmeta['sizes'] = 0;
 
         $this->subject->compress_attachment($testmeta, 1);
-        $this->assertEquals(1, count($this->wp->getCalls('update_post_meta')));
+        $this->assertEquals(2, count($this->wp->getCalls('update_post_meta')));
     }
 }

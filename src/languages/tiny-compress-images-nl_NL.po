@@ -43,6 +43,9 @@ msgstr "Comprimeer Afbeeldingen"
 msgid "Compressed %d out of %d sizes"
 msgstr "%d van de %d afmetingen zijn gecomprimeerd"
 
+msgid "Compressing %d sizes..."
+msgstr "%d afmetingen worden gecomprimeerd..."
+
 msgid "Total size"
 msgstr "Totale grootte"
 

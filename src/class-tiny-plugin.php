@@ -30,6 +30,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function __construct() {
         parent::__construct();
+
         $this->settings = new Tiny_Settings();
         if (is_admin()) {
             add_action('admin_menu', $this->get_method('admin_menu'));
@@ -101,8 +102,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         $compressor = $this->settings->get_compressor();
         $sizes = $this->settings->get_tinify_sizes();
-        foreach ($tiny_metadata->get_missing_sizes($sizes) as $size) {
+        $missing = $tiny_metadata->get_missing_sizes($sizes);
+        foreach ($missing as $size) {
             try {
+                $tiny_metadata->add_request($size);
+                $tiny_metadata->update();
+
                 $response = $compressor->compress_file($tiny_metadata->get_filename($size));
                 $tiny_metadata->add_response($response, $size);
                 $success++;
@@ -188,6 +193,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $missing = $tiny_metadata->get_missing_sizes($this->settings->get_tinify_sizes());
         $success = count($tiny_metadata->get_success_sizes());
         $total = count($missing) + $success;
+        $progress = count($tiny_metadata->get_in_progress_sizes());
 
         if (count($missing) > 0) {
             printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
@@ -198,6 +204,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
             echo '<button type="button" class="tiny-compress" data-id="' . $tiny_metadata->get_id() . '">' .
                 self::translate_escape('Compress') . '</button>';
             echo '<div class="spinner hidden"></div>';
+        } elseif ($progress > 0) {
+            printf(self::translate_escape('Compressing %d sizes...'), count($this->settings->get_tinify_sizes()));
         } else {
             printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
             $savings = $tiny_metadata->get_savings();

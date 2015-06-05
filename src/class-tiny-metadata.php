@@ -71,10 +71,17 @@ class Tiny_Metadata {
     }
 
     public function add_response($response, $size=self::ORIGINAL) {
-        $this->values[$size] = array(
+        $data = array(
             'input'  => array('size' => $response['input']['size']),
             'output' => array('size' => $response['output']['size']),
-            'timestamp' => time()
+            'end' => time()
+        );
+        $this->values[$size] = array_merge($this->values[$size], $data);
+    }
+
+    public function add_request($size=self::ORIGINAL) {
+        $this->values[$size] = array(
+            'start' => time()
         );
     }
 
@@ -108,6 +115,11 @@ class Tiny_Metadata {
             && file_exists($filename) && filesize($filename) == $this->values[$size]['output']['size'];
     }
 
+    public function is_compressing($size=self::ORIGINAL) {
+        $meta = $this->values[$size];
+        return isset($meta) && isset($meta['start']) && !isset($meta['output']);
+    }
+
     public function get_sizes() {
         return array_keys($this->filenames);
     }
@@ -119,6 +131,10 @@ class Tiny_Metadata {
     public function get_missing_sizes($tinify_sizes) {
         $sizes = array_intersect($this->get_sizes(), $tinify_sizes);
         return array_diff($sizes, $this->get_success_sizes());
+    }
+
+    public function get_in_progress_sizes() {
+        return array_filter(array_keys($this->values), array($this, 'is_compressing'));
     }
 
     public function get_latest_error() {
