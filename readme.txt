@@ -79,7 +79,7 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 == Changelog ==
 
 = 1.3.1 =
-* Media library now shows if files are being compressed.
+* Media library now shows when files are in the process of being compressed.
 
 = 1.3.0 =
 * Improved bulk compressions from media library. You can now also bulk compress your whole media library in one step.
