@@ -1,17 +1,5 @@
-FROM ubuntu:14.04
+FROM servebox/phantomjs:latest
 
 EXPOSE 8910
 
-ENV PHANTOM_JS_VERSION 2.0.0
-
-RUN apt-get update
-RUN apt-get install -yqq build-essential g++ flex bison gperf ruby perl \
-  libsqlite3-dev libfontconfig1-dev libicu-dev libfreetype6 libssl-dev \
-  libpng-dev libjpeg-dev python libx11-dev libxext-dev \
-  curl
-RUN curl -sSL https://github.com/ariya/phantomjs/archive/$PHANTOM_JS_VERSION.tar.gz | tar xz
-RUN ln -sf phantomjs-$PHANTOM_JS_VERSION /phantomjs
-RUN cd /phantomjs && ./build.sh --confirm
-
-
-CMD ["/phantomjs/bin/phantomjs", "--webdriver=8910"]
+CMD ["phantomjs", "--webdriver=8910"]
