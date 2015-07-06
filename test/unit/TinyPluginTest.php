@@ -115,7 +115,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $metadata = $this->wp->getMetadata(1, 'tiny_compress_images', true);
         foreach ($metadata as $key => $values) {
-            $this->assertEquals(time(), $values['end'], 2);
+            $this->assertBetween(-1, +1, $values['end'] - time());
             unset($metadata[$key]['end']);
             unset($metadata[$key]['start']);
         }
