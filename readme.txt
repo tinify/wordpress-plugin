@@ -18,11 +18,13 @@ This plugin automatically optimizes your images by integrating with the popular 
 
 = Features =
 
-* Compress all sizes.
-* Multisite support.
-* Bulk compress: compress your complete library with one click.
-* See your usage directly from the Media settings.
-* Detects automatically if an image should be recompressed.
+* Automatically compress new images.
+* Easy bulk compression of your existing media library.
+* Compress individual images already in your media library.
+* Multisite support with a single API key.
+* See your usage directly from the media settings and during bulk compression.
+* Select which thumbnail sizes of an image may be compressed.
+* Automatic detection of images that can be recompressed.
 
 = How does it work? =
 
