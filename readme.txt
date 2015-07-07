@@ -12,9 +12,7 @@ Speed up your website. Optimize your JPEG and PNG images automatically with Tin
 
 == Description ==
 
-Make your website faster by compressing your JPEG and PNG images.
-
-This plugin automatically optimizes your images by integrating with the popular image compression services TinyJPG and TinyPNG.
+Make your website faster by compressing your JPEG and PNG images. This plugin automatically optimizes your images by integrating with the popular image compression services TinyJPG and TinyPNG.
 
 = Features =
 
@@ -25,14 +23,15 @@ This plugin automatically optimizes your images by integrating with the popular 
 * See your usage directly from the media settings and during bulk compression.
 * Select which thumbnail sizes of an image may be compressed.
 * Automatic detection of images that can be recompressed.
+* No file size limit.
 
 = How does it work? =
 
-After you upload an image to your WordPress site, each resized image is uploaded to the TinyJPG or TinyPNG service. Your image is analyzed to apply the best possible compression. Based on the content of your image an optimal strategy is chosen. The result is sent back to your WordPress site. On average JPEG images are compressed by 40-60% and PNG images by 50-80% without visible loss in quality. Your website will load faster for your visitors, and you’ll save storage space and bandwidth!
+After you upload an image to your WordPress site, each resized image is uploaded to the TinyJPG or TinyPNG service. Your image is analyzed to apply the best possible compression. Based on the content of your image an optimal strategy is chosen. The result is sent back to your WordPress site and will replace the original image with one smaller in size. On average JPEG images are compressed by 40-60% and PNG images by 50-80% without visible loss in quality. Your website will load faster for your visitors, and you’ll save storage space and bandwidth!
 
 = Getting started =
 
-Install this plugin and obtain your free API key from https://tinypng.com/developers. The first 500 compressions per month are completely free, so roughly 100 images can be uploaded to WordPress for free, no strings attached! You can also change which of the generated thumbnail sizes should be compressed, because each one of them counts as a compression. And if you’re a heavy user, you can compress additional images for a small additional fee per image.
+Install this plugin and obtain your free API key from https://tinypng.com/developers. The first 500 compressions per month are completely free, so roughly 100 images can be uploaded to WordPress for free, no strings attached! You can also change which of the generated thumbnail sizes should be compressed, because each one of them counts as a compression. And if you’re a heavy user, you can compress more than 500 images per month for a small additional fee per image.
 
 = Multisite support =
 
@@ -77,6 +76,20 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 3. Bulk compress existing images after installing the plugin or when additional sizes have to be compressed.
 4. Show progress while bulk compressing (selection from) media library.
 5. Bulk compress complete media library.
+
+== FAQ ==
+
+= Q: I don't recall uploading 500 photos this month but my limit is already reached. How is this number calculated? =
+A: When you upload an image to your website, Wordpress will create different sized versions of it (see Settings > Media). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
+
+= Q: What happens to the compressed images when I uninstall the plugin? =
+A: When you remove the TinyPNG plugin all your compressed images will remain compressed.
+
+= Q: Is there a file size limit? =
+A: No. There are no limitations on the size of the images you want to compress.
+
+= Q: What happens when I reach my monthly compression limit? =
+A: Everything will keep on working, but newly uploaded images will not be compressed. Of course we encourage everyone to sign up for a full subscription.
 
 == Changelog ==
 
