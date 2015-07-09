@@ -77,7 +77,7 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 4. Show progress while bulk compressing (selection from) media library.
 5. Bulk compress complete media library.
 
-== FAQ ==
+== Frequently Asked Questions ==
 
 = Q: I don't recall uploading 500 photos this month but my limit is already reached. How is this number calculated? =
 A: When you upload an image to your website, Wordpress will create different sized versions of it (see Settings > Media). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
