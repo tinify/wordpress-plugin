@@ -67,4 +67,18 @@ class CompressIntegrationTest extends IntegrationTestCase {
         self::$driver->get(wordpress('/wp-admin/options-media.php'));
         $this->assertEquals(0, count(self::$driver->findElements(WebDriverBy::cssSelector('div.error p'))));
     }
+
+    public function testIncorrectJsonButton() {
+        $this->enable_compression_sizes(array());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->enable_compression_sizes(array('medium', 'large'));
+
+        $this->set_api_key('JSON1234');
+        self::$driver->get(wordpress('/wp-admin/upload.php'));
+
+        self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images button'))->click();
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('td.tiny-compress-images'), 'JSON: Syntax error [4]'));
+    }
+
 }

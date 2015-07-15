@@ -102,7 +102,10 @@ abstract class Tiny_Compress {
     protected static function decode($text) {
         $result = json_decode($text, true);
         if ($result === null) {
-            throw new Tiny_Exception('Could not decode JSON', 'JsonError');
+            throw new Tiny_Exception(sprintf('JSON: %s [%d]',
+                    PHP_VERSION_ID >= 50500 ? json_last_error_msg() : 'Error',
+                    json_last_error()),
+                'JsonError');
         }
         return $result;
     }
