@@ -57,11 +57,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function admin_menu() {
-        add_management_page(
-            self::translate('Compress JPEG & PNG Images'), self::translate('Compress All Images'),
-            'upload_files', 'tiny-bulk-compress', $this->get_method('bulk_compress_page')
-        );
-
+        if (current_user_can('manage_options')) {
+            add_management_page(
+                self::translate('Compress JPEG & PNG Images'), self::translate('Compress All Images'),
+                'upload_files', 'tiny-bulk-compress', $this->get_method('bulk_compress_page')
+            );
+        }
     }
 
     public function enqueue_scripts($hook) {
