@@ -1,9 +1,6 @@
 msgid "PNG and JPEG compression"
 msgstr "PNG- en JPEG-compressie"
 
-msgid "Multisite PNG and JPEG compression"
-msgstr "Multisite PNG- en JPEG-compressie"
-
 msgid "Visit %s to get an API key"
 msgstr "Bezoek de %s om een API-sleutel te krijgen"
 
@@ -15,9 +12,6 @@ msgstr "TinyPNG Developer pagina"
 
 msgid "TinyPNG API key"
 msgstr "TinyPNG API-sleutel"
-
-msgid "Multisite API key"
-msgstr "Multisite API-sleutel"
 
 msgid "File compression"
 msgstr "Bestandscompressie"
@@ -93,9 +87,6 @@ msgstr "Kon output niet downloaden"
 
 msgid "File does not exist"
 msgstr "Bestand bestaat niet"
-
-msgid "Could not decode JSON"
-msgstr "Kon JSON niet decoderen"
 
 msgid "Could not compress, enable cURL for detailed error"
 msgstr "Kon niet comprimeren, schakel cURL in voor een preciezere foutmelding"

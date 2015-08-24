@@ -15,9 +15,6 @@ msgstr ""
 msgid "PNG and JPEG compression"
 msgstr "PNG 和 JPEG 壓縮"
 
-msgid "Multisite PNG and JPEG compression"
-msgstr "多站台 PNG 和 JPEG 壓縮"
-
 msgid "Visit %s to get an API key"
 msgstr "訪問 %s 取得一個 API 金鑰"
 
@@ -29,9 +26,6 @@ msgstr "TinyPNG 開發者功能"
 
 msgid "TinyPNG API key"
 msgstr "TinyPNG API 金鑰"
-
-msgid "Multisite API key"
-msgstr "多站台 API 金鑰"
 
 msgid "File compression"
 msgstr "檔案壓縮"
@@ -107,9 +101,6 @@ msgstr "無法下載輸出"
 
 msgid "File does not exist"
 msgstr "檔案不存在"
-
-msgid "Could not decode JSON"
-msgstr "無法解碼 JSON"
 
 msgid "Could not compress, enable cURL for detailed error"
 msgstr "無法壓縮，啟用 cURL 取得詳細錯誤資訊"
