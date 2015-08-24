@@ -103,7 +103,7 @@ msgstr "Не могу найти url результата"
 msgid "Could not download output"
 msgstr "Не могу загрузить результат"
 
-msgid "File does not exists"
+msgid "File does not exist"
 msgstr "Файл не существует или не найден плагином"
 
 msgid "Could not decode JSON"

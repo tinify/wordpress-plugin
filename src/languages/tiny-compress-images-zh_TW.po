@@ -105,7 +105,7 @@ msgstr "找不到輸出網址"
 msgid "Could not download output"
 msgstr "無法下載輸出"
 
-msgid "File does not exists"
+msgid "File does not exist"
 msgstr "檔案不存在"
 
 msgid "Could not decode JSON"

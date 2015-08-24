@@ -72,7 +72,7 @@ abstract class Tiny_Compress {
 
     public function compress_file($file) {
         if (!file_exists($file)) {
-            throw new Tiny_Exception('File does not exists', 'FileError');
+            throw new Tiny_Exception('File does not exist', 'FileError');
         }
         list($output, $details) = $this->compress(file_get_contents($file));
         file_put_contents($file, $output);

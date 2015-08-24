@@ -91,7 +91,7 @@ msgstr "Kon geen outputlocatie vinden"
 msgid "Could not download output"
 msgstr "Kon output niet downloaden"
 
-msgid "File does not exists"
+msgid "File does not exist"
 msgstr "Bestand bestaat niet"
 
 msgid "Could not decode JSON"
