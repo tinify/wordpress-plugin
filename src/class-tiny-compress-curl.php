@@ -56,10 +56,11 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         }
 
         $header_size = curl_getinfo($request, CURLINFO_HEADER_SIZE);
+        $status_code = curl_getinfo($request, CURLINFO_HTTP_CODE);
         $headers = self::parse_headers(substr($response, 0, $header_size));
         curl_close($request);
 
-        return array(self::decode(substr($response, $header_size)), $headers);
+        return array(self::decode(substr($response, $header_size)), $headers, $status_code);
     }
 
     protected function output_options($url) {

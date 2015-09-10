@@ -80,5 +80,4 @@ class CompressIntegrationTest extends IntegrationTestCase {
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
             WebDriverBy::cssSelector('td.tiny-compress-images'), 'JSON: Syntax error [4]'));
     }
-
 }

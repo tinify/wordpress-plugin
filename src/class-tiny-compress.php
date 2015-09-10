@@ -44,10 +44,10 @@ abstract class Tiny_Compress {
     abstract protected function output($url);
 
     public function get_status(&$details) {
-        list($details, $headers) = $this->shrink(null);
+        list($details, $headers, $status_code) = $this->shrink(null);
 
         $this->call_after_compress_callback($details, $headers);
-        if (!isset($details['error']) || $details["error"] == 'InputMissing' || $details["error"] == 'TooManyRequests') {
+        if ($status_code >= 400 && $status_code < 500 && $status_code != 401) {
             return true;
         } else {
             return false;
