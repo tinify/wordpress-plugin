@@ -20,8 +20,10 @@ Make your website faster by compressing your JPEG and PNG images. This plugin au
 * Easy bulk compression of your existing media library.
 * Compress individual images already in your media library.
 * Multisite support with a single API key.
+* Color profiles are translated to the standard RGB color space.
 * See your usage directly from the media settings and during bulk compression.
 * Select which thumbnail sizes of an image may be compressed.
+* Converts from CMYK to RGB to save more space and maximize compatibility.
 * Automatic detection of images that can be recompressed.
 * No file size limit.
 

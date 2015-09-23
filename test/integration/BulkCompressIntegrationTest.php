@@ -35,7 +35,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array('thumbnail', 'medium', 'large'));
     }
 
-    public function testBulkCompressShouldFromMediaShouldOnlyCompressSelected() {
+    public function testBulkCompressFromMediaShouldOnlyCompressSelected() {
         $this->prepare(1, 2);
 
         self::$driver->get(wordpress('/wp-admin/upload.php?orderby=title&order=asc'));

@@ -101,18 +101,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $failed = 0;
 
         $compressor = $this->settings->get_compressor();
-        $sizes = $this->settings->get_tinify_sizes();
-        $missing = $tiny_metadata->get_missing_sizes($sizes);
-        foreach ($missing as $size) {
-            try {
-                $tiny_metadata->add_request($size);
-                $tiny_metadata->update();
+        $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+        $uncompressed_sizes = $tiny_metadata->get_uncompressed_sizes($active_tinify_sizes);
 
-                $response = $compressor->compress_file($tiny_metadata->get_filename($size));
-                $tiny_metadata->add_response($response, $size);
+        foreach ($uncompressed_sizes as $uncompressed_size) {
+            try {
+                $tiny_metadata->add_request($uncompressed_size);
+                $tiny_metadata->update();
+                $response = $compressor->compress_file($tiny_metadata->get_filename($uncompressed_size));
+                $responses[$uncompressed_size] = $response;
+
+                $tiny_metadata->add_response($response, $uncompressed_size);
                 $success++;
             } catch (Tiny_Exception $e) {
-                $tiny_metadata->add_exception($e, $size);
+                $tiny_metadata->add_exception($e, $uncompressed_size);
                 $failed++;
             }
         }
@@ -190,10 +192,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     private function render_compress_details($tiny_metadata) {
-        $missing = $tiny_metadata->get_missing_sizes($this->settings->get_tinify_sizes());
+        $missing = $tiny_metadata->get_uncompressed_sizes($this->settings->get_active_tinify_sizes());
         $success = count($tiny_metadata->get_success_sizes());
         $total = count($missing) + $success;
         $progress = count($tiny_metadata->get_in_progress_sizes());
+
+        $duplicates = count($this->settings->get_active_tinify_sizes()) - $total;
+        $success += $duplicates;
+        $total += $duplicates;
 
         if (count($missing) > 0) {
             printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
@@ -205,7 +211,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 self::translate_escape('Compress') . '</button>';
             echo '<div class="spinner hidden"></div>';
         } elseif ($progress > 0) {
-            printf(self::translate_escape('Compressing %d sizes...'), count($this->settings->get_tinify_sizes()));
+            printf(self::translate_escape('Compressing %d sizes...'), count($this->settings->get_active_tinify_sizes()));
         } else {
             printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
             $savings = $tiny_metadata->get_savings();

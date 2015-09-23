@@ -134,7 +134,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         return $this->sizes;
     }
 
-    public function get_tinify_sizes() {
+    public function get_active_tinify_sizes() {
         if (is_array($this->tinify_sizes)) {
             return $this->tinify_sizes;
         }

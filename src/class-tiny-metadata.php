@@ -58,10 +58,17 @@ class Tiny_Metadata {
 
         $this->filenames[self::ORIGINAL] = "$path_prefix${path_info['basename']}";
         $this->urls[self::ORIGINAL] = "$url_prefix${path_info['basename']}";
+
+        $unique_sizes = array();
         if (isset($wp_metadata['sizes']) && is_array($wp_metadata['sizes'])) {
             foreach ($wp_metadata['sizes'] as $size => $info) {
-                $this->filenames[$size] = "$path_prefix${info['file']}";
-                $this->urls[$size] = "$url_prefix${info['file']}";
+                $filename = $info['file'];
+
+                if (!isset($unique_sizes[$filename])) {
+                    $this->filenames[$size] = "$path_prefix$filename";
+                    $this->urls[$size] = "$url_prefix$filename";
+                    $unique_sizes[$filename] = true;
+                }
             }
         }
     }
@@ -128,8 +135,8 @@ class Tiny_Metadata {
         return array_filter(array_keys($this->values), array($this, 'is_compressed'));
     }
 
-    public function get_missing_sizes($tinify_sizes) {
-        $sizes = array_intersect($this->get_sizes(), $tinify_sizes);
+    public function get_uncompressed_sizes($active_tinify_sizes) {
+        $sizes = array_intersect($this->get_sizes(), $active_tinify_sizes);
         return array_diff($sizes, $this->get_success_sizes());
     }
 

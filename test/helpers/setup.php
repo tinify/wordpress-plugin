@@ -103,8 +103,12 @@ function setup_wordpress_site($driver) {
     }
     $driver->findElement(WebDriverBy::name('weblog_title'))->sendKeys('Wordpress test');
     $driver->findElement(WebDriverBy::name('user_name'))->clear()->sendKeys('admin');
-    $driver->findElement(WebDriverBy::name('admin_password'))->sendKeys('admin');
-    $driver->findElement(WebDriverBy::name('admin_password2'))->sendKeys('admin');
+    if (wordpress_version() > 42) {
+        $driver->findElement(WebDriverBy::id('pass1-text'))->clear()->sendKeys('a')->sendKeys('dmin');
+    } else {
+        $driver->findElement(WebDriverBy::name('admin_password'))->sendKeys('admin');
+        $driver->findElement(WebDriverBy::name('admin_password2'))->sendKeys('admin');
+    }
     $driver->findElement(WebDriverBy::name('admin_email'))->sendKeys('developers@voormedia.com');
     $driver->findElement(WebDriverBy::tagName('form'))->submit();
     $h1s = $driver->findElements(WebDriverBy::tagName('h1'));
@@ -118,13 +122,16 @@ function setup_wordpress_site($driver) {
 }
 
 function login($driver) {
+    print "Logging in to Wordpress... ";
     $driver->get(wordpress('/wp-login.php'));
     $driver->findElement(WebDriverBy::tagName('body'))->click();
     $driver->findElement(WebDriverBy::name('log'))->clear()->click()->sendKeys('admin');
     $driver->findElement(WebDriverBy::name('pwd'))->clear()->click()->sendKeys('admin');
     $driver->findElement(WebDriverBy::tagName('form'))->submit();
-    if ($driver->findElement(WebDriverBy::tagName('h2'))->getText() == 'Dashboard') {
-        print "Successfully logged into WordPress.\n";
+
+    $dashboardHeading = $driver->findElement(WebDriverBy::xpath("//html/body//div[@class='wrap']/*[self::h1 or self::h2]"));
+    if ($dashboardHeading->getText() == 'Dashboard') {
+        print "success!\n";
     } else {
         var_dump($driver->getPageSource());
         throw new UnexpectedValueException('Login failed.');
@@ -157,7 +164,6 @@ function reset_webservice() {
     curl_setopt_array($request, array(
         CURLOPT_URL => 'http://' . getenv('HOST_IP') .':8080/reset',
     ));
-
     $response = curl_exec($request);
     curl_close($request);
 }

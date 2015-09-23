@@ -7,7 +7,13 @@ use IO::Socket;
 use Time::HiRes qw(usleep);
 
 my $dir = dirname($0);
-my $hostip = `boot2docker ip`;
+
+my $hostip;
+if (`which docker-machine`) {
+  $hostip = `docker-machine ip default`;
+} else {
+  $hostip = `boot2docker ip`;
+}
 
 sub check_port {
     my ($ip, $port, $times, $sleep) = @_;
