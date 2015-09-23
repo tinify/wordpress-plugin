@@ -28,9 +28,9 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 
 ### Running the integration tests
 1. Start Selenium server: `java -jar selenium-server-standalone-2.44.0.jar`.
-2. Run `bin/integration-tests $version [$to_version]`. E.g. `bin/run-wordpress 41` or `bin/integration-tests 40 42`.
-
-Note that when testing a different WordPress version, `bin/run-wordpress <version>` has to be run first.
+2. Run `bin/integration-tests $version [$to_version]` (When $to_version is
+added, all versions between $version and $to_version are tested). E.g.
+`bin/integration-tests 41` or `bin/integration-tests 40 42`.
 
 ## License
 Copyright (C) 2015 Voormedia B.V.
