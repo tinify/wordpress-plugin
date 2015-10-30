@@ -183,12 +183,16 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo self::translate_escape('Remember each additional image size will affect your TinyPNG monthly usage') . "!";?>
 <input type="hidden" name="<?php echo self::get_prefixed_name('sizes[' . self::DUMMY_SIZE .']'); ?>" value="on"/></p>
 <?php
+        $original_enabled = false;
         foreach ($this->get_sizes() as $size => $option) {
+            if ($size === Tiny_Metadata::ORIGINAL) {
+                $original_enabled = $option['tinify'];
+            }
             $this->render_size_checkbox($size, $option);
         }
 
         echo '<div id="tiny-image-sizes-notices">';
-        $this->render_image_sizes_notices(count(self::get_active_tinify_sizes()), $this->get_sizes()[Tiny_Metadata::ORIGINAL]['tinify']);
+        $this->render_image_sizes_notices(count(self::get_active_tinify_sizes()), $original_enabled);
         echo '</div>';
     }
 
