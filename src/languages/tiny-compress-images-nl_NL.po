@@ -186,3 +186,6 @@ msgstr "Navigeer niet van deze pagina want daardoor stopt het proces"
 
 msgid "You will be notified via this page when the processing is done"
 msgstr "Je wordt genotificeerd op deze pagina bij voltooing"
+
+msgid "Settings"
+msgstr "Instellingen"

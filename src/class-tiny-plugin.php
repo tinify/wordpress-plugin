@@ -54,6 +54,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
         add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
         add_action('admin_action_tiny_bulk_compress', $this->get_method('bulk_compress'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
+        $plugin = plugin_basename(dirname(dirname(__FILE__)) . '/tiny-compress-images.php');
+        add_filter("plugin_action_links_$plugin", $this->get_method('add_plugin_links'));
     }
 
     public function admin_menu() {
@@ -62,6 +64,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
             'upload_files', 'tiny-bulk-compress', $this->get_method('bulk_compress_page')
         );
 
+    }
+
+    public function add_plugin_links($current_links) {
+        $additional[] = sprintf('<a href="options-media.php#%s">%s</a>', self::NAME,
+            self::translate_escape('Settings'));
+        return array_merge($additional, $current_links);
     }
 
     public function enqueue_scripts($hook) {
