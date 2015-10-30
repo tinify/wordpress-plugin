@@ -98,6 +98,11 @@ A: Yes! After installing the plugin, go to Tools > Compress JPEG & PNG images, a
 
 == Changelog ==
 
+= 1.4.0 =
+* Added indication of number of images you can compress for free each month.
+* Added link to settings page from the plugin listing.
+* Added clarification that by checking the original image size your original images will be overwritten.
+
 = 1.3.2 =
 * In some cases a user would have different file sizes defined in Settings > Media which have the exact same pixel dimensions. Compressing images could then occasionally result in compressing the same image multiple times without being seen as 'compressed'. We now detect duplicate file sizes and don't compress them again.
 

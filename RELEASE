@@ -2,15 +2,16 @@ In order to release a new version of the plugin to wordpress.org, perform the fo
 
 1. Update the version in tiny-compress-images.php
 2. Change the 'Stable tag' in readme.txt to the new release number.
-3. If you've changed the plugin to work with newer version of wordpress add that to the readme as well.
-4. Commit and push to GitHub.
-5. Create a new release in GitHub and pull it in.
-6. Locally, checkout the new tag: `git checkout <tagged version>`.
-7. If not already done so, checkout the plugin's Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
-8. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`.
-9. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
-10. Manually copy the Git release to the local Subversion repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
-11. Add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
-12. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
-13. Commit the trunk to Subversion: `svn ci -m "<message>"`.
-14. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
+3. Add release notes to readme.txt.
+4. If you've changed the plugin to work with newer version of wordpress add that to the readme as well.
+5. Commit and push to GitHub.
+6. Create a new release in GitHub and pull it in.
+7. Locally, checkout the new tag: `git checkout <tagged version>`.
+8. If not already done so, checkout the plugin's Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
+9. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`.
+10. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
+11. Manually copy the Git release to the local Subversion repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
+12. Add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
+13. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
+14. Commit the trunk to Subversion: `svn ci -m "<message>"`.
+15. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
