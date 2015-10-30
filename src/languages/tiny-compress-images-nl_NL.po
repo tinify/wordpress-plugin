@@ -133,6 +133,15 @@ msgstr "Als je meer afbeeldingen wilt comprimeren kun je je %s aanpassen"
 msgid "Upgrade your %s if you like to compress more images"
 msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
 
+msgid "With these settings you can compress %s images for free each month"
+msgstr "Met deze instellingen kun je elke maand %s afbeeldingen gratis comprimeren"
+
+msgid "With these settings no images will be compressed"
+msgstr "Met deze instellingen worden geen afbeeldingen gecomprimeerd"
+
+msgid "Note: your original images will be overwritten with the compressed versions"
+msgstr "Belangrijk: je originele afbeeldingen worden overschreven met de gecomprimeerde afbeeldingen"
+
 msgid "Please fill in an API key to start compressing images"
 msgstr "Vul een API-sleutel in om te starten met comprimeren"
 

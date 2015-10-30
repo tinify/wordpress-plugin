@@ -20,6 +20,7 @@
 
 class Tiny_Settings extends Tiny_WP_Base {
     const DUMMY_SIZE = '_tiny_dummy';
+    const MONTHLY_FREE_COMPRESSIONS = 500;
 
     private $sizes;
     private $tinify_sizes;
@@ -58,7 +59,13 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, self::translate('Connection status'), $this->get_method('render_pending_status'), 'media', $section);
 
+        add_action('wp_ajax_tiny_image_sizes_notices', $this->get_method('image_sizes_notices'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
+    }
+
+    public function image_sizes_notices() {
+        $this->render_image_sizes_notices($_GET["image_sizes_selected"], $_GET["original_selected"]);
+        exit();
     }
 
     public function connection_status() {
@@ -179,6 +186,10 @@ class Tiny_Settings extends Tiny_WP_Base {
         foreach ($this->get_sizes() as $size => $option) {
             $this->render_size_checkbox($size, $option);
         }
+
+        echo '<div id="tiny-image-sizes-notices">';
+        $this->render_image_sizes_notices(count(self::get_active_tinify_sizes()), $this->get_sizes()[Tiny_Metadata::ORIGINAL]['tinify']);
+        echo '</div>';
     }
 
     private function render_size_checkbox($size, $option) {
@@ -192,6 +203,23 @@ class Tiny_Settings extends Tiny_WP_Base {
 <p><input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $field ?>" value="on" <?php if ($option['tinify']) { echo ' checked="checked"'; } ?>/>
 <label for="<?php echo $id; ?>"><?php echo $label; ?></label></p>
 <?php
+    }
+
+    public function render_image_sizes_notices($active_image_sizes_count, $original_selected) {
+        echo '<br/>';
+        if ($active_image_sizes_count < 1) {
+            echo '<p>' . self::translate_escape('With these settings no images will be compressed') . '.</p>';
+        }
+        else {
+            $free_images_per_month = floor(self::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count);
+
+            echo '<p>';
+            printf(self::translate_escape('With these settings you can compress %s images for free each month') . '.', $free_images_per_month);
+            echo '</p>';
+            if ($original_selected) {
+                echo '<p>' . self::translate_escape('Note: your original images will be overwritten with the compressed versions') . '!</p>';
+            }
+        }
     }
 
     public function get_compression_count() {
@@ -241,7 +269,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         $compressions = self::get_compression_count();
         echo '<p>';
         // We currently have no way to check if a user is free or flexible.
-        if ($compressions == 500) {
+        if ($compressions == self::MONTHLY_FREE_COMPRESSIONS) {
             $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API account') . '</a>';
             printf(self::translate_escape('You have reached your limit of %s compressions this month') . '.', $compressions);
             echo '<br>';

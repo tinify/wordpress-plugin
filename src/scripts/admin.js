@@ -155,6 +155,13 @@
 
   if (adminpage === "options-media-php") {
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
+
+    jQuery('input[name*="tinypng_sizes"]').on("click", function() {
+      // Unfortunately, we need some additional information to display the correct notices.
+      originalSelected = jQuery('input[name="tinypng_sizes[0]"]:checked').length
+      totalSelectedSizes = jQuery('input[name*="tinypng_sizes"]:checked').length
+      jQuery('#tiny-image-sizes-notices').load(ajaxurl + '?action=tiny_image_sizes_notices&image_sizes_selected=' + totalSelectedSizes + '&original_selected=' + originalSelected)
+    })
   }
 
   jQuery('.tiny-notice a.tiny-dismiss').click(dismiss_notice)
