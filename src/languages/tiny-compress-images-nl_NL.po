@@ -19,8 +19,8 @@ msgstr "Bestandscompressie"
 msgid "original"
 msgstr "origineel"
 
-msgid "You can choose to compress different image sizes created by WordPress here"
-msgstr "Je kunt hier kiezen welke afmetingen je wilt comprimeren van de afbeeldingen"
+msgid "Choose sizes to compress"
+msgstr "Kies afmetingen om te comprimeren"
 
 msgid "Remember each additional image size will affect your TinyPNG monthly usage"
 msgstr "Elke afmetingen zal apart worden gecomprimeerd en telt mee voor je verbruik"
@@ -133,14 +133,20 @@ msgstr "Als je meer afbeeldingen wilt comprimeren kun je je %s aanpassen"
 msgid "Upgrade your %s if you like to compress more images"
 msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
 
-msgid "With these settings you can compress %s images for free each month"
-msgstr "Met deze instellingen kun je elke maand %s afbeeldingen gratis comprimeren"
+msgid "With these settings you can compress"
+msgstr "Met deze instellingen kun je elke maand"
+
+msgid "%s images"
+msgstr "%s afbeeldingen"
+
+msgid "for free each month"
+msgstr "gratis comprimeren"
 
 msgid "With these settings no images will be compressed"
 msgstr "Met deze instellingen worden geen afbeeldingen gecomprimeerd"
 
-msgid "Note: your original images will be overwritten with the compressed versions"
-msgstr "Belangrijk: je originele afbeeldingen worden overschreven met de gecomprimeerde afbeeldingen"
+msgid "overwritten by compressed image"
+msgstr "overschreven door gecomprimeerde afbeelding"
 
 msgid "Please fill in an API key to start compressing images"
 msgstr "Vul een API-sleutel in om te starten met comprimeren"

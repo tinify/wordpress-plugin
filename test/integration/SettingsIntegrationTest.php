@@ -86,25 +86,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $this->assertEquals(0, count(array_map('elementName', $elements)));
     }
 
-    public function testShouldShowOriginalsMessageWhenChecked() {
-        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notices'))->findElements(WebDriverBy::tagName('p'));
-        $statuses = array_map('innerText', $elements);
-        $this->assertContains('Note: your original images will be overwritten with the compressed versions!', $statuses);
-    }
-
-    public function testShouldHideOriginalsMessageWhenUnchecked() {
-        $element = self::$driver->findElement(
-            WebDriverBy::xpath('//input[@type="checkbox" and @name="tinypng_sizes[0]" and @checked="checked"]'));
-        $element->click();
-        self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
-
-        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notices'))->findElements(WebDriverBy::tagName('p'));
-        $statuses = array_map('innerText', $elements);
-        $this->assertNotContains('Note: your original images will be overwritten with the compressed versions!', $statuses);
-    }
-
     public function testShouldShowTotalImagesInfo() {
-        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notices'))->findElements(WebDriverBy::tagName('p'));
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
         $this->assertContains('With these settings you can compress 100 images for free each month.', $statuses);
     }
@@ -114,9 +97,9 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             WebDriverBy::xpath('//input[@type="checkbox" and @name="tinypng_sizes[0]" and @checked="checked"]'));
         $element->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-image-sizes-notices'), 'With these settings you can compress 125 images for free each month.'));
+            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'With these settings you can compress 125 images for free each month.'));
         // Not really necessary anymore to assert this.
-        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notices'))->findElements(WebDriverBy::tagName('p'));
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
         $this->assertContains('With these settings you can compress 125 images for free each month.', $statuses);
     }
@@ -128,9 +111,9 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             $element->click();
         }
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-image-sizes-notices'), 'With these settings no images will be compressed.'));
+            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'With these settings no images will be compressed.'));
         // Not really necessary anymore to assert this.
-        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notices'))->findElements(WebDriverBy::tagName('p'));
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
         $this->assertContains('With these settings no images will be compressed.', $statuses);
     }

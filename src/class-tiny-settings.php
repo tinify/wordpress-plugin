@@ -59,12 +59,12 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, self::translate('Connection status'), $this->get_method('render_pending_status'), 'media', $section);
 
-        add_action('wp_ajax_tiny_image_sizes_notices', $this->get_method('image_sizes_notices'));
+        add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
     }
 
-    public function image_sizes_notices() {
-        $this->render_image_sizes_notices($_GET["image_sizes_selected"], $_GET["original_selected"]);
+    public function image_sizes_notice() {
+        $this->render_image_sizes_notice($_GET["image_sizes_selected"]);
         exit();
     }
 
@@ -179,20 +179,15 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_sizes() {
-        echo '<p>' . self::translate_escape('You can choose to compress different image sizes created by WordPress here') . '.<br/>';
-        echo self::translate_escape('Remember each additional image size will affect your TinyPNG monthly usage') . "!";?>
+        echo '<p>' . self::translate_escape('Choose sizes to compress') . ':';?>
 <input type="hidden" name="<?php echo self::get_prefixed_name('sizes[' . self::DUMMY_SIZE .']'); ?>" value="on"/></p>
 <?php
-        $original_enabled = false;
         foreach ($this->get_sizes() as $size => $option) {
-            if ($size === Tiny_Metadata::ORIGINAL) {
-                $original_enabled = $option['tinify'];
-            }
             $this->render_size_checkbox($size, $option);
         }
 
-        echo '<div id="tiny-image-sizes-notices">';
-        $this->render_image_sizes_notices(count(self::get_active_tinify_sizes()), $original_enabled);
+        echo '<div id="tiny-image-sizes-notice">';
+        $this->render_image_sizes_notice(count(self::get_active_tinify_sizes()));
         echo '</div>';
     }
 
@@ -200,7 +195,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         $id = self::get_prefixed_name("sizes_$size");
         $field = self::get_prefixed_name("sizes[$size]");
         if ($size === Tiny_Metadata::ORIGINAL) {
-            $label = self::translate_escape("original");
+            $label = self::translate_escape("original") . ' (' . self::translate_escape('overwritten by compressed image') . ')';
         } else {
             $label = $size . " - ${option['width']}x${option['height']}";
         }?>
@@ -209,7 +204,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 <?php
     }
 
-    public function render_image_sizes_notices($active_image_sizes_count, $original_selected) {
+    public function render_image_sizes_notice($active_image_sizes_count) {
         echo '<br/>';
         if ($active_image_sizes_count < 1) {
             echo '<p>' . self::translate_escape('With these settings no images will be compressed') . '.</p>';
@@ -218,11 +213,12 @@ class Tiny_Settings extends Tiny_WP_Base {
             $free_images_per_month = floor(self::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count);
 
             echo '<p>';
-            printf(self::translate_escape('With these settings you can compress %s images for free each month') . '.', $free_images_per_month);
+            echo self::translate_escape('With these settings you can compress');
+            echo ' <strong>';
+            printf(self::translate_escape('%s images'), $free_images_per_month);
+            echo '</strong> ';
+            echo self::translate_escape('for free each month') . '.';
             echo '</p>';
-            if ($original_selected) {
-                echo '<p>' . self::translate_escape('Note: your original images will be overwritten with the compressed versions') . '!</p>';
-            }
         }
     }
 
