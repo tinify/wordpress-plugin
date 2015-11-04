@@ -55,6 +55,10 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, self::translate('File compression'), $this->get_method('render_sizes'), 'media', $section);
 
+        $field = self::get_prefixed_name('resize_original');
+        register_setting('media', $field);
+        add_settings_field($field, self::translate('Image resizing'), $this->get_method('render_resize'), 'media', $section);
+
         $field = self::get_prefixed_name('status');
         register_setting('media', $field);
         add_settings_field($field, self::translate('Connection status'), $this->get_method('render_pending_status'), 'media', $section);
@@ -155,6 +159,22 @@ class Tiny_Settings extends Tiny_WP_Base {
         return $this->tinify_sizes;
     }
 
+    public function get_resize_enabled() {
+        $setting = get_option(self::get_prefixed_name('resize_original'));
+        return isset($setting['enabled']) && $setting['enabled'] === 'on';
+    }
+
+    public function get_resize_resolution() {
+        $setting = get_option(self::get_prefixed_name('resize_original'));
+        if (!$this->get_resize_enabled() || !isset($setting['width']) || !isset($setting['height'])) {
+            return false;
+        }
+
+        $width = intval($setting['width']);
+        $height = intval($setting['height']);
+        return $width > 0 && $height > 0 ? array('width' => $width, 'height' => $height) : false;
+    }
+
     public function render_section() {
         echo '<span id="' . self::NAME . '"></span>';
     }
@@ -220,6 +240,23 @@ class Tiny_Settings extends Tiny_WP_Base {
             echo self::translate_escape('for free each month') . '.';
             echo '</p>';
         }
+    }
+
+    public function render_resize() {
+        echo '<p>' . self::translate_escape('Resizing the original image is 1 additional compression each image that need resizing') . '.</p>';
+        $field = self::get_prefixed_name("resize_original[enabled]");
+        $label = self::translate_escape('fit original image within');
+        ?>
+        <p><input type="checkbox" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
+        <label for="<?php echo $field; ?>"><?php echo $label; ?>
+        <?php $this->render_resize_input('width') ?> x <?php $this->render_resize_input('height') ?> pixels (width x height)</label></p>
+        <?php
+    }
+
+    public function render_resize_input($name) {
+        $field = sprintf(self::get_prefixed_name('resize_original[%s]'), $name);
+        $settings = get_option(self::get_prefixed_name('resize_original'));
+        echo '<input type="text" name="' . $field . '" value="' . $settings[$name] . '" size="5" />';
     }
 
     public function get_compression_count() {
