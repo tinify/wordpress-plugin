@@ -73,17 +73,22 @@ class Tiny_Metadata {
         }
     }
 
+    public function update_wp_metadata($wp_metadata) {
+        $tiny_metadata = $this->get_value();
+        if (isset($tiny_metadata) && isset($tiny_metadata['output'])) {
+            $wp_metadata['width'] = $tiny_metadata['output']['width'];
+            $wp_metadata['height'] = $tiny_metadata['output']['height'];
+        }
+        return $wp_metadata;
+    }
+
     public function update() {
         update_post_meta($this->id, self::META_KEY, $this->values);
     }
 
     public function add_response($response, $size=self::ORIGINAL) {
-        $data = array(
-            'input'  => array('size' => $response['input']['size']),
-            'output' => array('size' => $response['output']['size']),
-            'end' => time()
-        );
-        $this->values[$size] = array_merge($this->values[$size], $data);
+        $response['end'] = time();
+        $this->values[$size] = array_merge($this->values[$size], $response);
     }
 
     public function add_request($size=self::ORIGINAL) {
@@ -170,5 +175,9 @@ class Tiny_Metadata {
             }
         }
         return $result;
+    }
+
+    public function is_resizable($size) {
+        return $size === self::ORIGINAL;
     }
 }

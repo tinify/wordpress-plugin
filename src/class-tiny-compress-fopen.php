@@ -78,7 +78,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         );
     }
 
-    protected function output($url) {
+    protected function output($url, $resize) {
         $context = stream_context_create($this->output_options());
         $request = @fopen($url, 'rb', false, $context);
 

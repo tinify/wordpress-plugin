@@ -41,7 +41,7 @@ abstract class Tiny_Compress {
     }
 
     abstract protected function shrink($input);
-    abstract protected function output($url);
+    abstract protected function output($url, $resize);
 
     public function get_status(&$details) {
         list($details, $headers, $status_code) = $this->shrink(null);
@@ -54,7 +54,7 @@ abstract class Tiny_Compress {
         }
     }
 
-    public function compress($input) {
+    public function compress($input, $resize_options) {
         list($details, $headers) = $this->shrink($input);
         $this->call_after_compress_callback($details, $headers);
         $outputUrl = isset($headers['location']) ? $headers['location'] : null;
@@ -63,19 +63,30 @@ abstract class Tiny_Compress {
         } else if ($outputUrl === null) {
             throw new Tiny_Exception('Could not find output url', 'OutputNotFound');
         }
-        $output = $this->output($outputUrl);
+        $output = $this->output($outputUrl, $resize_options);
         if (strlen($output) == 0) {
             throw new Tiny_Exception('Could not download output', 'OutputError');
         }
+
         return array($output, $details);
     }
 
-    public function compress_file($file) {
+    public function compress_file($file, $resize_options) {
         if (!file_exists($file)) {
             throw new Tiny_Exception('File does not exist', 'FileError');
         }
-        list($output, $details) = $this->compress(file_get_contents($file));
+
+        if (!self::needs_resize($file, $resize_options)) {
+            $resize_options = false;
+        }
+
+        list($output, $details) = $this->compress(file_get_contents($file), $resize_options);
         file_put_contents($file, $output);
+
+        if ($resize_options) {
+            $details['output'] = self::set_resize_details($file, $details) + $details['output'];
+        }
+
         return $details;
     }
 
@@ -108,6 +119,27 @@ abstract class Tiny_Compress {
                 'JsonError');
         }
         return $result;
+    }
+
+    protected static function needs_resize($file, $resize_options) {
+        if (!$resize_options) {
+            return false;
+        }
+
+        list($width, $height) = getimagesize($file);
+        return $width > $resize_options['width'] || $height > $resize_options['height'];
+    }
+
+    protected static function set_resize_details($file, $details) {
+        $size = filesize($file);
+        list($width, $height) = getimagesize($file);
+        return array(
+            'size'    => $size,
+            'width'   => $width,
+            'height'  => $height,
+            'ratio'   => round($size / $details['input']['size'], 4),
+            'resized' => true
+        );
     }
 }
 

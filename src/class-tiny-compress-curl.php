@@ -72,9 +72,27 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         );
     }
 
-    protected function output($url) {
+    protected function resize_options($resize) {
+        if (!$resize) {
+            return array();
+        }
+
+        $body = array('resize' => array(
+            'method' => 'fit',
+            'width' => $resize['width'],
+            'height' => $resize['height']
+        ));
+
+        return array(
+            CURLOPT_USERPWD => 'api:' . $this->api_key,
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+            CURLOPT_POSTFIELDS => json_encode($body)
+        );
+    }
+
+    protected function output($url, $resize) {
         $request = curl_init();
-        curl_setopt_array($request, $this->output_options($url));
+        curl_setopt_array($request, $this->output_options($url) + $this->resize_options($resize));
 
         $response = curl_exec($request);
         curl_close($request);

@@ -176,7 +176,12 @@ class WordPressStubs {
     }
 
     public function getTestMetadata($path='14/01', $name='test') {
-        $metadata = array('file' => "$path/$name.png", 'sizes' => array());
+        $metadata = array(
+            'file' => "$path/$name.png",
+            'width' => 4000,
+            'height' => 3000,
+            'sizes' => array()
+        );
 
         $regex = '#^' . preg_quote($name) .'-([^.]+)[.](png|jpe?g)$#';
         $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/$path");

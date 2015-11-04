@@ -34,19 +34,32 @@ class Tiny_Plugin_Test extends TinyTestCase {
         $input = filesize($file);
         switch ($key) {
             case "thumbnail":
-                $output = 81; break;
+                $output = 81;
+                $width = '150';
+                $height = '150';
+                break;
             case "medium":
-                $output = 768; break;
+                $output = 768;
+                $width = '300';
+                $height = '300';
+                break;
             case "large":
-                $output = 6789; break;
+                $output = 6789;
+                $width = '1024';
+                $height = '1024';
+                break;
             case "post-thumbnail":
-                $output = 1000; break;
+                $output = 1000;
+                $width = '800';
+                $height = '500';
+                break;
             default:
                 $output = 10000;
+                $width = '4000';
+                $height = '3000';
         }
         $this->vfs->getChild(vfsStream::path($file))->truncate($output);
-        return array('input' => array('size' => $input), 'output' => array('size' => $output));
-
+        return array('input' => array('size' => $input), 'output' => array('size' => $output, 'width' => $width, 'height' => $height));
     }
 
     public function testInitShouldAddFilters() {
@@ -120,9 +133,9 @@ class Tiny_Plugin_Test extends TinyTestCase {
             unset($metadata[$key]['start']);
         }
         $this->assertEquals(array(
-            0 => array('input' => array('size' => 12345), 'output' => array('size' => 10000)),
-            'large' => array('input' => array('size' => 10000), 'output' => array('size' => 6789)),
-            'post-thumbnail' => array('input' => array('size' => 1234), 'output' => array('size' => 1000)),
+            0 => array('input' => array('size' => 12345), 'output' => array('size' => 10000, 'width' => 4000, 'height' => 3000)),
+            'large' => array('input' => array('size' => 10000), 'output' => array('size' => 6789, 'width' => 1024, 'height' => 1024)),
+            'post-thumbnail' => array('input' => array('size' => 1234), 'output' => array('size' => 1000, 'width' => 800, 'height' => 500)),
         ), $metadata);
     }
 

@@ -38,4 +38,22 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $uncompressed_sizes = array(Tiny_Metadata::ORIGINAL, "custom-size");
         $this->assertEquals($uncompressed_sizes, $this->subject->get_uncompressed_sizes($tinify_sizes));
     }
+
+    public function testUpdateWpMetadataShouldNotUpdateWithNoResizedOriginal() {
+        $wp_metadata = array(
+            'width' => 2000,
+            'height' => 1000
+        );
+        $this->assertEquals(array('width' => 2000, 'height' => 1000), $this->subject->update_wp_metadata($wp_metadata));
+    }
+
+    public function testUpdateWpMetadataShouldUpdateWithResizedOriginal() {
+        $wp_metadata = array(
+            'width' => 2000,
+            'height' => 1000
+        );
+        $this->subject->add_request();
+        $this->subject->add_response(array('output' => array('width' => 200, 'height' => 100)));
+        $this->assertEquals(array('width' => 200, 'height' => 100), $this->subject->update_wp_metadata($wp_metadata));
+    }
 }
