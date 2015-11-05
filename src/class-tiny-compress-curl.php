@@ -92,7 +92,8 @@ class Tiny_Compress_Curl extends Tiny_Compress {
 
     protected function output($url, $resize) {
         $request = curl_init();
-        curl_setopt_array($request, $this->output_options($url) + $this->resize_options($resize));
+        $options = array_replace_recursive($this->output_options($url), $this->resize_options($resize));
+        curl_setopt_array($request, $options);
 
         $response = curl_exec($request);
         curl_close($request);
