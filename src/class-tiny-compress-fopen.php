@@ -107,11 +107,13 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
         if ($request) {
             $response = stream_get_contents($request);
+            $meta_data = stream_get_meta_data($request);
+            $headers = self::parse_headers($meta_data['wrapper_data']);
             fclose($request);
         } else {
             $response = '';
+            $headers = array();
         }
-
-        return $response;
+        return array($response, $headers);
     }
 }

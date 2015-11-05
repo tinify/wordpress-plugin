@@ -57,7 +57,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         $field = self::get_prefixed_name('resize_original');
         register_setting('media', $field);
-        add_settings_field($field, self::translate('Image resizing'), $this->get_method('render_resize'), 'media', $section);
+        add_settings_field($field, self::translate('Resize original'), $this->get_method('render_resize'), 'media', $section);
 
         $field = self::get_prefixed_name('status');
         register_setting('media', $field);
@@ -243,8 +243,8 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_resize() {
-        echo '<p>' . self::translate_escape("Automatically resize large images to a smaller resolution. Enabling this option will resize the original image when it's too large, using the TinyPNG API") . '.</p>';
-        echo '<p class="tiny-resize-unavailable" style="display: none">' . self::translate_escape("Enable compressing the original image size to configure resizing") . '.</p>';
+        echo '<p>' . self::translate_escape("Automatically resize the orginal image to a lower resolution. Enabling this option will resize the original image when it exceeds the specified width or height, using the TinyPNG API") . '.</p>';
+        echo '<p class="tiny-resize-unavailable" style="display: none">' . self::translate_escape("Enable the compression of the original image size to configure resizing") . '.</p>';
 
         $id = self::get_prefixed_name("resize_original_enabled");
         $field = self::get_prefixed_name("resize_original[enabled]");

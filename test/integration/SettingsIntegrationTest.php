@@ -129,7 +129,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
         $this->assertContains('Resizing takes 1 additional compression per image larger than the specified resolution.', $texts);
-        $this->assertNotContains('Enable compressing the original image size to configure resizing.', $texts);
+        $this->assertNotContains('Enable the compression of the original image size to configure resizing.', $texts);
     }
 
     public function testShouldNotShowResizingWhenOriginalDisabled() {
@@ -143,7 +143,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
         $this->assertNotContains('Resizing takes 1 additional compression per image larger than the specified resolution.', $texts);
-        $this->assertContains('Enable compressing the original image size to configure resizing.', $texts);
+        $this->assertContains('Enable the compression of the original image size to configure resizing.', $texts);
     }
 
     public function testShouldPersistResizingSettings() {

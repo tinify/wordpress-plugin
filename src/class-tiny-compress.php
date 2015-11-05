@@ -63,7 +63,8 @@ abstract class Tiny_Compress {
         } else if ($outputUrl === null) {
             throw new Tiny_Exception('Could not find output url', 'OutputNotFound');
         }
-        $output = $this->output($outputUrl, $resize_options);
+        list($output, $headers) = $this->output($outputUrl, $resize_options);
+        $this->call_after_compress_callback(null, $headers);
         if (strlen($output) == 0) {
             throw new Tiny_Exception('Could not download output', 'OutputError');
         }

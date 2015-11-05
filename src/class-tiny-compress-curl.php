@@ -67,6 +67,7 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         return array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
             CURLOPT_CAINFO => self::get_ca_file(),
             CURLOPT_SSL_VERIFYPEER => true
         );
@@ -96,8 +97,10 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         curl_setopt_array($request, $options);
 
         $response = curl_exec($request);
+        $header_size = curl_getinfo($request, CURLINFO_HEADER_SIZE);
+        $headers = self::parse_headers(substr($response, 0, $header_size));
         curl_close($request);
 
-        return $response;
+        return array(substr($response, $header_size), $headers);
     }
 }
