@@ -244,19 +244,21 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_resize() {
         echo '<p>' . self::translate_escape('Resizing the original image is 1 additional compression each image that need resizing') . '.</p>';
+        $id = self::get_prefixed_name("resize_original_enabled");
         $field = self::get_prefixed_name("resize_original[enabled]");
         $label = self::translate_escape('fit original image within');
         ?>
-        <p><input type="checkbox" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
-        <label for="<?php echo $field; ?>"><?php echo $label; ?>
+        <p><input type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
+        <label for="<?php echo $id; ?>"><?php echo $label; ?>
         <?php $this->render_resize_input('width') ?> x <?php $this->render_resize_input('height') ?> pixels (width x height)</label></p>
         <?php
     }
 
     public function render_resize_input($name) {
+        $id = sprintf(self::get_prefixed_name('resize_original_%s'), $name);
         $field = sprintf(self::get_prefixed_name('resize_original[%s]'), $name);
         $settings = get_option(self::get_prefixed_name('resize_original'));
-        echo '<input type="text" name="' . $field . '" value="' . $settings[$name] . '" size="5" />';
+        echo '<input type="text" id="'. $id .'" name="' . $field . '" value="' . $settings[$name] . '" size="5" />';
     }
 
     public function get_compression_count() {

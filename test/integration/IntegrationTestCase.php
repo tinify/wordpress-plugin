@@ -62,4 +62,30 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         }
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
     }
+
+    protected function enable_resize($width, $height) {
+        $url = wordpress('/wp-admin/options-media.php');
+        if (self::$driver->getCurrentUrl() != $url) {
+            self::$driver->get($url);
+        }
+        $element = self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_enabled'));
+        if (!$element->getAttribute('checked')) {
+            $element->click();
+        }
+        self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_width'))->clear()->sendKeys($width);
+        self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_height'))->clear()->sendKeys($height);
+        self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
+    }
+
+    protected function disable_resize() {
+        $url = wordpress('/wp-admin/options-media.php');
+        if (self::$driver->getCurrentUrl() != $url) {
+            self::$driver->get($url);
+        }
+        $element = self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_enabled'));
+        if ($element->getAttribute('checked')) {
+            $element->click();
+        }
+        self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
+    }
 }

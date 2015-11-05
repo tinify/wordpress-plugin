@@ -80,4 +80,40 @@ class CompressIntegrationTest extends IntegrationTestCase {
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
             WebDriverBy::cssSelector('td.tiny-compress-images'), 'JSON: Syntax error [4]'));
     }
+
+    public function testResize() {
+        $this->set_api_key('RESIZE123');
+        $this->enable_resize(300, 200);
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->assertContains('Resized original to 300x200',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->assertContains('Dimensions: 300 × 200',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+    }
+
+    public function testResizeNotNeeded()
+    {
+        $this->set_api_key('RESIZE123');
+        $this->enable_resize(30000, 20000);
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->assertNotContains('Resized original',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->assertContains('Dimensions: 1080 × 720',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+    }
+
+    public function testResizeDisabled()
+    {
+        $this->set_api_key('RESIZE123');
+        $this->enable_resize(300, 200);
+        $this->disable_resize();
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->assertNotContains('Resized original',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->assertContains('Dimensions: 1080 × 720',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+    }
 }
