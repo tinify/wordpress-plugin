@@ -118,6 +118,40 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $this->assertContains('With these settings no images will be compressed.', $statuses);
     }
 
+    public function testShouldShowResizingWhenOriginalEnabled() {
+        $element = self::$driver->findElement(WebDriverBy::id('tinypng_sizes_0'));
+        if (!$element->getAttribute('checked')) {
+            $element->click();
+        }
+        $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
+        $texts = array_map('innerText', $labels);
+        $this->assertContains('fit original image within x pixels (width x height)', $texts);
+        $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
+        $texts = array_map('innerText', $paragraphs);
+        $this->assertContains('Resizing takes 1 additional compression per image larger than the specified resolution.', $texts);
+        $this->assertNotContains('Enable compressing the original image size to configure resizing.', $texts);
+    }
+
+    public function testShouldNotShowResizingWhenOriginalDisabled() {
+        $element = self::$driver->findElement(WebDriverBy::id('tinypng_sizes_0'));
+        if ($element->getAttribute('checked')) {
+            $element->click();
+        }
+        $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
+        $texts = array_map('innerText', $labels);
+        $this->assertNotContains('fit original image within x pixels (width x height)', $texts);
+        $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
+        $texts = array_map('innerText', $paragraphs);
+        $this->assertNotContains('Resizing takes 1 additional compression per image larger than the specified resolution.', $texts);
+        $this->assertContains('Enable compressing the original image size to configure resizing.', $texts);
+    }
+
+    public function testShouldPersistResizingSettings() {
+        $this->enable_resize(123, 456);
+        $this->assertEquals('123', self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_width'))->getAttribute('value'));
+        $this->assertEquals('456', self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_height'))->getAttribute('value'));
+    }
+
     public function testStatusPresenceOK() {
         reset_webservice();
         $this->set_api_key('PNG123');

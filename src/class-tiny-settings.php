@@ -243,22 +243,27 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_resize() {
-        echo '<p>' . self::translate_escape('Resizing the original image is 1 additional compression each image that need resizing') . '.</p>';
+        echo '<p>' . self::translate_escape("Automatically resize large images to a smaller resolution. Enabling this option will resize the original image when it's too large, using the TinyPNG API") . '.</p>';
+        echo '<p class="tiny-resize-unavailable" style="display: none">' . self::translate_escape("Enable compressing the original image size to configure resizing") . '.</p>';
+
         $id = self::get_prefixed_name("resize_original_enabled");
         $field = self::get_prefixed_name("resize_original[enabled]");
         $label = self::translate_escape('fit original image within');
+        $class = "tiny-resize-available";
         ?>
-        <p><input type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
-        <label for="<?php echo $id; ?>"><?php echo $label; ?>
+        <p><input class="<?php echo $class ?>" type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
+        <label class="<?php echo $class ?>" for="<?php echo $id; ?>"><?php echo $label; ?>
         <?php $this->render_resize_input('width') ?> x <?php $this->render_resize_input('height') ?> pixels (width x height)</label></p>
         <?php
+        echo '<p class="tiny-resize-available">' . sprintf(self::translate_escape("Resizing takes %s per image larger than the specified resolution"), '<strong>' . self::translate_escape('1 additional compression') . '</strong>') . '.</p>';
     }
 
     public function render_resize_input($name) {
         $id = sprintf(self::get_prefixed_name('resize_original_%s'), $name);
         $field = sprintf(self::get_prefixed_name('resize_original[%s]'), $name);
         $settings = get_option(self::get_prefixed_name('resize_original'));
-        echo '<input type="text" id="'. $id .'" name="' . $field . '" value="' . $settings[$name] . '" size="5" />';
+        $value = isset($settings[$name]) ? $settings[$name] : "";
+        echo '<input type="text" id="'. $id .'" name="' . $field . '" value="' . $value . '" size="5" />';
     }
 
     public function get_compression_count() {

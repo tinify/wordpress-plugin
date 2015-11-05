@@ -51,3 +51,7 @@
     box-shadow: 0px 1px 0px #DFDFDF;
     padding: 5px;
 }
+
+p.tiny-resize-unavailable {
+    font-style: italic;
+}

@@ -161,6 +161,23 @@
       totalSelectedSizes = jQuery('input[name*="tinypng_sizes"]:checked').length
       jQuery('#tiny-image-sizes-notice').load(ajaxurl + '?action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes)
     })
+
+    function update_resize_settings() {
+      if (jQuery('#tinypng_sizes_0').prop('checked')) {
+        jQuery('.tiny-resize-available').show()
+        jQuery('.tiny-resize-unavailable').hide()
+      } else {
+        jQuery('.tiny-resize-available').hide()
+        jQuery('.tiny-resize-unavailable').show()
+      }
+
+      var elements = jQuery('#tinypng_resize_original_width, #tinypng_resize_original_height')
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].disabled = !jQuery('#tinypng_resize_original_enabled').prop('checked')
+      }
+    }
+    update_resize_settings()
+    jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(update_resize_settings)
   }
 
   jQuery('.tiny-notice a.tiny-dismiss').click(dismiss_notice)
