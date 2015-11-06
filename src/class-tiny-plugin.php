@@ -213,7 +213,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if (count($missing) > 0) {
             printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
             $original = $tiny_metadata->get_value();
-            if ($original['output']['resized']) {
+            if (isset($original['output']['resized'])) {
                 echo '<br/>';
                 printf(self::translate_escape('Resized original to %dx%d'), $original['output']['width'], $original['output']['height']);
             }
@@ -229,7 +229,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         } else {
             printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
             $original = $tiny_metadata->get_value();
-            if ($original['output']['resized']) {
+            if (isset($original['output']['resized'])) {
                 echo '<br/>';
                 printf(self::translate_escape('Resized original to %dx%d'), $original['output']['width'], $original['output']['height']);
             }
