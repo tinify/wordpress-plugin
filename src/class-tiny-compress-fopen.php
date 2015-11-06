@@ -82,20 +82,13 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         if (!$resize) {
             return array();
         }
-
-        $body = array('resize' => array(
-            'method' => 'fit',
-            'width' => $resize['width'],
-            'height' => $resize['height']
-        ));
-
         return array(
             'http' => array(
                 'header' => array(
                     'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
                     'Content-Type: application/json'
                  ),
-                'content' => json_encode($body)
+                'content' => json_encode(array('resize' => $resize))
             )
         );
     }

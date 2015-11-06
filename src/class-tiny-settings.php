@@ -164,15 +164,25 @@ class Tiny_Settings extends Tiny_WP_Base {
         return isset($setting['enabled']) && $setting['enabled'] === 'on';
     }
 
-    public function get_resize_resolution() {
+    public function get_resize_options() {
         $setting = get_option(self::get_prefixed_name('resize_original'));
-        if (!$this->get_resize_enabled() || !isset($setting['width']) || !isset($setting['height'])) {
+        if (!$this->get_resize_enabled()) {
             return false;
         }
 
         $width = intval($setting['width']);
         $height = intval($setting['height']);
-        return $width > 0 && $height > 0 ? array('width' => $width, 'height' => $height) : false;
+        $method = $width > 0 && $height > 0 ? 'fit' : 'scale';
+
+        $options['method'] = $method;
+        if ($width > 0) {
+            $options['width'] = $width;
+        }
+        if ($height > 0) {
+            $options['height'] = $height;
+        }
+
+        return sizeof($options) >= 2 ? $options : false;
     }
 
     public function render_section() {

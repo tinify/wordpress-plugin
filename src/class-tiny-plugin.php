@@ -116,7 +116,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             try {
                 $tiny_metadata->add_request($uncompressed_size);
                 $tiny_metadata->update();
-                $resize = $tiny_metadata->is_resizable($uncompressed_size) ? $this->settings->get_resize_resolution() : false;
+                $resize = $tiny_metadata->is_resizable($uncompressed_size) ? $this->settings->get_resize_options() : false;
                 $response = $compressor->compress_file($tiny_metadata->get_filename($uncompressed_size), $resize);
                 $tiny_metadata->add_response($response, $uncompressed_size);
                 $success++;

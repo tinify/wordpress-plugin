@@ -85,7 +85,7 @@ abstract class Tiny_Compress {
         file_put_contents($file, $output);
 
         if ($resize_options) {
-            $details['output'] = self::set_resize_details($file, $details) + $details['output'];
+            $details['output'] = self::update_details($file, $details) + $details['output'];
         }
 
         return $details;
@@ -131,7 +131,7 @@ abstract class Tiny_Compress {
         return $width > $resize_options['width'] || $height > $resize_options['height'];
     }
 
-    protected static function set_resize_details($file, $details) {
+    protected static function update_details($file, $details) {
         $size = filesize($file);
         list($width, $height) = getimagesize($file);
         return array(

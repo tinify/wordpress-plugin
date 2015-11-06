@@ -77,17 +77,10 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         if (!$resize) {
             return array();
         }
-
-        $body = array('resize' => array(
-            'method' => 'fit',
-            'width' => $resize['width'],
-            'height' => $resize['height']
-        ));
-
         return array(
             CURLOPT_USERPWD => 'api:' . $this->api_key,
             CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
-            CURLOPT_POSTFIELDS => json_encode($body)
+            CURLOPT_POSTFIELDS => json_encode(array('resize' => $resize))
         );
     }
 
