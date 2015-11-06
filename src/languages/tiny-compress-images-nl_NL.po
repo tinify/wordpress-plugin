@@ -204,3 +204,33 @@ msgstr "Je wordt genotificeerd op deze pagina bij voltooing"
 
 msgid "Settings"
 msgstr "Instellingen"
+
+msgid "Resize original"
+msgstr "Orgineel verkleinen"
+
+msgid "Automatically resize the orginal image to a lower resolution. Enabling this option will resize the original image when it exceeds the specified width or height, using the TinyPNG API"
+msgstr "Verkleint automatisch de originele afbeelding naar een lagere resolutie. Wanneer deze optie is ingeschakeld wordt het origineel verkleint als het groter is dan de opgegeven breedte of hoogte"
+
+msgid "Enable the compression of the original image size to configure resizing"
+msgstr "Schakel de compressie van het originele formaat in om het origineel te verkleinen"
+
+msgid "fit original image within"
+msgstr "pas origineel binnen"
+
+msgid "Resizing takes %s per image larger than the specified resolution"
+msgstr "Verkleinen gebruikt %s per afbeelding die groter is dan de opgegeven resolutie"
+
+msgid "1 additional compression"
+msgstr "1 extra compressie"
+
+msgid "Resized original to %dx%d"
+msgstr "Origineel verkleind tot %dx%d"
+
+msgid "pixels"
+msgstr "pixels"
+
+msgid "width"
+msgstr "breedte"
+
+msgid "height"
+msgstr "hoogte"

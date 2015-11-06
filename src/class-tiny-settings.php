@@ -263,7 +263,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         ?>
         <p><input class="<?php echo $class ?>" type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
         <label class="<?php echo $class ?>" for="<?php echo $id; ?>"><?php echo $label; ?>
-        <?php $this->render_resize_input('width') ?> x <?php $this->render_resize_input('height') ?> pixels (width x height)</label></p>
+        <?php $this->render_resize_input('width') ?> x <?php $this->render_resize_input('height') ?> <?php printf("%s (%s x %s)", self::translate_escape('pixels'), self::translate_escape('width'), self::translate_escape('height')) ?></label></p>
         <?php
         echo '<p class="tiny-resize-available">' . sprintf(self::translate_escape("Resizing takes %s per image larger than the specified resolution"), '<strong>' . self::translate_escape('1 additional compression') . '</strong>') . '.</p>';
     }
