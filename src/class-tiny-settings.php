@@ -272,8 +272,8 @@ class Tiny_Settings extends Tiny_WP_Base {
         $id = sprintf(self::get_prefixed_name('resize_original_%s'), $name);
         $field = sprintf(self::get_prefixed_name('resize_original[%s]'), $name);
         $settings = get_option(self::get_prefixed_name('resize_original'));
-        $value = isset($settings[$name]) ? $settings[$name] : "";
-        echo '<input type="text" id="'. $id .'" name="' . $field . '" value="' . $value . '" size="5" />';
+        $value = isset($settings[$name]) ? $settings[$name] : "2048";
+        echo '<input type="number" id="'. $id .'" name="' . $field . '" value="' . $value . '" size="5" />';
     }
 
     public function get_compression_count() {

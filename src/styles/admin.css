@@ -55,3 +55,7 @@
 p.tiny-resize-unavailable {
     font-style: italic;
 }
+
+input[type=number][name*="tinypng_resize_original"] {
+    width: 65px;
+}
