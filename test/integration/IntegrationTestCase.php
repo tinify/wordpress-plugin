@@ -88,4 +88,17 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         }
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
     }
+
+    protected function view_edit_image($image_title = 'input-example') {
+        $url = wordpress('/wp-admin/upload.php');
+        if (self::$driver->getCurrentUrl() != $url) {
+            self::$driver->get($url);
+        }
+        if (wordpress_version() >= 43) {
+            $selector = "//span[text()='" . $image_title . "']";
+        } else {
+            $selector = "//a[contains(text(),'" . $image_title . "')]";
+        }
+        self::$driver->findElement(WebDriverBy::xpath($selector))->click();
+    }
 }

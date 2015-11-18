@@ -87,7 +87,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('Resized original to 300x200',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
-        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
@@ -98,7 +98,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('Resized original to 300x200',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
-        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
@@ -110,7 +110,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertNotContains('Resized original',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
-        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 720',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
@@ -123,7 +123,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertNotContains('Resized original',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
-        self::$driver->findElement(WebDriverBy::xpath('//a[contains(text(),"input-example")]'))->click();
+        $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 720',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }

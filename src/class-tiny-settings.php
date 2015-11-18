@@ -68,7 +68,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function image_sizes_notice() {
-        $this->render_image_sizes_notice($_GET["image_sizes_selected"]);
+        $this->render_image_sizes_notice($_GET["image_sizes_selected"], $_GET["resize_original"]);
         exit();
     }
 
@@ -217,7 +217,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         }
 
         echo '<div id="tiny-image-sizes-notice">';
-        $this->render_image_sizes_notice(count(self::get_active_tinify_sizes()));
+        $this->render_image_sizes_notice(count(self::get_active_tinify_sizes()), self::get_resize_enabled());
         echo '</div>';
     }
 
@@ -234,8 +234,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 <?php
     }
 
-    public function render_image_sizes_notice($active_image_sizes_count) {
-        echo '<br/>';
+    public function render_image_sizes_notice($active_image_sizes_count, $resize_original_enabled) {
+        echo '<br>';
+        if ($resize_original_enabled) {
+            $active_image_sizes_count++;
+        }
         if ($active_image_sizes_count < 1) {
             echo '<p>' . self::translate_escape('With these settings no images will be compressed') . '.</p>';
         }
@@ -245,7 +248,7 @@ class Tiny_Settings extends Tiny_WP_Base {
             echo '<p>';
             echo self::translate_escape('With these settings you can compress');
             echo ' <strong>';
-            printf(self::translate_escape('%s images'), $free_images_per_month);
+            printf(self::translate_escape('at least %s images'), $free_images_per_month);
             echo '</strong> ';
             echo self::translate_escape('for free each month') . '.';
             echo '</p>';
@@ -253,19 +256,26 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_resize() {
-        echo '<p>' . self::translate_escape("Automatically resize the orginal image to a lower resolution. Enabling this option will resize the original image when it exceeds the specified width or height, using the TinyPNG API") . '.</p>';
         echo '<p class="tiny-resize-unavailable" style="display: none">' . self::translate_escape("Enable the compression of the original image size to configure resizing") . '.</p>';
 
         $id = self::get_prefixed_name("resize_original_enabled");
         $field = self::get_prefixed_name("resize_original[enabled]");
-        $label = self::translate_escape('fit original image within');
-        $class = "tiny-resize-available";
+        $label = self::translate_escape('Resize orginal images larger than');
+
+        echo '<p class="tiny-resize-available">';
         ?>
-        <p><input class="<?php echo $class ?>" type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
-        <label class="<?php echo $class ?>" for="<?php echo $id; ?>"><?php echo $label; ?>
-        <?php $this->render_resize_input('width') ?> x <?php $this->render_resize_input('height') ?> <?php printf("%s (%s x %s)", self::translate_escape('pixels'), self::translate_escape('width'), self::translate_escape('height')) ?></label></p>
+        <input  type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
+        <label for="<?php echo $id; ?>"><?php echo $label; ?>:</label><br>
         <?php
-        echo '<p class="tiny-resize-available">' . sprintf(self::translate_escape("Resizing takes %s per image larger than the specified resolution"), '<strong>' . self::translate_escape('1 additional compression') . '</strong>') . '.</p>';
+
+        echo '</p>';
+        echo '<p class="tiny-resize-available tiny-resize-resolution">';
+
+        printf("%s: ", self::translate_escape('Max Width'));
+        $this->render_resize_input('width');
+        printf("%s: ", self::translate_escape('Max Height'));
+        $this->render_resize_input('height');
+        echo '</p>';
     }
 
     public function render_resize_input($name) {

@@ -89,7 +89,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     public function testShouldShowTotalImagesInfo() {
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('With these settings you can compress 100 images for free each month.', $statuses);
+        $this->assertContains('With these settings you can compress at least 100 images for free each month.', $statuses);
     }
 
     public function testShouldUpdateTotalImagesInfo() {
@@ -97,11 +97,11 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             WebDriverBy::xpath('//input[@type="checkbox" and @name="tinypng_sizes[0]" and @checked="checked"]'));
         $element->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'With these settings you can compress 125 images for free each month.'));
+            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'With these settings you can compress at least 125 images for free each month.'));
         // Not really necessary anymore to assert this.
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('With these settings you can compress 125 images for free each month.', $statuses);
+        $this->assertContains('With these settings you can compress at least 125 images for free each month.', $statuses);
     }
 
     public function testShouldShowCorrectNoImageSizesInfo() {
@@ -125,10 +125,9 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         }
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
-        $this->assertContains('fit original image within x pixels (width x height)', $texts);
+        $this->assertContains('Resize orginal images larger than:', $texts);
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
-        $this->assertContains('Resizing takes 1 additional compression per image larger than the specified resolution.', $texts);
         $this->assertNotContains('Enable the compression of the original image size to configure resizing.', $texts);
     }
 
@@ -139,10 +138,9 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         }
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
-        $this->assertNotContains('fit original image within x pixels (width x height)', $texts);
+        $this->assertNotContains('Resize orginal images larger than:', $texts);
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
-        $this->assertNotContains('Resizing takes 1 additional compression per image larger than the specified resolution.', $texts);
         $this->assertContains('Enable the compression of the original image size to configure resizing.', $texts);
     }
 
