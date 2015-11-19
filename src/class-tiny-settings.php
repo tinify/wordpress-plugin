@@ -68,7 +68,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function image_sizes_notice() {
-        $this->render_image_sizes_notice($_GET["image_sizes_selected"], $_GET["resize_original"]);
+        $this->render_image_sizes_notice($_GET["image_sizes_selected"], isset($_GET["resize_original"]));
         exit();
     }
 
@@ -260,7 +260,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         $id = self::get_prefixed_name("resize_original_enabled");
         $field = self::get_prefixed_name("resize_original[enabled]");
-        $label = self::translate_escape('Resize orginal images larger than');
+        $label = self::translate_escape('Resize and compress orginal images to fit within');
 
         echo '<p class="tiny-resize-available">';
         ?>
