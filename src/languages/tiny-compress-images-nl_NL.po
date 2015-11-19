@@ -136,8 +136,8 @@ msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
 msgid "With these settings you can compress"
 msgstr "Met deze instellingen kun je elke maand"
 
-msgid "%s images"
-msgstr "%s afbeeldingen"
+msgid "at least %s images"
+msgstr "minimaal %s afbeeldingen"
 
 msgid "for free each month"
 msgstr "gratis comprimeren"
