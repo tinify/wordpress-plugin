@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress, optimize, shrink, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda
 Requires at least: 3.0.6
 Tested up to: 4.4
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,6 +97,9 @@ A: Everything will keep on working, but newly uploaded images will not be compre
 A: Yes! After installing the plugin, go to Tools > Compress JPEG & PNG images, and click on "Compress all images" to compress all uncompressed images in your media library.
 
 == Changelog ==
+
+= 1.5.0 =
+* Resize oversized uploads automatically, using the TinyPNG API. Set a maximum width and/or height and the uploaded original image will be scaled to fit your maximum resolution.
 
 = 1.4.0 =
 * Added indication of number of images you can compress for free each month.
