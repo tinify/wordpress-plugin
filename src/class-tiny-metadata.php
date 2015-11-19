@@ -75,7 +75,7 @@ class Tiny_Metadata {
 
     public function update_wp_metadata($wp_metadata) {
         $tiny_metadata = $this->get_value();
-        if (isset($tiny_metadata) && isset($tiny_metadata['output'])) {
+        if (isset($tiny_metadata) && isset($tiny_metadata['output']) && isset($tiny_metadata['output']['width']) && isset($tiny_metadata['output']['height'])) {
             $wp_metadata['width'] = $tiny_metadata['output']['width'];
             $wp_metadata['height'] = $tiny_metadata['output']['height'];
         }
