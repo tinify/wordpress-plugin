@@ -98,6 +98,9 @@ abstract class Tiny_WP_Base {
     public function init() {
     }
 
+    public function xmlrpc_init() {
+    }
+
     public function admin_init() {
     }
 }
