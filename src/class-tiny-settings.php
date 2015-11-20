@@ -30,6 +30,10 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function __construct() {
         parent::__construct();
         $this->notices = new Tiny_Notices();
+
+        if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST && $this->get_api_key()) {
+            $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
+        }
     }
 
     public function admin_init() {
