@@ -287,6 +287,8 @@ class Tiny_Settings extends Tiny_WP_Base {
         printf("%s: ", self::translate_escape('Max Height'));
         $this->render_resize_input('height');
         echo '</p>';
+
+        echo '<p class="tiny-resize-available">' . sprintf(self::translate_escape("Resizing takes %s per image larger than the specified resolution"), '<strong>' . self::translate_escape('1 additional compression') . '</strong>') . '.</p>';
     }
 
     public function render_resize_input($name) {
