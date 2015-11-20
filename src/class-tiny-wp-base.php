@@ -42,6 +42,10 @@ abstract class Tiny_WP_Base {
         return floatval(self::wp_version()) >= $version;
     }
 
+    protected function is_xmlrpc_request() {
+        return defined('XMLRPC_REQUEST') && XMLRPC_REQUEST;
+    }
+
     public static function plugin_version() {
         if (is_null(self::$plugin_version)) {
             $plugin_data = get_plugin_data(dirname(__FILE__) . '/../tiny-compress-images.php');
@@ -68,7 +72,9 @@ abstract class Tiny_WP_Base {
 
     public function __construct() {
         add_action('init', $this->get_method('init'));
-        if (is_admin()) {
+        if (self::is_xmlrpc_request()) {
+            add_action('init', $this->get_method('xmlrpc_init'));
+        } elseif (is_admin()) {
             add_action('admin_init', $this->get_method('admin_init'));
         }
     }

@@ -30,9 +30,16 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function __construct() {
         parent::__construct();
         $this->notices = new Tiny_Notices();
+    }
 
-        if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST && $this->get_api_key()) {
-            $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
+    private function init_compressor() {
+        $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
+    }
+
+    public function xmlrpc_init() {
+        try {
+            $this->init_compressor();
+        } catch (Tiny_Exception $e) {
         }
     }
 
@@ -42,8 +49,8 @@ class Tiny_Settings extends Tiny_WP_Base {
                 self::translate_escape('Please fill in an API key to start compressing images'));
             $this->notices->show('setting', $link, 'error', false);
         }
-        try {
-            $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
+         try {
+            $this->init_compressor();
         } catch (Tiny_Exception $e) {
             $this->notices->show('compressor_exception', self::translate_escape($e->getMessage()), 'error', false);
         }
