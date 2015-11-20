@@ -125,7 +125,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         }
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
-        $this->assertContains('Resize orginal images larger than:', $texts);
+        $this->assertContains('Resize and compress orginal images to fit within:', $texts);
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
         $this->assertNotContains('Enable the compression of the original image size to configure resizing.', $texts);
@@ -138,7 +138,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         }
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
-        $this->assertNotContains('Resize orginal images larger than:', $texts);
+        $this->assertNotContains('Resize and compress orginal images to fit within:', $texts);
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
         $this->assertContains('Enable the compression of the original image size to configure resizing.', $texts);
