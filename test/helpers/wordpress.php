@@ -136,6 +136,10 @@ class WordPressStubs {
         $this->metadata[$id][$key] = $values;
     }
 
+    public function setMetadata($id, $values) {
+        $this->metadata[$id] = $values;
+    }
+
     public function getCalls($method) {
         return $this->calls[$method];
     }
@@ -156,9 +160,20 @@ class WordPressStubs {
         $this->stubs[$method] = $func;
     }
 
+    public function createImage($file_size, $path, $name) {
+        if (!$this->vfs->hasChild(self::UPLOAD_DIR . "/$path")) {
+            vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
+        }
+        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/$path");
+
+        vfsStream::newFile($name)
+            ->withContent(new LargeFileContent($file_size))
+            ->at($dir);
+    }
+
     public function createImages($sizes=null, $original_size=12345, $path='14/01', $name='test') {
         vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
-        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/$path");
+        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/" . $path);
 
         vfsStream::newFile("$name.png")
             ->withContent(new LargeFileContent($original_size))
@@ -173,6 +188,29 @@ class WordPressStubs {
                 ->withContent(new LargeFileContent($size))
                 ->at($dir);
         }
+    }
+
+    public function createImagesFromMeta($wp_meta, $tiny_meta, $original_size = 1234567) {
+        $parts = explode("/", $wp_meta["file"]);
+        $file = array_pop($parts);
+        $path = implode("/", $parts);
+
+        vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
+        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/" . $path);
+
+        vfsStream::newFile($file)
+            ->withContent(new LargeFileContent($original_size))
+            ->at($dir);
+
+        foreach ($wp_meta["sizes"] as $image_size => $values) {
+            if (isset($tiny_meta[Tiny_Metadata::META_KEY][$image_size])) {
+                $file_size = $tiny_meta[Tiny_Metadata::META_KEY][$image_size]["output"]["size"];
+                vfsStream::newFile($values["file"])
+                    ->withContent(new LargeFileContent($file_size))
+                    ->at($dir);
+            }
+        }
+
     }
 
     public function getTestMetadata($path='14/01', $name='test') {
