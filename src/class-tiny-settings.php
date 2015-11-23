@@ -247,23 +247,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_image_sizes_notice($active_image_sizes_count, $resize_original_enabled) {
         echo '<br>';
+        echo '<p>' . self::translate_escape('Each selected size counts as a compression') . '. ';
+
         if ($resize_original_enabled) {
             $active_image_sizes_count++;
         }
         if ($active_image_sizes_count < 1) {
-            echo '<p>' . self::translate_escape('With these settings no images will be compressed') . '.</p>';
-        }
-        else {
+            echo self::translate_escape('With these settings no images will be compressed') . '.';
+        } else {
             $free_images_per_month = floor(self::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count);
-
-            echo '<p>';
             echo self::translate_escape('With these settings you can compress');
             echo ' <strong>';
             printf(self::translate_escape('at least %s images'), $free_images_per_month);
             echo '</strong> ';
             echo self::translate_escape('for free each month') . '.';
-            echo '</p>';
         }
+        echo '</p>';
     }
 
     public function render_resize() {

@@ -133,6 +133,9 @@ msgstr "Als je meer afbeeldingen wilt comprimeren kun je je %s aanpassen"
 msgid "Upgrade your %s if you like to compress more images"
 msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
 
+msgid "Each selected size counts as a compression"
+msgstr "Elke geselecteerde afmeting telt als een compressie"
+
 msgid "With these settings you can compress"
 msgstr "Met deze instellingen kun je elke maand"
 
@@ -184,8 +187,11 @@ msgstr "Deze tool comprimeert alle afbeeldingen in je media-bibliotheek"
 msgid "Only images that have not been compressed will be compressed"
 msgstr "Dit geldt alleen voor de afbeeldingen die nog niet zijn gecomprimeerd"
 
-msgid "We have found %d images in your media library"
-msgstr "We hebben %d afbeeldingen in de media-bibliotheek gevonden"
+msgid "We have found %d images in your media library and for each image %d sizes will be compressed"
+msgstr "We hebben %d afbeeldingen in de media-bibliotheek gevonden en voor elke afbeelding worden %d afmetingen gecomprimeerd"
+
+msgid "This results in %d compressions at most"
+msgstr "Dit resulteert in een maximaal verbruik van %d compressies"
 
 msgid "To begin, just press the button below"
 msgstr "Druk op de knop om te starten"

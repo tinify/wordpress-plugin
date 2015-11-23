@@ -89,7 +89,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     public function testShouldShowTotalImagesInfo() {
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('With these settings you can compress at least 100 images for free each month.', $statuses);
+        $this->assertContains('Each selected size counts as a compression. With these settings you can compress at least 100 images for free each month.', $statuses);
     }
 
     public function testShouldUpdateTotalImagesInfo() {
@@ -97,11 +97,11 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             WebDriverBy::xpath('//input[@type="checkbox" and @name="tinypng_sizes[0]" and @checked="checked"]'));
         $element->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'With these settings you can compress at least 125 images for free each month.'));
+            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'Each selected size counts as a compression. With these settings you can compress at least 125 images for free each month.'));
         // Not really necessary anymore to assert this.
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('With these settings you can compress at least 125 images for free each month.', $statuses);
+        $this->assertContains('Each selected size counts as a compression. With these settings you can compress at least 125 images for free each month.', $statuses);
     }
 
     public function testShouldShowCorrectNoImageSizesInfo() {
@@ -111,11 +111,11 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             $element->click();
         }
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'With these settings no images will be compressed.'));
+            WebDriverBy::cssSelector('#tiny-image-sizes-notice'), 'Each selected size counts as a compression. With these settings no images will be compressed.'));
         // Not really necessary anymore to assert this.
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-image-sizes-notice'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('With these settings no images will be compressed.', $statuses);
+        $this->assertContains('Each selected size counts as a compression. With these settings no images will be compressed.', $statuses);
     }
 
     public function testShouldShowResizingWhenOriginalEnabled() {
