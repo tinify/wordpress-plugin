@@ -21,8 +21,10 @@
 class Tiny_Plugin extends Tiny_WP_Base {
     const MEDIA_COLUMN = self::NAME;
     const MEDIA_COLUMN_HEADER = 'Compression';
+    const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
     private $settings;
+    private $twig;
 
     public static function jpeg_quality() {
           return 95;
@@ -116,16 +118,19 @@ class Tiny_Plugin extends Tiny_WP_Base {
             try {
                 $tiny_metadata->add_request($uncompressed_size);
                 $tiny_metadata->update();
+
                 $resize = $tiny_metadata->is_resizable($uncompressed_size) ? $this->settings->get_resize_options() : false;
                 $response = $compressor->compress_file($tiny_metadata->get_filename($uncompressed_size), $resize);
+
                 $tiny_metadata->add_response($response, $uncompressed_size);
+                $tiny_metadata->update();
                 $success++;
             } catch (Tiny_Exception $e) {
                 $tiny_metadata->add_exception($e, $uncompressed_size);
+                $tiny_metadata->update();
                 $failed++;
             }
         }
-        $tiny_metadata->update();
 
         return array($tiny_metadata, array('success' => $success, 'failed' => $failed));
     }
@@ -201,44 +206,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     private function render_compress_details($tiny_metadata) {
-        $missing = $tiny_metadata->get_uncompressed_sizes($this->settings->get_active_tinify_sizes());
-        $success = count($tiny_metadata->get_success_sizes());
-        $total = count($missing) + $success;
-        $progress = count($tiny_metadata->get_in_progress_sizes());
+        $active = $this->settings->get_active_tinify_sizes();
 
-        $duplicates = count($this->settings->get_active_tinify_sizes()) - $total;
-        $success += $duplicates;
-        $total += $duplicates;
+        $uncompressed = $tiny_metadata->get_uncompressed_sizes($this->settings->get_active_tinify_sizes());
+        $savings = $tiny_metadata->get_savings();
+        $error = $tiny_metadata->get_latest_error();
 
-        if (count($missing) > 0) {
-            printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
-            $original = $tiny_metadata->get_value();
-            if (isset($original['output']['resized'])) {
-                echo '<br/>';
-                printf(self::translate_escape('Resized original to %dx%d'), $original['output']['width'], $original['output']['height']);
-            }
-            echo '<br/>';
-            if (($error = $tiny_metadata->get_latest_error())) {
-                echo '<span class="error">' . self::translate_escape('Latest error') . ': '. self::translate_escape($error) .'</span><br/>';
-            }
-            echo '<button type="button" class="tiny-compress" data-id="' . $tiny_metadata->get_id() . '">' .
-                self::translate_escape('Compress') . '</button>';
-            echo '<div class="spinner hidden"></div>';
-        } elseif ($progress > 0) {
-            printf(self::translate_escape('Compressing %d sizes...'), count($this->settings->get_active_tinify_sizes()));
+        if ($tiny_metadata->get_in_progress_count() > 0) {
+            include(__DIR__ . '/views/compress-details-processing.php');
         } else {
-            printf(self::translate_escape('Compressed %d out of %d sizes'), $success, $total);
-            $original = $tiny_metadata->get_value();
-            if (isset($original['output']['resized'])) {
-                echo '<br/>';
-                printf(self::translate_escape('Resized original to %dx%d'), $original['output']['width'], $original['output']['height']);
-            }
-            $savings = $tiny_metadata->get_savings();
-            if ($savings['count'] > 0) {
-                echo '<br/>';
-                echo self::translate_escape('Total size') . ': ' . size_format($savings['input']) . '<br/>';
-                echo self::translate_escape('Compressed size') . ': ' . size_format($savings['output']);
-            }
+            include(__DIR__ . '/views/compress-details.php');
         }
     }
 
