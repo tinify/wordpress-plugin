@@ -1,7 +1,7 @@
 === Compress JPEG & PNG images ===
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
-Tags: compress, optimize, shrink, resize, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda
+Tags: compress, optimize, shrink, resize, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda, wordpress app
 Requires at least: 3.0.6
 Tested up to: 4.4
 Stable tag: 1.5.0
@@ -26,6 +26,7 @@ Make your website faster by compressing your JPEG and PNG images. This plugin au
 * Select which thumbnail sizes of an image may be compressed.
 * Converts from CMYK to RGB to save more space and maximize compatibility.
 * Automatic detection of images that can be recompressed.
+* Compress and resize uploads from the Wordpress mobile app.
 * No file size limit.
 
 = How does it work? =
@@ -101,6 +102,7 @@ A: Yes! After installing the plugin, go to Tools > Compress JPEG & PNG images, a
 
 = 1.5.0 =
 * Resize original images automatically when compressing, using the TinyPNG API. Set a maximum width and/or height and the original image will be scaled to fit your maximum resolution.
+* Added support for compressing and resizing uploads from the mobile Wordpress app (thanks to contributor Pale Purple!).
 
 = 1.4.0 =
 * Added indication of number of images you can compress for free each month.
