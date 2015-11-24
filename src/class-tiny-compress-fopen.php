@@ -66,8 +66,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         return array(self::decode($response), $headers, $status_code);
     }
 
-    protected function output_options() {
-        return array(
+    protected function output_options($resize) {
+        $options = array(
             'http' => array(
                 'method' => 'GET',
             ),
@@ -76,25 +76,17 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
                 'verify_peer' => true
             )
         );
-    }
-
-    protected function resize_options($resize) {
-        if (!$resize) {
-            return array();
+        if ($resize) {
+            $options['http']['header'] = array(
+                'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
+                'Content-Type: application/json'
+            );
+            $options['http']['content'] = json_encode(array('resize' => $resize));
         }
-        return array(
-            'http' => array(
-                'header' => array(
-                    'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
-                    'Content-Type: application/json'
-                 ),
-                'content' => json_encode(array('resize' => $resize))
-            )
-        );
     }
 
     protected function output($url, $resize) {
-        $options = array_replace_recursive($this->output_options(), $this->resize_options($resize));
+        $options = $this->output_options($resize);
         $context = stream_context_create($options);
         $request = @fopen($url, 'rb', false, $context);
 
