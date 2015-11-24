@@ -50,7 +50,7 @@ run_mysql() {
     then
       docker start "mysql-wordpress"
     else
-      docker run --name mysql-wordpress -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql
+      docker run --name mysql-wordpress -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:5.5
     fi
   fi
 }
