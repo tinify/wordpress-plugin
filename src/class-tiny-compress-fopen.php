@@ -51,6 +51,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
         if (!$request) {
             $headers = self::parse_headers($http_response_header);
+
             return array(array(
                 'error' => 'FopenError',
                 'message' => 'Could not compress, enable cURL for detailed error',
@@ -83,11 +84,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
             );
             $options['http']['content'] = json_encode(array('resize' => $resize));
         }
+        return $options;
     }
 
     protected function output($url, $resize) {
-        $options = $this->output_options($resize);
-        $context = stream_context_create($options);
+        $context = stream_context_create($this->output_options($resize));
         $request = @fopen($url, 'rb', false, $context);
 
         if ($request) {
