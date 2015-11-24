@@ -10,7 +10,7 @@ my $dir = dirname($0);
 
 my $hostip;
 if (`which docker-machine`) {
-  $hostip = `docker-machine ip default`;
+  $hostip = `docker-machine ip $ENV{'DOCKER_MACHINE_NAME'}`;
 } else {
   $hostip = `boot2docker ip`;
 }
