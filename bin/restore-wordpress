@@ -21,9 +21,13 @@ export WORDPRESS_DATABASE=wordpress_$version
 export MYSQL_ROOT_PASSWORD=root
 
 if hash docker-machine 2>/dev/null; then
-  export HOST_IP=$(docker-machine ip default)
+  export HOST_IP=$(docker-machine ip $DOCKER_MACHINE_NAME)
 else
   export HOST_IP=$(boot2docker ip)
+fi
+if [ -z "$HOST_IP" ]; then
+  echo "Could not find docker machine ip"
+  exit 2
 fi
 
 export MYSQL_DUMP_FILE=tmp/mysqldump_wordpress_$version.sql.gz
