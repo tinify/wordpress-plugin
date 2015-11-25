@@ -32,7 +32,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testShrink() {
         $this->set_api_key('PNG123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        $this->assertContains('5 sizes compressed',
+        $this->assertContains('Compressed size',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
 
@@ -43,11 +43,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array('medium', 'large'));
 
         self::$driver->get(wordpress('/wp-admin/upload.php'));
-        $this->assertContains('1 size compressed',
+        $this->assertContains('Compressed 1 out of 2 sizes',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
         self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images button'))->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('td.tiny-compress-images'), '2 sizes compressed'));
+            WebDriverBy::cssSelector('td.tiny-compress-images'), 'Compressed 2 out of 2 sizes'));
     }
 
     public function testLimitReached() {
@@ -82,26 +82,22 @@ class CompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function testResizeFit() {
-        $this->set_api_key('RESIZE123');
+        $this->set_api_key('JPG123');
         $this->enable_resize(300, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
-            WebDriverBy::cssSelector('td.tiny-compress-images a.popup'))->getCoordinates());
-        $this->assertContains('resized to 300x200',
-            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images div.popup'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
+        $this->assertContains('Resized original to 300x200',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
 
     public function testResizeScale() {
-        $this->set_api_key('RESIZE123');
+        $this->set_api_key('JPG123');
         $this->enable_resize(0, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
-            WebDriverBy::cssSelector('td.tiny-compress-images a.popup'))->getCoordinates());
-        $this->assertContains('resized to 300x200', self::$driver->findElement(
-            WebDriverBy::cssSelector('td.tiny-compress-images div.popup'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
+        $this->assertContains('Resized original to 300x200',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -109,30 +105,26 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
     public function testResizeNotNeeded()
     {
-        $this->set_api_key('RESIZE123');
+        $this->set_api_key('JPG123');
         $this->enable_resize(30000, 20000);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
-            WebDriverBy::cssSelector('td.tiny-compress-images a.popup'))->getCoordinates());
-        $this->assertNotContains('resized',
-            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images div.popup'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
+        $this->assertNotContains('Resized original',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
         $this->view_edit_image();
-        $this->assertContains('Dimensions: 1080 × 720',
+        $this->assertContains('Dimensions: 1080 × 330',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
 
     public function testResizeDisabled()
     {
-        $this->set_api_key('RESIZE123');
+        $this->set_api_key('JPG123');
         $this->enable_resize(300, 200);
         $this->disable_resize();
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
-            WebDriverBy::cssSelector('td.tiny-compress-images a.popup'))->getCoordinates());
-        $this->assertNotContains('resized',
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
+        $this->assertNotContains('Resized original',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
         $this->view_edit_image();
-        $this->assertContains('Dimensions: 1080 × 720',
+        $this->assertContains('Dimensions: 1080 × 330',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
 }
