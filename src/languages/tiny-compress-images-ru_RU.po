@@ -37,7 +37,7 @@ msgstr "оригинальное изображение"
 msgid "You can choose to compress different image sizes created by WordPress here"
 msgstr "Здесь вы можете выбрать, какие размеры изображений сжимать"
 
-msgid "Remember each additional image size will affect your TinyPNG monthly usage"
+msgid "Each selected size counts as a compression"
 msgstr "Помните, каждый дополнительный типоразмер влияет на месячное использование сервиса TinyPNG"
 
 msgid "Compression"

@@ -36,7 +36,7 @@ msgstr "原始大小"
 msgid "You can choose to compress different image sizes created by WordPress here"
 msgstr "你可以在這裡選擇要壓縮的圖片大小，由 WordPress 建立"
 
-msgid "Remember each additional image size will affect your TinyPNG monthly usage"
+msgid "Each selected size counts as a compression"
 msgstr "請記住，每個額外圖片尺寸都會影響你的 TinyPNG 每月使用量"
 
 msgid "Compression"
