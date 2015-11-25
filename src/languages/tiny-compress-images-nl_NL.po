@@ -217,7 +217,7 @@ msgstr "Schakel compressie van de originele afbeelding in om te kunnen verkleine
 msgid "Resize and compress orginal images to fit within"
 msgstr "Verklein en comprimeer de originele afbeelding"
 
-msgid "Resizing takes %s per image larger than the specified resolution"
+msgid "Resizing takes %s for each image larger than the given dimensions"
 msgstr "Verkleinen gebruikt %s voor elke afbeelding die groter is dan de vermelde afmetingen"
 
 msgid "1 additional compression"

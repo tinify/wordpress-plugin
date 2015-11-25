@@ -247,8 +247,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_image_sizes_notice($active_image_sizes_count, $resize_original_enabled) {
         echo '<br>';
-        echo '<p>' . self::translate_escape('Each selected size counts as a compression') . '. ';
-
+        echo '<p>';
+        echo self::translate_escape('Each selected size counts as a compression') . '. ';
         if ($resize_original_enabled) {
             $active_image_sizes_count++;
         }
@@ -266,7 +266,9 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_resize() {
-        echo '<p class="tiny-resize-unavailable" style="display: none">' . self::translate_escape("Enable the compression of the original image size to configure resizing") . '.</p>';
+        echo '<p class="tiny-resize-unavailable" style="display: none">';
+        echo self::translate_escape("Enable the compression of the original image size to configure resizing") . '.';
+        echo '</p>';
 
         $id = self::get_prefixed_name("resize_original_enabled");
         $field = self::get_prefixed_name("resize_original[enabled]");
@@ -277,17 +279,18 @@ class Tiny_Settings extends Tiny_WP_Base {
         <input  type="checkbox" id="<?php echo $id ?>" name="<?php echo $field ?>" value="on" <?php if ($this->get_resize_enabled()) { echo ' checked="checked"'; } ?>/>
         <label for="<?php echo $id; ?>"><?php echo $label; ?>:</label><br>
         <?php
-
         echo '</p>';
-        echo '<p class="tiny-resize-available tiny-resize-resolution">';
 
+        echo '<p class="tiny-resize-available tiny-resize-resolution">';
         printf("%s: ", self::translate_escape('Max Width'));
         $this->render_resize_input('width');
         printf("%s: ", self::translate_escape('Max Height'));
         $this->render_resize_input('height');
         echo '</p>';
 
-        echo '<p class="tiny-resize-available">' . sprintf(self::translate_escape("Resizing takes %s per image larger than the specified resolution"), '<strong>' . self::translate_escape('1 additional compression') . '</strong>') . '.</p>';
+        echo '<p class="tiny-resize-available">';
+        echo sprintf(self::translate_escape("Resizing takes %s for each image larger than the given dimensions"), '<strong>' . self::translate_escape('1 additional compression') . '</strong>') . '.';
+        echo '</p>';
     }
 
     public function render_resize_input($name) {
