@@ -18,7 +18,7 @@ msgstr "PNG 和 JPEG 壓縮"
 msgid "Visit %s to get an API key"
 msgstr "訪問 %s 取得一個 API 金鑰"
 
-msgid "Visit %s to view your usage or upgrade your account"
+msgid "Visit %s to view or upgrade your account"
 msgstr "訪問 %s 檢視你的使用量或升級你的帳號"
 
 msgid "TinyPNG Developer section"
@@ -36,7 +36,7 @@ msgstr "原始大小"
 msgid "You can choose to compress different image sizes created by WordPress here"
 msgstr "你可以在這裡選擇要壓縮的圖片大小，由 WordPress 建立"
 
-msgid "Each selected size counts as a compression"
+msgid "Remember each selected size counts as a compression"
 msgstr "請記住，每個額外圖片尺寸都會影響你的 TinyPNG 每月使用量"
 
 msgid "Compression"

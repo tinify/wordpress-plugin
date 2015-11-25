@@ -4,8 +4,8 @@ msgstr "PNG- en JPEG-compressie"
 msgid "Visit %s to get an API key"
 msgstr "Bezoek de %s om een API-sleutel te verkrijgen"
 
-msgid "Visit %s to view your usage or upgrade your account"
-msgstr "Bezoek de %s om je verbruik te bekijken of je account aan te passen"
+msgid "Visit %s to view or upgrade your account"
+msgstr "Bezoek de %s om je account te bekijken of aan te passen"
 
 msgid "TinyPNG Developer section"
 msgstr "TinyPNG Developer pagina"
@@ -22,7 +22,7 @@ msgstr "origineel"
 msgid "Choose sizes to compress"
 msgstr "Kies afmetingen om te comprimeren"
 
-msgid "Each selected size counts as a compression"
+msgid "Remember each selected size counts as a compression"
 msgstr "Elke geselecteerde afmeting telt als een compressie"
 
 msgid "Compression"
@@ -217,7 +217,7 @@ msgstr "Schakel compressie van de originele afbeelding in om te kunnen verkleine
 msgid "Resize and compress orginal images to fit within"
 msgstr "Verklein en comprimeer de originele afbeelding"
 
-msgid "Resizing takes %s for each image larger than the given dimensions"
+msgid "Resizing takes %s for each image that is larger"
 msgstr "Verkleinen gebruikt %s voor elke afbeelding die groter is dan de vermelde afmetingen"
 
 msgid "1 additional compression"

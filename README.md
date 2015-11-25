@@ -1,13 +1,17 @@
 [<img src="https://travis-ci.org/tinify/wordpress-plugin.svg?branch=master" alt="Build Status">](https://travis-ci.org/tinify/wordpress-plugin)
 
-# TinyPNG image compression for WordPress
+# Compress JPEG & PNG images for WordPress
+
 Make your website faster by compressing your JPEG and PNG images.
 
-This plugin automatically optimizes your images by integrating with the popular image compression services TinyJPG and TinyPNG. You can download the plugin from https://wordpress.org/plugins/tiny-compress-images/.
+This plugin automatically optimizes your images by integrating with the
+popular image compression services TinyJPG and TinyPNG. You can download the
+plugin from https://wordpress.org/plugins/tiny-compress-images/.
 
-Learn more about TinyPNG at https://tinypng.com.
+Learn more about TinyJPG and TinyPNG at https://tinypng.com/.
 
 ## Contact us
+
 Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 
 ## Information for plugin contributors
@@ -33,6 +37,7 @@ added, all versions between $version and $to_version are tested). E.g.
 `bin/integration-tests 41` or `bin/integration-tests 40 42`.
 
 ## License
+
 Copyright (C) 2015 Voormedia B.V.
 
 This program is free software; you can redistribute it and/or modify

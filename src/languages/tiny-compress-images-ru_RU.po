@@ -19,7 +19,7 @@ msgstr "Сжатие PNG и JPEG"
 msgid "Visit %s to get an API key"
 msgstr "Посетите %s, чтобы получить API ключ"
 
-msgid "Visit %s to view your usage or upgrade your account"
+msgid "Visit %s to view or upgrade your account"
 msgstr "Посетите %s, чтобы посмотреть свою статистику использования сервиса и повысить статус аккаунта"
 
 msgid "TinyPNG Developer section"
@@ -37,7 +37,7 @@ msgstr "оригинальное изображение"
 msgid "You can choose to compress different image sizes created by WordPress here"
 msgstr "Здесь вы можете выбрать, какие размеры изображений сжимать"
 
-msgid "Each selected size counts as a compression"
+msgid "Remember each selected size counts as a compression"
 msgstr "Помните, каждый дополнительный типоразмер влияет на месячное использование сервиса TinyPNG"
 
 msgid "Compression"
