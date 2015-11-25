@@ -95,7 +95,7 @@ A: No. There are no limitations on the size of the images you want to compress.
 A: Everything will keep on working, but newly uploaded images will not be compressed. Of course we encourage everyone to sign up for a full subscription.
 
 = Q: Can I compress all existing images in my media library? =
-A: Yes! After installing the plugin, go to Tools > Compress JPEG & PNG images, and click on "Compress all images" to compress all uncompressed images in your media library.
+A: Yes! After installing the plugin, go to Tools > Compress All Images, and click on the button to compress all uncompressed images in your media library.
 
 == Changelog ==
 
