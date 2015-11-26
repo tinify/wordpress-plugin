@@ -165,6 +165,6 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#tiny-compress-status p')));
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-status'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('API connection unsuccessful', $statuses);
+        $this->assertContains('API connection unsuccessful', $statuses[0]);
     }
 }
