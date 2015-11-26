@@ -17,10 +17,10 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ## Information for plugin contributors
 
 ### Prerequisites
-* A working docker installation (https://docs.docker.com/installation/).
+* A working Docker installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
 * Selenium Server (http://www.seleniumhq.org/download/).
-* Mysql client and admin tools.
+* MySQL client and admin tools.
 * Java runtime.
 
 ### Running the plugin in Wordpress
@@ -35,6 +35,16 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 2. Run `bin/integration-tests $version [$to_version]` (When $to_version is
 added, all versions between $version and $to_version are tested). E.g.
 `bin/integration-tests 41` or `bin/integration-tests 40 42`.
+
+### Create language files
+
+WordPress requires both .po and .mo files for each language. The .mo files
+can be generated with [gettext](https://www.gnu.org/software/gettext/) that
+needs to be installed first.
+
+1. Install gettext for example run `brew install gettext`.
+2. Add a link msgfmt `ln -s /usr/local/Cellar/gettext/0.19.6/bin/msgfmt ~/.bin`.
+3. Generate the .mo files `bin/format-language-files`.
 
 ## License
 
