@@ -84,9 +84,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testResizeFit() {
         $this->set_api_key('JPG123');
         $this->enable_resize(300, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
-        $this->assertContains('Resized original to 300x200',
-            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
+            WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->getCoordinates());
+        $this->assertContains('resized to 300x200',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -95,9 +97,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testResizeScale() {
         $this->set_api_key('JPG123');
         $this->enable_resize(0, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
-        $this->assertContains('Resized original to 300x200',
-            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
+            WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->getCoordinates());
+        $this->assertContains('resized to 300x200', self::$driver->findElement(
+            WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -107,9 +111,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
     {
         $this->set_api_key('JPG123');
         $this->enable_resize(30000, 20000);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
-        $this->assertNotContains('Resized original',
-            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
+            WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->getCoordinates());
+        $this->assertNotContains('resized',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
         $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 330',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -120,9 +126,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->set_api_key('JPG123');
         $this->enable_resize(300, 200);
         $this->disable_resize();
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.jpg');
-        $this->assertNotContains('Resized original',
-            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+        self::$driver->getMouse()->mouseMove(self::$driver->findElement(
+            WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->getCoordinates());
+        $this->assertNotContains('resized',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
         $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 330',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());

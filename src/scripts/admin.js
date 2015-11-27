@@ -190,13 +190,5 @@
     jQuery('.tiny-notice.is-dismissible button').unbind('click').click(dismiss_notice)
   })
 
-  jQuery('body').on('mouseover','.tiny-compress-images a.popup', function() {
-    jQuery('.tiny-compress-images div.popup[data-id="' + jQuery(this).data("id") + '"]').addClass("active")
-  });
-
-  jQuery('body').on('mouseout','.tiny-compress-images a.popup', function() {
-    jQuery('.tiny-compress-images div.popup').removeClass("active")
-  })
-
   window.tinyBulkCompress = bulk_compress
 }).call()

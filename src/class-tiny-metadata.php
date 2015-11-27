@@ -23,6 +23,7 @@ class Tiny_Metadata {
     const ORIGINAL = 0;
 
     private $id;
+    private $name;
     private $values;
     private $filenames;
     private $urls;
@@ -34,7 +35,7 @@ class Tiny_Metadata {
             $wp_metadata = wp_get_attachment_metadata($id);
         }
         $this->parse_wp_metadata($wp_metadata);
-        $this->values = get_post_meta($id, self::META_KEY, true);
+        $this->values = get_post_meta($this->id, self::META_KEY, true);
         if (!is_array($this->values)) {
             $this->values = array();
         }
@@ -55,6 +56,8 @@ class Tiny_Metadata {
             $path_prefix .= $path_info['dirname'] .'/';
             $url_prefix .= $path_info['dirname'] .'/';
         }
+
+        $this->name = $path_info['basename'];
 
         $this->filenames[self::ORIGINAL] = "$path_prefix${path_info['basename']}";
         $this->urls[self::ORIGINAL] = "$url_prefix${path_info['basename']}";
@@ -107,6 +110,10 @@ class Tiny_Metadata {
 
     public function get_id() {
         return $this->id;
+    }
+
+    public function get_name() {
+        return $this->name;
     }
 
     public function get_filename($size=self::ORIGINAL) {
@@ -172,6 +179,15 @@ class Tiny_Metadata {
 
     public function get_in_progress_count() {
         return count($this->get_in_progress_sizes());
+    }
+
+    public function get_missing_count() {
+        return count($this->get_compressed_sizes()) -
+            count(array_filter($this->get_compressed_sizes(), array($this, 'still_exists')));
+    }
+
+    public function get_modified_count() {
+        return count($this->get_compressed_sizes()) - $this->get_success_count() - $this->get_missing_count();
     }
 
     public function get_latest_error() {

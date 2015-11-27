@@ -34,14 +34,68 @@ msgstr "Comprimeer"
 msgid "Compress Images"
 msgstr "Comprimeer Afbeeldingen"
 
-msgid "Compressed %d out of %d sizes"
-msgstr "%d van de %d afmetingen zijn gecomprimeerd"
+msgid "size compressed"
+msgstr "afmeting gecomprimeerd"
 
-msgid "Compressing %d sizes..."
-msgstr "%d afmetingen worden gecomprimeerd..."
+msgid "sizes compressed"
+msgstr "afmetingen gecomprimeerd"
+
+msgid "%d size not compressed"
+msgstr "%d afmeting niet gecomprimeerd"
+
+msgid "%d sizes not compressed"
+msgstr "%d afmetingen niet gecomprimeerd"
+
+msgid "%d file missing"
+msgstr "%d bestand bestaat niet"
+
+msgid "%d files missing"
+msgstr "%d bestanden bestaan niet"
+
+msgid "%d file modified after compression"
+msgstr "%d bestand veranderd na comprimeren"
+
+msgid "%d files modified after compression"
+msgstr "%d bestanden veranderd na comprimeren"
+
+msgid "Compression details for %s"
+msgstr "Compressie details voor %s"
+
+msgid "Size"
+msgstr "Afmeting"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "(resized to %dx%d)"
+msgstr "(verkleind naar %dx%d)"
+
+msgid "(modified after compression)"
+msgstr "(veranderd na compressie)"
+
+msgid "(missing)"
+msgstr "(bestand mist)"
+
+msgid "ago"
+msgstr "geleden"
+
+msgid "Combined"
+msgstr "Gecombineerd"
+
+msgid "Total savings"
+msgstr "Totaal bespaard"
+
+msgid "size being compressed"
+msgstr "afmeting wordt gecomprimeerd"
+
+msgid "sizes being compressed"
+msgstr "afmetingen worden gecomprimeerd"
 
 msgid "Total size"
 msgstr "Totale grootte"
+
+msgid "Original size"
+msgstr "Originele grootte"
 
 msgid "Compressed size"
 msgstr "Gecomprimeerde grootte"

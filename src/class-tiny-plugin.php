@@ -58,6 +58,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
         $plugin = plugin_basename(dirname(dirname(__FILE__)) . '/tiny-compress-images.php');
         add_filter("plugin_action_links_$plugin", $this->get_method('add_plugin_links'));
+        add_thickbox();
     }
 
     public function admin_menu() {
@@ -211,6 +212,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $uncompressed = $tiny_metadata->get_uncompressed_sizes($this->settings->get_active_tinify_sizes());
         $savings = $tiny_metadata->get_savings();
         $error = $tiny_metadata->get_latest_error();
+        $missing = $tiny_metadata->get_missing_count();
+        $modified = $tiny_metadata->get_modified_count();
+        $compressing = (count($uncompressed) > 0) ? count($uncompressed) : count($active);
 
         if ($tiny_metadata->get_in_progress_count() > 0) {
             include(__DIR__ . '/views/compress-details-processing.php');
