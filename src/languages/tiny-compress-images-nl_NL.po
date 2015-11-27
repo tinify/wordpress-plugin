@@ -133,6 +133,15 @@ msgstr "Als je meer afbeeldingen wilt comprimeren kun je je %s aanpassen"
 msgid "Upgrade your %s if you like to compress more images"
 msgstr "Upgrade je %s als je meer afbeeldingen wilt comprimeren"
 
+msgid "Savings"
+msgstr "Besparingen"
+
+msgid "You have saved a total of %s on images"
+msgstr "Je hebt in totaal %s bespaard op afbeeldingen"
+
+msgid "No images compressed yet. Use %s to compress existing images"
+msgstr "Nog geen gecomprimeerde afbeeldingen. Gebruik %s om bestaande afbeeldingen te comprimeren"
+
 msgid "With these settings you can compress"
 msgstr "Met deze instellingen kan je elke maand"
 

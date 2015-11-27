@@ -167,4 +167,23 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $statuses = array_map('innerText', $elements);
         $this->assertContains('API connection unsuccessful', $statuses[0]);
     }
+
+    public function testShouldShowBulkCompressionLink() {
+        reset_webservice();
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#tiny-compress-savings p')));
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-savings'))->findElements(WebDriverBy::tagName('p'));
+        $statuses = array_map('innerText', $elements);
+        $this->assertContains('No images compressed yet. Use Compress All Images to compress existing images.', $statuses);
+    }
+
+    public function testShouldShowSavings() {
+        reset_webservice();
+        $this->set_api_key('PNG123');
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        self::$driver->get(wordpress('/wp-admin/options-media.php'));
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#tiny-compress-savings p')));
+        $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-savings'))->findElements(WebDriverBy::tagName('p'));
+        $statuses = array_map('innerText', $elements);
+        $this->assertContains('You have saved a total of 53.0 kB on images!', $statuses);
+    }
 }

@@ -155,6 +155,7 @@
 
   if (adminpage === "options-media-php") {
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
+    jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 
     jQuery('input[name*="tinypng_sizes"], input#tinypng_resize_original_enabled').on("click", function() {
       // Unfortunately, we need some additional information to display the correct notice.

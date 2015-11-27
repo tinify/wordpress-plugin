@@ -74,8 +74,13 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, self::translate('Connection status'), $this->get_method('render_pending_status'), 'media', $section);
 
+        $field = self::get_prefixed_name('savings');
+        register_setting('media', $field);
+        add_settings_field($field, self::translate('Savings'), $this->get_method('render_pending_savings'), 'media', $section);
+
         add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
+        add_action('wp_ajax_tiny_compress_savings', $this->get_method('total_savings_status'));
     }
 
     public function image_sizes_notice() {
@@ -85,6 +90,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function connection_status() {
         $this->render_status();
+        exit();
+    }
+
+    public function total_savings_status() {
+        $this->render_total_savings();
         exit();
     }
 
@@ -267,6 +277,27 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '</p>';
     }
 
+    public function render_total_savings() {
+        global $wpdb;
+
+        $total_savings = 0;
+        $result = $wpdb->get_results("SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' ORDER BY ID DESC", ARRAY_A);
+        for ($i = 0; $i < sizeof($result); $i++) {
+            $tiny_metadata = new Tiny_Metadata($result[$i]["ID"]);
+            $savings = $tiny_metadata->get_savings();
+            $total_savings += ($savings['input'] - $savings['output']);
+        }
+
+        echo '<p>';
+        if ($total_savings > 0) {
+            printf(self::translate_escape("You have saved a total of %s on images") . '!', '<strong>' . size_format($total_savings, 1) . '</strong>');
+        } else {
+            $link = '<a href="tools.php?page=tiny-bulk-compress">' . self::translate_escape('Compress All Images') . '</a>';
+            printf(self::translate_escape('No images compressed yet. Use %s to compress existing images') . '.', $link);
+        }
+        echo '</p>';
+    }
+
     public function render_resize() {
         echo '<p class="tiny-resize-unavailable" style="display: none">';
         echo self::translate_escape("Enable the compression of the original image size to configure resizing") . '.';
@@ -369,5 +400,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_pending_status() {
         echo '<div id="tiny-compress-status"><div class="spinner"></div></div>';
+    }
+
+    public function render_pending_savings() {
+        echo '<div id="tiny-compress-savings"><div class="spinner"></div></div>';
     }
 }
