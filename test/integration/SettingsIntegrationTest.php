@@ -136,12 +136,11 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         if ($element->getAttribute('checked')) {
             $element->click();
         }
+        self::$driver->wait(1)->until(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('p.tiny-resize-unavailable'), 'Enable the compression of the original image size to configure resizing.'));
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
         $this->assertNotContains('Resize and compress orginal images to fit within:', $texts);
-        $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
-        $texts = array_map('innerText', $paragraphs);
-        $this->assertContains('Enable the compression of the original image size to configure resizing.', $texts);
     }
 
     public function testShouldPersistResizingSettings() {
