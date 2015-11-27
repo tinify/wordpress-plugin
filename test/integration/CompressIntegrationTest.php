@@ -32,7 +32,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testShrink() {
         $this->set_api_key('PNG123');
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        $this->assertContains('5 sizes compressed',
+        $this->assertContains('sizes compressed',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
 
