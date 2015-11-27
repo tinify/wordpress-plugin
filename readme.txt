@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress, optimize, shrink, resize, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda, wordpress app
 Requires at least: 3.0.6
 Tested up to: 4.4
-Stable tag: 1.5.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,11 @@ A: Everything will keep on working, but newly uploaded images will not be compre
 A: Yes! After installing the plugin, go to Tools > Compress All Images, and click on the button to compress all uncompressed images in your media library.
 
 == Changelog ==
+
+= 1.6.0 =
+* Show additional compression details in the media library.
+* Restyled compression column in the media library.
+* Improved calculation of how many sizes have been compressed when there are sizes that have similar dimensions.
 
 = 1.5.0 =
 * Resize original images when compressing. Set a maximum width and/or height and your original images will be scaled down in case they are bigger.
