@@ -29,7 +29,6 @@
 
 .tiny-compress-images .details-container span.icon {
     position: absolute;
-    font: 400 20px/1 dashicons;
 }
 
 .tiny-compress-images .details-container .message {
@@ -37,18 +36,15 @@
     margin-left: 24px;
 }
 
-.tiny-compress-images .details-container span.success:before {
-    content: '\f147';
+.tiny-compress-images .details-container span.success {
     color: #0EE00E;
 }
 
-.tiny-compress-images .details-container span.error:before {
-    content: '\f534';
+.tiny-compress-images .details-container span.error {
     color: #D54E21;
 }
 
-.tiny-compress-images .details-container span.alert:before {
-    content: '\f534';
+.tiny-compress-images .details-container span.alert {
     color: gray;
 }
 

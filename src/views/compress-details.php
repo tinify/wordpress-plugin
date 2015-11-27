@@ -7,11 +7,11 @@
     <?php } ?>
     <span class="details">
         <?php if ($error) { ?>
-            <span class="icon error"></span>
+            <span class="icon dashicons dashicons-warning error"></span>
         <?php } else if ($missing > 0 || $modified > 0) { ?>
-            <span class="icon alert"></span>
+            <span class="icon dashicons dashicons-warning alert"></span>
         <?php } else { ?>
-            <span class="icon success"></span>
+            <span class="icon dashicons dashicons-yes success"></span>
         <?php } ?>
 
         <span class="message">
