@@ -103,6 +103,8 @@ A: Yes! After installing the plugin, go to Tools > Compress All Images, and clic
 * Show additional compression details in the media library.
 * Restyled compression column in the media library.
 * Improved calculation of how many sizes have been compressed when there are sizes that have similar dimensions.
+* Show total savings on settings page.
+* Link to Compress All Images tool from settings page when no images have yet been compressed.
 
 = 1.5.0 =
 * Resize original images when compressing. Set a maximum width and/or height and your original images will be scaled down in case they are bigger.
