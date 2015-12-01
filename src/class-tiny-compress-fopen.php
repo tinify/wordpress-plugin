@@ -80,7 +80,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         if ($resize) {
             $options['http']['header'] = array(
                 'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
-                'Content-Type: application/json'
+                'Content-Type: application/json',
+                'User-Agent: ' . Tiny_WP_Base::plugin_identification() . ' fopen'
             );
             $options['http']['content'] = json_encode(array('resize' => $resize));
         }

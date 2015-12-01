@@ -69,7 +69,8 @@ class Tiny_Compress_Curl extends Tiny_Compress {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_CAINFO => self::get_ca_file(),
-            CURLOPT_SSL_VERIFYPEER => true
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL'
         );
         if ($resize) {
             $options[CURLOPT_USERPWD] = 'api:' . $this->api_key;
