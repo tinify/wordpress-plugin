@@ -62,11 +62,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function admin_menu() {
-        add_management_page(
+        add_media_page(
             self::translate('Compress JPEG & PNG Images'), self::translate('Compress All Images'),
             'upload_files', 'tiny-bulk-compress', $this->get_method('bulk_compress_page')
         );
-
     }
 
     public function add_plugin_links($current_links) {
@@ -190,7 +189,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_redirect(add_query_arg(
             '_wpnonce',
             wp_create_nonce('tiny-bulk-compress'),
-            admin_url("tools.php?page=tiny-bulk-compress&ids=$ids")
+            admin_url("upload.php?page=tiny-bulk-compress&ids=$ids")
         ));
         exit();
     }

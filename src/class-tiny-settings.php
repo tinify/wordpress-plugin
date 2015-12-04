@@ -292,7 +292,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         if ($total_savings > 0) {
             printf(self::translate_escape("You have saved a total of %s on images") . '!', '<strong>' . size_format($total_savings, 1) . '</strong>');
         } else {
-            $link = '<a href="tools.php?page=tiny-bulk-compress">' . self::translate_escape('Compress All Images') . '</a>';
+            $link = '<a href="upload.php?page=tiny-bulk-compress">' . self::translate_escape('Compress All Images') . '</a>';
             printf(self::translate_escape('No images compressed yet. Use %s to compress existing images') . '.', $link);
         }
         echo '</p>';
