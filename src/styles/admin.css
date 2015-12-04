@@ -23,8 +23,8 @@
 }
 
 .tiny-compress-images .details-container button {
-    float: right;
     display: block;
+    margin: 5px 0 10px 24px;
 }
 
 .tiny-compress-images .details-container span.icon {

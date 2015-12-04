@@ -208,8 +208,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     private function render_compress_details($tiny_metadata) {
         $active = $this->settings->get_active_tinify_sizes();
-
-        $uncompressed = $tiny_metadata->get_uncompressed_sizes($this->settings->get_active_tinify_sizes());
+        $uncompressed = $tiny_metadata->get_uncompressed_sizes($active);
         $savings = $tiny_metadata->get_savings();
         $error = $tiny_metadata->get_latest_error();
         $missing = $tiny_metadata->get_missing_count();

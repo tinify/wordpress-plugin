@@ -8,6 +8,7 @@
     var element = jQuery(event.target)
     element.attr('disabled', 'disabled')
     element.closest('td').find('.spinner').removeClass('hidden')
+    element.closest('td').find('span.dashicons').addClass('hidden')
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",

@@ -128,6 +128,15 @@ class Tiny_Metadata {
         return isset($this->values[$size]) ? $this->values[$size] : null;
     }
 
+    public function get_end_time($size=self::ORIGINAL) {
+        $value = $this->get_value($size);
+        if (array_key_exists("end", $value)) {
+            return $value["end"];
+        } else if (array_key_exists("timestamp", $value)) {
+            return $value["timestamp"];
+        }
+    }
+
     public function has_been_compressed($size=self::ORIGINAL) {
         return isset($this->values[$size]) && isset($this->values[$size]['output']);
     }

@@ -1,24 +1,25 @@
 <div class="details-container">
-    <?php if (count($uncompressed) > 0) { ?>
-        <button type="button" class="tiny-compress button button-primary" data-id="<?= $tiny_metadata->get_id() ?>">
-            <?= self::translate_escape('Compress') ?>
-        </button>
-        <div class="spinner hidden"></div>
-    <?php } ?>
-    <span class="details">
+    <div class="details">
         <?php if ($error) { ?>
             <span class="icon dashicons dashicons-warning error"></span>
-        <?php } else if ($missing > 0 || $modified > 0) { ?>
+        <?php } else if ($missing > 0) { ?>
             <span class="icon dashicons dashicons-warning alert"></span>
-        <?php } else { ?>
+        <?php } else if ($modified > 0) { ?>
+            <span class="icon dashicons dashicons-yes alert"></span>
+        <?php } else if ($tiny_metadata->get_success_count() > 0 && count($uncompressed) > 0) { ?>
+            <span class="icon dashicons dashicons-yes alert"></span>
+        <?php } else if ($tiny_metadata->get_success_count() > 0) { ?>
             <span class="icon dashicons dashicons-yes success"></span>
         <?php } ?>
+        <span class="icon spinner hidden"></span>
 
-        <span class="message">
-            <strong><?= $tiny_metadata->get_success_count() ?></strong>
-            <span><?php printf(self::translate_escape('%s compressed'), ($tiny_metadata->get_success_count() == 1) ? "size" : "sizes") ?></span>
-        </span>
-        <br/>
+        <?php if ($tiny_metadata->get_success_count() > 0 || ($tiny_metadata->get_success_count() == 0 && count($uncompressed) == 0)) { ?>
+            <span class="message">
+                <strong><?= $tiny_metadata->get_success_count() ?></strong>
+                <span><?php printf(self::translate_escape('%s compressed'), ($tiny_metadata->get_success_count() == 1) ? "size" : "sizes") ?></span>
+            </span>
+            <br/>
+        <?php } ?>
 
         <?php if (count($uncompressed) > 0 && $modified == 0) { ?>
             <span class="message">
@@ -41,6 +42,13 @@
             <br />
         <?php } ?>
 
+        <?php if ($savings["input"] - $savings["output"]) { ?>
+            <span class="message">
+                <?= self::translate_escape('Total savings') ?>&nbsp;<?= size_format($savings["input"] - $savings["output"], 1) ?>
+            </span>
+            <br />
+        <?php } ?>
+
         <?php if ($error) { ?>
             <span class="message error_message">
                 <?= self::translate_escape('Latest error') . ': '. self::translate_escape($error) ?>
@@ -51,7 +59,13 @@
         <?php if ($tiny_metadata->get_success_count() > 0) { ?>
             <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?= $tiny_metadata->get_id() ?>">Details</a>
         <?php } ?>
-    </span>
+    </div>
+
+    <?php if (count($uncompressed) > 0) { ?>
+        <button type="button" class="tiny-compress button button-small button-primary" data-id="<?= $tiny_metadata->get_id() ?>">
+            <?= self::translate_escape('Compress') ?>
+        </button>
+    <?php } ?>
 </div>
 <?php if ($tiny_metadata->get_success_count() > 0) { ?>
     <div class="modal" id="modal_<?= $tiny_metadata->get_id() ?>">
@@ -90,7 +104,7 @@
                         </td>
                         <td><?= size_format($meta["input"]["size"], 1) ?></td>
                         <td><?= size_format($meta["output"]["size"], 1) ?></td>
-                        <td><?= human_time_diff($meta["end"]) . ' ' . self::translate_escape('ago') ?></td>
+                        <td><?= human_time_diff($tiny_metadata->get_end_time($size)) . ' ' . self::translate_escape('ago') ?></td>
                     </tr>
                     <?php $i++; ?>
                 <?php } ?>
@@ -106,7 +120,7 @@
                 <?php } ?>
             </table>
 
-            <p class="tiny-important"><?= self::translate_escape('Total savings') ?>:&nbsp;<?= size_format($savings["input"] - $savings["output"], 1) ?></p>
+            <p><strong><?php printf(self::translate_escape('Total savings %s'), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
         </div>
     </div>
 <?php } ?>
