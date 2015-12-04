@@ -101,7 +101,8 @@ A: Yes! After installing the plugin, go to Tools > Compress All Images, and clic
 
 = 1.6.0 =
 * Show additional compression details in the media library.
-* Restyled compression column in the media library.
+* Improved usability of the compression column in the media library.
+* Moved Compress All Images page from the Tools to the Media menu.
 * Improved calculation of how many sizes have been compressed when there are sizes that have similar dimensions.
 * Show total savings on settings page.
 * Link to Compress All Images tool from settings page when no images have yet been compressed.
