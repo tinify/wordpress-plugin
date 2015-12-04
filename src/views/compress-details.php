@@ -3,7 +3,7 @@
         <?php if ($error) { ?>
             <span class="icon dashicons dashicons-warning error"></span>
         <?php } else if ($missing > 0) { ?>
-            <span class="icon dashicons dashicons-warning alert"></span>
+            <span class="icon dashicons dashicons-yes alert"></span>
         <?php } else if ($modified > 0) { ?>
             <span class="icon dashicons dashicons-yes alert"></span>
         <?php } else if ($tiny_metadata->get_success_count() > 0 && count($uncompressed) > 0) { ?>
