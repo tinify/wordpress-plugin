@@ -66,6 +66,7 @@
                 </tr>
                 <?php $i = 0; ?>
                 <?php foreach ($tiny_metadata->get_compressed_sizes() as $size) { ?>
+                    <?php $meta = $tiny_metadata->get_value($size); ?>
                     <tr class="<?= ($i % 2 == 0) ? 'even' : 'odd' ?>">
                         <td>
                             <?php
@@ -77,8 +78,7 @@
                             if ($tiny_metadata->still_exists($size)) {
                                 if ($tiny_metadata->is_compressed($size)) {
                                     if ($tiny_metadata->is_resized($size)) {
-                                        $original = $tiny_metadata->get_value($size);
-                                        ?><em>&nbsp;<?php printf(self::translate_escape('(resized to %dx%d)'), $original['output']['width'], $original['output']['height']) ?></em><?php
+                                        ?><em>&nbsp;<?php printf(self::translate_escape('(resized to %dx%d)'), $meta['output']['width'], $meta['output']['height']) ?></em><?php
                                     }
                                 } else {
                                     ?><em>&nbsp;<?= self::translate_escape('(modified after compression)') ?></em><?php
@@ -88,9 +88,9 @@
                             }
                             ?>
                         </td>
-                        <td><?= size_format($tiny_metadata->get_value($size)["input"]["size"], 1) ?></td>
-                        <td><?= size_format($tiny_metadata->get_value($size)["output"]["size"], 1) ?></td>
-                        <td><?= human_time_diff($tiny_metadata->get_value($size)["end"]) . ' ' . self::translate_escape('ago') ?></td>
+                        <td><?= size_format($meta["input"]["size"], 1) ?></td>
+                        <td><?= size_format($meta["output"]["size"], 1) ?></td>
+                        <td><?= human_time_diff($meta["end"]) . ' ' . self::translate_escape('ago') ?></td>
                     </tr>
                     <?php $i++; ?>
                 <?php } ?>
@@ -106,7 +106,7 @@
                 <?php } ?>
             </table>
 
-            <p class="tiny-important"><?= self::translate_escape('Total savings') ?>:&nbsp;<?= size_format($tiny_metadata->get_savings()["input"] - $tiny_metadata->get_savings()["output"], 1) ?></p>
+            <p class="tiny-important"><?= self::translate_escape('Total savings') ?>:&nbsp;<?= size_format($savings["input"] - $savings["output"], 1) ?></p>
         </div>
     </div>
 <?php } ?>
