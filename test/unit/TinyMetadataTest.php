@@ -234,6 +234,7 @@ class Tiny_Metadata_Test extends TinyTestCase {
     }
 
     public function testGetUncompressedSizes() {
+        $this->wp->createImage(137857, "2015/09", "tinypng_gravatar-600x600.png");
         $tinify_sizes = array(Tiny_Metadata::ORIGINAL, "thumbnail", "medium", "large");
         $this->assertEquals(
             array_values(array("large")),
@@ -245,9 +246,9 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $this->wp->addOption("tinypng_sizes[custom-size-2]", "on");
         $this->wp->addImageSize('custom-size', array('width' => 150, 'height' => 150));
         $this->wp->addImageSize('custom-size-2', array('width' => 150, 'height' => 150));
-        $this->wp->createImages();
+        $this->wp->createImages(array("150x150" => 37856), 146480, "2015/09", "panda");
 
-        $tiny_meta = new Tiny_Metadata(150, $this->json("wp_meta_sizes_with_same_files"));
+        $tiny_meta = new Tiny_Metadata(155, $this->json("wp_meta_sizes_with_same_files"));
 
         $tinify_sizes = array(Tiny_Metadata::ORIGINAL, "custom-size", "custom-size-2");
         $uncompressed_sizes = array(Tiny_Metadata::ORIGINAL, "custom-size");

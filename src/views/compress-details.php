@@ -59,7 +59,7 @@
         <?php } ?>
     </div>
 
-    <?php if ((count($uncompressed) - $missing) > 0) { ?>
+    <?php if (count($uncompressed) > 0) { ?>
         <button type="button" class="tiny-compress button button-small button-primary" data-id="<?= $tiny_metadata->get_id() ?>">
             <?= self::translate_escape('Compress') ?>
         </button>

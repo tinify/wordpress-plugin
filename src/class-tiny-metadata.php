@@ -141,6 +141,10 @@ class Tiny_Metadata {
         return isset($this->values[$size]) && isset($this->values[$size]['output']);
     }
 
+    public function exists($size=self::ORIGINAL) {
+        return file_exists($this->get_filename($size));
+    }
+
     public function still_exists($size=self::ORIGINAL) {
         return $this->has_been_compressed($size) && file_exists($this->get_filename($size));
     }
@@ -175,7 +179,8 @@ class Tiny_Metadata {
 
     public function get_uncompressed_sizes($active_tinify_sizes) {
         $sizes = array_intersect($this->get_sizes(), $active_tinify_sizes);
-        return array_diff($sizes, $this->get_success_sizes());
+        $uncompressed = array_diff($sizes, $this->get_success_sizes());
+        return array_filter($uncompressed, array($this, 'exists'));
     }
 
     public function get_not_compressed_active_sizes($active_tinify_sizes) {
