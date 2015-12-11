@@ -2,9 +2,7 @@
     <div class="details">
         <?php if ($error) { ?>
             <span class="icon dashicons dashicons-warning error"></span>
-        <?php } else if ($missing > 0) { ?>
-            <span class="icon dashicons dashicons-yes alert"></span>
-        <?php } else if ($modified > 0) { ?>
+        <?php } else if ($missing > 0 || $modified > 0) { ?>
             <span class="icon dashicons dashicons-yes alert"></span>
         <?php } else if ($tiny_metadata->get_success_count() > 0 && count($uncompressed) > 0) { ?>
             <span class="icon dashicons dashicons-yes alert"></span>
@@ -13,17 +11,17 @@
         <?php } ?>
         <span class="icon spinner hidden"></span>
 
-        <?php if ($tiny_metadata->get_success_count() > 0 || ($tiny_metadata->get_success_count() == 0 && count($uncompressed) == 0)) { ?>
+        <?php if ($tiny_metadata->get_compressed_count() > 0 || ($tiny_metadata->get_compressed_count() == 0 && count($uncompressed) == 0)) { ?>
             <span class="message">
-                <strong><?= $tiny_metadata->get_success_count() ?></strong>
-                <span><?php printf(self::translate_escape('%s compressed'), ($tiny_metadata->get_success_count() == 1) ? "size" : "sizes") ?></span>
+                <strong><?= $tiny_metadata->get_compressed_count() ?></strong>
+                <span><?php printf(self::translate_escape('%s compressed'), ($tiny_metadata->get_compressed_count() == 1) ? "size" : "sizes") ?></span>
             </span>
             <br/>
         <?php } ?>
 
-        <?php if (count($uncompressed) > 0 && $modified == 0) { ?>
+        <?php if ($not_compressed_active > 0) { ?>
             <span class="message">
-                <?php printf(self::translate_escape('%d %s not compressed'), count($uncompressed), (count($uncompressed) == 1) ? "size" : "sizes") ?>
+                <?php printf(self::translate_escape('%d %s not compressed'), $not_compressed_active, ($not_compressed_active == 1) ? "size" : "sizes") ?>
             </span>
             <br />
         <?php } ?>
@@ -56,18 +54,18 @@
             <br/>
         <?php } ?>
 
-        <?php if ($tiny_metadata->get_success_count() > 0) { ?>
+        <?php if ($tiny_metadata->get_compressed_count() > 0) { ?>
             <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?= $tiny_metadata->get_id() ?>">Details</a>
         <?php } ?>
     </div>
 
-    <?php if (count($uncompressed) > 0) { ?>
+    <?php if ((count($uncompressed) - $missing) > 0) { ?>
         <button type="button" class="tiny-compress button button-small button-primary" data-id="<?= $tiny_metadata->get_id() ?>">
             <?= self::translate_escape('Compress') ?>
         </button>
     <?php } ?>
 </div>
-<?php if ($tiny_metadata->get_success_count() > 0) { ?>
+<?php if ($tiny_metadata->get_compressed_count() > 0) { ?>
     <div class="modal" id="modal_<?= $tiny_metadata->get_id() ?>">
         <div class="tiny-compression-details">
             <h3><?php printf(self::translate_escape('Compression details for %s'), $tiny_metadata->get_name()) ?></h3>

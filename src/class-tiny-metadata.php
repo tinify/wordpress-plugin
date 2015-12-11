@@ -178,6 +178,11 @@ class Tiny_Metadata {
         return array_diff($sizes, $this->get_success_sizes());
     }
 
+    public function get_not_compressed_active_sizes($active_tinify_sizes) {
+        $sizes = array_intersect($this->get_sizes(), $active_tinify_sizes);
+        return array_diff($sizes, $this->get_compressed_sizes());
+    }
+
     public function get_in_progress_sizes() {
         return array_filter(array_keys($this->values), array($this, 'is_compressing'));
     }
@@ -188,6 +193,10 @@ class Tiny_Metadata {
 
     public function get_in_progress_count() {
         return count($this->get_in_progress_sizes());
+    }
+
+    public function get_compressed_count() {
+        return count($this->get_compressed_sizes());
     }
 
     public function get_missing_count() {
