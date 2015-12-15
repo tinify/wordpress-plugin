@@ -95,25 +95,22 @@ A: No. There are no limitations on the size of the images you want to compress.
 A: Everything will keep on working, but newly uploaded images will not be compressed. Of course we encourage everyone to sign up for a full subscription.
 
 = Q: Can I compress all existing images in my media library? =
-A: Yes! After installing the plugin, go to Tools > Compress All Images, and click on the button to compress all uncompressed images in your media library.
+A: Yes! After installing the plugin, go to Media > Compress All Images, and click on the button to compress all uncompressed images in your media library.
 
 == Changelog ==
 
 = 1.6.0 =
-* Show additional compression details in the media library.
-* Improved usability of the compression column in the media library.
-* Moved Compress All Images page from the Tools to the Media menu.
-* Improved calculation of how many sizes have been compressed when there are sizes that have similar dimensions.
-* Show total savings on settings page.
-* Link to Compress All Images tool from settings page when no images have yet been compressed.
+* Improved compression status in the Media Library with new details window.
+* Show total compression savings on the Media Settings page with link to bulk compression page when no images have been compressed yet.
+* Moved Compress All Images from the Tools to the Media menu.
 
 = 1.5.0 =
-* Resize original images when compressing. Set a maximum width and/or height and your original images will be scaled down in case they are bigger.
-* Added support for the mobile WordPress app (thanks to David Goodwin).
+* Resize original images by specifying a maximum width and/or height. During compression your original images will also be scaled down if they are bigger.
+* Support for the mobile WordPress app (thanks to David Goodwin).
 
 = 1.4.0 =
 * Indication of the number of images you can compress for free each month.
-* Link to the settings page from the plugin listing.
+* Link to the Media Settings page from the plugin listing.
 * Clarification that original images will be overwritten when compressed.
 
 = 1.3.2 =
@@ -131,15 +128,16 @@ A: Yes! After installing the plugin, go to Tools > Compress All Images, and clic
 * Prevent compressing the original image if it is the only selected image size.
 
 = 1.2.0 =
-* Display connection status and number of compressions this month on the settings page. This also allows you to check if you entered a valid API key.
-* Show a notice to administrators when the limit of the fixed and free plans is reached.
+* Show if you entered a valid API key.
+* Display connection status and number of compressions this month.
+* Show a notice to administrators when the free compression limit is reached.
 * The plugin now works when php's parse_ini_file is disabled on your host.
-* Avoids warnings when no image sizes have been selected.
+* Avoid warnings when no image thumbnail sizes have been selected.
 
 = 1.1.0 =
 * The API key can now be set with the TINY_API_KEY constant in wp-config.php. This will work for normal and multisite WordPress installations.
-* You can now enable or disable compression of the original uploaded image. If you upgrade the plugin from version 1.0 you may need to go to media settings to include it for compression.
-* Improved display of original sizes and compressed sizes showing the total size of all compressed images in media library list view.
+* Enable or disable compression of the original uploaded image.
+* Improved display of original sizes and compressed sizes showing the total compression size in the Media Library list view.
 
 = 1.0.0 =
 * Initial version.
