@@ -83,7 +83,7 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 == Frequently Asked Questions ==
 
 = Q: I don't recall uploading 500 photos this month but my limit is already reached. How is this number calculated? =
-A: When you upload an image to your website, Wordpress will create different sized versions of it (see Settings > Media). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
+A: When you upload an image to your website, WordPress will create different sized versions of it (see Settings > Media). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
 
 = Q: What happens to the compressed images when I uninstall the plugin? =
 A: When you remove the TinyPNG plugin all your compressed images will remain compressed.

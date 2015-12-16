@@ -122,7 +122,7 @@ function setup_wordpress_site($driver) {
 }
 
 function login($driver) {
-    print "Logging in to Wordpress... ";
+    print "Logging in to WordPress... ";
     $driver->get(wordpress('/wp-login.php'));
     $driver->findElement(WebDriverBy::tagName('body'))->click();
     $driver->findElement(WebDriverBy::name('log'))->clear()->click()->sendKeys('admin');

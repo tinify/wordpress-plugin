@@ -82,7 +82,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_register_script($handle, plugins_url('/scripts/admin.js', __FILE__),
             array(), self::plugin_version(), true);
 
-        // Wordpress < 3.3 does not handle multi dimensional arrays
+        // WordPress < 3.3 does not handle multidimensional arrays
         wp_localize_script($handle, 'tinyCompress', array(
             'nonce' => wp_create_nonce('tiny-compress'),
             'wpVersion' => self::wp_version(),
@@ -232,17 +232,26 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $image_count = $result[0]['count'];
             $sizes_count = count($this->settings->get_active_tinify_sizes());
 
-            echo '<p>' . self::translate_escape("Use this tool to compress all images in your media library") . '. ';
-            echo self::translate_escape("Only images that have not been compressed will be compressed") . '.</p>';
-            echo '<p>' . sprintf(self::translate_escape("We have found %d images in your media library and for each image %d sizes will be compressed"), $image_count, $sizes_count) . '. ';
-            echo sprintf(self::translate_escape('This results in %d compressions at most'), $image_count*$sizes_count) . '.</p>';
-            echo '<p>' . self::translate_escape("To begin, just press the button below") . '.</p>';
+            echo '<p>';
+            echo self::translate_escape("Use this tool to compress all images in your media library") . '. ';
+            echo self::translate_escape("Only images that have not been compressed will be compressed") . '. ';
+            echo '</p>';
+            echo '<p>';
+            echo sprintf(self::translate_escape("We have found %d images in your media library and for each image %d sizes will be compressed"), $image_count, $sizes_count) . '. ';
+            echo sprintf(self::translate_escape('This results in %d compressions at most'), $image_count*$sizes_count) . '. ';
+            echo '</p>';
+            echo '<p>';
+            echo self::translate_escape("To begin, just press the button below") . '. ';
+            echo '</p>';
 
             echo '<form method="POST" action="?page=tiny-bulk-compress">';
             echo '<input type="hidden" name="_wpnonce" value="' . wp_create_nonce('tiny-bulk-compress') . '">';
             echo '<input type="hidden" name="tiny-bulk-compress" value="1">';
-            echo '<p><button class="button button-primary button-large" type="submit">' .
-                self::translate_escape('Compress All Images') . '</p>';
+            echo '<p>';
+            echo '<button class="button button-primary button-large" type="submit">';
+            echo self::translate_escape('Compress All Images');
+            echo '</button>';
+            echo '</p>';
             echo '</form>';
         } else {
             check_admin_referer('tiny-bulk-compress');
