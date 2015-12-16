@@ -216,9 +216,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $compressing = (count($uncompressed) > 0) ? count($uncompressed) : count($active);
 
         if ($tiny_metadata->get_in_progress_count() > 0) {
-            include(__DIR__ . '/views/compress-details-processing.php');
+            include(dirname(__FILE__) . '/views/compress-details-processing.php');
         } else {
-            include(__DIR__ . '/views/compress-details.php');
+            include(dirname(__FILE__) . '/views/compress-details.php');
         }
     }
 

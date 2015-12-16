@@ -34,6 +34,6 @@ abstract class TinyTestCase extends PHPUnit_Framework_TestCase {
     }
 
     protected function json($file_name) {
-        return json_decode(file_get_contents(__DIR__ . "/../fixtures/json/" . $file_name . ".json"), true);
+        return json_decode(file_get_contents(dirname(__FILE__) . "/../fixtures/json/" . $file_name . ".json"), true);
     }
 }
