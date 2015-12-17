@@ -136,8 +136,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function compress_attachment($metadata, $attachment_id) {
-        list($tiny_metadata, $result) = $this->compress($metadata, $attachment_id);
-        return $tiny_metadata->update_wp_metadata($metadata);
+        if (!empty($metadata)) {
+            list($tiny_metadata, $result) = $this->compress($metadata, $attachment_id);
+            return $tiny_metadata->update_wp_metadata($metadata);
+        }
     }
 
     public function compress_image() {
