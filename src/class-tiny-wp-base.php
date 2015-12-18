@@ -55,7 +55,7 @@ abstract class Tiny_WP_Base {
     }
 
     public static function plugin_identification() {
-        return 'Wordpress/' . self::wp_version() . ' Tiny/' . self::plugin_version();
+        return 'Wordpress/' . self::wp_version() . ' PHP/' . PHP_VERSION . ' Tiny/' . self::plugin_version();
     }
 
     protected static function get_prefixed_name($name) {

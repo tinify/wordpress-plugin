@@ -21,7 +21,7 @@ run_phantomjs() {
   echo "Starting PhantomJS container..."
   docker run --name phantomjs \
     --link "wordpress$version":wordpress \
-    -d phantomjs
+    --detach=false phantomjs
 }
 
 run_wordpress() {
