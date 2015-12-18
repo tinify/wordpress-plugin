@@ -115,8 +115,8 @@ abstract class Tiny_Compress {
         $result = json_decode($text, true);
         if ($result === null) {
             throw new Tiny_Exception(sprintf('JSON: %s [%d]',
-                    PHP_VERSION_ID >= 50500 ? json_last_error_msg() : 'Error',
-                    json_last_error()),
+                    PHP_VERSION_ID >= 50500 ? json_last_error_msg() : 'Unknown error',
+                    PHP_VERSION_ID >= 50300 ? json_last_error() : 'Error'),
                 'JsonError');
         }
         return $result;

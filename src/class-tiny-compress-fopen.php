@@ -28,7 +28,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
                     'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
                     'User-Agent: ' . Tiny_WP_Base::plugin_identification() . ' fopen',
                  ),
-                'content' => $input
+                'content' => $input,
+                'follow_location' => 0,
+                'max_redirects' => 1, // Necessary for PHP 5.2
+                'ignore_errors' => TRUE // Apparently, a 201 is a failure :'(
             ),
             'ssl' => array(
                 'cafile' => self::get_ca_file(),
