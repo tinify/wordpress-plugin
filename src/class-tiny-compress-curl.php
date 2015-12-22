@@ -45,13 +45,12 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         $request = curl_init();
         curl_setopt_array($request, $this->shrink_options($input));
 
-        $output_url = null;
         $response = curl_exec($request);
         if ($response === false || $response === null) {
             return array(array(
                 'error' => 'CurlError',
                 'message' => sprintf("cURL: %s [%d]", curl_error($request), curl_errno($request))
-              ), null
+              ), null, null
             );
         }
 
