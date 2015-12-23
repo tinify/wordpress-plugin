@@ -305,11 +305,11 @@ class Tiny_Settings extends Tiny_WP_Base {
         $id = self::get_prefixed_name("resize_original_enabled");
         $name = self::get_prefixed_name("resize_original[enabled]");
         $checked = ( $this->get_resize_enabled() ? ' checked="checked"' : '' );
-        $label = self::translate_escape('Resize and compress orginal images to fit within');
+        $label = self::translate_escape('Resize and compress the orginal image');
 
         echo '<p class="tiny-resize-available">';
         echo '<input  type="checkbox" id="' . $id . '" name="' . $name . '" value="on" '. $checked . '/>';
-        echo '<label for="' . $id . '">' . $label . ':</label>';
+        echo '<label for="' . $id . '">' . $label . '</label>';
         echo '<br>';
         echo '</p>';
 

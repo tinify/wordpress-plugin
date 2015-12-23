@@ -28,7 +28,7 @@
 
         <?php if ($missing > 0) { ?>
             <span class="message">
-                <?php printf(self::translate_escape('%d %s missing'), $missing, ($missing == 1) ? "file" : "files") ?>
+                <?php printf(self::translate_escape('%d %s removed'), $missing, ($missing == 1) ? "file" : "files") ?>
             </span>
             <br />
         <?php } ?>
@@ -92,7 +92,7 @@
                                     echo '<em>' . self::translate_escape('(modified after compression)') . '</em>';
                                 }
                             } else {
-                                echo '<em>' . self::translate_escape('(file missing)') . '</em>';
+                                echo '<em>' . self::translate_escape('(file removed)') . '</em>';
                             }
                             ?>
                         </td>

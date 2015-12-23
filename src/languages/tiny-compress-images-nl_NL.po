@@ -76,7 +76,7 @@ msgstr "(verkleind naar %dx%d)"
 msgid "(modified after compression)"
 msgstr "(veranderd na compressie)"
 
-msgid "(file missing)"
+msgid "(file removed)"
 msgstr "(bestand ontbreekt)"
 
 msgid "ago"
@@ -280,7 +280,7 @@ msgstr "Orgineel verkleinen"
 msgid "Enable the compression of the original image size to configure resizing"
 msgstr "Schakel compressie van de originele afbeelding in om te kunnen verkleinen"
 
-msgid "Resize and compress orginal images to fit within"
+msgid "Resize and compress the orginal image"
 msgstr "Verklein en comprimeer de originele afbeelding"
 
 msgid "Resizing takes %s for each image that is larger"
