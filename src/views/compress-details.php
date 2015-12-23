@@ -42,7 +42,7 @@
 
         <?php if ($savings["input"] - $savings["output"]) { ?>
             <span class="message">
-                <?php echo self::translate_escape('Total savings') ?>&nbsp;<?php echo size_format($savings["input"] - $savings["output"], 1) ?>
+                <?php printf( self::translate_escape( 'Total savings %s' ), str_replace( " ", "&nbsp;", size_format( $savings["input"] - $savings["output"] ) ) ) ?>
             </span>
             <br />
         <?php } ?>
@@ -72,8 +72,8 @@
             <table>
                 <tr>
                     <th><?php echo self::translate_escape('Size') ?></th>
-                    <th><?php echo self::translate_escape('Original size') ?></th>
-                    <th><?php echo self::translate_escape('Compressed size') ?></th>
+                    <th><?php echo self::translate_escape('Original') ?></th>
+                    <th><?php echo self::translate_escape('Compressed') ?></th>
                     <th><?php echo self::translate_escape('Date') ?></th>
                 </tr>
                 <?php $i = 0; ?>
@@ -82,26 +82,22 @@
                     <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                         <td>
                             <?php
-                            if ($size == "0") {
-                                echo 'original';
-                            } else {
-                                echo $size;
-                            }
+                            echo ($size == "0" ? self::translate_escape('original') : $size ) . ' ';
                             if ($tiny_metadata->still_exists($size)) {
                                 if ($tiny_metadata->is_compressed($size)) {
                                     if ($tiny_metadata->is_resized($size)) {
-                                        ?><em>&nbsp;<?php printf(self::translate_escape('(resized to %dx%d)'), $meta['output']['width'], $meta['output']['height']) ?></em><?php
+                                        printf('<em>' . self::translate_escape('(resized to %dx%d)') . '</em>', $meta['output']['width'], $meta['output']['height']);
                                     }
                                 } else {
-                                    ?><em>&nbsp;<?php echo self::translate_escape('(modified after compression)') ?></em><?php
+                                    echo '<em>' . self::translate_escape('(modified after compression)') . '</em>';
                                 }
                             } else {
-                                ?><em>&nbsp;<?php echo self::translate_escape('(missing)') ?></em><?php
+                                echo '<em>' . self::translate_escape('(file missing)') . '</em>';
                             }
                             ?>
                         </td>
-                        <td><?php echo size_format($meta["input"]["size"], 1) ?></td>
-                        <td><?php echo size_format($meta["output"]["size"], 1) ?></td>
+                        <td><?php echo size_format( $meta["input"]["size"] ) ?></td>
+                        <td><?php echo size_format( $meta["output"]["size"] ) ?></td>
                         <td><?php echo human_time_diff($tiny_metadata->get_end_time($size)) . ' ' . self::translate_escape('ago') ?></td>
                     </tr>
                     <?php $i++; ?>
@@ -110,15 +106,14 @@
                 <tfoot>
                     <tr>
                         <td><?php echo self::translate_escape('Combined') ?></td>
-                        <td><?php echo size_format($savings['input'], 1) ?></td>
-                        <td><?php echo size_format($savings['output'], 1) ?></td>
+                        <td><?php echo size_format( $savings['input'] ) ?></td>
+                        <td><?php echo size_format( $savings['output'] ) ?></td>
                         <td></td>
                     </tr>
                 </tfoot>
                 <?php } ?>
             </table>
-
-            <p><strong><?php printf(self::translate_escape('Total savings %s'), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
+            <p><strong><?php printf( self::translate_escape( 'Total savings %s' ), size_format( $savings["input"] - $savings["output"] ) ) ?></strong></p>
         </div>
     </div>
 <?php } ?>

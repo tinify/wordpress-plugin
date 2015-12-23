@@ -12,6 +12,9 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language: zh_TW\n"
 
+msgid "Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG."
+msgstr "Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG."
+
 msgid "PNG and JPEG compression"
 msgstr "PNG 和 JPEG 壓縮"
 

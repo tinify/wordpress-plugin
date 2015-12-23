@@ -20,7 +20,6 @@
 
 class Tiny_Settings extends Tiny_WP_Base {
     const DUMMY_SIZE = '_tiny_dummy';
-    const MONTHLY_FREE_COMPRESSIONS = 500;
 
     private $sizes;
     private $tinify_sizes;
@@ -267,7 +266,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         if ($active_image_sizes_count < 1) {
             echo self::translate_escape('With these settings no images will be compressed') . '.';
         } else {
-            $free_images_per_month = floor(self::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count);
+            $free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count );
             echo self::translate_escape('With these settings you can compress');
             echo ' <strong>';
             printf(self::translate_escape('at least %s images'), $free_images_per_month);
@@ -290,7 +289,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         echo '<p>';
         if ($total_savings > 0) {
-            printf(self::translate_escape("You have saved a total of %s on images") . '!', '<strong>' . size_format($total_savings, 1) . '</strong>');
+            printf( self::translate_escape( "You have saved a total of %s on images") . '!', '<strong>' . size_format( $total_savings ) . '</strong>' );
         } else {
             $link = '<a href="upload.php?page=tiny-bulk-compress">' . self::translate_escape('Compress All Images') . '</a>';
             printf(self::translate_escape('No images compressed yet. Use %s to compress existing images') . '.', $link);
@@ -381,12 +380,11 @@ class Tiny_Settings extends Tiny_WP_Base {
             }
         }
         echo '</p>';
-
         if ($status) {
             $compressions = self::get_compression_count();
             echo '<p>';
             // It is not possible to check if a subscription is free or flexible.
-            if ($compressions == self::MONTHLY_FREE_COMPRESSIONS) {
+            if ( $compressions == Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
                 $link = '<a href="https://tinypng.com/developers" target="_blank">' . self::translate_escape('TinyPNG API account') . '</a>';
                 printf(self::translate_escape('You have reached your limit of %s compressions this month') . '.', $compressions);
                 echo '<br>';

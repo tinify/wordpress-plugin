@@ -1,3 +1,6 @@
+msgid "Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG."
+msgstr "Maak je website sneller. Optimaliseer alle JPEG en PNG afbeeldingen automatisch met TinyPNG."
+
 msgid "PNG and JPEG compression"
 msgstr "PNG- en JPEG-compressie"
 
@@ -73,8 +76,8 @@ msgstr "(verkleind naar %dx%d)"
 msgid "(modified after compression)"
 msgstr "(veranderd na compressie)"
 
-msgid "(missing)"
-msgstr "(bestand mist)"
+msgid "(file missing)"
+msgstr "(bestand ontbreekt)"
 
 msgid "ago"
 msgstr "geleden"
@@ -82,8 +85,8 @@ msgstr "geleden"
 msgid "Combined"
 msgstr "Gecombineerd"
 
-msgid "Total savings"
-msgstr "Totaal bespaard"
+msgid "Total savings %s"
+msgstr "Totaal bespaard %s"
 
 msgid "size being compressed"
 msgstr "afmeting wordt gecomprimeerd"
@@ -94,11 +97,11 @@ msgstr "afmetingen worden gecomprimeerd"
 msgid "Total size"
 msgstr "Totale grootte"
 
-msgid "Original size"
-msgstr "Originele grootte"
+msgid "Original"
+msgstr "Origineel"
 
-msgid "Compressed size"
-msgstr "Gecomprimeerde grootte"
+msgid "Compressed"
+msgstr "Gecomprimeerd"
 
 msgid "Latest error"
 msgstr "Laatste fout"

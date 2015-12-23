@@ -31,7 +31,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
                 'content' => $input,
                 'follow_location' => 0,
                 'max_redirects' => 1, // Necessary for PHP 5.2
-                'ignore_errors' => TRUE // Apparently, a 201 is a failure :'(
+                'ignore_errors' => true // Apparently, a 201 is a failure
             ),
             'ssl' => array(
                 'cafile' => self::get_ca_file(),
