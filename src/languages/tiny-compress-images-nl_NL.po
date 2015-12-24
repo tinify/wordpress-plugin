@@ -50,10 +50,10 @@ msgid "%d sizes not compressed"
 msgstr "%d afmetingen niet gecomprimeerd"
 
 msgid "%d file removed"
-msgid "%d bestand verwijderd"
+msgstr "%d bestand verwijderd"
 
 msgid "%d files removed"
-msgid "%d bestanden verwijderd"
+msgstr "%d bestanden verwijderd"
 
 msgid "%d file missing"
 msgstr "%d bestand bestaat niet"
