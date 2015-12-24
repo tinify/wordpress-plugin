@@ -14,35 +14,35 @@
         <?php if ($tiny_metadata->get_compressed_count() > 0 || ($tiny_metadata->get_compressed_count() == 0 && count($uncompressed) == 0)) { ?>
             <span class="message">
                 <strong><?php echo $tiny_metadata->get_compressed_count() ?></strong>
-                <span><?php printf(self::translate_escape('%s compressed'), ($tiny_metadata->get_compressed_count() == 1) ? "size" : "sizes") ?></span>
+                <span><?php printf(self::ntranslate_escape('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count())) ?></span>
             </span>
             <br/>
         <?php } ?>
 
         <?php if ($not_compressed_active > 0) { ?>
             <span class="message">
-                <?php printf(self::translate_escape('%d %s not compressed'), $not_compressed_active, ($not_compressed_active == 1) ? "size" : "sizes") ?>
+                <?php printf(self::ntranslate_escape('%d size not compressed', '%d sizes not compressed', $not_compressed_active), $not_compressed_active) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($missing > 0) { ?>
             <span class="message">
-                <?php printf(self::translate_escape('%d %s removed'), $missing, ($missing == 1) ? "file" : "files") ?>
+                <?php printf(self::ntranslate_escape('%d file removed', '%d files removed', $missing), $missing) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($modified > 0) { ?>
             <span class="message">
-                <?php printf(self::translate_escape('%d %s modified after compression'), $modified, ($modified == 1) ? "file" : "files") ?>
+                <?php printf(self::ntranslate_escape('%d file modified after compression', '%d files modified after compression', $modified), $modified) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($savings["input"] - $savings["output"]) { ?>
             <span class="message">
-                <?php printf(self::translate_escape( 'Total savings %s' ), str_replace( " ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
+                <?php printf(self::translate_escape('Total savings %s' ), str_replace( " ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
             </span>
             <br />
         <?php } ?>
