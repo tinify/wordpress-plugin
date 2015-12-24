@@ -42,7 +42,7 @@
 
         <?php if ($savings["input"] - $savings["output"]) { ?>
             <span class="message">
-                <?php printf( self::translate_escape( 'Total savings %s' ), str_replace( " ", "&nbsp;", size_format( $savings["input"] - $savings["output"] ) ) ) ?>
+                <?php printf(self::translate_escape( 'Total savings %s' ), str_replace( " ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
             </span>
             <br />
         <?php } ?>
@@ -96,8 +96,8 @@
                             }
                             ?>
                         </td>
-                        <td><?php echo size_format( $meta["input"]["size"] ) ?></td>
-                        <td><?php echo size_format( $meta["output"]["size"] ) ?></td>
+                        <td><?php echo size_format($meta["input"]["size"], 1) ?></td>
+                        <td><?php echo size_format($meta["output"]["size"], 1) ?></td>
                         <td><?php echo human_time_diff($tiny_metadata->get_end_time($size)) . ' ' . self::translate_escape('ago') ?></td>
                     </tr>
                     <?php $i++; ?>
@@ -106,14 +106,14 @@
                 <tfoot>
                     <tr>
                         <td><?php echo self::translate_escape('Combined') ?></td>
-                        <td><?php echo size_format( $savings['input'] ) ?></td>
-                        <td><?php echo size_format( $savings['output'] ) ?></td>
+                        <td><?php echo size_format($savings['input'], 1) ?></td>
+                        <td><?php echo size_format($savings['output'], 1) ?></td>
                         <td></td>
                     </tr>
                 </tfoot>
                 <?php } ?>
             </table>
-            <p><strong><?php printf( self::translate_escape( 'Total savings %s' ), size_format( $savings["input"] - $savings["output"] ) ) ?></strong></p>
+            <p><strong><?php printf( self::translate_escape( 'Total savings %s' ), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
         </div>
     </div>
 <?php } ?>
