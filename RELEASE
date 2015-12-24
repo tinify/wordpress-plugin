@@ -8,10 +8,11 @@ In order to release a new version of the plugin to wordpress.org, perform the fo
 6. Create a new release in GitHub and pull it in.
 7. Locally, checkout the new tag: `git checkout <tagged version>`.
 8. If not already done so, checkout the plugin's Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
-9. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`.
-10. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
-11. Manually copy the Git release to the local Subversion repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
-12. Add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
-13. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
-14. Commit the trunk to Subversion: `svn ci -m "<message>"`.
-15. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
+9. Run `svn update` when the Subversion repository already existed.
+10. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`.
+11. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
+12. Manually copy the Git release to the local Subversion repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
+13. Add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
+14. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
+15. Commit the trunk to Subversion: `svn ci -m "<message>"`.
+16. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
