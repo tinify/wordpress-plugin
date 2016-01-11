@@ -17,9 +17,9 @@ Make your website faster by compressing your JPEG and PNG images. This plugin au
 = Features =
 
 * Automatically compress new images on upload.
-* Resize large original images by setting a maximum width and/or height.
 * Compress individual images already in your media library.
 * Easy bulk compression of your existing media library.
+* Resize large original images by setting a maximum width and/or height.
 * Select which thumbnail sizes of an image may be compressed.
 * Multisite support with a single API key.
 * Color profiles are translated to the standard RGB color space.
@@ -34,7 +34,7 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 = Getting started =
 
-Install this plugin and obtain your free API key from https://tinypng.com/developers. With a free account you can compress roughly 100 images each month (based on a regular WordPress installation). The exact number depends on the number of thumbnail sizes you use. You can change which of the generated thumbnail sizes should be compressed, because each one of them counts as a compression. And if you’re a heavy user, you can compress more images for a small additional fee per image.
+Install this plugin and obtain your free API key from https://tinypng.com/developers. With a free account you can compress **roughly 100 images each month** (based on a regular WordPress installation). The exact number depends on the number of thumbnail sizes you use. You can change which of the generated thumbnail sizes should be compressed, because each one of them counts as a compression. And if you’re a heavy user, you can compress more images for a small additional fee per image.
 
 = Multisite support =
 
@@ -82,11 +82,14 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 
 == Frequently Asked Questions ==
 
-= Q: I don't recall uploading 500 photos this month but my limit is already reached. How is this number calculated? =
-A: When you upload an image to your website, WordPress will create different sized versions of it (see Settings > Media). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
+= Q: How many images can I compress for free? =
+In a default Wordpress installation you can compress around 100 images for free each month. WordPress creates different sized versions of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the Settings > Media page before you start compressing.
 
 = Q: What happens to the compressed images when I uninstall the plugin? =
 A: When you remove the TinyPNG plugin all your compressed images will remain compressed.
+
+= Q: I don't recall uploading 500 photos this month but my limit is already reached. How is this number calculated? =
+A: When you upload an image to your website, WordPress will create different sized versions of it (see Settings > Media). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
 
 = Q: Is there a file size limit? =
 A: No. There are no limitations on the size of the images you want to compress.
