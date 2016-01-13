@@ -83,7 +83,7 @@ The API key can also be configured in wp-config.php. You can add a TINY_API_KEY 
 == Frequently Asked Questions ==
 
 = Q: How many images can I compress for free? =
-In a default Wordpress installation you can compress around 100 images for free each month. WordPress creates different sized versions of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the Settings > Media page before you start compressing.
+A: In a default Wordpress installation you can compress around 100 images for free each month. WordPress creates different thumbnails of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the Settings > Media page before you start compressing.
 
 = Q: What happens to the compressed images when I uninstall the plugin? =
 A: When you remove the TinyPNG plugin all your compressed images will remain compressed.

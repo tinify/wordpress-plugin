@@ -14,42 +14,44 @@
         <?php if ($tiny_metadata->get_compressed_count() > 0 || ($tiny_metadata->get_compressed_count() == 0 && count($uncompressed) == 0)) { ?>
             <span class="message">
                 <strong><?php echo $tiny_metadata->get_compressed_count() ?></strong>
-                <span><?php printf(self::ntranslate_escape('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count())) ?></span>
+                <span>
+                    <?= htmlspecialchars(_n('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count(), 'tiny-compress-images')) ?>
+                </span>
             </span>
             <br/>
         <?php } ?>
 
         <?php if ($not_compressed_active > 0) { ?>
             <span class="message">
-                <?php printf(self::ntranslate_escape('%d size not compressed', '%d sizes not compressed', $not_compressed_active), $not_compressed_active) ?>
+                <?= htmlspecialchars(sprintf(_n('%d size not compressed', '%d sizes not compressed', $not_compressed_active), $not_compressed_active)) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($missing > 0) { ?>
             <span class="message">
-                <?php printf(self::ntranslate_escape('%d file removed', '%d files removed', $missing), $missing) ?>
+                <?= htmlspecialchars(sprintf(_n('%d file removed', '%d files removed', $missing), $missing)) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($modified > 0) { ?>
             <span class="message">
-                <?php printf(self::ntranslate_escape('%d file modified after compression', '%d files modified after compression', $modified), $modified) ?>
+                <?= htmlspecialchars(sprintf(_n('%d file modified after compression', '%d files modified after compression', $modified), $modified)) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($savings["input"] - $savings["output"]) { ?>
             <span class="message">
-                <?php printf(self::translate_escape('Total savings %s' ), str_replace( " ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
+                <?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), str_replace(" ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
             </span>
             <br />
         <?php } ?>
 
         <?php if ($error) { ?>
             <span class="message error_message">
-                <?php echo self::translate_escape('Latest error') . ': '. self::translate_escape($error) ?>
+                <?= esc_html__('Latest error', 'tiny-compress-images') . ': '. esc_html__($error, 'tiny-compress-images') ?>
             </span>
             <br/>
         <?php } ?>
@@ -61,20 +63,20 @@
 
     <?php if (count($uncompressed) > 0) { ?>
         <button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_metadata->get_id() ?>">
-            <?php echo self::translate_escape('Compress') ?>
+            <?php echo esc_html__('Compress', 'tiny-compress-images') ?>
         </button>
     <?php } ?>
 </div>
 <?php if ($tiny_metadata->get_compressed_count() > 0) { ?>
     <div class="modal" id="modal_<?php echo $tiny_metadata->get_id() ?>">
         <div class="tiny-compression-details">
-            <h3><?php printf(self::translate_escape('Compression details for %s'), $tiny_metadata->get_name()) ?></h3>
+            <h3><?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_metadata->get_name()) ?></h3>
             <table>
                 <tr>
-                    <th><?php echo self::translate_escape('Size') ?></th>
-                    <th><?php echo self::translate_escape('Original') ?></th>
-                    <th><?php echo self::translate_escape('Compressed') ?></th>
-                    <th><?php echo self::translate_escape('Date') ?></th>
+                    <th><?php esc_html_e('Size', 'tiny-compress-images') ?></th>
+                    <th><?php esc_html_e('Original', 'tiny-compress-images') ?></th>
+                    <th><?php esc_html_e('Compressed', 'tiny-compress-images') ?></th>
+                    <th><?php esc_html_e('Date', 'tiny-compress-images') ?></th>
                 </tr>
                 <?php $i = 0; ?>
                 <?php foreach ($tiny_metadata->get_compressed_sizes() as $size) { ?>
@@ -82,30 +84,30 @@
                     <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                         <td>
                             <?php
-                            echo ($size == "0" ? self::translate_escape('original') : $size ) . ' ';
+                            echo ($size == "0" ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
                             if ($tiny_metadata->still_exists($size)) {
                                 if ($tiny_metadata->is_compressed($size)) {
                                     if ($tiny_metadata->is_resized($size)) {
-                                        printf('<em>' . self::translate_escape('(resized to %dx%d)') . '</em>', $meta['output']['width'], $meta['output']['height']);
+                                        printf('<em>' . esc_html__('(resized to %dx%d)', 'tiny-compress-images') . '</em>', $meta['output']['width'], $meta['output']['height']);
                                     }
                                 } else {
-                                    echo '<em>' . self::translate_escape('(modified after compression)') . '</em>';
+                                    echo '<em>' . esc_html__('(modified after compression)', 'tiny-compress-images') . '</em>';
                                 }
                             } else {
-                                echo '<em>' . self::translate_escape('(file removed)') . '</em>';
+                                echo '<em>' . esc_html__('(file removed)', 'tiny-compress-images') . '</em>';
                             }
                             ?>
                         </td>
                         <td><?php echo size_format($meta["input"]["size"], 1) ?></td>
                         <td><?php echo size_format($meta["output"]["size"], 1) ?></td>
-                        <td><?php echo human_time_diff($tiny_metadata->get_end_time($size)) . ' ' . self::translate_escape('ago') ?></td>
+                        <td><?php echo human_time_diff($tiny_metadata->get_end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') ?></td>
                     </tr>
                     <?php $i++; ?>
                 <?php } ?>
                 <?php if ($savings['count'] > 0) { ?>
                 <tfoot>
                     <tr>
-                        <td><?php echo self::translate_escape('Combined') ?></td>
+                        <td><?php esc_html_e('Combined', 'tiny-compress-images') ?></td>
                         <td><?php echo size_format($savings['input'], 1) ?></td>
                         <td><?php echo size_format($savings['output'], 1) ?></td>
                         <td></td>
@@ -113,7 +115,7 @@
                 </tfoot>
                 <?php } ?>
             </table>
-            <p><strong><?php printf( self::translate_escape( 'Total savings %s' ), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
+            <p><strong><?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
         </div>
     </div>
 <?php } ?>

@@ -233,3 +233,7 @@ class WordPressStubs {
         return $metadata;
     }
 }
+
+function __($text, $domain = 'default') {
+    return translate($text, $domain);
+}

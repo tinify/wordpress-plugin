@@ -62,18 +62,6 @@ abstract class Tiny_WP_Base {
         return self::PREFIX . $name;
     }
 
-    protected static function translate($phrase) {
-        return translate($phrase, self::NAME);
-    }
-
-    protected static function translate_escape($phrase) {
-        return htmlspecialchars(translate($phrase, self::NAME));
-    }
-
-    protected static function ntranslate_escape($single, $plural, $amount) {
-        return htmlspecialchars(_n($single, $plural, $amount, self::NAME));
-    }
-
     public function __construct() {
         add_action('init', $this->get_method('init'));
         if (self::is_xmlrpc_request()) {

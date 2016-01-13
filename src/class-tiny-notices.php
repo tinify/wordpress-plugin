@@ -114,9 +114,10 @@ class Tiny_Notices extends Tiny_WP_Base {
             $add = '</p>';
             $css[] = 'is-dismissible';
         } else {
-            $add = '&nbsp;<a href="#" class="tiny-dismiss">' . self::translate_escape('Dismiss') . '</a></p>';
+            $add = '&nbsp;<a href="#" class="tiny-dismiss">' . esc_html__('Dismiss', 'tiny-compress-images') . '</a></p>';
         }
         $css = implode(' ', $css);
-        add_action('admin_notices', create_function('', "echo '<div class=\"$css\" data-name=\"$name\"><p>Compress JPEG & PNG images: $message$add</div>';"));
+        $pluginName = __('Compress JPEG & PNG images', 'tiny-compress-images');
+        add_action('admin_notices', create_function('', "echo '<div class=\"$css\" data-name=\"$name\"><p>" . $pluginName . ": $message$add</div>';"));
     }
 }
