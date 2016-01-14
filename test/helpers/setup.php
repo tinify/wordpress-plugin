@@ -26,14 +26,12 @@ function configure_wordpress_for_testing($driver) {
         activate_plugin($driver);
         backup_wordpress_site();
     }
-    set_test_webservice_url();
 }
 
 function restore_wordpress() {
     if (is_wordpress_setup()) {
         set_siteurl('http://' . getenv('HOST_IP') . ':' . getenv('HOST_PORT'));
     }
-    restore_webservice_url();
 }
 
 function mysql_dump_file() {
@@ -46,17 +44,6 @@ function restore_wordpress_site() {
 
 function backup_wordpress_site() {
     shell_exec('mysqldump -h ' . getenv('HOST_IP') . ' -u root -p' . getenv('MYSQL_ROOT_PASSWORD') . ' ' . getenv('WORDPRESS_DATABASE') . ' | gzip -c > ' . mysql_dump_file());
-}
-
-function set_test_webservice_url() {
-    $config_dir = dirname(__FILE__) . '/../../src/config';
-    shell_exec('mv ' . $config_dir . '/tiny-config.php ' . $config_dir . '/tiny-config.php.bak');
-    shell_exec('cp ' . dirname(__FILE__) . '/../fixtures/tiny-config.php ' . $config_dir . '/tiny-config.php');
-}
-
-function restore_webservice_url() {
-    $config_dir = dirname(__FILE__) . '/../../src/config';
-    shell_exec('test -f ' . $config_dir . '/tiny-config.php.bak && mv ' . $config_dir . '/tiny-config.php.bak ' . $config_dir . '/tiny-config.php');
 }
 
 function set_siteurl($site_url) {

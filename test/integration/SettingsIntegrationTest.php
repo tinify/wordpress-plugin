@@ -125,7 +125,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         }
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
-        $this->assertContains('Resize and compress orginal images to fit within:', $texts);
+        $this->assertContains('Resize and compress the orginal image', $texts);
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
         $this->assertNotContains('Enable the compression of the original image size to configure resizing.', $texts);
@@ -183,6 +183,6 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#tiny-compress-savings p')));
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-savings'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('You have saved a total of 53.0 kB on images!', $statuses);
+        $this->assertContains('You have saved a total of 53 kB on images!', $statuses);
     }
 }

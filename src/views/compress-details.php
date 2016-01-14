@@ -1,5 +1,5 @@
 <div class="details-container">
-    <div class="details">
+    <div class="details" id="tinify-compress-details">
         <?php if ($error) { ?>
             <span class="icon dashicons dashicons-warning error"></span>
         <?php } else if ($missing > 0 || $modified > 0) { ?>
