@@ -221,17 +221,16 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '<p>';
         $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG Developer section', 'tiny-compress-images') . '</a>';
         if (empty($key)) {
-            printf(esc_html__('Visit %s to get an API key', 'tiny-compress-images') . '.', $link);
+            printf(esc_html__('Visit %s to get an API key.', 'tiny-compress-images'), $link);
         } else {
-            printf(esc_html__('Visit %s to view or upgrade your account', 'tiny-compress-images') . '.', $link);
+            printf(esc_html__('Visit %s to view or upgrade your account.', 'tiny-compress-images'), $link);
         }
         echo '</p>';
     }
 
     public function render_sizes() {
         echo '<p>';
-        echo esc_html__('Choose sizes to compress', 'tiny-compress-images') . '. ';
-        echo esc_html__('Remember each selected size counts as a compression', 'tiny-compress-images') . '. ';
+        esc_html_e('Choose sizes to compress. Remember each selected size counts as a compression.', 'tiny-compress-images');
         echo '</p>';
         echo '<input type="hidden" name="' . self::get_prefixed_name('sizes[' . self::DUMMY_SIZE . ']') . '" value="on"/>';
         foreach ($this->get_sizes() as $size => $option) {
@@ -264,14 +263,11 @@ class Tiny_Settings extends Tiny_WP_Base {
             $active_image_sizes_count++;
         }
         if ($active_image_sizes_count < 1) {
-            echo esc_html__('With these settings no images will be compressed', 'tiny-compress-images') . '.';
+            esc_html_e('With these settings no images will be compressed.', 'tiny-compress-images');
         } else {
             $free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count );
-            echo esc_html__('With these settings you can compress', 'tiny-compress-images');
-            echo ' <strong>';
-            printf(esc_html__('at least %s images', 'tiny-compress-images'), $free_images_per_month);
-            echo '</strong> ';
-            echo esc_html__('for free each month', 'tiny-compress-images') . '.';
+            printf(__('With these settings you can compress <strong> at least %s images </strong> for free each month.',
+                      'tiny-compress-images'), $free_images_per_month);
         }
         echo '</p>';
     }
@@ -289,17 +285,17 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         echo '<p>';
         if ($total_savings > 0) {
-            printf(esc_html__('You have saved a total of %s on images', 'tiny-compress-images') . '!', '<strong>' . size_format($total_savings) . '</strong>' );
+            printf(esc_html__('You have saved a total of %s on images!', 'tiny-compress-images'), '<strong>' . size_format($total_savings) . '</strong>' );
         } else {
             $link = '<a href="upload.php?page=tiny-bulk-compress">' . esc_html__('Compress All Images', 'tiny-compress-images') . '</a>';
-            printf(esc_html__('No images compressed yet. Use %s to compress existing images', 'tiny-compress-images') . '.', $link);
+            printf(esc_html__('No images compressed yet. Use %s to compress existing images.', 'tiny-compress-images'), $link);
         }
         echo '</p>';
     }
 
     public function render_resize() {
         echo '<p class="tiny-resize-unavailable" style="display: none">';
-        echo esc_html__('Enable the compression of the original image size to configure resizing', 'tiny-compress-images') . '.';
+        esc_html_e('Enable the compression of the original image size to configure resizing.', 'tiny-compress-images');
         echo '</p>';
 
         $id = self::get_prefixed_name("resize_original_enabled");
@@ -321,7 +317,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '</p>';
 
         echo '<p class="tiny-resize-available">';
-        echo sprintf(esc_html__('Resizing takes %s for each image that is larger', 'tiny-compress-images'), esc_html__('1 additional compression', 'tiny-compress-images')) . '.';
+        esc_html_e('Resizing takes 1 additional compression for each image that is larger.', 'tiny-compress-images');
         echo '</p>';
     }
 
@@ -347,8 +343,8 @@ class Tiny_Settings extends Tiny_WP_Base {
             if (isset($details['error']) && $details['error'] == 'TooManyRequests') {
                 $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG API account', 'tiny-compress-images') . '</a>';
                 $this->notices->add('limit-reached',
-                    sprintf(esc_html__('You have reached your limit of %s compressions this month', 'tiny-compress-images'), $count) . '. ' .
-                    sprintf(esc_html__('Upgrade your %s if you like to compress more images', 'tiny-compress-images'), $link) . '.');
+                    sprintf(esc_html__('You have reached your limit of %s compressions this month.', 'tiny-compress-images'), $count) .
+                    sprintf(esc_html__('Upgrade your %s if you like to compress more images.', 'tiny-compress-images'), $link));
             } else {
                 $this->notices->remove('limit-reached');
             }
@@ -376,21 +372,22 @@ class Tiny_Settings extends Tiny_WP_Base {
                     echo esc_html__('Error', 'tiny-compress-images') . ': ' . esc_html__($details['message'], 'tiny-compress-images');
                 }
             } else {
-                echo esc_html__('API status could not be checked, enable cURL for more information', 'tiny-compress-images');
+                esc_html_e('API status could not be checked, enable cURL for more information', 'tiny-compress-images');
             }
         }
         echo '</p>';
+
         if ($status) {
             $compressions = self::get_compression_count();
             echo '<p>';
             // It is not possible to check if a subscription is free or flexible.
             if ( $compressions == Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
                 $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG API account', 'tiny-compress-images') . '</a>';
-                printf(esc_html__('You have reached your limit of %s compressions this month', 'tiny-compress-images') . '.', $compressions);
+                printf(esc_html__('You have reached your limit of %s compressions this month.', 'tiny-compress-images'), $compressions);
                 echo '<br>';
-                printf(esc_html__('If you need to compress more images you can change your %s', 'tiny-compress-images') . '.', $link);
+                printf(esc_html__('If you need to compress more images you can change your %s.', 'tiny-compress-images'), $link);
             } else {
-               printf(esc_html__('You have made %s compressions this month', 'tiny-compress-images') . '.', self::get_compression_count());
+               printf(esc_html__('You have made %s compressions this month.', 'tiny-compress-images'), self::get_compression_count());
             }
             echo '</p>';
         }

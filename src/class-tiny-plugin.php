@@ -147,19 +147,19 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
         $json = !empty($_POST['json']) && $_POST['json'];
         if (!current_user_can('upload_files')) {
-            $message = __("You don't have permission to work with uploaded files", 'tiny-compress-images') . '.';
+            $message = __("You don't have permission to work with uploaded files.", 'tiny-compress-images');
             echo $json ? json_encode(array('error' => $message)) : $message;
             exit();
         }
         if (empty($_POST['id'])) {
-            $message = __('Not a valid media file', 'tiny-compress-images') . '.';
+            $message = __('Not a valid media file.', 'tiny-compress-images');
             echo $json ? json_encode(array('error' => $message)) : $message;
             exit();
         }
         $id = intval($_POST['id']);
         $metadata = wp_get_attachment_metadata($id);
         if (!is_array($metadata)) {
-            $message = __('Could not find metadata of media file', 'tiny-compress-images') . '.';
+            $message = __('Could not find metadata of media file.', 'tiny-compress-images');
             echo $json ? json_encode(array('error' => $message)) : $message;
             exit;
         }
@@ -234,16 +234,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $sizes_count = count($this->settings->get_active_tinify_sizes());
 
             echo '<p>';
-            echo esc_html__('Use this tool to compress all images in your media library', 'tiny-compress-images') . '. ';
-            echo esc_html__('Only images that have not been compressed will be compressed', 'tiny-compress-images') . '. ';
+            esc_html_e('Use this tool to compress all images in your media library. Only images that have not been compressed will be compressed.', 'tiny-compress-images');
             echo '</p>';
             echo '<p>';
-            echo sprintf(esc_html__('We have found %d images in your media library and for each image %d sizes will be compressed', 'tiny-compress-images'),
-             $image_count, $sizes_count) . '. ';
-            echo sprintf(esc_html__('This results in %d compressions at most', 'tiny-compress-images'), $image_count * $sizes_count) . '. ';
+            echo sprintf(esc_html__('We have found %d images in your media library and for each image %d sizes will be compressed.', 'tiny-compress-images'),
+             $image_count, $sizes_count) . ' ';
+            echo sprintf(esc_html__('This results in %d compressions at most.', 'tiny-compress-images'), $image_count * $sizes_count);
             echo '</p>';
             echo '<p>';
-            echo esc_html__('To begin, just press the button below', 'tiny-compress-images') . '. ';
+            esc_html_e('To begin, just press the button below.', 'tiny-compress-images');
             echo '</p>';
 
             echo '<form method="POST" action="?page=tiny-bulk-compress">';
@@ -269,14 +268,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $items = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' $cond ORDER BY ID DESC", ARRAY_A);
 
             echo '<p>';
-            echo esc_html__('Please be patient while the images are being compressed', 'tiny-compress-images') . '. ';
-            echo esc_html__('This can take a while if you have many images', 'tiny-compress-images') . '. ';
-            echo esc_html__('Do not navigate away from this page because it will stop the process', 'tiny-compress-images') . '. ';
-            echo esc_html__('You will be notified via this page when the processing is done', 'tiny-compress-images') . '.';
+            esc_html_e('Please be patient while the images are being compressed, it can take a while if you have many images. Do not navigate away from this page because it will stop the process.', 'tiny-compress-images');
+            echo '</p><p>';
+            esc_html_e('You will be notified via this page when the processing is done.', 'tiny-compress-images');
             echo "</p>";
 
-            echo '<div id="tiny-status"><p>'. esc_html__('Compressions this month', 'tiny-compress-images') . sprintf(' <span>%d</span></p></div>', $this->settings->get_status());
-            echo '<div id="tiny-progress"><p>'. esc_html__('Processing', 'tiny-compress-images') . ' <span>0</span> ' . esc_html__('out of', 'tiny-compress-images') . sprintf(' %d </p></div>', count($items));
+            echo '<div id="tiny-status"><p>';
+            esc_html_e('Compressions this month', 'tiny-compress-images');
+            printf(' <span>%d</span></p></div>', $this->settings->get_status());
+
+            echo '<div id="tiny-progress"><p>';
+
+            /* translators: as in 'processing image X out of Y' */
+            esc_html_e('Processing', 'tiny-compress-images');
+            echo ' <span>0</span> ' . esc_html__('out of', 'tiny-compress-images') . sprintf(' %d </p></div>', count($items));
             echo '<div id="media-items">';
             echo '</div>';
 

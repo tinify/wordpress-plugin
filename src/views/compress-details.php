@@ -63,14 +63,16 @@
 
     <?php if (count($uncompressed) > 0) { ?>
         <button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_metadata->get_id() ?>">
-            <?php echo esc_html__('Compress', 'tiny-compress-images') ?>
+            <?= esc_html__('Compress', 'tiny-compress-images') ?>
         </button>
     <?php } ?>
 </div>
 <?php if ($tiny_metadata->get_compressed_count() > 0) { ?>
     <div class="modal" id="modal_<?php echo $tiny_metadata->get_id() ?>">
         <div class="tiny-compression-details">
-            <h3><?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_metadata->get_name()) ?></h3>
+            <h3>
+                <?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_metadata->get_name()) ?>
+            </h3>
             <table>
                 <tr>
                     <th><?php esc_html_e('Size', 'tiny-compress-images') ?></th>
