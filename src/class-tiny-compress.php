@@ -38,6 +38,7 @@ abstract class Tiny_Compress {
     protected function __construct($api_key, $after_compress_callback) {
         $this->api_key = $api_key;
         $this->after_compress_callback = $after_compress_callback;
+        $this->proxy = new WP_HTTP_Proxy();
     }
 
     abstract protected function shrink($input);
@@ -143,4 +144,3 @@ abstract class Tiny_Compress {
         );
     }
 }
-

@@ -40,6 +40,7 @@ class Tiny_Compress_Curl extends Tiny_Compress {
               CURLOPT_SSL_VERIFYPEER => true,
               CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL/' . self::curl_version()
         );
+        $options = $this->add_proxy_options(Tiny_Config::URL, $options);
         if (TINY_DEBUG) {
             $f = fopen(dirname(__FILE__) . '/curl.log', 'w');
             if (is_resource($f)) {
@@ -80,6 +81,7 @@ class Tiny_Compress_Curl extends Tiny_Compress {
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL/' . self::curl_version()
         );
+        $this->add_proxy_options($url, $options);
         if ($resize) {
             $options[CURLOPT_USERPWD] = 'api:' . $this->api_key;
             $options[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
@@ -99,5 +101,19 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         curl_close($request);
 
         return array(substr($response, $header_size), $headers);
+    }
+
+    private function add_proxy_options($url, $options) {
+        if ($this->proxy->is_enabled() && $this->proxy->send_through_proxy($url)) {
+            $options[CURLOPT_PROXYTYPE] = CURLPROXY_HTTP;
+            $options[CURLOPT_PROXY] = $this->proxy->host();
+            $options[CURLOPT_PROXYPORT] = $this->proxy->port();
+
+            if ($this->proxy->use_authentication()) {
+                $options[CURLOPT_PROXYAUTH] = CURLAUTH_ANY;
+                $options[CURLOPT_PROXYUSERPWD] = $this->proxy->authentication();
+            }
+        }
+        return $options;
     }
 }
