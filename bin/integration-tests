@@ -33,11 +33,6 @@ sub check_port {
 my $from = $ARGV[0] || 42;
 my $to = $ARGV[1] || $from;
 
-print("mv src/config/tiny-config.php src/config/tiny-config.php.bak\n");
-system("mv", "src/config/tiny-config.php", "src/config/tiny-config.php.bak");
-print("cp test/fixtures/tiny-config.php src/config/tiny-config.php\n\n");
-system("cp", "test/fixtures/tiny-config.php", "src/config/tiny-config.php");
-
 for (my $version = $from; $version <= $to; $version++) {
     printf("==================== WordPress %d ====================\n", $version);
     print(" - Running\n");
@@ -60,6 +55,3 @@ for (my $version = $from; $version <= $to; $version++) {
         next;
     }
 }
-
-print("mv src/config/tiny-config.php.bak src/config/tiny-config.php\n\n");
-system("mv", "src/config/tiny-config.php.bak", "src/config/tiny-config.php");

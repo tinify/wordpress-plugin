@@ -9,8 +9,8 @@
     "composer/installers": "~1.0"
   },
   "require-dev": {
-    "facebook/webdriver": "0.5.*",
     "phpunit/phpunit": "~4.6",
+    "facebook/webdriver": "~1.1",
     "mikey179/vfsStream": "~1.5",
     "mockery/mockery": "~0.9"
   }

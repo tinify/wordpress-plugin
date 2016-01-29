@@ -2,6 +2,13 @@
 
 require 'vendor/autoload.php';
 
+use Facebook\WebDriver;
+use Facebook\WebDriver\WebDriverDimension;
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\Remote;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
+
 function wordpress($url = null) {
     return getenv('WORDPRESS_URL') . $url;
 }
@@ -155,9 +162,13 @@ function reset_webservice() {
     curl_close($request);
 }
 
-$global_webdriver_host = 'http://127.0.0.1:4444/wd/hub';
-$global_driver = RemoteWebDriver::create($global_webdriver_host, DesiredCapabilities::firefox());
+// $global_webdriver_host = 'http://127.0.0.1:4444/wd/hub';
+// $global_driver = RemoteWebDriver::create($global_webdriver_host, DesiredCapabilities::firefox());
+$global_webdriver_host = 'http://127.0.0.1:8910';
+$global_driver = RemoteWebDriver::create($global_webdriver_host, DesiredCapabilities::phantomjs());
 $global_session_id = $global_driver->getSessionID();
+$window = new WebDriverDimension(1280, 1024);
+$global_driver->manage()->window()->setSize($window);
 
 register_shutdown_function('close_webdriver');
 register_shutdown_function('restore_wordpress');

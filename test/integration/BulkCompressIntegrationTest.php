@@ -2,6 +2,9 @@
 
 require_once(dirname(__FILE__) . "/IntegrationTestCase.php");
 
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverExpectedCondition;
+
 class BulkCompressIntegrationTest extends IntegrationTestCase {
 
     public function setUp() {

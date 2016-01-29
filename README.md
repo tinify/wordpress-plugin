@@ -19,7 +19,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Prerequisites
 * A working Docker installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
-* Selenium Server (http://www.seleniumhq.org/download/).
+* PhantomJS 2.1 or greater (http://phantomjs.org).
 * MySQL client and admin tools.
 * Java runtime.
 
@@ -31,7 +31,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 1. Run `bin/unit-tests`.
 
 ### Running the integration tests
-1. Start Selenium server: `java -jar selenium-server-standalone-2.44.0.jar`.
+1. Start PhantomJS server: `phantomjs --webdriver=127.0.0.1:8910`.
 2. Run `bin/integration-tests $version [$to_version]` (When $to_version is
 added, all versions between $version and $to_version are tested). E.g.
 `bin/integration-tests 41` or `bin/integration-tests 40 42`.

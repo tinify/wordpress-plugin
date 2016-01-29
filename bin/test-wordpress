@@ -39,4 +39,19 @@ fi
 
 export HOST_PORT=80$version
 export WORDPRESS_URL=http://$HOST_IP:$HOST_PORT
+
+function prepare_test_config {
+  printf "\nPreparing test config\n\n"
+  mv src/config/tiny-config.php src/config/tiny-config.php.bak
+  cp test/fixtures/tiny-config.php src/config/tiny-config.php
+}
+
+function restore_config {
+  printf "\n\nRestoring config\n\n"
+  mv src/config/tiny-config.php.bak src/config/tiny-config.php
+}
+
+trap 'restore_config' EXIT
+
+prepare_test_config
 vendor/bin/phpunit "$PHPUNIT_ARG"

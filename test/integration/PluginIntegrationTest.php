@@ -2,6 +2,8 @@
 
 require_once(dirname(__FILE__) . "/IntegrationTestCase.php");
 
+use Facebook\WebDriver\WebDriverBy;
+
 class PluginIntegrationTest extends IntegrationTestCase {
 
     public function setUp() {
