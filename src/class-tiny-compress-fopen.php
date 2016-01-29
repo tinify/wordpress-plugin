@@ -74,6 +74,9 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         $options = array(
             'http' => array(
                 'method' => 'GET',
+                'header' => array(
+                    'User-Agent: ' . Tiny_WP_Base::plugin_identification() . ' fopen',
+                 ),
             ),
             'ssl' => array(
                 'cafile' => self::get_ca_file(),
@@ -81,11 +84,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
             )
         );
         if ($resize) {
-            $options['http']['header'] = array(
-                'Authorization: Basic ' . base64_encode('api:' . $this->api_key),
-                'Content-Type: application/json',
-                'User-Agent: ' . Tiny_WP_Base::plugin_identification() . ' fopen'
-            );
+            $options['http']['header'][] = 'Authorization: Basic ' . base64_encode('api:' . $this->api_key);
+            $options['http']['header'][] = 'Content-Type: application/json';
             $options['http']['content'] = json_encode(array('resize' => $resize));
         }
         return $options;

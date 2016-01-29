@@ -19,6 +19,15 @@
 */
 
 class Tiny_Compress_Curl extends Tiny_Compress {
+    private static $curl_version;
+
+    protected static function curl_version() {
+        if (is_null(self::$curl_version)) {
+            self::$curl_version = curl_version();
+        }
+        return self::$curl_version['version'];
+    }
+
     protected function shrink_options($input) {
         $options = array(
               CURLOPT_URL => Tiny_Config::URL,
@@ -29,7 +38,7 @@ class Tiny_Compress_Curl extends Tiny_Compress {
               CURLOPT_HEADER => true,
               CURLOPT_CAINFO => self::get_ca_file(),
               CURLOPT_SSL_VERIFYPEER => true,
-              CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL'
+              CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL/' . self::curl_version()
         );
         if (TINY_DEBUG) {
             $f = fopen(dirname(__FILE__) . '/curl.log', 'w');
@@ -69,7 +78,7 @@ class Tiny_Compress_Curl extends Tiny_Compress {
             CURLOPT_HEADER => true,
             CURLOPT_CAINFO => self::get_ca_file(),
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL'
+            CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL/' . self::curl_version()
         );
         if ($resize) {
             $options[CURLOPT_USERPWD] = 'api:' . $this->api_key;
