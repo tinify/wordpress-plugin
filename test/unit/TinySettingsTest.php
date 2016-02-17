@@ -34,7 +34,7 @@ class Tiny_Settings_Test extends TinyTestCase {
             array('tinypng_resize_original', 'Resize original', array($this->subject, 'render_resize'), 'media', 'tinypng_settings'),
             array('tinypng_status', 'Connection status', array($this->subject, 'render_pending_status'), 'media', 'tinypng_settings'),
             array('tinypng_savings', 'Savings', array($this->subject, 'render_pending_savings'), 'media', 'tinypng_settings'),
-            array('tinypng_include_metadata', 'Include Metadata', array($this->subject, 'include_metadata'), 'media', 'tinypng_settings')
+            array('tinypng_include_metadata', 'Keep Copyright metadata', array($this->subject, 'include_metadata'), 'media', 'tinypng_settings')
         ), $this->wp->getCalls('add_settings_field'));
     }
 
