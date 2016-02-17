@@ -72,7 +72,7 @@ class Tiny_Compress_Curl extends Tiny_Compress {
         return array(self::decode(substr($response, $header_size)), $headers, $status_code);
     }
 
-    protected function output_options($url, $resize) {
+    protected function output_options($url, $resize_options, $merge_options) {
         $options = array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -82,17 +82,29 @@ class Tiny_Compress_Curl extends Tiny_Compress {
             CURLOPT_USERAGENT => Tiny_WP_Base::plugin_identification() . ' cURL/' . self::curl_version()
         );
         $this->add_proxy_options($url, $options);
-        if ($resize) {
+
+        $body = array();
+
+        if ($merge_options) {
+            $body['merge'] = $merge_options;
+        }
+
+        if ($resize_options) {
+            $body['resize'] = $resize_options;
+        }
+
+        if ($resize_options || $merge_options) {
             $options[CURLOPT_USERPWD] = 'api:' . $this->api_key;
             $options[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
-            $options[CURLOPT_POSTFIELDS] = json_encode(array('resize' => $resize));
+            $options[CURLOPT_POSTFIELDS] = json_encode($body);
         }
+
         return $options;
     }
 
-    protected function output($url, $resize) {
+    protected function output($url, $resize_options, $merge_options) {
         $request = curl_init();
-        $options = $this->output_options($url, $resize);
+        $options = $this->output_options($url, $resize_options, $merge_options);
         curl_setopt_array($request, $options);
 
         $response = curl_exec($request);

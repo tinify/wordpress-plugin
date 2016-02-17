@@ -77,6 +77,10 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, __('Savings'), $this->get_method('render_pending_savings'), 'media', $section);
 
+        $field = self::get_prefixed_name('include_metadata');
+        register_setting('media', $field);
+        add_settings_field($field, __('Keep Copyright metadata', 'tiny-compress-images'), $this->get_method('include_metadata'), 'media', $section);
+
         add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
         add_action('wp_ajax_tiny_compress_savings', $this->get_method('total_savings_status'));
@@ -182,6 +186,21 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function get_resize_enabled() {
         $setting = get_option(self::get_prefixed_name('resize_original'));
         return isset($setting['enabled']) && $setting['enabled'] === 'on';
+    }
+
+    public function get_metadata_enabled() {
+        $setting = get_option(self::get_prefixed_name('include_metadata'));
+        return isset($setting['enabled']) && $setting['enabled'] === 'on';
+    }
+
+    public function get_metadata_options() {
+        $setting = get_option(self::get_prefixed_name('include_metadata'));
+        if (!$this->get_metadata_enabled()) {
+            return false;
+
+        }
+        $options = array('copyright');
+        return $options;
     }
 
     public function get_resize_options() {
@@ -318,6 +337,23 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         echo '<p class="tiny-resize-available">';
         esc_html_e('Resizing takes 1 additional compression for each image that is larger.', 'tiny-compress-images');
+        echo '</p>';
+    }
+
+        public function include_metadata() {
+        echo '<p class="tiny-resize-unavailable" style="display: none">';
+        esc_html_e('Include metadata information in the compressed image.', 'tiny-compress-images');
+        echo '</p>';
+
+        $id = self::get_prefixed_name("include_metadata_enabled");
+        $name = self::get_prefixed_name("include_metadata[enabled]");
+        $checked = ( $this->get_metadata_enabled() ? ' checked="checked"' : '' );
+        $label = esc_html__('Keep Copyright metadata in your images.', 'tiny-compress-images');
+
+        echo '<p class="tiny-resize-available">';
+        echo '<input  type="checkbox" id="' . $id . '" name="' . $name . '" value="on" '. $checked . '/>';
+        echo '<label for="' . $id . '">' . $label . '</label>';
+        echo '<br>';
         echo '</p>';
     }
 

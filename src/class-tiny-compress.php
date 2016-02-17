@@ -42,7 +42,7 @@ abstract class Tiny_Compress {
     }
 
     abstract protected function shrink($input);
-    abstract protected function output($url, $resize);
+    abstract protected function output($url, $resize_options, $merge_options);
 
     public function get_status(&$details) {
         list($details, $headers, $status_code) = $this->shrink(null);
@@ -55,7 +55,7 @@ abstract class Tiny_Compress {
         }
     }
 
-    public function compress($input, $resize_options) {
+    public function compress($input, $resize_options, $merge_options) {
         list($details, $headers) = $this->shrink($input);
         $this->call_after_compress_callback($details, $headers);
         $outputUrl = isset($headers['location']) ? $headers['location'] : null;
@@ -64,7 +64,7 @@ abstract class Tiny_Compress {
         } else if ($outputUrl === null) {
             throw new Tiny_Exception('Could not find output url', 'OutputNotFound');
         }
-        list($output, $headers) = $this->output($outputUrl, $resize_options);
+        list($output, $headers) = $this->output($outputUrl, $resize_options, $merge_options);
         $this->call_after_compress_callback(null, $headers);
         if (strlen($output) == 0) {
             throw new Tiny_Exception('Could not download output', 'OutputError');
@@ -73,7 +73,7 @@ abstract class Tiny_Compress {
         return array($output, $details);
     }
 
-    public function compress_file($file, $resize_options) {
+    public function compress_file($file, $resize_options, $merge_options) {
         if (!file_exists($file)) {
             throw new Tiny_Exception('File does not exist', 'FileError');
         }
@@ -82,7 +82,7 @@ abstract class Tiny_Compress {
             $resize_options = false;
         }
 
-        list($output, $details) = $this->compress(file_get_contents($file), $resize_options);
+        list($output, $details) = $this->compress(file_get_contents($file), $resize_options, $merge_options);
         file_put_contents($file, $output);
 
         if ($resize_options) {
