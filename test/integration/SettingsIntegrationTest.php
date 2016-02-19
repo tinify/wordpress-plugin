@@ -131,7 +131,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $this->assertContains('Resize and compress the orginal image', $texts);
         $paragraphs = self::$driver->findElements(WebDriverBy::tagName('p'));
         $texts = array_map('innerText', $paragraphs);
-        $this->assertNotContains('Enable the compression of the original image size to configure resizing.', $texts);
+        $this->assertNotContains('Enable compression of the original image size for more options.', $texts);
     }
 
     public function testShouldNotShowResizingWhenOriginalDisabled() {
@@ -140,7 +140,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             $element->click();
         }
         self::$driver->wait(1)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('p.tiny-resize-unavailable'), 'Enable the compression of the original image size to configure resizing.'));
+            WebDriverBy::cssSelector('p.tiny-resize-unavailable'), 'Enable compression of the original image size for more options.'));
         $labels = self::$driver->findElements(WebDriverBy::tagName('label'));
         $texts = array_map('innerText', $labels);
         $this->assertNotContains('Resize and compress orginal images to fit within:', $texts);

@@ -67,7 +67,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         $field = self::get_prefixed_name('resize_original');
         register_setting('media', $field);
-        add_settings_field($field, __('Resize original', 'tiny-compress-images'), $this->get_method('render_resize'), 'media', $section);
+        add_settings_field($field, __('Original image', 'tiny-compress-images'), $this->get_method('render_resize'), 'media', $section);
 
         $field = self::get_prefixed_name('status');
         register_setting('media', $field);
@@ -76,10 +76,6 @@ class Tiny_Settings extends Tiny_WP_Base {
         $field = self::get_prefixed_name('savings');
         register_setting('media', $field);
         add_settings_field($field, __('Savings'), $this->get_method('render_pending_savings'), 'media', $section);
-
-        $field = self::get_prefixed_name('include_metadata');
-        register_setting('media', $field);
-        add_settings_field($field, __('Keep Copyright metadata', 'tiny-compress-images'), $this->get_method('include_metadata'), 'media', $section);
 
         add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
@@ -314,7 +310,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function render_resize() {
         echo '<p class="tiny-resize-unavailable" style="display: none">';
-        esc_html_e('Enable the compression of the original image size to configure resizing.', 'tiny-compress-images');
+        esc_html_e('Enable compression of the original image size for more options.', 'tiny-compress-images');
         echo '</p>';
 
         $id = self::get_prefixed_name("resize_original_enabled");
@@ -335,20 +331,14 @@ class Tiny_Settings extends Tiny_WP_Base {
         $this->render_resize_input('height');
         echo '</p>';
 
-        echo '<p class="tiny-resize-available">';
+        echo '<p class="tiny-resize-available tiny-resize-resolution">';
         esc_html_e('Resizing takes 1 additional compression for each image that is larger.', 'tiny-compress-images');
-        echo '</p>';
-    }
-
-        public function include_metadata() {
-        echo '<p class="tiny-resize-unavailable" style="display: none">';
-        esc_html_e('Include metadata information in the compressed image.', 'tiny-compress-images');
         echo '</p>';
 
         $id = self::get_prefixed_name("include_metadata_enabled");
         $name = self::get_prefixed_name("include_metadata[enabled]");
         $checked = ( $this->get_metadata_enabled() ? ' checked="checked"' : '' );
-        $label = esc_html__('Keep Copyright metadata in your images.', 'tiny-compress-images');
+        $label = esc_html__('Preserve copyright information in the original image (JPEG only)', 'tiny-compress-images');
 
         echo '<p class="tiny-resize-available">';
         echo '<input  type="checkbox" id="' . $id . '" name="' . $name . '" value="on" '. $checked . '/>';
