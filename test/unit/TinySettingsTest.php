@@ -16,7 +16,8 @@ class Tiny_Settings_Test extends TinyTestCase {
             array('media', 'tinypng_sizes'),
             array('media', 'tinypng_resize_original'),
             array('media', 'tinypng_status'),
-            array('media', 'tinypng_savings')
+            array('media', 'tinypng_savings'),
+            array('media', 'tinypng_preserve_data')
         ), $this->wp->getCalls('register_setting'));
     }
 
@@ -150,23 +151,23 @@ class Tiny_Settings_Test extends TinyTestCase {
     }
 
     public function testShouldReturnIncludeMetadataEnabled() {
-        $this->wp->addOption("tinypng_include_metadata", array('enabled' => 'on'));
-        $this->assertEquals(true, $this->subject->get_metadata_enabled());
+        $this->wp->addOption("tinypng_preserve_data", array('enabled' => 'on'));
+        $this->assertEquals(true, $this->subject->get_preserve_enabled());
     }
 
     public function testShouldReturnIncludeMetadataNotEnabledWithoutConfiguration() {
         $this->wp->addOption("tinypng_include_metadata", array());
-        $this->assertEquals(false, $this->subject->get_metadata_enabled());
+        $this->assertEquals(false, $this->subject->get_preserve_enabled());
     }
 
-    public function testShouldReturnMergeOptionsWhenEnabled() {
-        $this->wp->addOption("tinypng_include_metadata", array('enabled' => 'on'));
-        $this->assertEquals(array('0' => 'copyright'), $this->subject->get_metadata_options());
+    public function testShouldReturnPreserveOptionsWhenEnabled() {
+        $this->wp->addOption("tinypng_preserve_data", array('enabled' => 'on'));
+        $this->assertEquals(array('0' => 'copyright'), $this->subject->get_preserve_options());
     }
 
-    public function testShouldNotReturnMergeOptionsWhenDisabled() {
+    public function testShouldNotReturnPreserveOptionsWhenDisabled() {
         $this->wp->addOption("tinypng_include_metadata", array());
-        $this->assertEquals(false, $this->subject->get_metadata_options());
+        $this->assertEquals(false, $this->subject->get_preserve_options());
     }
 
 }

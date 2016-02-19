@@ -77,6 +77,9 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, __('Savings'), $this->get_method('render_pending_savings'), 'media', $section);
 
+        $field = self::get_prefixed_name('preserve_data');
+        register_setting('media', $field);
+
         add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
         add_action('wp_ajax_tiny_compress_savings', $this->get_method('total_savings_status'));
@@ -184,14 +187,14 @@ class Tiny_Settings extends Tiny_WP_Base {
         return isset($setting['enabled']) && $setting['enabled'] === 'on';
     }
 
-    public function get_metadata_enabled() {
-        $setting = get_option(self::get_prefixed_name('include_metadata'));
+    public function get_preserve_enabled() {
+        $setting = get_option(self::get_prefixed_name('preserve_data'));
         return isset($setting['enabled']) && $setting['enabled'] === 'on';
     }
 
-    public function get_metadata_options() {
-        $setting = get_option(self::get_prefixed_name('include_metadata'));
-        if (!$this->get_metadata_enabled()) {
+    public function get_preserve_options() {
+        $setting = get_option(self::get_prefixed_name('preserve_data'));
+        if (!$this->get_preserve_enabled()) {
             return false;
 
         }
@@ -335,9 +338,9 @@ class Tiny_Settings extends Tiny_WP_Base {
         esc_html_e('Resizing takes 1 additional compression for each image that is larger.', 'tiny-compress-images');
         echo '</p>';
 
-        $id = self::get_prefixed_name("include_metadata_enabled");
-        $name = self::get_prefixed_name("include_metadata[enabled]");
-        $checked = ( $this->get_metadata_enabled() ? ' checked="checked"' : '' );
+        $id = self::get_prefixed_name("preserve_data_enabled");
+        $name = self::get_prefixed_name("preserve_data[enabled]");
+        $checked = ( $this->get_preserve_enabled() ? ' checked="checked"' : '' );
         $label = esc_html__('Preserve copyright information in the original image (JPEG only)', 'tiny-compress-images');
 
         echo '<p class="tiny-resize-available">';

@@ -70,7 +70,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         return array(self::decode($response), $headers, $status_code);
     }
 
-    protected function output_options($resize_options, $merge_options) {
+    protected function output_options($resize_options, $preserve_options) {
         $options = array(
             'http' => array(
                 'method' => 'GET',
@@ -86,15 +86,15 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
         $body = array();
 
-        if ($merge_options) {
-            $body['merge'] = $merge_options;
+        if ($preserve_options) {
+            $body['preserve'] = $preserve_options;
         }
 
         if ($resize_options) {
             $body['resize'] = $resize_options;
         }
 
-        if ($resize_options || $merge_options) {
+        if ($resize_options || $preserve_options) {
             $options['http']['header'][] = 'Authorization: Basic ' . base64_encode('api:' . $this->api_key);
             $options['http']['header'][] = 'Content-Type: application/json';
             $options['http']['content'] = json_encode($body);
@@ -102,8 +102,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         return $options;
     }
 
-    protected function output($url, $resize_options, $merge_options) {
-        $context = stream_context_create($this->output_options($resize_options, $merge_options));
+    protected function output($url, $resize_options, $preserve_options) {
+        $context = stream_context_create($this->output_options($resize_options, $preserve_options));
         $request = @fopen($url, 'rb', false, $context);
 
         if ($request) {
