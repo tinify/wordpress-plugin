@@ -123,10 +123,16 @@ function login($driver) {
     $driver->findElement(WebDriverBy::name('pwd'))->clear()->click()->sendKeys('admin');
     $driver->findElement(WebDriverBy::tagName('form'))->submit();
 
-    $dashboardHeading = $driver->findElement(WebDriverBy::xpath("//html/body//div[@class='wrap']/*[self::h1 or self::h2]"));
-    if ($dashboardHeading->getText() == 'Dashboard') {
-        print "success!\n";
-    } else {
+    try {
+        $dashboardHeading = $driver->findElement(WebDriverBy::xpath("//html/body//div[@class='wrap']/*[self::h1 or self::h2]"));
+        if ($dashboardHeading->getText() == 'Dashboard') {
+            print "success!\n";
+        } else {
+            var_dump($driver->getPageSource());
+            throw new UnexpectedValueException('Login failed.');
+        }
+    } catch (Exception $e) {
+        // Fixme: sometimes we get a login error randomly. Perhaps it's caused by one of the tests.
         var_dump($driver->getPageSource());
         throw new UnexpectedValueException('Login failed.');
     }

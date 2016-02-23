@@ -169,5 +169,4 @@ class Tiny_Settings_Test extends TinyTestCase {
         $this->wp->addOption("tinypng_include_metadata", array());
         $this->assertEquals(false, $this->subject->get_preserve_options());
     }
-
 }

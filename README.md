@@ -31,20 +31,16 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 1. Run `bin/unit-tests`.
 
 ### Running the integration tests
-1. Start PhantomJS server: `phantomjs --webdriver=127.0.0.1:8910`.
+1. Start PhantomJS server: `phantomjs --webdriver=127.0.0.1:8910`. Tested with version 2.1.1.
 2. Run `bin/integration-tests $version [$to_version]` (When $to_version is
 added, all versions between $version and $to_version are tested). E.g.
 `bin/integration-tests 41` or `bin/integration-tests 40 42`.
 
-### Create language files
+### Translating the plugin
+Language packs will be generated for the plugin once translations for a
+language are 100% filled in and approved.
 
-WordPress requires both .po and .mo files for each language. The .mo files
-can be generated with [gettext](https://www.gnu.org/software/gettext/) that
-needs to be installed first.
-
-1. Install gettext for example run `brew install gettext`.
-2. Add a link msgfmt `ln -s /usr/local/Cellar/gettext/0.19.6/bin/msgfmt ~/.bin`.
-3. Generate the .mo files `bin/format-language-files`.
+See https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images.
 
 ## License
 
