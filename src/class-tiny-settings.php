@@ -196,9 +196,10 @@ class Tiny_Settings extends Tiny_WP_Base {
         $settings = get_option(self::get_prefixed_name('preserve_data'));
         $options = array();
         if ($settings) {
-            foreach (array_keys($settings) as &$setting) {
-                if ($settings[$setting] === "on") {
-                    array_push($options, $setting);
+            $keys = array_keys($settings);
+            foreach ($keys as &$key) {
+                if ($settings[$key] === "on") {
+                    array_push($options, $key);
                 }
             }
         }
