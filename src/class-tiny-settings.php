@@ -187,18 +187,21 @@ class Tiny_Settings extends Tiny_WP_Base {
         return isset($setting['enabled']) && $setting['enabled'] === 'on';
     }
 
-    public function get_preserve_enabled() {
+    public function get_preserve_enabled($name) {
         $setting = get_option(self::get_prefixed_name('preserve_data'));
-        return isset($setting['enabled']) && $setting['enabled'] === 'on';
+        return isset($setting[$name]) && $setting[$name] === 'on';
     }
 
     public function get_preserve_options() {
-        $setting = get_option(self::get_prefixed_name('preserve_data'));
-        if (!$this->get_preserve_enabled()) {
-            return false;
-
+        $settings = get_option(self::get_prefixed_name('preserve_data'));
+        $options = array();
+        if ($settings) {
+            foreach (array_keys($settings) as &$setting) {
+                if ($settings[$setting] === "on") {
+                    array_push($options, $setting);
+                }
+            }
         }
-        $options = array('copyright');
         return $options;
     }
 
@@ -338,13 +341,17 @@ class Tiny_Settings extends Tiny_WP_Base {
         esc_html_e('Resizing takes 1 additional compression for each image that is larger.', 'tiny-compress-images');
         echo '</p>';
 
-        $id = self::get_prefixed_name("preserve_data_enabled");
-        $name = self::get_prefixed_name("preserve_data[enabled]");
-        $checked = ( $this->get_preserve_enabled() ? ' checked="checked"' : '' );
-        $label = esc_html__('Preserve copyright information in the original image (JPEG only)', 'tiny-compress-images');
+        echo '<br>';
+        $this->render_preserve_input("copyright", 'Preserve copyright information in the original image (JPEG only)');
+    }
 
-        echo '<p class="tiny-resize-available">';
-        echo '<input  type="checkbox" id="' . $id . '" name="' . $name . '" value="on" '. $checked . '/>';
+    public function render_preserve_input($name, $description) {
+        echo '<p>';
+        $id = sprintf(self::get_prefixed_name('preserve_data_%s'), $name);
+        $field = sprintf(self::get_prefixed_name('preserve_data[%s]'), $name);
+        $checked = ( $this->get_preserve_enabled($name) ? ' checked="checked"' : '' );
+        $label = esc_html__($description, 'tiny-compress-images');
+        echo '<input type="checkbox" id="' . $id . '" name="' . $field . '" value="on" ' . $checked . '/>';
         echo '<label for="' . $id . '">' . $label . '</label>';
         echo '<br>';
         echo '</p>';

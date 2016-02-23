@@ -151,22 +151,22 @@ class Tiny_Settings_Test extends TinyTestCase {
     }
 
     public function testShouldReturnIncludeMetadataEnabled() {
-        $this->wp->addOption("tinypng_preserve_data", array('enabled' => 'on'));
-        $this->assertEquals(true, $this->subject->get_preserve_enabled());
+        $this->wp->addOption("tinypng_preserve_data", array('copyright' => 'on'));
+        $this->assertEquals(true, $this->subject->get_preserve_enabled("copyright"));
     }
 
     public function testShouldReturnIncludeMetadataNotEnabledWithoutConfiguration() {
         $this->wp->addOption("tinypng_include_metadata", array());
-        $this->assertEquals(false, $this->subject->get_preserve_enabled());
+        $this->assertEquals(false, $this->subject->get_preserve_enabled("copyright"));
     }
 
     public function testShouldReturnPreserveOptionsWhenEnabled() {
-        $this->wp->addOption("tinypng_preserve_data", array('enabled' => 'on'));
+        $this->wp->addOption("tinypng_preserve_data", array('copyright' => 'on'));
         $this->assertEquals(array('0' => 'copyright'), $this->subject->get_preserve_options());
     }
 
     public function testShouldNotReturnPreserveOptionsWhenDisabled() {
         $this->wp->addOption("tinypng_include_metadata", array());
-        $this->assertEquals(false, $this->subject->get_preserve_options());
+        $this->assertEquals(array(), $this->subject->get_preserve_options());
     }
 }
