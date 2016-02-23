@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress, optimize, shrink, resize, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, faster, performance, panda, wordpress app
 Requires at least: 3.0.6
 Tested up to: 4.4
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,11 @@ A: Everything will keep on working, but newly uploaded images will not be compre
 A: Yes! After installing the plugin, go to Media > Compress All Images, and click on the button to compress all uncompressed images in your media library.
 
 == Changelog ==
+
+= 1.7.0 =
+* Option to preserve copyright information in your original JPEG images.
+* Added proxy support for cURL.
+* Added support for translate.wordpress.org plugin translations.
 
 = 1.6.0 =
 * Improved compression status in the Media Library with new details window.
