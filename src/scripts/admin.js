@@ -182,8 +182,23 @@
         elements[i].disabled = !jQuery('#tinypng_resize_original_enabled').prop('checked')
       }
     }
-    update_resize_settings()
-    jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(update_resize_settings)
+
+    function update_preserve_settings() {
+      if (jQuery('#tinypng_sizes_0').prop('checked')) {
+        jQuery('.tiny-preserve').show()
+      } else {
+        jQuery('.tiny-preserve').hide()
+        jQuery('#tinypng_preserve_data_copyright').attr('checked', false)
+      }
+    }
+
+    function update_settings() {
+      update_resize_settings()
+      update_preserve_settings()
+    }
+
+
+    jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(update_settings)
   }
 
   jQuery('.tiny-notice a.tiny-dismiss').click(dismiss_notice)

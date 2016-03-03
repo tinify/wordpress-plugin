@@ -347,7 +347,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_preserve_input($name, $description) {
-        echo '<p>';
+        echo '<p class="tiny-preserve">';
         $id = sprintf(self::get_prefixed_name('preserve_data_%s'), $name);
         $field = sprintf(self::get_prefixed_name('preserve_data[%s]'), $name);
         $checked = ( $this->get_preserve_enabled($name) ? ' checked="checked"' : '' );
