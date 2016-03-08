@@ -14,12 +14,6 @@ if (preg_match('#output/.+[.](png|jpg)$#', $_SERVER['REQUEST_URI'], $match)) {
 $api_key = get_api_key();
 if (!is_null($api_key)) {
     $data = get_json_body();
-    if (is_null($data) || $api_key != 'JPG123') {
-        mock_invalid_response();
-        ob_end_flush();
-        exit();
-    }
-
     $resize = $data->resize;
     if ($resize->method) {
         $file = "output-resized.$ext";

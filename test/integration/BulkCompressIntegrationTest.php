@@ -29,10 +29,10 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array());
 
         for ($i = 0; $i < $normal; $i++) {
-            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.jpg');
         }
         for ($i = 0; $i < $large; $i++) {
-            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-large.png');
+            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
         }
 
         $this->enable_compression_sizes(array('thumbnail', 'medium', 'large'));
@@ -70,10 +70,9 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $filenames = array_map('innerText', $elements);
 
         $this->assertEquals(2, count($filenames));
-        $this->assertContains('input-large', $filenames);
         $this->assertContains('input-example', $filenames);
 
         $this->assertEquals('2', self::$driver->findElement(WebDriverBy::cssSelector('#tiny-progress span'))->getText());
-        $this->assertEquals('5', self::$driver->findElement(WebDriverBy::cssSelector('#tiny-status span'))->getText());
+        $this->assertEquals('4', self::$driver->findElement(WebDriverBy::cssSelector('#tiny-status span'))->getText());
     }
 }

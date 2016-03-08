@@ -34,22 +34,6 @@ function mock_jpg_response() {
     return json_encode($response);
 }
 
-function mock_large_response() {
-    global $session;
-
-    $session['Compression-Count'] += 1;
-    header('HTTP/1.1 201 Created');
-    header("Location: http://webservice/output/large.png");
-    header("Content-Type: application/json; charset=utf-8");
-    header("Compression-Count: {$session['Compression-Count']}");
-
-    $response = array(
-        "input" => array("size" => 80506, "type" => "image/jpg"),
-        "output" => array("size" => 70200, "type" => "image/jpg", "ratio" => 0.872)
-    );
-    return json_encode($response);
-}
-
 function mock_empty_response() {
     global $session;
 

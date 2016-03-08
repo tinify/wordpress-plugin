@@ -94,7 +94,7 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
     }
 
-    protected function view_edit_image($image_title = 'input-large') {
+    protected function view_edit_image($image_title = 'input-example') {
         $url = wordpress('/wp-admin/upload.php');
         if (self::$driver->getCurrentUrl() != $url) {
             self::$driver->get($url);
