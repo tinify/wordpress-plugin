@@ -137,7 +137,7 @@
     bulk_compress_item(items, 0)
   }
 
-  if (adminpage === "upload-php") {
+  if (typeof adminpage !== "undefined" && adminpage === "upload-php") {
     if (typeof jQuery.fn.on === "function") {
       jQuery('table').on('click', 'button.tiny-compress', compress_image)
     } else {
@@ -154,7 +154,7 @@
     jQuery('<option>').val('tiny_bulk_compress').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
   }
 
-  if (adminpage === "options-media-php") {
+  if (typeof adminpage !== "undefined" && adminpage === "options-media-php") {
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 
