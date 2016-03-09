@@ -85,8 +85,9 @@ abstract class Tiny_Compress {
         list($output, $details) = $this->compress(file_get_contents($file), $resize_options, $preserve_options);
         file_put_contents($file, $output);
 
+        $details['output'] = self::update_details($file, $details) + $details['output'];
         if ($resize_options) {
-            $details['output'] = self::update_details($file, $details) + $details['output'];
+            $details['output']['resized'] = true;
         }
 
         return $details;
@@ -139,8 +140,7 @@ abstract class Tiny_Compress {
             'size'    => $size,
             'width'   => $width,
             'height'  => $height,
-            'ratio'   => round($size / $details['input']['size'], 4),
-            'resized' => true
+            'ratio'   => round($size / $details['input']['size'], 4)
         );
     }
 }

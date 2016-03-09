@@ -163,4 +163,13 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->assertContains('Dimensions: 1080 × 720',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
     }
+
+    public function testPreserveCopyrightShouldDisplayCorrectImageSizeInMediaLibrary()
+    {
+        $this->set_api_key('PRESERVEJPG123');
+        $this->enable_preserve_copyright();
+        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-copyright.jpg');
+        $this->assertNotContains('files modified after compression',
+            self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
+    }
 }

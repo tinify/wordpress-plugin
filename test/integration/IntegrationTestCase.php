@@ -94,6 +94,18 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
     }
 
+    protected function enable_preserve_copyright() {
+        $url = wordpress('/wp-admin/options-media.php');
+        if (self::$driver->getCurrentUrl() != $url) {
+            self::$driver->get($url);
+        }
+        $element = self::$driver->findElement(WebDriverBy::id('tinypng_preserve_data_copyright'));
+        if (!$element->getAttribute('checked')) {
+            $element->click();
+        }
+        self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
+    }
+
     protected function view_edit_image($image_title = 'input-example') {
         $url = wordpress('/wp-admin/upload.php');
         if (self::$driver->getCurrentUrl() != $url) {

@@ -28,8 +28,24 @@ function mock_jpg_response() {
     header("Compression-Count: {$session['Compression-Count']}");
 
     $response = array(
-        "input" => array("size" => 15391, "type" => "image/jpg"),
-        "output" => array("size" => 13910, "type" => "image/jpg", "ratio" => 0.904)
+        "input" => array("size" => 15391, "type" => "image/jpeg"),
+        "output" => array("size" => 13910, "type" => "image/jpeg", "ratio" => 0.904)
+    );
+    return json_encode($response);
+}
+
+function mock_preserve_jpg_copyright_response() {
+    global $session;
+
+    $session['Compression-Count'] += 1;
+    header('HTTP/1.1 201 Created');
+    header("Location: http://webservice/output/copyright.jpg");
+    header("Content-Type: application/json; charset=utf-8");
+    header("Compression-Count: {$session['Compression-Count']}");
+
+    $response = array(
+        "input" => array("size" => 110329, "type" => "image/jpeg"),
+        "output" => array("size" => 97835, "type" => "image/jpeg", "ratio" => 0.8868)
     );
     return json_encode($response);
 }
@@ -85,6 +101,12 @@ if ($api_key == 'PNG123') {
         echo mock_empty_response();
     } else {
         echo mock_jpg_response();
+    }
+} else if ($api_key == 'PRESERVEJPG123') {
+    if (intval($_SERVER['CONTENT_LENGTH']) == 0) {
+        echo mock_empty_response();
+    } else {
+        echo mock_preserve_jpg_copyright_response();
     }
 } else if ($api_key == 'JSON1234') {
     if (intval($_SERVER['CONTENT_LENGTH']) == 0) {
