@@ -1,67 +1,69 @@
 <div class="details-container">
     <div class="details" id="tinify-compress-details">
-        <?php if ($error) { ?>
-            <span class="icon dashicons dashicons-warning error"></span>
-        <?php } else if ($missing > 0 || $modified > 0) { ?>
-            <span class="icon dashicons dashicons-yes alert"></span>
-        <?php } else if ($tiny_metadata->get_success_count() > 0 && count($uncompressed) > 0) { ?>
-            <span class="icon dashicons dashicons-yes alert"></span>
-        <?php } else if ($tiny_metadata->get_success_count() > 0) { ?>
-            <span class="icon dashicons dashicons-yes success"></span>
-        <?php } ?>
-        <span class="icon spinner hidden"></span>
+        <?php if ($tiny_metadata->can_be_compressed()) { ?>
+            <?php if ($error) { ?>
+                <span class="icon dashicons dashicons-warning error"></span>
+            <?php } else if ($missing > 0 || $modified > 0) { ?>
+                <span class="icon dashicons dashicons-yes alert"></span>
+            <?php } else if ($tiny_metadata->get_success_count() > 0 && count($uncompressed) > 0) { ?>
+                <span class="icon dashicons dashicons-yes alert"></span>
+            <?php } else if ($tiny_metadata->get_success_count() > 0) { ?>
+                <span class="icon dashicons dashicons-yes success"></span>
+            <?php } ?>
+            <span class="icon spinner hidden"></span>
 
-        <?php if ($tiny_metadata->get_compressed_count() > 0 || ($tiny_metadata->get_compressed_count() == 0 && count($uncompressed) == 0)) { ?>
-            <span class="message">
-                <strong><?php echo $tiny_metadata->get_compressed_count() ?></strong>
-                <span>
-                    <?= htmlspecialchars(_n('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count(), 'tiny-compress-images')) ?>
+            <?php if ($tiny_metadata->get_compressed_count() > 0 || ($tiny_metadata->get_compressed_count() == 0 && count($uncompressed) == 0)) { ?>
+                <span class="message">
+                    <strong><?php echo $tiny_metadata->get_compressed_count() ?></strong>
+                    <span>
+                        <?= htmlspecialchars(_n('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count(), 'tiny-compress-images')) ?>
+                    </span>
                 </span>
-            </span>
-            <br/>
-        <?php } ?>
+                <br/>
+            <?php } ?>
 
-        <?php if ($not_compressed_active > 0) { ?>
-            <span class="message">
-                <?= htmlspecialchars(sprintf(_n('%d size not compressed', '%d sizes not compressed', $not_compressed_active), $not_compressed_active)) ?>
-            </span>
-            <br />
-        <?php } ?>
+            <?php if ($not_compressed_active > 0) { ?>
+                <span class="message">
+                    <?= htmlspecialchars(sprintf(_n('%d size not compressed', '%d sizes not compressed', $not_compressed_active), $not_compressed_active)) ?>
+                </span>
+                <br />
+            <?php } ?>
 
-        <?php if ($missing > 0) { ?>
-            <span class="message">
-                <?= htmlspecialchars(sprintf(_n('%d file removed', '%d files removed', $missing), $missing)) ?>
-            </span>
-            <br />
-        <?php } ?>
+            <?php if ($missing > 0) { ?>
+                <span class="message">
+                    <?= htmlspecialchars(sprintf(_n('%d file removed', '%d files removed', $missing), $missing)) ?>
+                </span>
+                <br />
+            <?php } ?>
 
-        <?php if ($modified > 0) { ?>
-            <span class="message">
-                <?= htmlspecialchars(sprintf(_n('%d file modified after compression', '%d files modified after compression', $modified), $modified)) ?>
-            </span>
-            <br />
-        <?php } ?>
+            <?php if ($modified > 0) { ?>
+                <span class="message">
+                    <?= htmlspecialchars(sprintf(_n('%d file modified after compression', '%d files modified after compression', $modified), $modified)) ?>
+                </span>
+                <br />
+            <?php } ?>
 
-        <?php if ($savings["input"] - $savings["output"]) { ?>
-            <span class="message">
-                <?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), str_replace(" ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
-            </span>
-            <br />
-        <?php } ?>
+            <?php if ($savings["input"] - $savings["output"]) { ?>
+                <span class="message">
+                    <?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), str_replace(" ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
+                </span>
+                <br />
+            <?php } ?>
 
-        <?php if ($error) { ?>
-            <span class="message error_message">
-                <?= esc_html__('Latest error', 'tiny-compress-images') . ': '. esc_html__($error, 'tiny-compress-images') ?>
-            </span>
-            <br/>
-        <?php } ?>
+            <?php if ($error) { ?>
+                <span class="message error_message">
+                    <?= esc_html__('Latest error', 'tiny-compress-images') . ': '. esc_html__($error, 'tiny-compress-images') ?>
+                </span>
+                <br/>
+            <?php } ?>
 
-        <?php if ($tiny_metadata->get_compressed_count() > 0) { ?>
-            <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_metadata->get_id() ?>">Details</a>
+            <?php if ($tiny_metadata->get_compressed_count() > 0) { ?>
+                <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_metadata->get_id() ?>">Details</a>
+            <?php } ?>
         <?php } ?>
     </div>
 
-    <?php if (count($uncompressed) > 0) { ?>
+    <?php if ($tiny_metadata->can_be_compressed() && count($uncompressed) > 0) { ?>
         <button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_metadata->get_id() ?>">
             <?= esc_html__('Compress', 'tiny-compress-images') ?>
         </button>

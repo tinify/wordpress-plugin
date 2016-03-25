@@ -16,7 +16,7 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         self::$driver = RemoteWebDriver::createBySessionId($GLOBALS['global_session_id'], $GLOBALS['global_webdriver_host']);
     }
 
-    protected function upload_image($path) {
+    protected function upload_media($path) {
         self::$driver->get(wordpress('/wp-admin/media-new.php?browser-uploader&flash=0'));
         $links = self::$driver->findElements(WebDriverBy::xpath('//a[text()="browser uploader"]'));
         if (count($links) > 0) {
@@ -32,9 +32,9 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         self::$driver->findElement(WebDriverBy::xpath('//input[@value="Upload"]'))->click();
         $path_elements = explode('/', $path);
         $file_name = array_pop($path_elements);
-        $image_elements = explode('.', $file_name);
-        $image_name = $image_elements[0];
-        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath('//img[contains(@src, "' . $image_name . '")]')));
+        $media_elements = explode('.', $file_name);
+        $media_name = $media_elements[0];
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath('//img[contains(@alt, "' . $media_name . '")]')));
     }
 
     protected function set_api_key($api_key) {

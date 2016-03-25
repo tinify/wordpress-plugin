@@ -18,7 +18,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function testBulkCompressActionShouldBePresentInMedia() {
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertEquals('Optimize Images', self::$driver->findElement(
             WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]')
         )->getText());
@@ -29,11 +29,14 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array());
 
         for ($i = 0; $i < $normal; $i++) {
-            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.jpg');
+            $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.jpg');
         }
         for ($i = 0; $i < $large; $i++) {
-            $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+            $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         }
+
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.gif');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.pdf');
 
         $this->enable_compression_sizes(array('thumbnail', 'medium', 'large'));
     }

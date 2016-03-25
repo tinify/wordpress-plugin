@@ -19,7 +19,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testInvalidCredentialsShouldStillUploadImage()
     {
         $this->set_api_key('1234');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('input-example',
             self::$driver->findElement(WebDriverBy::xpath('//img[contains(@src, "input-example")]'))->getAttribute('src'));
     }
@@ -27,14 +27,14 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testInvalidCredentialsShouldShowError()
     {
         $this->set_api_key('1234');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('Latest error: Credentials are invalid',
             self::$driver->findElement(WebDriverBy::id('tinify-compress-details'))->getText());
     }
 
     public function testShrink() {
         $this->set_api_key('PNG123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('sizes compressed',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
@@ -42,7 +42,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testCompressButton() {
         $this->enable_compression_sizes(array('medium'));
         $this->set_api_key('PNG123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->enable_compression_sizes(array('medium', 'large'));
 
         self::$driver->get(wordpress('/wp-admin/upload.php'));
@@ -57,14 +57,14 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
     public function testLimitReached() {
         $this->set_api_key('LIMIT123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->assertContains('Latest error: Your monthly limit has been exceeded',
             self::$driver->findElement(WebDriverBy::cssSelector('span.error_message'))->getText());
     }
 
     public function testLimitReachedDismisses() {
         $this->set_api_key('LIMIT123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->findElement(WebDriverBy::cssSelector('.tiny-notice button, .tiny-notice a.tiny-dismiss'))->click();
         self::$driver->wait(2)->until(WebDriverExpectedCondition::invisibilityOfElementWithText(
              WebDriverBy::cssSelector('.tiny-dismiss'), 'Dismiss'));
@@ -75,7 +75,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
     public function testIncorrectJsonButton() {
         $this->enable_compression_sizes(array());
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->enable_compression_sizes(array('medium', 'large'));
 
         $this->set_api_key('JSON1234');
@@ -89,7 +89,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testResizeFitShouldDisplayResizedTextInMediaLibrary() {
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->click();
         $this->assertContains('resized to 300x200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
@@ -98,7 +98,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testResizeFitShouldDisplayResizedTextInEditScreen() {
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -107,7 +107,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testResizeScaleShouldDisplayResizedTextInMediaLibrary() {
         $this->set_api_key('PNG123');
         $this->enable_resize(0, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->click();
         $this->assertContains('resized to 300x200', self::$driver->findElement(
             WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
@@ -116,7 +116,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testResizeScaleShouldDisplayResizedTextInEditScreen() {
         $this->set_api_key('PNG123');
         $this->enable_resize(0, 200);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -126,7 +126,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     {
         $this->set_api_key('PNG123');
         $this->enable_resize(30000, 20000);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->click();
         $this->assertNotContains('resized',
             self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
@@ -136,7 +136,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     {
         $this->set_api_key('PNG123');
         $this->enable_resize(30000, 20000);
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 720',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -147,7 +147,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
         $this->disable_resize();
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images a.thickbox'))->click();
         $this->assertNotContains('resized',
             self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
@@ -158,7 +158,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
         $this->disable_resize();
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 720',
             self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
@@ -168,8 +168,22 @@ class CompressIntegrationTest extends IntegrationTestCase {
     {
         $this->set_api_key('PRESERVEJPG123');
         $this->enable_preserve_copyright();
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-copyright.jpg');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-copyright.jpg');
         $this->assertNotContains('files modified after compression',
+            self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
+    }
+
+    public function testDifferentImageFormatFileShouldNotShowCompressInfoInMediaLibrary()
+    {
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.gif');
+        $this->assertEquals('',
+            self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
+    }
+
+    public function testNonImageFileShouldNotShowCompressInfoInMediaLibrary()
+    {
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.pdf');
+        $this->assertEquals('',
             self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
     }
 }

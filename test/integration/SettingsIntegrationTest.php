@@ -180,7 +180,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     public function testShouldShowSavings() {
         reset_webservice();
         $this->set_api_key('PNG123');
-        $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         self::$driver->get(wordpress('/wp-admin/options-media.php'));
         self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#tiny-compress-savings p')));
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-savings'))->findElements(WebDriverBy::tagName('p'));

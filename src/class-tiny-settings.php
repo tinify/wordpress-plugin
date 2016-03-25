@@ -298,7 +298,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         global $wpdb;
 
         $total_savings = 0;
-        $result = $wpdb->get_results("SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' ORDER BY ID DESC", ARRAY_A);
+        $result = $wpdb->get_results("SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png') ORDER BY ID DESC", ARRAY_A);
         for ($i = 0; $i < sizeof($result); $i++) {
             $tiny_metadata = new Tiny_Metadata($result[$i]["ID"]);
             $savings = $tiny_metadata->get_savings();

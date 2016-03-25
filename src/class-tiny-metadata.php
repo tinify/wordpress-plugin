@@ -116,6 +116,14 @@ class Tiny_Metadata {
         return $this->name;
     }
 
+    public function can_be_compressed() {
+        return in_array($this->get_mime_type(), array("image/jpeg", "image/png"));
+    }
+
+    public function get_mime_type() {
+        return get_post_mime_type($this->id);
+    }
+
     public function get_filename($size=self::ORIGINAL) {
         return isset($this->filenames[$size]) ? $this->filenames[$size] : null;
     }

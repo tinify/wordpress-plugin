@@ -102,7 +102,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $mime_type = get_post_mime_type($attachment_id);
         $tiny_metadata = new Tiny_Metadata($attachment_id, $metadata);
 
-        if ($this->settings->get_compressor() === null || strpos($mime_type, 'image/') !== 0) {
+        if ($this->settings->get_compressor() === null || !$tiny_metadata->can_be_compressed()) {
             return array($tiny_metadata, null);
         }
 
@@ -230,7 +230,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         echo '<div class="wrap" id="tiny-bulk-compress">';
         echo '<h2>' . __('Compress JPEG & PNG Images', 'tiny-compress-images') . '</h2>';
         if (empty($_POST['tiny-bulk-compress']) && empty($_REQUEST['ids'])) {
-            $result = $wpdb->get_results("SELECT COUNT(*) AS `count` FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' ORDER BY ID DESC", ARRAY_A);
+            $result = $wpdb->get_results("SELECT COUNT(*) AS `count` FROM $wpdb->posts WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png') ORDER BY ID DESC", ARRAY_A);
             $image_count = $result[0]['count'];
             $sizes_count = count($this->settings->get_active_tinify_sizes());
 
@@ -266,7 +266,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             }
 
             // Get all ids and names of the images and not the whole objects which will only fill memory
-            $items = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%' $cond ORDER BY ID DESC", ARRAY_A);
+            $items = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png') $cond ORDER BY ID DESC", ARRAY_A);
 
             echo '<p>';
             esc_html_e('Please be patient while the images are being optimized, it can take a while if you have many images. Do not navigate away from this page because it will stop the process.', 'tiny-compress-images');
