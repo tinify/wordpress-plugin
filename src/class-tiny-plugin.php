@@ -89,6 +89,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             'L10nAllDone' => __('All images are processed', 'tiny-compress-images'),
             'L10nBulkAction' => __('Optimize Images', 'tiny-compress-images'),
             'L10nCompressing' => __('Compressing', 'tiny-compress-images'),
+            'L10nCompression' => __('compression', 'tiny-compress-images'),
             'L10nCompressions' => __('compressions', 'tiny-compress-images'),
             'L10nError' => __('Error', 'tiny-compress-images'),
             'L10nInternalError' => __('Internal error', 'tiny-compress-images'),
@@ -238,7 +239,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             esc_html_e('Use this tool to compress all images in your media library. Only images that have not been compressed will be compressed.', 'tiny-compress-images');
             echo '</p>';
             echo '<p>';
-            echo sprintf(esc_html__('We have found %d images in your media library and for each image %d sizes will be compressed.', 'tiny-compress-images'),
+            echo sprintf(esc_html__('We have found %d images in your media library and for each image a maximum of %d sizes will be compressed.', 'tiny-compress-images'),
              $image_count, $sizes_count) . ' ';
             echo sprintf(esc_html__('This results in %d compressions at most.', 'tiny-compress-images'), $image_count * $sizes_count);
             echo '</p>';

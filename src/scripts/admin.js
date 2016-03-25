@@ -80,12 +80,12 @@
       } else if (data.failed > 0) {
         status.addClass('failed')
         row.find('.bar').css('width', '100%')
-        row.find('.percent').html(data.success + " " + tinyCompress.L10nCompressions)
+        row.find('.percent').html(data.success + " " + (data.success == 1 ? tinyCompress.L10nCompression : tinyCompress.L10nCompressions))
         row.find('.progress').attr("title", data.message)
       } else {
         status.addClass('success')
         row.find('.bar').css('width', '100%')
-        row.find('.percent').html(data.success + " " + tinyCompress.L10nCompressions)
+        row.find('.percent').html(data.success + " " + (data.success == 1 ? tinyCompress.L10nCompression : tinyCompress.L10nCompressions))
       }
 
       if (data.status) {
