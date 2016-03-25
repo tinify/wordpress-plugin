@@ -20,7 +20,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     {
         $headings = self::$driver->findElements(WebDriverBy::cssSelector('h1, h2, h3, h4'));
         $texts = array_map('innerText', $headings);
-        $this->assertContains('PNG and JPEG compression', $texts);
+        $this->assertContains('PNG and JPEG optimization', $texts);
     }
 
     public function testApiKeyInputPresence() {
@@ -174,7 +174,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#tiny-compress-savings p')));
         $elements = self::$driver->findElement(WebDriverBy::id('tiny-compress-savings'))->findElements(WebDriverBy::tagName('p'));
         $statuses = array_map('innerText', $elements);
-        $this->assertContains('No images compressed yet. Use Compress All Images to compress existing images.', $statuses);
+        $this->assertContains('No images compressed yet. Use Optimize Images to compress existing images.', $statuses);
     }
 
     public function testShouldShowSavings() {

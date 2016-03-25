@@ -19,7 +19,7 @@ class BulkCompressIntegrationTest extends IntegrationTestCase {
 
     public function testBulkCompressActionShouldBePresentInMedia() {
         $this->upload_image(dirname(__FILE__) . '/../fixtures/input-example.png');
-        $this->assertEquals('Compress Images', self::$driver->findElement(
+        $this->assertEquals('Optimize Images', self::$driver->findElement(
             WebDriverBy::cssSelector('select[name="action"] option[value="tiny_bulk_compress"]')
         )->getText());
     }

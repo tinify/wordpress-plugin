@@ -23,7 +23,7 @@ class Tiny_Settings_Test extends TinyTestCase {
 
     public function testAdminInitShouldAddSettingsSection() {
         $this->assertEquals(array(
-            array('tinypng_settings', 'PNG and JPEG compression', array($this->subject, 'render_section'), 'media'),
+            array('tinypng_settings', 'PNG and JPEG optimization', array($this->subject, 'render_section'), 'media'),
         ), $this->wp->getCalls('add_settings_section'));
     }
 
