@@ -16,7 +16,7 @@
                 <span class="message">
                     <strong><?php echo $tiny_metadata->get_compressed_count() ?></strong>
                     <span>
-                        <?= htmlspecialchars(_n('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count(), 'tiny-compress-images')) ?>
+                        <?php echo htmlspecialchars(_n('size compressed', 'sizes compressed', $tiny_metadata->get_compressed_count(), 'tiny-compress-images')) ?>
                     </span>
                 </span>
                 <br/>
@@ -24,21 +24,21 @@
 
             <?php if ($not_compressed_active > 0) { ?>
                 <span class="message">
-                    <?= htmlspecialchars(sprintf(_n('%d size not compressed', '%d sizes not compressed', $not_compressed_active), $not_compressed_active)) ?>
+                    <?php echo htmlspecialchars(sprintf(_n('%d size not compressed', '%d sizes not compressed', $not_compressed_active, 'tiny-compress-images'), $not_compressed_active)) ?>
                 </span>
                 <br />
             <?php } ?>
 
             <?php if ($missing > 0) { ?>
                 <span class="message">
-                    <?= htmlspecialchars(sprintf(_n('%d file removed', '%d files removed', $missing), $missing)) ?>
+                    <?php echo htmlspecialchars(sprintf(_n('%d file removed', '%d files removed', $missing, 'tiny-compress-images'), $missing)) ?>
                 </span>
                 <br />
             <?php } ?>
 
             <?php if ($modified > 0) { ?>
                 <span class="message">
-                    <?= htmlspecialchars(sprintf(_n('%d file modified after compression', '%d files modified after compression', $modified), $modified)) ?>
+                    <?php echo htmlspecialchars(sprintf(_n('%d file modified after compression', '%d files modified after compression', $modified, 'tiny-compress-images'), $modified)) ?>
                 </span>
                 <br />
             <?php } ?>
@@ -52,7 +52,7 @@
 
             <?php if ($error) { ?>
                 <span class="message error_message">
-                    <?= esc_html__('Latest error', 'tiny-compress-images') . ': '. esc_html__($error, 'tiny-compress-images') ?>
+                    <?php echo esc_html__('Latest error', 'tiny-compress-images') . ': '. esc_html__($error, 'tiny-compress-images') ?>
                 </span>
                 <br/>
             <?php } ?>
@@ -65,7 +65,7 @@
 
     <?php if ($tiny_metadata->can_be_compressed() && count($uncompressed) > 0) { ?>
         <button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_metadata->get_id() ?>">
-            <?= esc_html__('Compress', 'tiny-compress-images') ?>
+            <?php echo esc_html__('Compress', 'tiny-compress-images') ?>
         </button>
     <?php } ?>
 </div>
@@ -82,9 +82,9 @@
                     <th><?php esc_html_e('Compressed', 'tiny-compress-images') ?></th>
                     <th><?php esc_html_e('Date', 'tiny-compress-images') ?></th>
                 </tr>
-                <?php $i = 0; ?>
+                <?php $i = 0 ?>
                 <?php foreach ($tiny_metadata->get_compressed_sizes() as $size) { ?>
-                    <?php $meta = $tiny_metadata->get_value($size); ?>
+                    <?php $meta = $tiny_metadata->get_value($size) ?>
                     <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                         <td>
                             <?php
@@ -106,7 +106,7 @@
                         <td><?php echo size_format($meta["output"]["size"], 1) ?></td>
                         <td><?php echo human_time_diff($tiny_metadata->get_end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') ?></td>
                     </tr>
-                    <?php $i++; ?>
+                    <?php $i++ ?>
                 <?php } ?>
                 <?php if ($savings['count'] > 0) { ?>
                 <tfoot>

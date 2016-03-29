@@ -75,7 +75,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         $field = self::get_prefixed_name('savings');
         register_setting('media', $field);
-        add_settings_field($field, __('Savings'), $this->get_method('render_pending_savings'), 'media', $section);
+        add_settings_field($field, __('Savings', 'tiny-compress-images'), $this->get_method('render_pending_savings'), 'media', $section);
 
         $field = self::get_prefixed_name('preserve_data');
         register_setting('media', $field);
@@ -288,8 +288,7 @@ class Tiny_Settings extends Tiny_WP_Base {
             esc_html_e('With these settings no images will be compressed.', 'tiny-compress-images');
         } else {
             $free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count );
-            printf(__('With these settings you can compress <strong> at least %s images </strong> for free each month.',
-                      'tiny-compress-images'), $free_images_per_month);
+            printf(__('With these settings you can compress <strong> at least %s images </strong> for free each month.', 'tiny-compress-images'), $free_images_per_month);
         }
         echo '</p>';
     }
