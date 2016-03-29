@@ -30,11 +30,7 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         $file_input->setFileDetector(new UselessFileDetector());
         $file_input->sendKeys($path);
         self::$driver->findElement(WebDriverBy::xpath('//input[@value="Upload"]'))->click();
-        $path_elements = explode('/', $path);
-        $file_name = array_pop($path_elements);
-        $media_elements = explode('.', $file_name);
-        $media_name = $media_elements[0];
-        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath('//img[contains(@alt, "' . $media_name . '")]')));
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath('//h1[contains(text(),"Media Library")]')));
     }
 
     protected function set_api_key($api_key) {
