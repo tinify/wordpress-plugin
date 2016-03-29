@@ -342,7 +342,9 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '</p>';
 
         echo '<br>';
-        $this->render_preserve_input("copyright", 'Preserve copyright information in the original image (JPEG only)');
+        $this->render_preserve_input("creation", 'Preserve creation date and time in the original image (JPEG only)') .'<br>';
+        $this->render_preserve_input("copyright", 'Preserve copyright information in the original image') .'<br>';
+        $this->render_preserve_input("location", 'Preserve GPS location in the original image (JPEG only)') .'<br>';
     }
 
     public function render_preserve_input($name, $description) {
