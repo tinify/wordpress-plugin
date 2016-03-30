@@ -59,7 +59,7 @@ function mock_empty_response() {
 
     $response = array(
         "error" => "InputMissing",
-        "message" => "Your monthly limit has been exceeded"
+        "message" => "File is empty"
     );
     return json_encode($response);
 }
@@ -89,8 +89,9 @@ function mock_invalid_json_response() {
     return '{invalid: json}';
 }
 
+
 $api_key = get_api_key();
-if ($api_key == 'PNG123') {
+if (substr($api_key, 0, 6) == 'PNG123') {
     if (intval($_SERVER['CONTENT_LENGTH']) == 0) {
         echo mock_empty_response();
     } else {
@@ -116,6 +117,8 @@ if ($api_key == 'PNG123') {
     }
 } else if ($api_key == 'LIMIT123') {
     echo mock_limit_reached_response();
+} else if ($api_key == 'GATEWAYTIMEOUT') {
+    echo mock_service_unavailable_response();
 } else {
     echo mock_invalid_response();
 }

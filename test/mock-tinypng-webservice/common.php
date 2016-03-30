@@ -39,7 +39,12 @@ function mock_invalid_response() {
 
     $response = array(
         "error" => "Unauthorized",
-        "message" => "Credentials are invalid"
+        "message" => "Credentials are invalid "
     );
     return json_encode($response);
+}
+
+function mock_service_unavailable_response() {
+    header('HTTP/1.1 503 Service unavailable');
+    return 'HTTP Error 503. The service is unavailable';
 }

@@ -167,7 +167,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testPreserveCopyrightShouldDisplayCorrectImageSizeInMediaLibrary()
     {
         $this->set_api_key('PRESERVEJPG123');
-        $this->enable_preserve_copyright();
+        $this->enable_preserve(array('copyright'));
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-copyright.jpg');
         $this->assertNotContains('files modified after compression',
             self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
@@ -185,5 +185,36 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.pdf');
         $this->assertEquals('',
             self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
+    }
+
+    public function testGatewayTimeoutShouldBeDetectedInShrink()
+    {
+        $this->enable_compression_sizes(array('medium'));
+        $this->set_api_key('GATEWAYTIMEOUT');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->assertContains('JSON: Syntax error [4]',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+    }
+
+    public function testGatewayTimeoutShouldBeDetectedInOutput()
+    {
+        $this->enable_compression_sizes(array('medium'));
+        $this->enable_preserve(array('copyright'));
+        $this->set_api_key('PNG123_GATEWAYTIMEOUT');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        self::$driver->takeScreenshot("/Users/jacobmiddag/Downloads/ss2.png");
+        $this->assertContains('Unexepected error in output',
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
+    }
+
+    public function testErrorShouldBeDetectedInOutput()
+    {
+        $this->enable_compression_sizes(array('medium'));
+        $this->enable_preserve(array('copyright'));
+        $this->set_api_key('PNG123_INVALID');
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        self::$driver->takeScreenshot("/Users/jacobmiddag/Downloads/ss3.png");
+        $this->assertContains("Metadata key 'author' not supported",
+            self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
 }

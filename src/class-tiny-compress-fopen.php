@@ -19,6 +19,16 @@
 */
 
 class Tiny_Compress_Fopen extends Tiny_Compress {
+    private function status_code($header) {
+        if ($header && count($header) > 0) {
+            $http_code_values = explode(' ', $header[0]);
+            if (count($http_code_values) > 1) {
+                return intval($http_code_values[1]);
+            }
+        }
+        return null;
+    }
+
     protected function shrink_options($input) {
         return array(
             'http' => array(
@@ -44,14 +54,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         $context = stream_context_create($this->shrink_options($input));
         $request = @fopen(Tiny_Config::URL, 'r', false, $context);
 
-        $status_code = null;
-        if ($http_response_header && count($http_response_header) > 0) {
-            $http_code_values = explode(' ', $http_response_header[0]);
-            if (count($http_code_values) > 1) {
-                $status_code = intval($http_code_values[1]);
-            }
-        }
-
+        $status_code = self::status_code($http_response_header);
         if (!$request) {
             $headers = self::parse_headers($http_response_header);
 
@@ -106,6 +109,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         $context = stream_context_create($this->output_options($resize_options, $preserve_options));
         $request = @fopen($url, 'rb', false, $context);
 
+        $status_code = self::status_code($http_response_header);
         if ($request) {
             $response = stream_get_contents($request);
             $meta_data = stream_get_meta_data($request);
@@ -113,8 +117,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
             fclose($request);
         } else {
             $response = '';
-            $headers = array();
+            $headers = self::parse_headers($http_response_header);
         }
-        return array($response, $headers);
+        return array($response, $headers, $status_code);
     }
 }

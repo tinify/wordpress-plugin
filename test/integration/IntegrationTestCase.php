@@ -90,14 +90,23 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
     }
 
-    protected function enable_preserve_copyright() {
+    protected function enable_preserve($keys) {
         $url = wordpress('/wp-admin/options-media.php');
         if (self::$driver->getCurrentUrl() != $url) {
             self::$driver->get($url);
         }
-        $element = self::$driver->findElement(WebDriverBy::id('tinypng_preserve_data_copyright'));
-        if (!$element->getAttribute('checked')) {
-            $element->click();
+        $elements = self::$driver->findElements(WebDriverBy::xpath('//input[starts-with(@id, "tinypng_preserve_data")]'));
+        foreach($elements as $element) {
+            $key = str_replace('tinypng_preserve_data_', '', $element->getAttribute('id'));
+            if (in_array($key, $keys)) {
+                if (!$element->getAttribute('checked')) {
+                    $element->click();
+                }
+            } else {
+                if ($element->getAttribute('checked')) {
+                    $element->click();
+                }
+            }
         }
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
     }

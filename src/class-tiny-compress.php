@@ -56,15 +56,29 @@ abstract class Tiny_Compress {
     }
 
     public function compress($input, $resize_options, $preserve_options) {
-        list($details, $headers) = $this->shrink($input);
+        list($details, $headers, $status_code) = $this->shrink($input);
         $this->call_after_compress_callback($details, $headers);
         $outputUrl = isset($headers['location']) ? $headers['location'] : null;
         if (isset($details['error']) && $details['error']) {
             throw new Tiny_Exception($details['message'], $details['error']);
+        } else if ($status_code >= 400) {
+            throw new Tiny_Exception('Unexepected error in shrink', 'UnexpectedError');
         } else if ($outputUrl === null) {
             throw new Tiny_Exception('Could not find output url', 'OutputNotFound');
         }
-        list($output, $headers) = $this->output($outputUrl, $resize_options, $preserve_options);
+
+        list($output, $headers, $status_code) = $this->output($outputUrl, $resize_options, $preserve_options);
+        if (isset($headers['content-type']) && substr($headers['content-type'], 0, 16) == 'application/json') {
+            $details = self::decode($output);
+            if (isset($details['error']) && $details['error']) {
+                throw new Tiny_Exception($details['message'], $details['error']);
+            } else {
+                throw new Tiny_Exception('Unknown error', 'UnknownError');
+            }
+        } else if ($status_code >= 400) {
+            throw new Tiny_Exception('Unexepected error in output', 'UnexpectedError');
+        }
+
         $this->call_after_compress_callback(null, $headers);
         if (strlen($output) == 0) {
             throw new Tiny_Exception('Could not download output', 'OutputError');
