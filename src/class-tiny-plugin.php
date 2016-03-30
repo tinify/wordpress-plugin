@@ -62,7 +62,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function admin_menu() {
         add_media_page(
-            __('Compress JPEG & PNG Images', 'tiny-compress-images'), __('Optimize Images', 'tiny-compress-images'),
+            __('Compress JPEG & PNG Images', 'tiny-compress-images'), __('Compress All Images', 'tiny-compress-images'),
             'upload_files', 'tiny-bulk-compress', $this->get_method('bulk_compress_page')
         );
     }
@@ -87,7 +87,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             'wpVersion' => self::wp_version(),
             'pluginVersion' => self::plugin_version(),
             'L10nAllDone' => __('All images are processed', 'tiny-compress-images'),
-            'L10nBulkAction' => __('Optimize Images', 'tiny-compress-images'),
+            'L10nBulkAction' => __('Compress All Images', 'tiny-compress-images'),
             'L10nCompressing' => __('Compressing', 'tiny-compress-images'),
             'L10nCompression' => __('compression', 'tiny-compress-images'),
             'L10nCompressions' => __('compressions', 'tiny-compress-images'),
@@ -252,7 +252,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             echo '<input type="hidden" name="tiny-bulk-compress" value="1">';
             echo '<p>';
             echo '<button class="button button-primary button-large" type="submit">';
-            esc_html_e('Optimize Images', 'tiny-compress-images');
+            esc_html_e('Compress All Images', 'tiny-compress-images');
             echo '</button>';
             echo '</p>';
             echo '</form>';

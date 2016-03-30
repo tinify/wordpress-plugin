@@ -308,7 +308,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         if ($total_savings > 0) {
             printf(esc_html__('You have saved a total of %s on images!', 'tiny-compress-images'), '<strong>' . size_format($total_savings) . '</strong>' );
         } else {
-            $link = '<a href="upload.php?page=tiny-bulk-compress">' . esc_html__('Optimize Images', 'tiny-compress-images') . '</a>';
+            $link = '<a href="upload.php?page=tiny-bulk-compress">' . esc_html__('Compress All Images', 'tiny-compress-images') . '</a>';
             printf(esc_html__('No images compressed yet. Use %s to compress existing images.', 'tiny-compress-images'), $link);
         }
         echo '</p>';
