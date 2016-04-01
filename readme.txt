@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: optimize, compress, shrink, resize, faster, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, performance, panda, wordpress app
 Requires at least: 3.0.6
 Tested up to: 4.5
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,11 @@ A: Everything will keep on working, but newly uploaded images will not be optimi
 A: Yes! After installing the plugin, go to *Media > Compress All Images*, and click on the button to optimize all unoptimized images in your media library.
 
 == Changelog ==
+
+= 1.7.1 =
+* Option to preserve gps location and original creation date and time in your original JPEG images.
+* Option to preserve coyright information in your original PNG images.
+* Improved handling of unsupported image files (e.g. GIF)
 
 = 1.7.0 =
 * Option to preserve copyright information in your original JPEG images.
