@@ -202,7 +202,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->enable_preserve(array('copyright'));
         $this->set_api_key('PNG123_GATEWAYTIMEOUT');
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->takeScreenshot("/Users/jacobmiddag/Downloads/ss2.png");
         $this->assertContains('Unexepected error in output',
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
@@ -213,7 +212,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->enable_preserve(array('copyright'));
         $this->set_api_key('PNG123_INVALID');
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->takeScreenshot("/Users/jacobmiddag/Downloads/ss3.png");
         $this->assertContains("Metadata key 'author' not supported",
             self::$driver->findElement(WebDriverBy::cssSelector('td.tiny-compress-images'))->getText());
     }
