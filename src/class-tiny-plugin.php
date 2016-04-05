@@ -52,6 +52,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function admin_init() {
         add_filter('manage_media_columns', $this->get_method('add_media_columns'));
         add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
+        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
         add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
         add_action('admin_action_tiny_bulk_compress', $this->get_method('bulk_compress'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
@@ -140,6 +141,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if (!empty($metadata)) {
             list($tiny_metadata, $result) = $this->compress($metadata, $attachment_id);
             return $tiny_metadata->update_wp_metadata($metadata);
+        } else {
+            return $metadata;
         }
     }
 
@@ -206,6 +209,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if ($column === self::MEDIA_COLUMN) {
             $this->render_compress_details(new Tiny_Metadata($id));
         }
+    }
+
+    public function show_media_info() {
+        global $post;
+        echo '<div class="misc-pub-section tiny-compress-images">';
+        echo '<h4>' . __('Compress JPEG & PNG Images', 'tiny-compress-images') . '</h4>';
+        $this->render_compress_details(new Tiny_Metadata($post->ID));
+        echo '</div>';
     }
 
     private function render_compress_details($tiny_metadata) {
