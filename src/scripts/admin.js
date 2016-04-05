@@ -6,9 +6,11 @@
 
   function compress_image(event) {
     var element = jQuery(event.target)
+    var container = element.closest('.tiny-ajax-container')
+
     element.attr('disabled', 'disabled')
-    element.closest('td').find('.spinner').removeClass('hidden')
-    element.closest('td').find('span.dashicons').addClass('hidden')
+    container.find('.spinner').removeClass('hidden')
+    container.find('span.dashicons').addClass('hidden')
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -18,11 +20,11 @@
         id: element.data('id') || element.attr('data-id')
       },
       success: function(data) {
-        element.closest('td').html(data)
+        container.html(data)
       },
       error: function() {
         element.removeAttr('disabled')
-        element.closest('td').find('.spinner').addClass('hidden')
+        container.find('.spinner').addClass('hidden')
       }
     })
   }
@@ -137,12 +139,21 @@
     bulk_compress_item(items, 0)
   }
 
-  if (typeof adminpage !== "undefined" && adminpage === "upload-php") {
+  var adminpage = ""
+  if (typeof window.adminpage !== "undefined") {
+    adminpage = window.adminpage
+  }
+
+  function eventOn(parentSelector, event, eventSelector, callback) {
     if (typeof jQuery.fn.on === "function") {
-      jQuery('table').on('click', 'button.tiny-compress', compress_image)
+      jQuery(parentSelector).on(event, eventSelector, callback)
     } else {
-      jQuery('button.tiny-compress').live('click', compress_image)
+      jQuery(eventSelector).live(event, callback)
     }
+  }
+
+  if (adminpage === "upload-php") {
+    eventOn('table', 'click', 'button.tiny-compress', compress_image)
 
     if (typeof jQuery.fn.prop === "function") {
       jQuery('button.tiny-compress').prop('disabled', null)
@@ -152,9 +163,9 @@
 
     jQuery('<option>').val('tiny_bulk_compress').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
     jQuery('<option>').val('tiny_bulk_compress').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
-  }
-
-  if (typeof adminpage !== "undefined" && adminpage === "options-media-php") {
+  } else if (adminpage === "post-php") {
+    eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
+  } else if (adminpage === "options-media-php") {
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 

@@ -96,12 +96,13 @@ class CompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function testResizeFitShouldDisplayResizedTextInEditScreen() {
+        if (!$this->has_postbox_container()) return;
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
-            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+            self::$driver->findElement(WebDriverBy::cssSelector($this->postbox_dimension_selector()))->getText());
     }
 
     public function testResizeScaleShouldDisplayResizedTextInMediaLibrary() {
@@ -114,16 +115,16 @@ class CompressIntegrationTest extends IntegrationTestCase {
     }
 
     public function testResizeScaleShouldDisplayResizedTextInEditScreen() {
+        if (!$this->has_postbox_container()) return;
         $this->set_api_key('PNG123');
         $this->enable_resize(0, 200);
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 300 × 200',
-            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+            self::$driver->findElement(WebDriverBy::cssSelector($this->postbox_dimension_selector()))->getText());
     }
 
-    public function testResizeNotNeededShouldNotDisplayResizedTextInMediaLibrary()
-    {
+    public function testResizeNotNeededShouldNotDisplayResizedTextInMediaLibrary() {
         $this->set_api_key('PNG123');
         $this->enable_resize(30000, 20000);
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
@@ -132,18 +133,17 @@ class CompressIntegrationTest extends IntegrationTestCase {
             self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
     }
 
-    public function testResizeNotNeededShouldDisplayOriginalDimensionsInEditScreen()
-    {
+    public function testResizeNotNeededShouldDisplayOriginalDimensionsInEditScreen() {
+        if (!$this->has_postbox_container()) return;
         $this->set_api_key('PNG123');
         $this->enable_resize(30000, 20000);
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 720',
-            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+            self::$driver->findElement(WebDriverBy::cssSelector($this->postbox_dimension_selector()))->getText());
     }
 
-    public function testResizeDisabledShouldNotDisplayResizedTextInMediaLibrary()
-    {
+    public function testResizeDisabledShouldNotDisplayResizedTextInMediaLibrary() {
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
         $this->disable_resize();
@@ -153,24 +153,56 @@ class CompressIntegrationTest extends IntegrationTestCase {
             self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
     }
 
-    public function testResizeDisabledShouldDisplayOriginalDimensionsInEditScreen()
-    {
+    public function testResizeDisabledShouldDisplayOriginalDimensionsInEditScreen() {
+        if (!$this->has_postbox_container()) return;
         $this->set_api_key('PNG123');
         $this->enable_resize(300, 200);
         $this->disable_resize();
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
         $this->assertContains('Dimensions: 1080 × 720',
-            self::$driver->findElement(WebDriverBy::cssSelector('div.misc-pub-dimensions'))->getText());
+            self::$driver->findElement(WebDriverBy::cssSelector($this->postbox_dimension_selector()))->getText());
     }
 
-    public function testPreserveCopyrightShouldDisplayCorrectImageSizeInMediaLibrary()
-    {
+    public function testPreserveCopyrightShouldDisplayCorrectImageSizeInMediaLibrary() {
         $this->set_api_key('PRESERVEJPG123');
         $this->enable_preserve(array('copyright'));
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-copyright.jpg');
         $this->assertNotContains('files modified after compression',
             self::$driver->findElement(WebDriverBy::cssSelector('div#tinify-compress-details'))->getText());
+    }
+
+    public function testShouldShowDetailsInEditScreen() {
+        if (!$this->has_postbox_container()) return;
+        $this->set_api_key('PNG123');
+        $this->enable_compression_sizes(array());
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->enable_compression_sizes(array('medium', 'large'));
+        $this->view_edit_image();
+        $this->assertContains("Compress JPEG & PNG Images\n2 sizes not compressed\nCompress",
+            self::$driver->findElement(WebDriverBy::cssSelector('div.postbox-container div.tiny-compress-images'))->getText());
+    }
+
+    public function testButtonInEditScreenShouldCompressImages() {
+        if (!$this->has_postbox_container()) return;
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->set_api_key('PNG123');
+        $this->enable_compression_sizes(array('medium', 'large'));
+        $this->view_edit_image();
+        self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compress-images button.tiny-compress'))->click();
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('div.tiny-compress-images'), '2 sizes compressed'));
+    }
+
+    public function testEditScreenShouldShowDetailsPopup() {
+        if (!$this->has_postbox_container()) return;
+        $this->set_api_key('PNG123');
+        $this->enable_compression_sizes(array('medium', 'large'));
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->view_edit_image();
+        self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compress-images a.thickbox'))->click();
+        $this->assertContains('Compression details for input-example.jpg',
+            self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
     }
 
     public function testDifferentImageFormatFileShouldNotShowCompressInfoInMediaLibrary()

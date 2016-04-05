@@ -207,7 +207,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function render_media_column($column, $id) {
         if ($column === self::MEDIA_COLUMN) {
+            echo '<div class="tiny-ajax-container">';
             $this->render_compress_details(new Tiny_Metadata($id));
+            echo '</div>';
         }
     }
 
@@ -215,8 +217,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         global $post;
         echo '<div class="misc-pub-section tiny-compress-images">';
         echo '<h4>' . __('Compress JPEG & PNG Images', 'tiny-compress-images') . '</h4>';
+        echo '<div class="tiny-ajax-container">';
         $this->render_compress_details(new Tiny_Metadata($post->ID));
-        echo '</div>';
+        echo '</div></div>';
     }
 
     private function render_compress_details($tiny_metadata) {
