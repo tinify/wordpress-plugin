@@ -33,9 +33,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
         parent::__construct();
 
         $this->settings = new Tiny_Settings();
-        if (is_admin()) {
-            add_action('admin_menu', $this->get_method('admin_menu'));
-        }
     }
 
     public function set_compressor($compressor) {
