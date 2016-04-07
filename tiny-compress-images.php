@@ -16,6 +16,7 @@ require dirname(__FILE__) . '/src/class-tiny-exception.php';
 require dirname(__FILE__) . '/src/class-tiny-compress.php';
 require dirname(__FILE__) . '/src/class-tiny-compress-curl.php';
 require dirname(__FILE__) . '/src/class-tiny-compress-fopen.php';
+require dirname(__FILE__) . '/src/class-tiny-metadata-image.php';
 require dirname(__FILE__) . '/src/class-tiny-metadata.php';
 require dirname(__FILE__) . '/src/class-tiny-settings.php';
 require dirname(__FILE__) . '/src/class-tiny-plugin.php';

@@ -113,22 +113,22 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         $compressor = $this->settings->get_compressor();
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-        $uncompressed_sizes = $tiny_metadata->get_uncompressed_sizes($active_tinify_sizes);
+        $uncompressed_images = $tiny_metadata->filter_images('uncompressed', $active_tinify_sizes);
 
-        foreach ($uncompressed_sizes as $uncompressed_size) {
+        foreach ($uncompressed_images as $size => $image) {
             try {
-                $tiny_metadata->add_request($uncompressed_size);
+                $image->add_request();
                 $tiny_metadata->update();
 
-                $resize = $tiny_metadata->is_resizable($uncompressed_size) ? $this->settings->get_resize_options() : false;
+                $resize = ($size == Tiny_Metadata::ORIGINAL) ? $this->settings->get_resize_options() : false;
                 $preserve = count($this->settings->get_preserve_options()) > 0 ? $this->settings->get_preserve_options() : false;
-                $response = $compressor->compress_file($tiny_metadata->get_filename($uncompressed_size), $resize, $preserve);
+                $response = $compressor->compress_file($image->filename, $resize, $preserve);
 
-                $tiny_metadata->add_response($response, $uncompressed_size);
+                $image->add_response($response);
                 $tiny_metadata->update();
                 $success++;
             } catch (Tiny_Exception $e) {
-                $tiny_metadata->add_exception($e, $uncompressed_size);
+                $image->add_exception($e);
                 $tiny_metadata->update();
                 $failed++;
             }
@@ -175,7 +175,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if ($json) {
             $result['message'] = $tiny_metadata->get_latest_error();
             $result['status'] = $this->settings->get_status();
-            $result['thumbnail'] = $tiny_metadata->get_url('thumbnail');
+            $result['thumbnail'] = $tiny_metadata->get_image('thumbnail', true)->url;
             echo json_encode($result);
         } else {
             echo $this->render_compress_details($tiny_metadata);
@@ -223,16 +223,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     private function render_compress_details($tiny_metadata) {
-        $active = $this->settings->get_active_tinify_sizes();
-        $uncompressed = $tiny_metadata->get_uncompressed_sizes($active);
-        $not_compressed_active = count($tiny_metadata->get_not_compressed_active_sizes($active));
-        $savings = $tiny_metadata->get_savings();
-        $error = $tiny_metadata->get_latest_error();
-        $missing = $tiny_metadata->get_missing_count();
-        $modified = $tiny_metadata->get_modified_count();
-        $compressing = (count($uncompressed) > 0) ? count($uncompressed) : count($active);
-
-        if ($tiny_metadata->get_in_progress_count() > 0) {
+        $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+        $in_progress = count($tiny_metadata->filter_images('in_progress'));
+        if ($in_progress > 0) {
             include(dirname(__FILE__) . '/views/compress-details-processing.php');
         } else {
             include(dirname(__FILE__) . '/views/compress-details.php');
