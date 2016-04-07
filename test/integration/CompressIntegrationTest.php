@@ -179,7 +179,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->enable_compression_sizes(array('medium', 'large'));
         $this->view_edit_image();
-        $this->assertContains("Compress JPEG & PNG Images\n2 sizes not compressed\nCompress",
+        $this->assertContains("Compress JPEG & PNG Images\n2 sizes not compressed\nDetails\nCompress",
             self::$driver->findElement(WebDriverBy::cssSelector('div.postbox-container div.tiny-compress-images'))->getText());
     }
 
@@ -203,6 +203,24 @@ class CompressIntegrationTest extends IntegrationTestCase {
         self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compress-images a.thickbox'))->click();
         $this->assertContains('Compression details for input-example.jpg',
             self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compression-details'))->getText());
+    }
+
+    public function testEditScreenShouldShowCorrectDetailsInPopup() {
+        if (!$this->has_postbox_container()) return;
+        $this->set_api_key('PNG123');
+        $this->enable_compression_sizes(array('medium', 'large'));
+        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
+        $this->view_edit_image();
+        self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compress-images a.thickbox'))->click();
+        $cells = self::$driver->findElements(WebDriverBy::cssSelector('div.tiny-compression-details td'));
+        $texts = array_map('innerText', $cells);
+        $this->assertEquals(array(
+            'original', '158.1 kB', 'Not configured to be compressed',
+            'large',    '158.1 kB', '147.5 kB',
+            '1 min ago', 'medium', '158.1 kB',
+            '147.5 kB', '1 min ago', 'thumbnail',
+            '11.8 kB', 'Not configured to be compressed', 'Combined',
+            '316.2 kB', '295.0 kB', ''), $texts);
     }
 
     public function testDifferentImageFormatFileShouldNotShowCompressInfoInMediaLibrary()

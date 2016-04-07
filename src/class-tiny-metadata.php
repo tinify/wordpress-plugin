@@ -128,6 +128,22 @@ class Tiny_Metadata {
         return get_post_mime_type($this->id);
     }
 
+    public function get_images() {
+        $compressed = array();
+        $uncompressed = array();
+        foreach ($this->images as $size => $image) {
+            if ($size === self::ORIGINAL) continue;
+            if ($image->has_been_compressed()) {
+                $compressed[$size] = $image;
+            } else {
+                $uncompressed[$size] = $image;
+            }
+        }
+        ksort($compressed);
+        ksort($uncompressed);
+        return array(self::ORIGINAL => $this->images[self::ORIGINAL]) + $compressed + $uncompressed;
+    }
+
     public function filter_images($method, $sizes=null) {
         $selection = array();
         if (is_null($sizes)) {

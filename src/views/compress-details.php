@@ -63,9 +63,7 @@ $savings = $tiny_metadata->get_savings();
                 <br/>
             <?php } ?>
 
-            <?php if ($total['has_been_compressed'] > 0) { ?>
-                <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_metadata->get_id() ?>">Details</a>
-            <?php } ?>
+            <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_metadata->get_id() ?>">Details</a>
         <?php } ?>
     </div>
 
@@ -75,55 +73,69 @@ $savings = $tiny_metadata->get_savings();
         </button>
     <?php } ?>
 </div>
-<?php if ($total['has_been_compressed'] > 0) { ?>
-    <div class="modal" id="modal_<?php echo $tiny_metadata->get_id() ?>">
-        <div class="tiny-compression-details">
-            <h3>
-                <?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_metadata->get_name()) ?>
-            </h3>
-            <table>
-                <tr>
-                    <th><?php esc_html_e('Size', 'tiny-compress-images') ?></th>
-                    <th><?php esc_html_e('Original', 'tiny-compress-images') ?></th>
-                    <th><?php esc_html_e('Compressed', 'tiny-compress-images') ?></th>
-                    <th><?php esc_html_e('Date', 'tiny-compress-images') ?></th>
+
+<div class="modal" id="modal_<?php echo $tiny_metadata->get_id() ?>">
+    <div class="tiny-compression-details">
+        <h3>
+            <?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_metadata->get_name()) ?>
+        </h3>
+        <table>
+            <tr>
+                <th><?php esc_html_e('Size', 'tiny-compress-images') ?></th>
+                <th><?php esc_html_e('Original', 'tiny-compress-images') ?></th>
+                <th><?php esc_html_e('Compressed', 'tiny-compress-images') ?></th>
+                <th><?php esc_html_e('Date', 'tiny-compress-images') ?></th>
+            </tr>
+            <?php $i = 0 ?>
+            <?php foreach ($tiny_metadata->get_images() as $size => $image) {
+                    $meta = $image->meta ? $image->meta : array() ?>
+                <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
+                    <td><?php
+                        echo ($size === Tiny_Metadata::ORIGINAL ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
+                        if ($image->missing()) {
+                            echo '<em>' . esc_html__('(file removed)', 'tiny-compress-images') . '</em>';
+                        } else if ($image->modified()) {
+                            echo '<em>' . esc_html__('(modified after compression)', 'tiny-compress-images') . '</em>';
+                        } else if ($image->resized()) {
+                            printf('<em>' . esc_html__('(resized to %dx%d)', 'tiny-compress-images') . '</em>', $meta['output']['width'], $meta['output']['height']);
+                        }
+                    ?></td>
+                    <td><?php
+                        if ($image->has_been_compressed()) {
+                            echo size_format($meta["input"]["size"], 1);
+                        }
+                        else if ($image->exists()) {
+                            echo size_format($image->filesize(), 1);
+                        }
+                        else
+                            echo 'File removed';
+                    ?></td>
+                    <?php
+                        if ($image->has_been_compressed()) {
+                            echo '<td>';
+                            echo size_format($meta["output"]["size"], 1);
+                            echo '</td>';
+                            echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
+                        }
+                         else {
+                            echo '<td colspan=2><em>' . esc_html__('Not configured to be compressed', 'tiny-compress-images') . '</em></td>';
+                        }
+                     ?>
                 </tr>
-                <?php $i = 0 ?>
-                <?php foreach ($tiny_metadata->filter_images('has_been_compressed') as $size => $image) {
-                        $meta = $image->meta ? $image->meta : array() ?>
-                    <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
-                        <td>
-                            <?php
-                            echo ($size === Tiny_Metadata::ORIGINAL ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
-                            if ($image->missing()) {
-                                echo '<em>' . esc_html__('(file removed)', 'tiny-compress-images') . '</em>';
-                            } else if ($image->modified()) {
-                                echo '<em>' . esc_html__('(modified after compression)', 'tiny-compress-images') . '</em>';
-                            } else if ($image->resized()) {
-                                printf('<em>' . esc_html__('(resized to %dx%d)', 'tiny-compress-images') . '</em>', $meta['output']['width'], $meta['output']['height']);
-                            } else if (!$image->compressed()) {
-                                echo '<em>' . esc_html__('(unknown state)', 'tiny-compress-images') . '</em>';
-                            }
-                            ?>
-                        </td>
-                        <td><?php echo size_format($meta["input"]["size"], 1) ?></td>
-                        <td><?php echo size_format($meta["output"]["size"], 1) ?></td>
-                        <td><?php echo human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') ?></td>
-                    </tr>
-                    <?php $i++ ?>
-                <?php } ?>
-                <?php if ($savings['count'] > 0) { ?>
-                <tfoot>
-                    <tr>
-                        <td><?php esc_html_e('Combined', 'tiny-compress-images') ?></td>
-                        <td><?php echo size_format($savings['input'], 1) ?></td>
-                        <td><?php echo size_format($savings['output'], 1) ?></td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-                <?php } ?>
-            </table>
-            <p><strong><?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
-        </div>
+                <?php $i++ ?>
+            <?php } ?>
+            <?php if ($savings['count'] > 0) { ?>
+            <tfoot>
+                <tr>
+                    <td><?php esc_html_e('Combined', 'tiny-compress-images') ?></td>
+                    <td><?php echo size_format($savings['input'], 1) ?></td>
+                    <td><?php echo size_format($savings['output'], 1) ?></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+            <?php } ?>
+        </table>
+        <p><strong><?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
     </div>
-<?php } ?>
+</div>
+

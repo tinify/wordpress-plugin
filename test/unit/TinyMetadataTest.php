@@ -15,7 +15,7 @@ class Tiny_Metadata_Test extends TinyTestCase {
                 "output" => array("size" => 37856)),
             "medium" => array(
                 "input" => array("size" => 66480),
-                "output" => array("size" => 57856))
+                "output" => array("size" => 57856)),
         ));
         $this->wp->setMetadata(1, $meta);
         $this->wp->createImagesFromMeta($this->json("wp_meta_default_sizes"), $meta, 137856);
@@ -40,6 +40,11 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $tiny_meta->get_image()->add_request();
         $tiny_meta->get_image()->add_response(array('output' => array('width' => 200, 'height' => 100)));
         $this->assertEquals(array('width' => 200, 'height' => 100), $tiny_meta->update_wp_metadata($wp_metadata));
+    }
+
+    public function testGetImagesShouldReturnAllImages() {
+        $this->assertEquals(array(Tiny_Metadata::ORIGINAL, 'medium', 'thumbnail', 'large'), array_keys(
+            $this->subject->get_images()));
     }
 
     public function testFilterImagesShouldFilterCorrectly() {

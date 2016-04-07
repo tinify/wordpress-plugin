@@ -72,7 +72,11 @@ class Tiny_Metadata_Image {
         return !$this->has_been_compressed();
     }
 
-    private function exists() {
+    public function filesize() {
+        return filesize($this->filename);
+    }
+
+    public function exists() {
         if (is_null($this->_exists)) {
             $this->_exists = $this->filename && file_exists($this->filename);
         }
@@ -81,7 +85,7 @@ class Tiny_Metadata_Image {
 
     private function same_size() {
         if (is_null($this->_same_size)) {
-            $this->_same_size = filesize($this->filename) == $this->meta['output']['size'];
+            $this->_same_size = $this->filesize() == $this->meta['output']['size'];
         }
         return $this->_same_size;
     }
