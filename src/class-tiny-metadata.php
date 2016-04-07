@@ -129,6 +129,9 @@ class Tiny_Metadata {
     }
 
     public function get_images() {
+        $original = isset($this->images[self::ORIGINAL])
+            ? array(self::ORIGINAL => $this->images[self::ORIGINAL])
+            : array();
         $compressed = array();
         $uncompressed = array();
         foreach ($this->images as $size => $image) {
@@ -141,7 +144,7 @@ class Tiny_Metadata {
         }
         ksort($compressed);
         ksort($uncompressed);
-        return array(self::ORIGINAL => $this->images[self::ORIGINAL]) + $compressed + $uncompressed;
+        return $original + $compressed + $uncompressed;
     }
 
     public function filter_images($method, $sizes=null) {
