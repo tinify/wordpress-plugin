@@ -211,16 +211,26 @@ class CompressIntegrationTest extends IntegrationTestCase {
         $this->enable_compression_sizes(array('medium', 'large'));
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
         $this->view_edit_image();
+
         self::$driver->findElement(WebDriverBy::cssSelector('div.tiny-compress-images a.thickbox'))->click();
         $cells = self::$driver->findElements(WebDriverBy::cssSelector('div.tiny-compression-details td'));
         $texts = array_map('innerText', $cells);
+        // Remove sizes that are version specific
+        for ($i = 0; $i < count($texts); ) {
+            $row_size = (substr($texts[$i+2], 0, 3) == 'Not') ? 3 : 4;
+            if (in_array($texts[$i], array('original', 'thumbnail', 'medium', 'large', 'Combined'))) {
+                $i += $row_size;
+            } else {
+                $texts = array_merge(array_slice($texts, 0, $i), array_slice($texts, $i + $row_size));
+            }
+        }
+
         $this->assertEquals(array(
-            'original', '158.1 kB', 'Not configured to be compressed',
-            'large',    '158.1 kB', '147.5 kB',
-            '1 min ago', 'medium', '158.1 kB',
-            '147.5 kB', '1 min ago', 'thumbnail',
-            '11.8 kB', 'Not configured to be compressed', 'Combined',
-            '316.2 kB', '295.0 kB', ''), $texts);
+            'original',  '158.1 kB', 'Not configured to be compressed',
+            'large',     '158.1 kB', '147.5 kB', '1 min ago',
+            'medium',    '158.1 kB', '147.5 kB', '1 min ago',
+            'thumbnail', '11.8 kB',  'Not configured to be compressed',
+            'Combined',  '316.2 kB', '295.0 kB', ''), $texts);
     }
 
     public function testDifferentImageFormatFileShouldNotShowCompressInfoInMediaLibrary()
@@ -249,7 +259,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
     public function testGatewayTimeoutShouldBeDetectedInOutput()
     {
         $this->enable_compression_sizes(array('0', 'medium'));
-        self::$driver->takeScreenshot("/Users/jacobmiddag/Downloads/ss.png");
         $this->enable_preserve(array('copyright'));
         $this->set_api_key('PNG123_GATEWAYTIMEOUT');
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');

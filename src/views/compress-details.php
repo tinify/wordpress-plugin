@@ -91,7 +91,6 @@ $size_exists = array_fill_keys($available_sizes, true);
             </tr>
             <?php $i = 0 ?>
             <?php foreach ($tiny_metadata->get_images() as $size => $image) {
-                    if (!isset($size_exists[$size])) continue;
                     $meta = $image->meta ? $image->meta : array() ?>
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
@@ -121,8 +120,10 @@ $size_exists = array_fill_keys($available_sizes, true);
                             echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
                         } elseif (isset($size_active[$size])) {
                             echo '<td colspan=2><em>' . esc_html__('Not compressed', 'tiny-compress-images') . '</em></td>';
-                        } else {
+                        } elseif (isset($size_exists[$size])) {
                             echo '<td colspan=2><em>' . esc_html__('Not configured to be compressed', 'tiny-compress-images') . '</em></td>';
+                        } else {
+                            echo '<td colspan=2><em>' . esc_html__('Size is no longer in use', 'tiny-compress-images') . '</em></td>';
                         }
                      ?>
                 </tr>

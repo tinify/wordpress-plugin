@@ -23,12 +23,12 @@ Make your website faster by optimizing your JPEG and PNG images. This plugin aut
 * Preserve copyright metadata, creation date and GPS location in the original images.
 * Select which thumbnail sizes of an image may be optimized.
 * Multisite support with a single API key.
+* WooCommerce compatible.
 * See your usage from the media settings and during bulk optimization.
 * Color profiles are automatically translated to the standard RGB color space.
 * Convert CMYK to RGB to save more space and maximize compatibility.
 * Optimize and resize uploads with the WordPress mobile app.
 * No file size limits.
-* WooCommerce compatible.
 
 = How does it work? =
 
