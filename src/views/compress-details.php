@@ -4,6 +4,9 @@ $total = $tiny_metadata->get_count(array('modified', 'missing', 'has_been_compre
 $active = $tiny_metadata->get_count(array('uncompressed', 'never_compressed'), $active_tinify_sizes);
 $savings = $tiny_metadata->get_savings();
 
+$size_active = array_fill_keys($active_tinify_sizes, true);
+$size_exists = array_fill_keys($available_sizes, true);
+
 ?><div class="details-container">
     <div class="details" id="tinify-compress-details">
         <?php if ($tiny_metadata->can_be_compressed()) { ?>
@@ -88,6 +91,7 @@ $savings = $tiny_metadata->get_savings();
             </tr>
             <?php $i = 0 ?>
             <?php foreach ($tiny_metadata->get_images() as $size => $image) {
+                    if (!isset($size_exists[$size])) continue;
                     $meta = $image->meta ? $image->meta : array() ?>
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
@@ -103,12 +107,11 @@ $savings = $tiny_metadata->get_savings();
                     <td><?php
                         if ($image->has_been_compressed()) {
                             echo size_format($meta["input"]["size"], 1);
-                        }
-                        else if ($image->exists()) {
+                        } else if ($image->exists()) {
                             echo size_format($image->filesize(), 1);
-                        }
-                        else
+                        } else {
                             echo 'File removed';
+                        }
                     ?></td>
                     <?php
                         if ($image->has_been_compressed()) {
@@ -116,8 +119,9 @@ $savings = $tiny_metadata->get_savings();
                             echo size_format($meta["output"]["size"], 1);
                             echo '</td>';
                             echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
-                        }
-                         else {
+                        } elseif (isset($size_active[$size])) {
+                            echo '<td colspan=2><em>' . esc_html__('Not compressed', 'tiny-compress-images') . '</em></td>';
+                        } else {
                             echo '<td colspan=2><em>' . esc_html__('Not configured to be compressed', 'tiny-compress-images') . '</em></td>';
                         }
                      ?>
@@ -135,7 +139,9 @@ $savings = $tiny_metadata->get_savings();
             </tfoot>
             <?php } ?>
         </table>
-        <p><strong><?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), size_format($savings["input"] - $savings["output"], 1)) ?></strong></p>
+        <?php if ($savings['input'] && $savings['output']) { ?>
+            <p><strong><?php printf(esc_html__('Total savings %s (%.0f%%)', 'tiny-compress-images'), size_format($savings["input"] - $savings["output"], 1), (1 - $savings['output'] / floatval($savings['input'])) * 100) ?></strong></p>
+        <?php } ?>
     </div>
 </div>
 

@@ -145,6 +145,13 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         $this->assertNotContains('Resize and compress orginal images to fit within:', $texts);
     }
 
+    public function testShouldNotShowResizingWhenOriginalDisabledWhenShownFirst() {
+        $this->enable_compression_sizes(array('original'));
+        self::$driver->navigate()->refresh();
+        $this->assertEquals('Enable compression of the original image size for more options.',
+            self::$driver->findElement(WebDriverBy::cssSelector('.tiny-resize-unavailable'))->getText());
+    }
+
     public function testShouldPersistResizingSettings() {
         $this->enable_resize(123, 456);
         $this->assertEquals('123', self::$driver->findElement(WebDriverBy::id('tinypng_resize_original_width'))->getAttribute('value'));

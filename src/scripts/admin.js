@@ -139,6 +139,37 @@
     bulk_compress_item(items, 0)
   }
 
+  function update_resize_settings() {
+    if (jQuery('#tinypng_sizes_0').prop('checked')) {
+      jQuery('.tiny-resize-available').show()
+      jQuery('.tiny-resize-unavailable').hide()
+    } else {
+      jQuery('.tiny-resize-available').hide()
+      jQuery('.tiny-resize-unavailable').show()
+    }
+
+    var original_enabled = jQuery('#tinypng_resize_original_enabled').prop('checked')
+    jQuery('#tinypng_resize_original_width, #tinypng_resize_original_height').each(function (i, el) {
+      el.disabled = !original_enabled
+    })
+  }
+
+  function update_preserve_settings() {
+    if (jQuery('#tinypng_sizes_0').prop('checked')) {
+      jQuery('.tiny-preserve').show()
+    } else {
+      jQuery('.tiny-preserve').hide()
+      jQuery('#tinypng_preserve_data_creation').attr('checked', false)
+      jQuery('#tinypng_preserve_data_copyright').attr('checked', false)
+      jQuery('#tinypng_preserve_data_location').attr('checked', false)
+    }
+  }
+
+  function update_settings() {
+    update_resize_settings()
+    update_preserve_settings()
+  }
+
   var adminpage = ""
   if (typeof window.adminpage !== "undefined") {
     adminpage = window.adminpage
@@ -179,37 +210,8 @@
       jQuery('#tiny-image-sizes-notice').load(image_count_url)
     })
 
-    function update_resize_settings() {
-      if (jQuery('#tinypng_sizes_0').prop('checked')) {
-        jQuery('.tiny-resize-available').show()
-        jQuery('.tiny-resize-unavailable').hide()
-      } else {
-        jQuery('.tiny-resize-available').hide()
-        jQuery('.tiny-resize-unavailable').show()
-      }
-
-      var elements = jQuery('#tinypng_resize_original_width, #tinypng_resize_original_height')
-      for (var i = 0; i < elements.length; i++) {
-        elements[i].disabled = !jQuery('#tinypng_resize_original_enabled').prop('checked')
-      }
-    }
-
-    function update_preserve_settings() {
-      if (jQuery('#tinypng_sizes_0').prop('checked')) {
-        jQuery('.tiny-preserve').show()
-      } else {
-        jQuery('.tiny-preserve').hide()
-        jQuery('#tinypng_preserve_data_copyright').attr('checked', false)
-      }
-    }
-
-    function update_settings() {
-      update_resize_settings()
-      update_preserve_settings()
-    }
-
-
     jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(update_settings)
+    update_settings()
   }
 
   jQuery('.tiny-notice a.tiny-dismiss').click(dismiss_notice)

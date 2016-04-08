@@ -220,6 +220,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     private function render_compress_details($tiny_metadata) {
+        $available_sizes = array_keys($this->settings->get_sizes());
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
         $in_progress = count($tiny_metadata->filter_images('in_progress'));
         if ($in_progress > 0) {

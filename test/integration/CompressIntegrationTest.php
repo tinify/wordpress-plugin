@@ -248,7 +248,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
     public function testGatewayTimeoutShouldBeDetectedInOutput()
     {
-        $this->enable_compression_sizes(array('medium'));
+        $this->enable_compression_sizes(array('0', 'medium'));
+        self::$driver->takeScreenshot("/Users/jacobmiddag/Downloads/ss.png");
         $this->enable_preserve(array('copyright'));
         $this->set_api_key('PNG123_GATEWAYTIMEOUT');
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
@@ -258,7 +259,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
     public function testErrorShouldBeDetectedInOutput()
     {
-        $this->enable_compression_sizes(array('medium'));
+        $this->enable_compression_sizes(array('0', 'medium'));
         $this->enable_preserve(array('copyright'));
         $this->set_api_key('PNG123_INVALID');
         $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
