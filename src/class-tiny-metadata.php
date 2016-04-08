@@ -26,6 +26,10 @@ class Tiny_Metadata {
     private $name;
     private $images = array();
 
+    public static function is_original($size) {
+        return $size === self::ORIGINAL;
+    }
+
     public function __construct($id, $wp_metadata=null) {
         $this->id = $id;
 
@@ -135,7 +139,7 @@ class Tiny_Metadata {
         $compressed = array();
         $uncompressed = array();
         foreach ($this->images as $size => $image) {
-            if ($size === self::ORIGINAL) continue;
+            if (self::is_original($size)) continue;
             if ($image->has_been_compressed()) {
                 $compressed[$size] = $image;
             } else {

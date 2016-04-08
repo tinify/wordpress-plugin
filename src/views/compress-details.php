@@ -98,7 +98,7 @@ ksort($size_exists);
                     $meta = $image->meta ? $image->meta : array() ?>
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
-                        echo ($size === Tiny_Metadata::ORIGINAL ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
+                        echo (Tiny_Metadata::is_original($size) ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
                         if ($image->missing()) {
                             echo '<em>' . esc_html__('(file removed)', 'tiny-compress-images') . '</em>';
                         } else if ($image->modified()) {

@@ -117,7 +117,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 $image->add_request();
                 $tiny_metadata->update();
 
-                $resize = ($size === Tiny_Metadata::ORIGINAL) ? $this->settings->get_resize_options() : false;
+                $resize = Tiny_Metadata::is_original($size) ? $this->settings->get_resize_options() : false;
                 $preserve = count($this->settings->get_preserve_options()) > 0 ? $this->settings->get_preserve_options() : false;
                 $response = $compressor->compress_file($image->filename, $resize, $preserve);
 
