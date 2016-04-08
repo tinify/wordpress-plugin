@@ -6,6 +6,7 @@ $savings = $tiny_metadata->get_savings();
 
 $size_active = array_fill_keys($active_tinify_sizes, true);
 $size_exists = array_fill_keys($available_sizes, true);
+ksort($size_exists);
 
 ?><div class="details-container">
     <div class="details" id="tinify-compress-details">
@@ -90,7 +91,10 @@ $size_exists = array_fill_keys($available_sizes, true);
                 <th><?php esc_html_e('Date', 'tiny-compress-images') ?></th>
             </tr>
             <?php $i = 0 ?>
-            <?php foreach ($tiny_metadata->get_images() as $size => $image) {
+            <?php
+                $images = $tiny_metadata->get_images() + $size_exists;
+                foreach ($images as $size => $image) {
+                    if (!is_object($image)) $image = new Tiny_Metadata_Image();
                     $meta = $image->meta ? $image->meta : array() ?>
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
@@ -109,7 +113,7 @@ $size_exists = array_fill_keys($available_sizes, true);
                         } else if ($image->exists()) {
                             echo size_format($image->filesize(), 1);
                         } else {
-                            echo 'File removed';
+                            echo '-';
                         }
                     ?></td>
                     <?php
@@ -118,6 +122,8 @@ $size_exists = array_fill_keys($available_sizes, true);
                             echo size_format($meta["output"]["size"], 1);
                             echo '</td>';
                             echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
+                        } elseif (!$image->exists()) {
+                            echo '<td colspan=2><em>' . esc_html__('Size is not present', 'tiny-compress-images') . '</em></td>';
                         } elseif (isset($size_active[$size])) {
                             echo '<td colspan=2><em>' . esc_html__('Not compressed', 'tiny-compress-images') . '</em></td>';
                         } elseif (isset($size_exists[$size])) {
