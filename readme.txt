@@ -38,6 +38,10 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 Install this plugin and obtain your free API key from https://tinypng.com/developers. With a free account you can optimize **roughly 100 images each month** (based on a regular WordPress installation). The exact number depends on the amount of thumbnails you use. You can change which of the generated thumbnail sizes should be optimized in the *Settings > Media* page. If you’re a heavy user you can optimize more images for a small additional fee per image.
 
+= Optimizing all your images =
+
+You can optimize all your JPEG and PNG images at once by going to *Media > Compress All Images*. Clicking on the big 'Compress all images' button will start optimizing all unoptimized images in your media library.
+
 = Multisite support =
 
 The API key can optionally be configured in wp-config.php. This removes the need to set a key on each site individually in your multisite network.
