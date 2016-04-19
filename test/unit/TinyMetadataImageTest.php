@@ -22,6 +22,9 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
             "small" => array(
                 "input" => array("size" => 66480),
                 'start' => 1447925134),
+            "failed" => array(
+                "input" => array()
+            )
         ));
         $this->wp->setMetadata(1, $meta);
         $this->wp->createImagesFromMeta($this->json("wp_meta_default_sizes"), $meta, 137856);
@@ -137,11 +140,23 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
         $this->assertFalse($this->original->uncompressed());
     }
 
-    public function testInProgressShouldReturnTrueIfMetaHaveStartAndNotOutput() {
-        $this->assertTrue($this->small->in_progress());
+    public function testInProgressShouldReturnFalseIfMetaStartIsLongAgo() {
+        $image = new Tiny_Metadata_Image("test.jpg", "");
+        $oneHourAgo = date('U') - (60 * 60);
+        $image->meta['start'] = $oneHourAgo;
+
+        $this->assertFalse($image->in_progress());
     }
 
-    public function testInProgressShouldReturnFalseIfMetaHaveStartAndOutput() {
+    public function testInProgressShouldReturnTruefMetaStartIsRecent() {
+        $image = new Tiny_Metadata_Image("test.jpg", "");
+        $twoMinutesAgo = date('U') - (60 * 2);
+        $image->meta['start'] = $twoMinutesAgo;
+
+        $this->assertTrue($image->in_progress());
+    }
+
+    public function testInProgressShouldReturnFalseIfMetaContainsStartAndOutput() {
         $this->assertFalse($this->original->in_progress());
     }
 
