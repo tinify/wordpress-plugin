@@ -76,6 +76,7 @@ class Tiny_Metadata {
                 $filename = $info['file'];
 
                 if (!isset($unique_sizes[$filename])) {
+                    $unique_sizes[$filename] = true;
                     $this->images[$size] = new Tiny_Metadata_Image(
                         "$path_prefix$filename", "$url_prefix$filename");
                 }

@@ -123,7 +123,7 @@ ksort($size_exists);
                             echo '</td>';
                             echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
                         } elseif (!$image->exists()) {
-                            echo '<td colspan=2><em>' . esc_html__('Size is not present', 'tiny-compress-images') . '</em></td>';
+                            echo '<td colspan=2><em>' . esc_html__('Not present or duplicate', 'tiny-compress-images') . '</em></td>';
                         } elseif (isset($size_active[$size])) {
                             echo '<td colspan=2><em>' . esc_html__('Not compressed', 'tiny-compress-images') . '</em></td>';
                         } elseif (isset($size_exists[$size])) {
