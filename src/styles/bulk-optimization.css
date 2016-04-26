@@ -1,0 +1,303 @@
+:root {
+  --green: #7ACB44;
+  --dark-green: #65AD36;
+  --light-green: #79BA4E;
+  --light-border-color: #e5e5e5;
+  --error-color: #D54E21;
+  --red: #d0021b;
+  --dark-red: #920011;
+  --blue: #0085ba;
+  --dark-blue: #006799;
+  --light-blue: #0073aa;
+  --load-bar-blue: #2185B5;
+}
+
+.tiny-bulk-optimization .whitebox {
+  box-shadow: 0 1px 1px rgba(0,0,0,.04);
+  border: 1px solid var(--light-border-color);
+  background: #fff;
+  margin-top: 1rem;
+}
+
+.tiny-bulk-optimization .overview {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.tiny-bulk-optimization .overview > .statistics,
+.tiny-bulk-optimization .overview > .savings {
+  flex: 1;
+  margin: 1rem 2rem;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  border: 1px solid var(--light-border-color);
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item {
+  padding: 1rem 0;
+  position: relative;
+  flex: 1;
+  text-align: center;
+  min-width: 150px;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item h3 {
+  text-transform: uppercase;
+  color: #bbb;
+  font-size: 0.9rem;
+  font-weight: normal;
+  max-width: 90%;
+  margin: 0 auto 1rem auto;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item span {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1rem;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item div.tooltip {
+  display: inline-block;
+  position: relative;
+  vertical-align: super;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item div.tooltip > .dashicons {
+  font-weight: normal;
+  color: #0085ba;
+  font-size: 1rem;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item div.tooltip > div.tip {
+  display: none;
+  position: absolute;
+  width: 10rem;
+  background: #fff;
+  left: 130%;
+  box-shadow: 1px 1px 4px rgba(0,0,0,.2);
+  border: 1px solid var(--light-border-color);
+  width: 15rem;
+  z-index: 10;
+  padding: 0 1rem;
+  background: #fff;
+  top: 50%;
+  text-align: left;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item div.tooltip:hover > div.tip {
+  display: block;
+}
+
+.tiny-bulk-optimization .overview > .statistics .totals > .item:nth-child(2):before,
+.tiny-bulk-optimization .overview > .statistics .totals > .item:nth-child(3):before {
+  position: absolute;
+  left: 0;
+  top: 25%;
+  background: var(--light-border-color);
+  content: ' ';
+  width: 1px;
+  height: 50%;
+}
+
+.tiny-bulk-optimization .overview > .statistics .notes {
+  display: flex;
+}
+
+.tiny-bulk-optimization .overview > .statistics .notes p:nth-child(odd) {
+  flex-basis: 18%;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.tiny-bulk-optimization .overview > .statistics .notes p:nth-child(even) {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+.tiny-bulk-optimization .overview > .savings {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.tiny-bulk-optimization .overview > .savings > h3 {
+  flex-basis: 100%;
+}
+
+.tiny-bulk-optimization .overview > .savings > .savings-chart {
+  flex-basis: 45%;
+}
+
+.tiny-bulk-optimization .overview > .savings > table.savings-numbers {
+  flex-basis: 50%;
+  margin-top: 2.5rem;
+}
+
+.tiny-bulk-optimization .overview > .savings > table.savings-numbers tr {
+  height: 2.5rem;
+}
+
+.tiny-bulk-optimization .overview > .savings > table.savings-numbers tr > td:first-child {
+  text-align: right;
+  padding-right: 1rem;
+  font-size: 1.2rem;
+}
+
+.tiny-bulk-optimization .overview > .savings > table.savings-numbers tr > td:last-child {
+  color: #bbb;
+}
+
+.tiny-bulk-optimization .overview > .savings > table.savings-numbers td.green {
+  color: var(--green);
+}
+
+.tiny-bulk-optimization .overview > div.optimize {
+  flex-basis: 100%;
+  margin: 1rem 2rem;
+  text-align: center;
+}
+
+.tiny-bulk-optimization .overview > div.optimize > div.progressbar {
+  position: relative;
+  height: 1rem;
+  background: #ebebeb;
+  border-radius: 2rem;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  opacity: 0.99;
+  color: #fff;
+}
+
+.tiny-bulk-optimization .overview > div.optimize > div.progressbar > div.progressbar-progress {
+  background: url('stripe-blue.png');
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1rem;
+  width: 0%;
+  border-radius: 2rem;
+  padding: 0.5rem 0;
+  z-index: -2;
+  opacity: 1;
+  transition: all 1s ease;
+  animation: progress-bar 8s linear infinite;
+}
+
+@keyframes progress-bar{
+  to {
+    background-position: 100% 0;
+  }
+}
+
+.tiny-bulk-optimization .overview > div.optimize button {
+  height: 3rem;
+  font-size: 0.9rem;
+  padding: 0;
+  min-width: 200px;
+}
+
+.tiny-bulk-optimization .overview > div.optimize button > span {
+  padding: 0.5rem 1rem;
+  width: inherit;
+  height: inherit;
+  display: none;
+  pointer-events: none;
+  height: 30px;
+  color: #fff;
+}
+
+.tiny-bulk-optimization .overview > div.optimize button > span.cancel,
+.tiny-bulk-optimization .overview > div.optimize button > span.cancelling {
+  background: var(--red);
+  border-color: var(--red) #000 var(--dark-red);
+  text-shadow: 0 -1px 1px var(--dark-red), 1px 0 1px var(--dark-red), 0 1px 1px var(--dark-red), -1px 0 1px var(--dark-red);
+  box-shadow: 0 0 3px rgba(208, 2, 27, 0.8)
+}
+
+.tiny-bulk-optimization .overview > div.optimize button > span.optimizing {
+  background: var(--blue);
+  border-color: var(--light-blue) var(--dark-blue) var(--dark-blue);
+  box-shadow: 0 1px 0 var(--dark-blue);
+  text-shadow: 0 -1px 1px var(--dark-blue),1px 0 1px var(--dark-blue),0 1px 1px var(--dark-blue),-1px 0 1px var(--dark-blue);
+}
+
+.tiny-bulk-optimization .overview > div.optimize button > span.start-optimizing {
+  background: var(--green);
+  border-color: var(--light-green) var(--dark-green) var(--dark-green);
+  text-shadow: 0 -1px 1px var(--dark-green), 1px 0 1px var(--dark-green), 0 1px 1px var(--dark-green), -1px 0 1px var(--dark-green);
+  box-shadow: 0 1px 0 var(--dark-green);
+}
+
+.tiny-bulk-optimization .overview > div.optimize button:focus > span.start-optimizing {
+  border-color: var(--green);
+  box-shadow: 0 0 3px rgba(122, 203, 68, 0.8)
+}
+
+.tiny-bulk-optimization .overview > div.optimize button > span.active {
+  display: block;
+  pointer-events: none;
+}
+
+.tiny-bulk-optimization .overview > div.optimize button ~ div.spinner {
+  position: absolute;
+  background-size: 30px 30px;
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  display: none;
+}
+
+.tiny-bulk-optimization .savings-chart {
+  position: relative;
+}
+
+.tiny-bulk-optimization .savings-chart > .textual {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 0;
+  left: 0;
+  color: var(--green);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.tiny-bulk-optimization .savings-chart > .textual > div {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5rem;
+}
+
+.tiny-bulk-optimization .savings-chart > .textual > div.percentage {
+  margin-top: 40%;
+  font-size: 2rem;
+}
+
+.tiny-bulk-optimization #media-items tr.media-item td.failed span.error {
+  color: var(--error-color);
+  position: absolute;
+}
+.tiny-bulk-optimization #media-items tr.media-item td.failed span.message {
+  display: inline-block;
+  margin-left: 24px;
+}
+
+.tiny-bulk-optimization #media-items tr th.thumbnail,
+.tiny-bulk-optimization #media-items tr.media-item td.thumbnail {
+  width: 30px;
+  height: 30px;
+}
+
+.tiny-bulk-optimization #media-items tr.media-item td {
+  vertical-align: middle;
+}

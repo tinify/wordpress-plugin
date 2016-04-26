@@ -204,7 +204,11 @@ class WordPressStubs {
 
         foreach ($wp_meta["sizes"] as $image_size => $values) {
             if (isset($tiny_meta[Tiny_Metadata::META_KEY][$image_size])) {
-                $file_size = $tiny_meta[Tiny_Metadata::META_KEY][$image_size]["output"]["size"];
+                if (isset($tiny_meta[Tiny_Metadata::META_KEY][$image_size]["output"])) {
+                    $file_size = $tiny_meta[Tiny_Metadata::META_KEY][$image_size]["output"]["size"];
+                } else {
+                    $file_size = $tiny_meta[Tiny_Metadata::META_KEY][$image_size]["input"]["size"];
+                }
                 vfsStream::newFile($values["file"])
                     ->withContent(new LargeFileContent($file_size))
                     ->at($dir);

@@ -16,7 +16,6 @@ class Tiny_Settings_Test extends TinyTestCase {
             array('media', 'tinypng_sizes'),
             array('media', 'tinypng_resize_original'),
             array('media', 'tinypng_status'),
-            array('media', 'tinypng_savings'),
             array('media', 'tinypng_preserve_data')
         ), $this->wp->getCalls('register_setting'));
     }
@@ -33,7 +32,6 @@ class Tiny_Settings_Test extends TinyTestCase {
             array('tinypng_sizes', 'File compression', array($this->subject, 'render_sizes'), 'media', 'tinypng_settings'),
             array('tinypng_resize_original', 'Original image', array($this->subject, 'render_resize'), 'media', 'tinypng_settings'),
             array('tinypng_status', 'Connection status', array($this->subject, 'render_pending_status'), 'media', 'tinypng_settings'),
-            array('tinypng_savings', 'Savings', array($this->subject, 'render_pending_savings'), 'media', 'tinypng_settings')
         ), $this->wp->getCalls('add_settings_field'));
     }
 

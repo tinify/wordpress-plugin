@@ -27,7 +27,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 2. Use `docker ps` to check which port to use to connect to WordPress.
 
 ### Running the unit tests
-1. Run `bin/unit-tests`.
+1. Run `bin/unit-tests <optional path to file>`.
 
 ### Running the integration tests
 1. Start PhantomJS server: `phantomjs --wd`. Tested with version 2.1.1.

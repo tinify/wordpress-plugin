@@ -16,6 +16,8 @@ class Tiny_Metadata_Test extends TinyTestCase {
             "medium" => array(
                 "input" => array("size" => 66480),
                 "output" => array("size" => 57856)),
+            "large" => array(
+                "input" => array("size" => 66480)),
         ));
         $this->wp->setMetadata(1, $meta);
         $this->wp->createImagesFromMeta($this->json("wp_meta_default_sizes"), $meta, 137856);
@@ -43,7 +45,7 @@ class Tiny_Metadata_Test extends TinyTestCase {
     }
 
     public function testGetImagesShouldReturnAllImages() {
-        $this->assertEquals(array(Tiny_Metadata::ORIGINAL, 'medium', 'thumbnail', 'large'), array_keys(
+        $this->assertEquals(array(Tiny_Metadata::ORIGINAL, 'medium', 'thumbnail', 'large', 'small'), array_keys(
             $this->subject->get_images()));
     }
 
@@ -78,5 +80,22 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $this->subject->get_image()->add_request("large");
         $this->subject->get_image()->add_exception(new Tiny_Exception('Could not download output', 'OutputError'), "large");
         $this->assertEquals("Could not download output", $this->subject->get_latest_error());
+    }
+
+    public function testGetImageSizesCompressed() {
+        $this->assertEquals(3, $this->subject->get_image_sizes_optimized());
+    }
+
+    public function testGetImageSizesUnCompressed() {
+        $active_sizes = array(0 => Tiny_Metadata::ORIGINAL, 1 => "thumbnail", 2 => "small", 3 => "medium", 4 => "large");
+        $this->assertEquals(1, $this->subject->get_image_sizes_to_be_optimized($active_sizes));
+    }
+
+    public function testGetInitialTotalSize() {
+        $this->assertEquals(325920, $this->subject->get_total_size_before_optimization());
+    }
+
+    public function testGetCompressedTotalSize() {
+        $this->assertEquals(300048, $this->subject->get_total_size_after_optimization());
     }
 }

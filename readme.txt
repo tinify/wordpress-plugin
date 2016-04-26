@@ -40,7 +40,7 @@ Install this plugin and obtain your free API key from https://tinypng.com/develo
 
 = Optimizing all your images =
 
-You can optimize all your JPEG and PNG images at once by going to *Media > Compress All Images*. Clicking on the big 'Compress all images' button will start optimizing all unoptimized images in your media library.
+You can optimize all your JPEG and PNG images at once by going to *Media > Bulk Optimization*. Clicking on the big button will start optimizing all unoptimized images in your media library.
 
 = Multisite support =
 
@@ -84,7 +84,7 @@ The API key can also be configured in wp-config.php. You can add a `TINY_API_KEY
 2. In the Media Library you can see how much bytes TinyPNG has saved you. You can also compress additional sizes per image.
 3. Optimize all images in bulk after installing the plugin or when additional sizes have to be optimized.
 4. Showing progress during bulk optimization from media library.
-5. Bulk optimization of all images through the Media > Compress All Images page.
+5. Bulk optimization of all images through the Media > Bulk Optimization page.
 
 == Frequently Asked Questions ==
 
@@ -104,9 +104,13 @@ A: No. There are no limitations on the size of the images you want to compress.
 A: Everything will keep on working, but newly uploaded images will not be optimized. Of course we encourage everyone to sign up for a full subscription.
 
 = Q: Can I optimize all existing images in my media library? =
-A: Yes! After installing the plugin, go to *Media > Compress All Images*, and click on the button to optimize all unoptimized images in your media library.
+A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and click on the button to optimize all unoptimized images in your media library.
 
 == Changelog ==
+= 1.8.0 =
+* New and improved Bulk optimization page!
+* Fixed never ending spinner when error occured bug
+* Prevent compression of duplicate sizes with different names
 
 = 1.7.2 =
 * Show more information about compressed/uncompressed image sizes in details popup.

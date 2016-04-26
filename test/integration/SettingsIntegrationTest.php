@@ -170,21 +170,4 @@ class SettingsIntegrationTest extends IntegrationTestCase {
             WebDriverBy::cssSelector('#tiny-compress-status'),
            "API connection unsuccessful\nError: Credentials are invalid"));
     }
-
-    public function testShouldShowBulkCompressionLink() {
-        reset_webservice();
-        self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-compress-savings p'),
-            'No images compressed yet. Use Compress All Images to compress existing images.'));
-    }
-
-    public function testShouldShowSavings() {
-        reset_webservice();
-        $this->set_api_key('PNG123');
-        $this->upload_media(dirname(__FILE__) . '/../fixtures/input-example.png');
-        self::$driver->get(wordpress('/wp-admin/options-media.php'));
-        self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-compress-savings p'),
-            'You have saved a total of'));
-    }
 }

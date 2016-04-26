@@ -9,6 +9,12 @@
       "height": 150,
       "mime-type": "image/png"
     },
+    "small": {
+      "file": "tinypng_gravatar-200x200.png",
+      "width": 200,
+      "height": 200,
+      "mime-type": "image/png"
+    },
     "medium": {
       "file": "tinypng_gravatar-300x300.png",
       "width": 300,

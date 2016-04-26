@@ -15,8 +15,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
         clear_settings();
     }
 
-    public function testTitlePresence()
-    {
+    public function testTitlePresence() {
         $element = self::$driver->findElements(WebDriverBy::xpath('//*[@id="compress-jpeg-png-images"]//a[text()="Settings"]'));
         $this->assertStringEndsWith('options-media.php#tiny-compress-images', $element[0]->getAttribute('href'));
     }

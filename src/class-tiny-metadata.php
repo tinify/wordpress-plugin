@@ -25,6 +25,11 @@ class Tiny_Metadata {
     private $id;
     private $name;
     private $images = array();
+    private $statistics_calculated = false;
+    private $image_sizes_optimized = 0;
+    private $image_sizes_unoptimized = 0;
+    private $initial_total_size = 0;
+    private $optimized_total_size = 0;
 
     public static function is_original($size) {
         return $size === self::ORIGINAL;
@@ -197,21 +202,59 @@ class Tiny_Metadata {
         return $message;
     }
 
+    public function get_image_sizes_optimized() {
+        if (!$this->statistics_calculated) $this->calculate_statistics();
+        return $this->image_sizes_optimized;
+    }
+
+    public function get_image_sizes_to_be_optimized() {
+        if (!$this->statistics_calculated) $this->calculate_statistics();
+        return $this->image_sizes_unoptimized;
+    }
+
+    public function get_total_size_before_optimization() {
+        if (!$this->statistics_calculated) $this->calculate_statistics();
+        return $this->initial_total_size;
+    }
+
+    public function get_total_size_after_optimization() {
+        if (!$this->statistics_calculated) $this->calculate_statistics();
+        return $this->optimized_total_size;
+    }
+
     public function get_savings() {
-        $result = array(
-            'input' => 0,
-            'output' => 0,
-            'count' => 0
-        );
-        foreach ($this->images as $size => $image) {
-            if (!is_array($image->meta)) continue;
-            $m = $image->meta;
-            if (isset($m['input']) && isset($m['output'])) {
-                $result['count']++;
-                $result['input'] += $m['input']['size'];
-                $result['output'] += $m['output']['size'];
-            }
+       if (!$this->statistics_calculated) $this->calculate_statistics();
+       $before = $this->get_total_size_before_optimization();
+       $after = $this->get_total_size_after_optimization();
+       return ($before - $after) / $before * 100;
+    }
+
+    // Only takes into account all images that have been processed by our plugin.
+    // They need to have 'tiny_compress_images' metadata in wp_postmeta.
+    // We only check the sizes that are present in the installation and exist.
+    protected function calculate_statistics() {
+        if ($this->statistics_calculated) return;
+
+        foreach ($this->images as $image_size) {
+            if (!is_array($image_size->meta)) continue;
+
+            // It is assumed that all active sizes are present in the meta information.
+            if (isset($image_size->meta['input'])) {
+                $this->initial_total_size += intval($image_size->meta['input']['size']);
+
+                if (isset($image_size->meta['output'])) {
+                    $this->optimized_total_size += intval($image_size->meta['output']['size']);
+                    $this->image_sizes_optimized += 1;
+                } else {
+                    $this->optimized_total_size += intval($image_size->meta['input']['size']);
+                }
+            } // else we have not analysed this image yet
         }
-        return $result;
+
+        $settings = new Tiny_Settings();
+        $active = $this->get_count(array('uncompressed', 'never_compressed'), $settings->get_active_tinify_sizes());
+        $this->image_sizes_unoptimized = $active['never_compressed'];
+
+        $this->statistics_calculated = true;
     }
 }

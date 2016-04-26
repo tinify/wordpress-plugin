@@ -73,16 +73,11 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, __('Connection status', 'tiny-compress-images'), $this->get_method('render_pending_status'), 'media', $section);
 
-        $field = self::get_prefixed_name('savings');
-        register_setting('media', $field);
-        add_settings_field($field, __('Savings', 'tiny-compress-images'), $this->get_method('render_pending_savings'), 'media', $section);
-
         $field = self::get_prefixed_name('preserve_data');
         register_setting('media', $field);
 
         add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
-        add_action('wp_ajax_tiny_compress_savings', $this->get_method('total_savings_status'));
     }
 
     public function image_sizes_notice() {
@@ -92,11 +87,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 
     public function connection_status() {
         $this->render_status();
-        exit();
-    }
-
-    public function total_savings_status() {
-        $this->render_total_savings();
         exit();
     }
 
@@ -255,6 +245,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         esc_html_e('Choose sizes to compress. Remember each selected size counts as a compression.', 'tiny-compress-images');
         echo '</p>';
         echo '<input type="hidden" name="' . self::get_prefixed_name('sizes[' . self::DUMMY_SIZE . ']') . '" value="on"/>';
+
         foreach ($this->get_sizes() as $size => $option) {
             $this->render_size_checkbox($size, $option);
         }
@@ -289,27 +280,6 @@ class Tiny_Settings extends Tiny_WP_Base {
         } else {
             $free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count );
             printf(__('With these settings you can compress <strong> at least %s images </strong> for free each month.', 'tiny-compress-images'), $free_images_per_month);
-        }
-        echo '</p>';
-    }
-
-    public function render_total_savings() {
-        global $wpdb;
-
-        $total_savings = 0;
-        $result = $wpdb->get_results("SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png') ORDER BY ID DESC", ARRAY_A);
-        for ($i = 0; $i < sizeof($result); $i++) {
-            $tiny_metadata = new Tiny_Metadata($result[$i]["ID"]);
-            $savings = $tiny_metadata->get_savings();
-            $total_savings += ($savings['input'] - $savings['output']);
-        }
-
-        echo '<p>';
-        if ($total_savings > 0) {
-            printf(esc_html__('You have saved a total of %s on images!', 'tiny-compress-images'), '<strong>' . size_format($total_savings) . '</strong>' );
-        } else {
-            $link = '<a href="upload.php?page=tiny-bulk-compress">' . esc_html__('Compress All Images', 'tiny-compress-images') . '</a>';
-            printf(esc_html__('No images compressed yet. Use %s to compress existing images.', 'tiny-compress-images'), $link);
         }
         echo '</p>';
     }

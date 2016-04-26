@@ -99,7 +99,14 @@ abstract class Tiny_Compress {
         list($output, $details) = $this->compress(file_get_contents($file), $resize_options, $preserve_options);
         file_put_contents($file, $output);
 
-        $details['output'] = self::update_details($file, $details) + $details['output'];
+        if ($resize_options || $preserve_options) {
+            $details['output'] = self::update_details($file, $details) + $details['output'];
+        } else {
+            // Combine the details for the output, partially read from FS but extra values come from the API.
+            // The filesize read from disk (in update_details) is not correct sometimes.
+            $details['output'] = array_merge(self::update_details($file, $details), $details['output']);
+        }
+
         if ($resize_options) {
             $details['output']['resized'] = true;
         }

@@ -2,7 +2,8 @@
 $error = $tiny_metadata->get_latest_error();
 $total = $tiny_metadata->get_count(array('modified', 'missing', 'has_been_compressed', 'compressed'));
 $active = $tiny_metadata->get_count(array('uncompressed', 'never_compressed'), $active_tinify_sizes);
-$savings = $tiny_metadata->get_savings();
+$size_before = $tiny_metadata->get_total_size_before_optimization();
+$size_after = $tiny_metadata->get_total_size_after_optimization();
 
 $size_active = array_fill_keys($active_tinify_sizes, true);
 $size_exists = array_fill_keys($available_sizes, true);
@@ -53,9 +54,9 @@ ksort($size_exists);
                 <br />
             <?php } ?>
 
-            <?php if ($savings["input"] - $savings["output"]) { ?>
+            <?php if ($size_before - $size_after) { ?>
                 <span class="message">
-                    <?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), str_replace(" ", "&nbsp;", size_format($savings["input"] - $savings["output"], 1))) ?>
+                    <?php printf(esc_html__('Total savings %s', 'tiny-compress-images'), str_replace(" ", "&nbsp;", size_format($size_before - $size_after, 1))) ?>
                 </span>
                 <br />
             <?php } ?>
@@ -135,20 +136,23 @@ ksort($size_exists);
                 </tr>
                 <?php $i++ ?>
             <?php } ?>
-            <?php if ($savings['count'] > 0) { ?>
+            <?php if ($tiny_metadata->get_image_sizes_optimized() > 0) { ?>
             <tfoot>
                 <tr>
                     <td><?php esc_html_e('Combined', 'tiny-compress-images') ?></td>
-                    <td><?php echo size_format($savings['input'], 1) ?></td>
-                    <td><?php echo size_format($savings['output'], 1) ?></td>
+                    <td><?php echo size_format($size_before, 1) ?></td>
+                    <td><?php echo size_format($size_after, 1) ?></td>
                     <td></td>
                 </tr>
             </tfoot>
             <?php } ?>
         </table>
-        <?php if ($savings['input'] && $savings['output']) { ?>
-            <p><strong><?php printf(esc_html__('Total savings %s (%.0f%%)', 'tiny-compress-images'), size_format($savings["input"] - $savings["output"], 1), (1 - $savings['output'] / floatval($savings['input'])) * 100) ?></strong></p>
+        <?php if ($size_before && $size_after) { ?>
+            <p><strong>
+                <?php printf(esc_html__('Total savings %s (%.0f%%)', 'tiny-compress-images'),
+                size_format($size_before - $size_after, 1),
+                (1 - $size_after / floatval($size_before)) * 100) ?>
+            </strong></p>
         <?php } ?>
     </div>
 </div>
-
