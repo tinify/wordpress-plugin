@@ -306,7 +306,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     public function render_bulk_optimization_page() {
         $attachment_counts = ((array) wp_count_attachments());
-        $uploaded_images = intval($attachment_counts['image/png']) + intval($attachment_counts['image/jpeg']);
+        $number_of_png_images = array_key_exists('image/png', $attachment_counts) ? intval($attachment_counts['image/png']) : 0;
+        $number_of_jpeg_images = array_key_exists('image/jpeg', $attachment_counts) ? intval($attachment_counts['image/jpeg']) : 0;
+        $uploaded_images = $number_of_png_images + $number_of_jpeg_images;
 
         $stats = $this->get_optimization_statistics();
         $optimized_image_sizes = $stats['optimized-image-sizes'];
