@@ -33,19 +33,20 @@
     var name = jQuery(tinypng_api_key_name).val()
     var mail = jQuery(tinypng_api_key_mail).val()
     var redirect = jQuery(location).attr('href');
-    var application = jQuery(tinypng_api_key_application).val()
+    var alias = "WordPress plugin for " + jQuery(tinypng_api_key_alias).val()
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
       data: {
         _nonce: tinyCompress.nonce,
-        action: 'tiny_new_api_key',
+        action: 'tiny_create_api_key',
         name: name,
         mail: mail,
         redirect: redirect,
-        application: application
+        alias: alias
       },
       success: function(data) {
+        jQuery(tinypng_api_key).val(data)
         console.log(data)
       },
       error: function() {

@@ -27,12 +27,11 @@ require_once("Tinify.php");
 class Tiny_Compress_Tinify extends Tiny_Compress {
 
     protected function shrink_options($input) {
-
+        return [];
     }
 
     protected function shrink($input) {
-        Tinify\setKey($this->api_key);
-        $response = Tinify\fromFile(null);
+        echo $input;
     }
 
     protected function output_options($url, $resize_options, $preserve_options) {
@@ -41,5 +40,17 @@ class Tiny_Compress_Tinify extends Tiny_Compress {
 
     protected function output($url, $resize_options, $preserve_options) {
 
+    }
+
+    public static function createKey($email, $input) {
+        //Send info to end-point
+        //set the key
+        $key = 'LgBHwbormgzzfMlPXRZNUACNHebIjlKV';
+        update_option('tinypng_api_key', $key);
+    }
+
+    public static function getKey($email, $input) {
+        //return the key
+        return get_option('tinypng_api_key');
     }
 }

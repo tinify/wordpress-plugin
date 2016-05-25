@@ -27,7 +27,7 @@ class Tiny_PHP {
         return ini_get('allow_url_fopen');
     }
 
-    public static function is_running_legacy() {
-        return ( version_compare( PHP_VERSION, '5.3', '<' ) && (!is_curl_available()) );
+    public static function client_library_supported() {
+        return ( (version_compare( PHP_VERSION, '5.3', '>' )) && (Tiny_PHP::is_curl_available()) );
     }
 }

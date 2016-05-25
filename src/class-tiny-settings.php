@@ -226,13 +226,13 @@ class Tiny_Settings extends Tiny_WP_Base {
         global $current_user;
         $name = $current_user->user_firstname . ' ' . $current_user->user_lastname;
         $mail = $current_user->user_email;
-        $application = get_bloginfo( 'name' );
+        $alias = get_bloginfo( 'url' );
 
         echo '<div class=' . $field . '_step1>';
         esc_html_e('Create new API key', 'tiny-compress-images');
         echo '<input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" size="40" />';
         echo '<input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" size="50" />';
-        echo '<input type="hidden" id=' . $field . '_application name=' . $field . '_application value="' . htmlspecialchars($application) . '" size="100" />';
+        echo '<input type="hidden" id=' . $field . '_alias name=' . $field . '_alias value="' . htmlspecialchars($alias) . '" size="100" />';
         echo '<button type="button" class="tiny-new-api-key button">';
             echo esc_html__('Submit', 'tiny-compress-images');
         echo '</button>';
