@@ -22,6 +22,10 @@ require dirname(__FILE__) . '/src/class-tiny-settings.php';
 require dirname(__FILE__) . '/src/class-tiny-plugin.php';
 require dirname(__FILE__) . '/src/class-tiny-notices.php';
 
+if (!Tiny_PHP::is_running_legacy()) {
+  require dirname(__FILE__) . '/src/class-tiny-compress-tinify.php';
+}
+
 $tiny_plugin = new Tiny_Plugin();
 
 if ( !defined( 'TINY_DEBUG' ) ) {

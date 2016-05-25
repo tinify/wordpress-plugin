@@ -28,6 +28,32 @@
     })
   }
 
+  function new_api_key(event) {
+    var element = jQuery(event.target)
+    var name = jQuery(tinypng_api_key_name).val()
+    var mail = jQuery(tinypng_api_key_mail).val()
+    var redirect = jQuery(location).attr('href');
+    var application = jQuery(tinypng_api_key_application).val()
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_new_api_key',
+        name: name,
+        mail: mail,
+        redirect: redirect,
+        application: application
+      },
+      success: function(data) {
+        console.log(data)
+      },
+      error: function() {
+        console.log("Failure")
+      }
+    })
+  }
+
   function dismiss_notice(event) {
     var element = jQuery(event.target)
     var notice = element.closest(".tiny-notice")
@@ -111,6 +137,7 @@
   } else if (adminpage === "post-php") {
     eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
+    eventOn('table', 'click', 'button.tiny-new-api-key', new_api_key)
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 

@@ -18,16 +18,28 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_PHP {
-    public static function is_curl_available() {
-        return extension_loaded('curl');
+require_once("Tinify/Exception.php");
+require_once("Tinify/ResultMeta.php");
+require_once("Tinify/Result.php");
+require_once("Tinify/Source.php");
+require_once("Tinify/Client.php");
+require_once("Tinify.php");
+class Tiny_Compress_Tinify extends Tiny_Compress {
+
+    protected function shrink_options($input) {
+
     }
 
-    public static function is_fopen_available() {
-        return ini_get('allow_url_fopen');
+    protected function shrink($input) {
+        Tinify\setKey($this->api_key);
+        $response = Tinify\fromFile(null);
     }
 
-    public static function is_running_legacy() {
-        return ( version_compare( PHP_VERSION, '5.3', '<' ) && (!is_curl_available()) );
+    protected function output_options($url, $resize_options, $preserve_options) {
+
+    }
+
+    protected function output($url, $resize_options, $preserve_options) {
+
     }
 }

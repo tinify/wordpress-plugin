@@ -51,6 +51,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
         add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
         add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
+        add_action('wp_ajax_tiny_new_api_key', $this->get_method('new_api_key'));
         add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
         add_action('admin_action_tiny_bulk_optimization', $this->get_method('bulk_optimization'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
@@ -195,6 +196,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
 
         exit();
+    }
+
+    public function new_api_key() {
+        $json = !empty($_POST['json']) && $_POST['json'];
+        echo $_POST['name'];
+        echo "\n";
+        echo $_POST['mail'];
+        echo "\n";
+        echo $_POST['redirect'];
+        echo "\n";
+        echo $_POST['application'];
     }
 
     public function get_optimization_statistics() {

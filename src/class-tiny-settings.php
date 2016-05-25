@@ -17,7 +17,6 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 class Tiny_Settings extends Tiny_WP_Base {
     const DUMMY_SIZE = '_tiny_dummy';
 
@@ -224,20 +223,35 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function render_api_key() {
         $field = self::get_prefixed_name('api_key');
         $key = $this->get_api_key();
+        global $current_user;
+        $name = $current_user->user_firstname . ' ' . $current_user->user_lastname;
+        $mail = $current_user->user_email;
+        $application = get_bloginfo( 'name' );
 
+        echo '<div class=' . $field . '_step1>';
+        esc_html_e('Create new API key', 'tiny-compress-images');
+        echo '<input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" size="40" />';
+        echo '<input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" size="50" />';
+        echo '<input type="hidden" id=' . $field . '_application name=' . $field . '_application value="' . htmlspecialchars($application) . '" size="100" />';
+        echo '<button type="button" class="tiny-new-api-key button">';
+            echo esc_html__('Submit', 'tiny-compress-images');
+        echo '</button>';
+        echo '</div>';
+
+        echo '<div class=' . $field . '_step2>';
         if (defined('TINY_API_KEY')) {
             echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
         } else {
-            echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+            if (empty($key)) {
+                printf(esc_html__('Enter your API key', 'tiny-compress-images'));
+                echo '<input type="text" id="' . $field . '" name="' . $field . '" size="40" />';
+            } else {
+                printf(esc_html__('Your API key is:', 'tiny-compress-images'));
+                echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+            }
         }
-        echo '<p>';
-        $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG Developer section', 'tiny-compress-images') . '</a>';
-        if (empty($key)) {
-            printf(esc_html__('Visit %s to get an API key.', 'tiny-compress-images'), $link);
-        } else {
-            printf(esc_html__('Visit %s to view or upgrade your account.', 'tiny-compress-images'), $link);
-        }
-        echo '</p>';
+        echo submit_button();
+        echo '</div>';
     }
 
     public function render_sizes() {

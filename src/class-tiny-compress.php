@@ -23,11 +23,13 @@ abstract class Tiny_Compress {
     protected $after_compress_callback;
 
     public static function get_ca_file() {
-        return dirname(__FILE__) . '/cacert.pem';
+        return dirname(__FILE__) . '/data/cacert.pem';
     }
 
     public static function get_compressor($api_key, $after_compress_callback=null) {
-        if (Tiny_PHP::is_curl_available()) {
+        if (!Tiny_PHP::is_running_legacy()) {
+            return new Tiny_Compress_Tinify($api_key, $after_compress_callback);
+        } elseif (Tiny_PHP::is_curl_available()) {
             return new Tiny_Compress_Curl($api_key, $after_compress_callback);
         } elseif (Tiny_PHP::is_fopen_available()) {
             return new Tiny_Compress_Fopen($api_key, $after_compress_callback);
