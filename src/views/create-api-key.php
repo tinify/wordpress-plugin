@@ -14,7 +14,7 @@ $alias = get_bloginfo( 'url' );
     <input class='tinypng_api_key_input' type='text' id='tinypng_api_key_name' name='tinypng_api_key_name' value="<?php echo htmlspecialchars($name) ?>" />
     <input class='tinypng_api_key_input' type='text' id='tinypng_api_key_mail' name='tinypng_api_key_mail' value="<?php echo htmlspecialchars($mail) ?>" />
     <input type='hidden' id='tinypng_api_key_alias' name='tinypng_api_key_alias' value="<?php echo htmlspecialchars($alias) ?>" />
-    <button type='button' class='tiny-new-api-key-create'>
+    <button type='button' class='tinypng-new-api-key-create button'>
       <?php echo esc_html__('Get me a key!', 'tiny-compress-images') ?>
     </button>
     </div>

@@ -29,7 +29,6 @@
   }
 
   function new_api_key(event) {
-    var element = jQuery(event.target)
     var name = jQuery(tinypng_api_key_name).val()
     var mail = jQuery(tinypng_api_key_mail).val()
     var redirect = jQuery(location).attr('href');
@@ -47,7 +46,6 @@
       },
       success: function(data) {
         jQuery(tinypng_api_key).val(data)
-        console.log(data)
       },
       error: function() {
         console.log("Failure")
@@ -138,7 +136,7 @@
   } else if (adminpage === "post-php") {
     eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
-    eventOn('table', 'click', 'button.tiny-new-api-key-create', new_api_key)
+    eventOn('div', 'click', 'button.tinypng-new-api-key-create', new_api_key)
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 
