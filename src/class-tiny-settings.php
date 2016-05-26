@@ -228,36 +228,36 @@ class Tiny_Settings extends Tiny_WP_Base {
         $mail = $current_user->user_email;
         $alias = get_bloginfo( 'url' );
 
-        echo '<div class=' . $field . '_step1>';
-        echo '<span class=' . $field . '_text>';
-        esc_html_e('Create new API key', 'tiny-compress-images');
-        echo '</span>';
-        echo '<input class=' . $field . '_input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" />';
-        echo '<input class=' . $field . '_input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" />';
-        echo '<input type="hidden" id=' . $field . '_alias name=' . $field . '_alias value="' . htmlspecialchars($alias) . '" size="100" />';
-        echo '<button type="button" class="tiny-new-api-key-create">';
+        if (empty($key)) {
+            echo '<div class=' . $field . '_step1>';
+            echo '<span class=' . $field . '_text>';
+            esc_html_e('Create new API key', 'tiny-compress-images');
+            echo '</span>';
+            echo '<input class=' . $field . '_input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" />';
+            echo '<input class=' . $field . '_input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" />';
+            echo '<input type="hidden" id=' . $field . '_alias name=' . $field . '_alias value="' . htmlspecialchars($alias) . '" size="100" />';
+            echo '<button type="button" class="tiny-new-api-key-create">';
             echo esc_html__('Get me a key!', 'tiny-compress-images');
-        echo '</button>';
-        echo '</div>';
-
-        echo '<div class=' . $field . '_step2>';
-        echo '<div class=' . $field . '_container>';
-        if (defined('TINY_API_KEY')) {
-            echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
+            echo '</button>';
+            echo '</div>';
+            echo '<div class=' . $field . '_step2>';
+            echo '<div class=' . $field . '_container>';
+            echo '<span class=' . $field . '_text>';
+            printf(esc_html__('Enter API key', 'tiny-compress-images'));
+            echo '</span>';
+            echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" />';
+            echo submit_button('Save', '', $field . '_save');
+            echo '</div>';
+            echo '</div>';
         } else {
-            if (empty($key)) {
-                echo '<span class=' . $field . '_text>';
-                printf(esc_html__('Enter API key', 'tiny-compress-images'));
-                echo '</span>';
-                echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" />';
+            if (defined('TINY_API_KEY')) {
+            echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
             } else {
-                printf(esc_html__('Your API key is:', 'tiny-compress-images'));
-                echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+                echo '<div class=' . $field . '_exists>';
+
+                echo '</div>';
             }
         }
-        echo submit_button('Save', '', $field . '_save');
-        echo '</div>';
-        echo '</div>';
     }
 
     public function render_sizes() {
