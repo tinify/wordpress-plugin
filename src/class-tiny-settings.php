@@ -229,32 +229,17 @@ class Tiny_Settings extends Tiny_WP_Base {
         $alias = get_bloginfo( 'url' );
 
         if (empty($key)) {
-            echo '<div class=' . $field . '_step1>';
-            echo '<span class=' . $field . '_text>';
-            esc_html_e('Create new API key', 'tiny-compress-images');
-            echo '</span>';
-            echo '<input class=' . $field . '_input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" />';
-            echo '<input class=' . $field . '_input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" />';
-            echo '<input type="hidden" id=' . $field . '_alias name=' . $field . '_alias value="' . htmlspecialchars($alias) . '" size="100" />';
-            echo '<button type="button" class="tiny-new-api-key-create">';
-            echo esc_html__('Get me a key!', 'tiny-compress-images');
-            echo '</button>';
-            echo '</div>';
-            echo '<div class=' . $field . '_step2>';
-            echo '<div class=' . $field . '_container>';
-            echo '<span class=' . $field . '_text>';
-            printf(esc_html__('Enter API key', 'tiny-compress-images'));
-            echo '</span>';
-            echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" />';
-            echo submit_button('Save', '', $field . '_save');
-            echo '</div>';
-            echo '</div>';
+            include(dirname(__FILE__) . '/views/create-api-key.php');
         } else {
+            include(dirname(__FILE__) . '/views/create-api-key-modal.php');
             if (defined('TINY_API_KEY')) {
             echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
             } else {
                 echo '<div class=' . $field . '_exists>';
-
+                echo '<span class="dashicons-before dashicons-yes"></span>';
+                echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" value="' . htmlspecialchars($key) . '" disabled />';
+                add_thickbox();
+                echo '<a href="#TB_inline?width=657&height=242&inlineId=tinypng_api_key_container" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
                 echo '</div>';
             }
         }

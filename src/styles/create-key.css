@@ -81,3 +81,36 @@
   background-color: #0085BA;
   border: none;
 }
+
+.tinypng_api_key_exists {
+  position: relative;
+  width: 365px;
+  height: 95px;
+  background-color: white;
+  border: solid #E5E5E5 1px;
+}
+.dashicons-yes {
+  position: absolute;
+  display: block;
+  top: 22px;
+  right: 48px;
+  color: #A5C690;
+}
+
+.dashicons-yes::before {
+  font-size: 35px;
+}
+
+.tinypng_api_key_exists .tinypng_api_key_input {
+  position: relative;
+  color: #A5C690;
+}
+
+.tinypng_api_key_exists a {
+  position: relative;
+  left: 30px;
+  top: 25px;
+  float: left;
+  font-size: 14px;
+  text-decoration: none;
+}
