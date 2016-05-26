@@ -1,136 +1,101 @@
-.tinypng_api_key_step1 {
-    max-width: 290px;
-    height: 240px;
-    float: left;
-    background-color: white;
-    border: solid #E5E5E5 1px;
-    border-right: none;
+#tinypng_api_key_container {
+  display: inline-block;
+  padding: 30px;
+  border-left: solid #E1E1E1 1px;
+  background-color: white;
 }
 
-.tinypng_api_key_step1 .tinypng_api_key_text {
-  position: relative;
-  top: 30px;
-  left: 30px;
-  font-size: 16px;
+#tinypng_api_key_container h4 {
+  margin-top: 0;
+}
+
+#tinypng_api_key_container input {
+  margin-bottom: 15px;
+}
+
+#tinypng_api_key_container:before,
+#tinypng_api_key_container:after {
+    content: " ";
+    display: table;
+}
+
+#tinypng_api_key_container:after {
+    clear: both;
+}
+
+.tinypng_api_key_step1 {
+    float: left;
+    padding-right: 30px;
+    border-right: solid #E5E5E5 1px;
 }
 
 #tinypng_api_key_name {
-  position: relative;
-  top: 50px;
-  left: 30px;
-  width: 240px;
-  height: 35px;
+  display: block;
+  min-width: 240px;
 }
 
 #tinypng_api_key_mail {
-  position: relative;
-  top: 70px;
-  left: 30px;
-  width: 240px;
-  height: 35px;
+  display: block;
+  min-width: 240px;
 }
 
 .tinypng-create-api-key {
-  position: relative;
-  top: 90px;
-  left: 30px;
-  width: 240px;
-  height: 35px !important;
-  color: white !important;
-  background-color: #0085BA !important;
-  border: none !important;
+  width: 100%;
 }
 
 .tinypng_api_key_step2 {
-    width: 365px;
-    height: 240px;
     float: left;
-    background-color: white;
-    border: solid #E5E5E5 1px;
-    border-left: none;
+    padding-left: 30px;
 }
 
-.tinypng_api_key_step2 .tinypng_api_key_text {
-  position: relative;
-  left: 30px;
-  font-size: 16px;
+.form-table td .tinypng_api_key_step2 p {
+  margin: 0;
+  padding: 0;
 }
 
-.tinypng_api_key_container {
-  position: relative;
-  top: 30px;
-  height: 133px;
-  border-left: solid #E1E1E1 1px;
-}
-
-.tinypng_api_key_input {
-  position: relative;
-  top: 20px;
-  left: 30px;
-  width: 300px;
-  height: 35px;
-}
-
-.tinypng-save-api-key {
-  position: relative;
-  top: 40px;
-  left: 30px;
-  width: 95px;
-  height: 35px !important;
-  color: white  !important;
-  background-color: #0085BA  !important;
-  border: none  !important;
-}
-
-#tinypng_submit_api_key {
-  position: relative;
-  top: 30px;
-  left: 30px;
-  width: 95px;
-  height: 35px !important;
-  color: white  !important;
-  background-color: #0085BA  !important;
-  border: none  !important;
+#tinypng_api_key {
+  min-width: 300px;
 }
 
 .tinypng_api_key_exists {
+  display: inline-block;
   position: relative;
-  width: 365px;
-  height: 95px;
+  padding: 30px;
   background-color: white;
   border: solid #E5E5E5 1px;
 }
 .dashicons-yes {
   position: absolute;
   display: block;
-  top: 22px;
-  right: 48px;
+  top: 33px;
+  right: 40px;
   color: #A5C690;
 }
 
 .dashicons-yes::before {
-  font-size: 35px;
+  font-size: 25px;
+}
+
+.tinypng_api_key_input {
+  display: block;
 }
 
 .tinypng_api_key_exists .tinypng_api_key_input {
-  position: relative;
   color: #A5C690;
 }
 
 .tinypng_api_key_exists a {
-  position: relative;
-  left: 30px;
-  top: 25px;
-  float: left;
   font-size: 14px;
   text-decoration: none;
 }
 
+.tinypng_api_key_exists #tinypng_api_key {
+  display: block;
+  margin-bottom: 4px;
+}
+
 .key-error {
   display: none;
-  position: relative;
-  left: 30px;
-  bottom: 16px;
   font-size: 13px;
   color: red;
 }

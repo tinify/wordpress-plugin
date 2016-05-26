@@ -219,7 +219,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function save_api_key() {
         //validate
         update_option('tinypng_api_key', $_POST['key']);
-        echo "invalid";
+        echo "valid";
     }
 
     public function get_optimization_statistics() {
