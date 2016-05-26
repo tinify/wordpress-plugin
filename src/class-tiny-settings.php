@@ -229,12 +229,14 @@ class Tiny_Settings extends Tiny_WP_Base {
         $alias = get_bloginfo( 'url' );
 
         echo '<div class=' . $field . '_step1>';
+        echo '<span class=' . $field . '_text>';
         esc_html_e('Create new API key', 'tiny-compress-images');
-        echo '<input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" size="40" />';
-        echo '<input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" size="50" />';
+        echo '</span>';
+        echo '<input class=' . $field . '_input type="text" id=' . $field . '_name name=' . $field . '_name value="' . htmlspecialchars($name) . '" />';
+        echo '<input class=' . $field . '_input type="text" id=' . $field . '_mail name=' . $field . '_mail value="' . htmlspecialchars($mail) . '" />';
         echo '<input type="hidden" id=' . $field . '_alias name=' . $field . '_alias value="' . htmlspecialchars($alias) . '" size="100" />';
-        echo '<button type="button" class="tiny-new-api-key button">';
-            echo esc_html__('Submit', 'tiny-compress-images');
+        echo '<button type="button" class="tiny-new-api-key-create">';
+            echo esc_html__('Get me a key!', 'tiny-compress-images');
         echo '</button>';
         echo '</div>';
 
@@ -243,14 +245,16 @@ class Tiny_Settings extends Tiny_WP_Base {
             echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
         } else {
             if (empty($key)) {
-                printf(esc_html__('Enter your API key', 'tiny-compress-images'));
-                echo '<input type="text" id="' . $field . '" name="' . $field . '" size="40" />';
+                echo '<span class=' . $field . '_text>';
+                printf(esc_html__('Enter API key', 'tiny-compress-images'));
+                echo '</span>';
+                echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" />';
             } else {
                 printf(esc_html__('Your API key is:', 'tiny-compress-images'));
-                echo '<input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
+                echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" value="' . htmlspecialchars($key) . '" size="40" />';
             }
         }
-        echo submit_button();
+        echo submit_button('Save', '', $field . '_save');
         echo '</div>';
     }
 

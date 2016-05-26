@@ -107,17 +107,3 @@ p.tiny-resize-resolution input {
 input[type=number][name*="tinypng_resize_original"] {
     width: 65px;
 }
-
-.tinypng_api_key_step1 {
-    width: 400px;
-    height: 200px;
-    float: left;
-    border: solid 1px black;
-}
-
-.tinypng_api_key_step2 {
-    width: 400px;
-    height: 200px;
-    float: left;
-    border: solid 1px black;
-}

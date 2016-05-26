@@ -1,0 +1,70 @@
+.tinypng_api_key_step1 {
+    max-width: 290px;
+    height: 240px;
+    float: left;
+    background-color: white;
+    border: solid #E5E5E5 1px;
+    border-right: none;
+}
+
+.tinypng_api_key_text {
+  position: relative;
+  top: 30px;
+  left: 30px;
+  font-size: 16px;
+}
+
+#tinypng_api_key_name {
+  position: relative;
+  top: 50px;
+  left: 30px;
+  width: 240px;
+  height: 35px;
+}
+
+#tinypng_api_key_mail {
+  position: relative;
+  top: 70px;
+  left: 30px;
+  width: 240px;
+  height: 35px;
+}
+
+.tiny-new-api-key-create {
+  position: relative;
+  top: 90px;
+  left: 30px;
+  width: 240px;
+  height: 35px !important;
+  color: white;
+  background-color: #0085BA;
+  border: none;
+}
+
+.tinypng_api_key_step2 {
+    width: 365px;
+    height: 240px;
+    float: left;
+    background-color: white;
+    border: solid #E5E5E5 1px;
+    border-left: none;
+}
+
+.tinypng_api_key_input {
+  position: relative;
+  top: 50px;
+  left: 30px;
+  width: 300px;
+  height: 35px;
+}
+
+#tinypng_api_key_save {
+  position: relative;
+  top: 57px;
+  left: 30px;
+  width: 95px;
+  height: 35px;
+  color: white;
+  background-color: #0085BA;
+  border: none;
+}

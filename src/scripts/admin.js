@@ -138,7 +138,7 @@
   } else if (adminpage === "post-php") {
     eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
-    eventOn('table', 'click', 'button.tiny-new-api-key', new_api_key)
+    eventOn('table', 'click', 'button.tiny-new-api-key-create', new_api_key)
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 
