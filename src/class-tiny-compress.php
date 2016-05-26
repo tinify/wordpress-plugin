@@ -27,7 +27,8 @@ abstract class Tiny_Compress {
     }
 
     public static function get_compressor($api_key, $after_compress_callback=null) {
-        if (Tiny_PHP::client_library_supported()) {
+        //Still not implemented
+        if (!Tiny_PHP::client_library_supported()) {
             return new Tiny_Compress_Tinify($api_key, $after_compress_callback);
         } elseif (Tiny_PHP::is_curl_available()) {
             return new Tiny_Compress_Curl($api_key, $after_compress_callback);
