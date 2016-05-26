@@ -30,7 +30,7 @@
   height: 35px;
 }
 
-.tinypng-new-api-key-create {
+.tinypng-create-api-key {
   position: relative;
   top: 90px;
   left: 30px;
@@ -71,15 +71,26 @@
   height: 35px;
 }
 
-#tinypng_api_key_save {
+.tinypng-save-api-key {
   position: relative;
-  top: 27px;
+  top: 40px;
   left: 30px;
   width: 95px;
-  height: 35px;
-  color: white;
-  background-color: #0085BA;
-  border: none;
+  height: 35px !important;
+  color: white  !important;
+  background-color: #0085BA  !important;
+  border: none  !important;
+}
+
+#tinypng_submit_api_key {
+  position: relative;
+  top: 30px;
+  left: 30px;
+  width: 95px;
+  height: 35px !important;
+  color: white  !important;
+  background-color: #0085BA  !important;
+  border: none  !important;
 }
 
 .tinypng_api_key_exists {
@@ -113,4 +124,13 @@
   float: left;
   font-size: 14px;
   text-decoration: none;
+}
+
+.key-error {
+  display: none;
+  position: relative;
+  left: 30px;
+  bottom: 16px;
+  font-size: 13px;
+  color: red;
 }

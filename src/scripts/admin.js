@@ -28,7 +28,33 @@
     })
   }
 
-  function new_api_key(event) {
+  function save_api_key() {
+    jQuery('.key-error').hide()
+    var key = jQuery(tinypng_api_key_modal).val()
+
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_save_api_key',
+        key: key
+      },
+      success: function(data) {
+        console.log(data)
+        if (data == "valid0")
+          location.reload();
+        else {
+          jQuery('.key-error').show()
+        }
+      },
+      error: function() {
+        console.log("Failure")
+      }
+    })
+  }
+
+  function create_api_key() {
     var name = jQuery(tinypng_api_key_name).val()
     var mail = jQuery(tinypng_api_key_mail).val()
     var redirect = jQuery(location).attr('href');
@@ -45,7 +71,7 @@
         alias: alias
       },
       success: function(data) {
-        jQuery(tinypng_api_key).val(data)
+        location.reload();
       },
       error: function() {
         console.log("Failure")
@@ -136,7 +162,8 @@
   } else if (adminpage === "post-php") {
     eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
-    eventOn('div', 'click', 'button.tinypng-new-api-key-create', new_api_key)
+    eventOn('div', 'click', 'button.tinypng-create-api-key', create_api_key)
+    eventOn('div', 'click', 'button.tinypng-save-api-key', save_api_key)
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 

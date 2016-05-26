@@ -52,6 +52,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
         add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
         add_action('wp_ajax_tiny_create_api_key', $this->get_method('create_api_key'));
+        add_action('wp_ajax_tiny_save_api_key', $this->get_method('save_api_key'));
         add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
         add_action('admin_action_tiny_bulk_optimization', $this->get_method('bulk_optimization'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
@@ -213,6 +214,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
         } else {
             //Throw not suported
         }
+    }
+
+    public function save_api_key() {
+        //validate
+        update_option('tinypng_api_key', $_POST['key']);
+        echo "invalid";
     }
 
     public function get_optimization_statistics() {
