@@ -45,7 +45,7 @@
         if (data == "valid0")
           location.reload();
         else {
-          jQuery('.key-error').show()
+          //Show a error message
         }
       },
       error: function() {
