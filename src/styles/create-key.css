@@ -7,7 +7,7 @@
     border-right: none;
 }
 
-.tinypng_api_key_text {
+.tinypng_api_key_step1 .tinypng_api_key_text {
   position: relative;
   top: 30px;
   left: 30px;
@@ -50,9 +50,22 @@
     border-left: none;
 }
 
+.tinypng_api_key_step2 .tinypng_api_key_text {
+  position: relative;
+  left: 30px;
+  font-size: 16px;
+}
+
+.tinypng_api_key_container {
+  position: relative;
+  top: 30px;
+  height: 133px;
+  border-left: solid #E1E1E1 1px;
+}
+
 .tinypng_api_key_input {
   position: relative;
-  top: 50px;
+  top: 20px;
   left: 30px;
   width: 300px;
   height: 35px;
@@ -60,7 +73,7 @@
 
 #tinypng_api_key_save {
   position: relative;
-  top: 57px;
+  top: 27px;
   left: 30px;
   width: 95px;
   height: 35px;

@@ -241,6 +241,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         echo '</div>';
 
         echo '<div class=' . $field . '_step2>';
+        echo '<div class=' . $field . '_container>';
         if (defined('TINY_API_KEY')) {
             echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
         } else {
@@ -255,6 +256,7 @@ class Tiny_Settings extends Tiny_WP_Base {
             }
         }
         echo submit_button('Save', '', $field . '_save');
+        echo '</div>';
         echo '</div>';
     }
 
