@@ -75,6 +75,8 @@ class Tiny_Settings extends Tiny_WP_Base {
         $field = self::get_prefixed_name('preserve_data');
         register_setting('media', $field);
 
+        add_settings_section('section_end', '', $this->get_method('render_section_end'), 'media');
+
         add_action('wp_ajax_tiny_image_sizes_notice', $this->get_method('image_sizes_notice'));
         add_action('wp_ajax_tiny_compress_status', $this->get_method('connection_status'));
     }
@@ -216,7 +218,12 @@ class Tiny_Settings extends Tiny_WP_Base {
         return sizeof($options) >= 2 ? $options : false;
     }
 
+    public function render_section_end() {
+        echo '</div>';
+    }
+
     public function render_section() {
+        echo '<div id="' . self::NAME . '_section">';
         echo '<span id="' . self::NAME . '"></span>';
     }
 
