@@ -234,7 +234,7 @@ class Tiny_Settings extends Tiny_WP_Base {
                 echo '<span class="dashicons-before dashicons-yes"></span>';
                 echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" value="' . htmlspecialchars($key) . '" disabled />';
                 add_thickbox();
-                echo '<a href="#TB_inline?width=668&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
+                echo '<a href="#TB_inline?width=450&height=180&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
                 echo '</div>';
             }
         }
