@@ -206,20 +206,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
             try {
                 Tiny_Compress_Tinify::createKey($_POST['mail'], array("name" => $_POST['name'], "alias" => $_POST['alias'], "redirect" => $_POST['redirect']));
                 echo Tiny_Compress_Tinify::getKey();
-
-                // store
             } catch (Exception $e) {
-                //Throw error
+                throw new Tiny_Exception('Could not connect trough the API', 'ClientLibraryConnectionProblem');
             }
         } else {
-            //Throw not suported
+            throw new Tiny_Exception('Old PHP/cURL version', 'ClientLibraryNotSupported');
         }
     }
 
     public function save_api_key() {
         //validate
-        update_option('tinypng_api_key', $_POST['key']);
-        echo "valid";
+        $valid = true;
+        if ($valid) {
+            update_option('tinypng_api_key', $_POST['key']);
+            echo "valid";
+        } else {
+            echo "invalid";
+        }
     }
 
     public function get_optimization_statistics() {

@@ -223,11 +223,6 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function render_api_key() {
         $field = self::get_prefixed_name('api_key');
         $key = $this->get_api_key();
-        global $current_user;
-        $name = $current_user->user_firstname . ' ' . $current_user->user_lastname;
-        $mail = $current_user->user_email;
-        $alias = get_bloginfo( 'url' );
-
         if (empty($key)) {
             include(dirname(__FILE__) . '/views/create-api-key.php');
         } else {
