@@ -218,8 +218,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
 
         $usage_this_month = $this->settings->get_compression_count();
-        $estimated_cost = $this->estimate_cost($unoptimized_image_sizes + $usage_this_month) -
-            $this->estimate_cost($usage_this_month);
+        $estimated_cost = $this->estimate_cost($unoptimized_image_sizes);
 
         $savings_percentage = 0;
         if ($optimized_library_size != 0 && $unoptimized_library_size != 0) {
