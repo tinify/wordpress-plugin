@@ -1,7 +1,7 @@
 #tinypng_api_key_container {
   display: inline-block;
   padding: 30px;
-  border-left: solid #E1E1E1 1px;
+  border: solid #E1E1E1 1px;
   background-color: white;
 }
 

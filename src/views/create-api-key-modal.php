@@ -27,6 +27,9 @@ $alias = get_bloginfo( 'url' );
       <button type='button' class='tinypng-save-api-key button button-primary'>
         <?php echo esc_html__('Save', 'tiny-compress-images') ?>
       </button>
+      <div class="api-error" style="display: none">
+      <?php include(dirname(__FILE__) . '/render-status.php') ?>
+      </div>
     </div>
   </div>
 </div>

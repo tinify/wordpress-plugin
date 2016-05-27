@@ -29,7 +29,7 @@
   }
 
   function save_api_key() {
-    jQuery('.key-error').hide()
+    jQuery('.api-error').hide()
     var key = jQuery(tinypng_api_key_modal).val()
 
     jQuery.ajax({
@@ -45,7 +45,7 @@
         if (data == "valid0")
           location.reload();
         else {
-          //Show a error message
+          jQuery('.api-error').show()
         }
       },
       error: function() {
