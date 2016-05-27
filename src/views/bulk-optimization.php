@@ -54,11 +54,14 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                     <div class='tooltip'>
                         <span class='dashicons dashicons-info'></span>
                         <div class='tip'>
-                            <p>
-                                <?php
-                                printf(esc_html__('With your current settings you can still optimize a total of %d images sizes across your %d images.',
-                                                  'tiny-compress-images'), $unoptimized_image_sizes, $uploaded_images);
-                                ?>
+                            <?php if ($uploaded_images > 0 && sizeof($active_tinify_sizes) > 0 && $unoptimized_image_sizes > 0) { ?>
+                                <p>
+                                    <?php
+                                    printf(esc_html__('With your current settings you can still optimize a total of %d images sizes across your %d images.',
+                                                      'tiny-compress-images'), $unoptimized_image_sizes, $uploaded_images);
+                                    ?>
+                                </p>
+                            <?php } ?>
                             <p>
                                 <?php
 
