@@ -2,13 +2,13 @@
 
 require_once(dirname(__FILE__) . "/TinyTestCase.php");
 
-class Tiny_Compress_Test extends TinyTestCase {
+class Tiny_Compress_Client_Test extends TinyTestCase {
     protected $php_mock;
 
     public function setUp() {
         parent::setUp();
         $this->php_mock = \Mockery::mock('alias:Tiny_PHP');
-        $this->php_mock->shouldReceive('is_curl_available')->andReturn(true);
+        $this->php_mock->shouldReceive('client_library_supported')->andReturn(true);
     }
 
     public function testShouldReturnCompressor() {
@@ -18,6 +18,6 @@ class Tiny_Compress_Test extends TinyTestCase {
 
     public function testShouldReturnCurlCompressorByDefault() {
         $compressor = Tiny_Compress::get_compressor('api1234');
-        $this->assertInstanceOf('Tiny_Compress_Curl', $compressor);
+        $this->assertInstanceOf('Tiny_Compress_Client', $compressor);
     }
 }

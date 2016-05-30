@@ -202,9 +202,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function create_api_key() {
-        if (Tiny_PHP::client_library_supported()) {
+        $compressor = $this->settings->get_compressor();
+        if ($compressor->can_create_key()) {
             try {
-                Tiny_Compress_Tinify::createKey($_POST['mail'], array(
+                $compressor->create_key($_POST['mail'], array(
                     "name" => $_POST['name'],
                     "identifier" => $_POST['identifier'],
                     "link" => $_POST['link'],
@@ -222,7 +223,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $valid = false;
         $key = $_POST['key'];
         if (Tiny_PHP::client_library_supported()) {
-            $valid = Tiny_Compress_Tinify::validate($key);
+            $valid = Tiny_Compress_Client::validate($key);
         }
         if ($valid) {
             update_option('tinypng_api_key', $key);
@@ -230,10 +231,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
         } else {
             echo 'false';
         }
-    }
-
-    public function getKey() {
-        return get_option('tinypng_api_key');
     }
 
     public function get_optimization_statistics() {

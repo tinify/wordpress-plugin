@@ -349,20 +349,19 @@ class Tiny_Settings extends Tiny_WP_Base {
         return get_option($field);
     }
 
-    public function after_compress_callback($details, $headers) {
-        if (isset($headers['compression-count'])) {
-            $count = $headers['compression-count'];
+    public function after_compress_callback($compressor) {
+        if ($count = $compressor->get_compression_count()) {
             $field = self::get_prefixed_name('status');
             update_option($field, $count);
+        }
 
-            if (isset($details['error']) && $details['error'] == 'TooManyRequests') {
-                $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG API account', 'tiny-compress-images') . '</a>';
-                $this->notices->add('limit-reached',
-                    sprintf(esc_html__('You have reached your limit of %s compressions this month.', 'tiny-compress-images'), $count) .
-                    sprintf(esc_html__('Upgrade your %s if you like to compress more images.', 'tiny-compress-images'), $link));
-            } else {
-                $this->notices->remove('limit-reached');
-            }
+        if ($compressor->is_limit_reached()) {
+            $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG API account', 'tiny-compress-images') . '</a>';
+            $this->notices->add('limit-reached',
+                sprintf(esc_html__('You have reached your limit of %s compressions this month.', 'tiny-compress-images'), $count) .
+                sprintf(esc_html__('Upgrade your %s if you like to compress more images.', 'tiny-compress-images'), $link));
+        } else {
+            $this->notices->remove('limit-reached');
         }
     }
 

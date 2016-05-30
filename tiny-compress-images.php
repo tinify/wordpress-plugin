@@ -14,8 +14,6 @@ require dirname(__FILE__) . '/src/class-tiny-php.php';
 require dirname(__FILE__) . '/src/class-tiny-wp-base.php';
 require dirname(__FILE__) . '/src/class-tiny-exception.php';
 require dirname(__FILE__) . '/src/class-tiny-compress.php';
-require dirname(__FILE__) . '/src/class-tiny-compress-curl.php';
-require dirname(__FILE__) . '/src/class-tiny-compress-fopen.php';
 require dirname(__FILE__) . '/src/class-tiny-metadata-image.php';
 require dirname(__FILE__) . '/src/class-tiny-metadata.php';
 require dirname(__FILE__) . '/src/class-tiny-settings.php';
@@ -23,7 +21,9 @@ require dirname(__FILE__) . '/src/class-tiny-plugin.php';
 require dirname(__FILE__) . '/src/class-tiny-notices.php';
 
 if (Tiny_PHP::client_library_supported()) {
-  require dirname(__FILE__) . '/src/class-tiny-compress-tinify.php';
+    require dirname(__FILE__) . '/src/class-tiny-compress-client.php';
+} else {
+    require dirname(__FILE__) . '/src/class-tiny-compress-fopen.php';
 }
 
 $tiny_plugin = new Tiny_Plugin();

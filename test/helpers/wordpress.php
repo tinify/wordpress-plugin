@@ -1,5 +1,8 @@
 <?php
 
+define( 'ABSPATH', dirname(dirname(__FILE__)) . '/' );
+define( 'WPINC', 'wp-includes' );
+
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;
 
@@ -61,6 +64,7 @@ class WordPressStubs {
         $this->addMethod('translate');
         $this->addMethod('load_plugin_textdomain');
         $this->addMethod('get_post_mime_type');
+        $this->addMethod('get_plugin_data');
         $this->addMethod('wp_upload_dir');
         $this->addMethod('plugin_basename');
         $this->addMethod('is_multisite');
@@ -103,6 +107,8 @@ class WordPressStubs {
             return call_user_func_array(array($this, 'updateMetadata'), $args);
         } elseif ('get_intermediate_image_sizes' === $method) {
             return array_merge(array('thumbnail', 'medium', 'large'), array_keys($GLOBALS['_wp_additional_image_sizes']));
+        } elseif ('get_plugin_data' === $method) {
+            return array('Version' => '1.7.2');
         } elseif ('wp_upload_dir' === $method) {
             return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR);
         } elseif ('is_admin' === $method) {

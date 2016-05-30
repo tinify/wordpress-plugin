@@ -1,23 +1,17 @@
 <?php
 
-$details = null;
-try {
-    $status = $this->compressor->get_status($details);
-} catch (Tiny_Exception $e) {
-    $status = false;
-    $details = array('message' => $e->getMessage());
-}
+$status = $this->compressor->get_status();
 
 echo '<p>';
-if ($status) {
+if ($status->ok) {
     echo '<img src="images/yes.png"> ';
     echo esc_html__('API connection successful', 'tiny-compress-images');
 } else {
     echo '<img src="images/no.png"> ';
-    if ($status === false) {
+    if (!$status->ok) {
         echo esc_html__('API connection unsuccessful', 'tiny-compress-images') . '<br>';
-        if (isset($details['message'])) {
-            echo esc_html__('Error', 'tiny-compress-images') . ': ' . esc_html__($details['message'], 'tiny-compress-images');
+        if (isset($status->message)) {
+            echo esc_html__('Error', 'tiny-compress-images') . ': ' . esc_html__($status->message, 'tiny-compress-images');
         }
     } else {
         esc_html_e('API status could not be checked, enable cURL for more information', 'tiny-compress-images');
@@ -25,7 +19,7 @@ if ($status) {
 }
 echo '</p>';
 
-if ($status) {
+if ($status->ok) {
     $compressions = self::get_compression_count();
     echo '<p>';
     // It is not possible to check if a subscription is free or flexible.
