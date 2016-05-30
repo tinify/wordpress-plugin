@@ -17,6 +17,17 @@
   margin-bottom: 10px !important;
 }
 
+.tinypng-api-key-message {
+  width: 270px;
+  position: relative;
+  padding-left: 30px;
+}
+
+.tinypng-api-key-message span {
+  position: absolute;
+  left: 0px;
+}
+
 #tinypng_api_key_container input {
   margin-bottom: 10px;
 }

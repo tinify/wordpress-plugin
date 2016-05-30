@@ -66,10 +66,20 @@
         link: link,
       },
       success: function(data) {
-        location.reload();
+        jQuery('.tinypng-api-key-message.success').hide()
+        jQuery('.tinypng-api-key-message.already-registered').hide()
+        jQuery('.tinypng-api-key-message.error').hide()
+
+        if (data == "created"){
+          jQuery('.tinypng-api-key-message.success').show()
+        } else if (data == "exists") {
+           jQuery('.tinypng-api-key-message.already-registered').show()
+         } else {
+            jQuery('.tinypng-api-key-message.error').show()
+         }
       },
       error: function() {
-        console.log("Failure")
+        jQuery('.tinypng-api-key-message.error').show()
       }
     })
   }

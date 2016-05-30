@@ -21,6 +21,18 @@ $free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / count(s
     <button type='button' class='tinypng-create-api-key button button-primary'>
       <?php echo esc_html__('Register new account!', 'tiny-compress-images') ?>
     </button>
+    <p class='tinypng-api-key-message success' style="display: none">
+      <span class="dashicons-before dashicons-email-alt"></span>
+      <?php printf(esc_html__('Thank you for registering. Before you can start you have to verify your address in the mail that we just sent you.', 'tiny-compress-images')) ?>
+    </p>
+    <p class='tinypng-api-key-message already-registered' style="display: none">
+      <span class="dashicons-before dashicons-info"></span>
+      <?php printf(esc_html__('You have already registed with this email. Please go to %s to retrieve your key.', 'tiny-compress-images'), $link) ?>
+    </p>
+    <p class='tinypng-api-key-message error' style="display: none">
+      <span class="dashicons-before dashicons-warning"></span>
+      <?php printf(esc_html__('Something went wrong. Please try again later.', 'tiny-compress-images')) ?>
+    </p>
     </div>
   <div class='tinypng_api_key_step2'>
     <h4 class='tinypng_api_key_text'>
