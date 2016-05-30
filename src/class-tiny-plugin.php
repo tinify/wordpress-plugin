@@ -215,13 +215,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function save_api_key() {
-        //validate
-        $valid = true;
+        $valid = false;
+        $key = $_POST['key'];
+        if (Tiny_PHP::client_library_supported()) {
+            $valid = Tiny_Compress_Tinify::validate($key);
+        }
         if ($valid) {
-            update_option('tinypng_api_key', $_POST['key']);
-            echo "valid";
+            update_option('tinypng_api_key', $key);
+            echo 'valid';
         } else {
-            echo "invalid";
+            echo 'false';
         }
     }
 
