@@ -14,9 +14,14 @@ $key = $this->get_api_key();
       <button type='button' class='tinypng-save-api-key button button-primary'>
         <?php echo esc_html__('Save', 'tiny-compress-images') ?>
       </button>
-      <div class="api-error" style="display: none">
-        <?php include(dirname(__FILE__) . '/render-status.php') ?>
-      </div>
+      <p class='tinypng-api-key-message invalid-key' style="display: none">
+        <span class="dashicons-before dashicons-info"></span>
+        <?php printf(esc_html__('The key that you have entered does not exist. Please try a different key.', 'tiny-compress-images')) ?>
+      </p>
+      <p class='tinypng-api-key-message error' style="display: none">
+        <span class="dashicons-before dashicons-warning"></span>
+        <?php printf(esc_html__('Something went wrong. Please try again later.', 'tiny-compress-images')) ?>
+      </p>
     </div>
   </div>
 </div>

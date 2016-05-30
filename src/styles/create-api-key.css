@@ -20,7 +20,7 @@
 .tinypng-api-key-message {
   width: 270px;
   position: relative;
-  padding-left: 30px;
+  padding-left: 30px !important;
 }
 
 .tinypng-api-key-message span {
@@ -124,5 +124,5 @@
 }
 
 #TB_ajaxContent p {
-  padding-top: 0;
+   margin-top: 0px !important;
 }

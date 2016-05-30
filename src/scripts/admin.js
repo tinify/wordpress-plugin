@@ -29,7 +29,7 @@
   }
 
   function save_api_key() {
-    jQuery('.api-error').hide()
+    jQuery('.tinypng-api-key-message.invalid-key').hide()
     var key = jQuery("#tinypng_api_key_modal").val()
 
     jQuery.ajax({
@@ -41,10 +41,14 @@
         key: key
       },
       success: function(data) {
-        location.reload()
+        if(data == "invalid") {
+          jQuery('.tinypng-api-key-message.invalid-key').show()
+        } else {
+            location.reload()
+          }
       },
       error: function() {
-        console.log("Failure")
+        jQuery('.tinypng-api-key-message.error').show()
       }
     })
   }
