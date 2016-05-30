@@ -56,9 +56,9 @@
 
   function create_api_key() {
     var name = jQuery(tinypng_api_key_name).val()
-    var mail = jQuery(tinypng_api_key_mail).val()
-    var redirect = jQuery(location).attr('href');
-    var alias = "WordPress plugin for " + jQuery(tinypng_api_key_alias).val()
+    var email = jQuery(tinypng_api_key_email).val()
+    var identifier = "WordPress plugin for " + jQuery(tinypng_api_key_identifier).val()
+    var link = jQuery(location).attr('href')
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -66,9 +66,9 @@
         _nonce: tinyCompress.nonce,
         action: 'tiny_create_api_key',
         name: name,
-        mail: mail,
-        redirect: redirect,
-        alias: alias
+        email: email,
+        identifier: identifier,
+        link: link,
       },
       success: function(data) {
         location.reload();

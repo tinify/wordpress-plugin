@@ -204,7 +204,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function create_api_key() {
         if (Tiny_PHP::client_library_supported()) {
             try {
-                Tiny_Compress_Tinify::createKey($_POST['mail'], array("name" => $_POST['name'], "alias" => $_POST['alias'], "redirect" => $_POST['redirect']));
+                Tiny_Compress_Tinify::createKey($_POST['mail'], array(
+                    "name" => $_POST['name'],
+                    "identifier" => $_POST['identifier'],
+                    "link" => $_POST['link'],
+                ));
                 echo Tiny_Plugin::getKey();
             } catch (Exception $e) {
                 throw new Tiny_Exception('Could not connect trough the API', 'ClientLibraryConnectionProblem');
