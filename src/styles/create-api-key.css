@@ -7,11 +7,18 @@
 
 #tinypng_api_key_container h4 {
   margin-top: 0;
-  font-size: 14px;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.tinypng-api-key-information {
+  display: block;
+  width: 300px;
+  margin-bottom: 10px !important;
 }
 
 #tinypng_api_key_container input {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 #tinypng_api_key_container:before,
@@ -32,12 +39,12 @@
 
 #tinypng_api_key_name {
   display: block;
-  min-width: 240px;
+  min-width: 300px;
 }
 
 #tinypng_api_key_email {
   display: block;
-  min-width: 240px;
+  min-width: 300px;
 }
 
 .tinypng-create-api-key {
@@ -56,13 +63,14 @@
 
 #tinypng_api_key {
   min-width: 300px;
+  margin-top: 30px;
 }
 
 .dashicons-yes {
   position: absolute;
   display: block;
-  top: 33px;
-  right: 40px;
+  top: 2px;
+  right: 90px;
   color: #A5C690;
 }
 
@@ -77,16 +85,20 @@
 .tinypng_api_key_exists {
   display: inline-block;
   position: relative;
-  padding: 30px;
-  background-color: white;
-  border: solid #E5E5E5 1px;
+}
+
+.tinypng_api_key_exists #tinypng_api_key {
+  margin: 0 10px 0 0;
 }
 
 .tinypng_api_key_exists .tinypng_api_key_input {
+  float: left;
   color: #A5C690;
 }
 
 .tinypng_api_key_exists a {
+  display: inline-block;
+  margin-top: 3px;
   font-size: 14px;
   text-decoration: none;
 }
@@ -100,4 +112,8 @@
   display: none;
   font-size: 13px;
   color: red;
+}
+
+#TB_ajaxContent p {
+  padding-top: 0;
 }

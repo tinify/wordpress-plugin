@@ -41,7 +41,6 @@
         key: key
       },
       success: function(data) {
-        console.log(data)
         if (data == "valid0")
           location.reload();
         else {
