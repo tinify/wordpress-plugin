@@ -21,7 +21,8 @@
     "phpunit/phpunit": "~4.6",
     "facebook/webdriver": "~1.1",
     "mikey179/vfsStream": "~1.5",
-    "mockery/mockery": "~0.9"
+    "mockery/mockery": "~0.9",
+    "symfony/yaml": "~2.8"
   },
   "scripts": {
     "post-install-cmd": "bin/post-install",
