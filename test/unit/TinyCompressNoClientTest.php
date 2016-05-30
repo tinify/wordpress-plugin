@@ -11,7 +11,7 @@ class Tiny_Compress_No_Client_Test extends TinyTestCase {
         $this->php_mock->shouldReceive('client_library_supported')->andReturn(false);
     }
 
-    public function testShouldReturnFopenCompressorIfCurlUnavailable() {
+    public function testShouldReturnFopenCompressorIfClientNotSupported() {
         $this->php_mock->shouldReceive('fopen_available')->andReturn(true);
         $compressor = Tiny_Compress::create('api1234');
         $this->assertInstanceOf('Tiny_Compress_Fopen', $compressor);

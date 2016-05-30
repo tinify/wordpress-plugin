@@ -16,7 +16,7 @@ class Tiny_Compress_Client_Test extends TinyTestCase {
         $this->assertInstanceOf('Tiny_Compress', $compressor);
     }
 
-    public function testShouldReturnCurlCompressorByDefault() {
+    public function testShouldReturnClientCompressorByDefault() {
         $compressor = Tiny_Compress::create('api1234');
         $this->assertInstanceOf('Tiny_Compress_Client', $compressor);
     }

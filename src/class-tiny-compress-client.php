@@ -97,12 +97,13 @@ class Tiny_Compress_Client extends Tiny_Compress {
             );
 
             $buffer = $result->toBuffer();
+
+            return array($buffer, $meta);
+
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
             throw $err;
         }
-
-        return array($buffer, $meta);
     }
 
     public function create_key($email, $options) {
