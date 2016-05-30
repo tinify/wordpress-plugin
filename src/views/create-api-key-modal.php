@@ -1,5 +1,4 @@
 <?php
-$field = 'tinypng_api_key';
 $key = $this->get_api_key();
 ?>
 <div id='tinypng_api_key_wrapper' style="display: none">

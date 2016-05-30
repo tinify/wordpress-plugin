@@ -63,7 +63,6 @@
 
 #tinypng_api_key {
   min-width: 300px;
-  margin-top: 30px;
 }
 
 .dashicons-yes {
@@ -106,6 +105,10 @@
 .tinypng_api_key_exists #tinypng_api_key {
   display: block;
   margin-bottom: 4px;
+}
+
+#tinypng_submit_api_key {
+  width: 300px;
 }
 
 .key-error {
