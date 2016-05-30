@@ -45,10 +45,6 @@ class Tiny_Compress_Tinify extends Tiny_Compress {
         update_option('tinypng_api_key', $key);
     }
 
-    public static function getKey($email, $input) {
-        return get_option('tinypng_api_key');
-    }
-
     public static function validate($key) {
         try {
             \Tinify\setKey($key);

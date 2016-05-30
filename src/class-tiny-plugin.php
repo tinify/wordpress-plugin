@@ -205,7 +205,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if (Tiny_PHP::client_library_supported()) {
             try {
                 Tiny_Compress_Tinify::createKey($_POST['mail'], array("name" => $_POST['name'], "alias" => $_POST['alias'], "redirect" => $_POST['redirect']));
-                echo Tiny_Compress_Tinify::getKey();
+                echo Tiny_Plugin::getKey();
             } catch (Exception $e) {
                 throw new Tiny_Exception('Could not connect trough the API', 'ClientLibraryConnectionProblem');
             }
@@ -226,6 +226,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
         } else {
             echo 'false';
         }
+    }
+
+    public function getKey() {
+        return get_option('tinypng_api_key');
     }
 
     public function get_optimization_statistics() {
