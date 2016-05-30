@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e6735090f84ec4d3c0370d09a2baf6ed",
-    "content-hash": "3a792c216ffec92e59a08e4c56bb43de",
+    "hash": "04309ae1b18766e45412df5f4ad37cbd",
+    "content-hash": "02adac6e5a50c78394a188d11f0d7fe3",
     "packages": [
         {
             "name": "composer/installers",
@@ -109,16 +109,16 @@
         },
         {
             "name": "tinify/tinify",
-            "version": "1.3.0",
+            "version": "dev-create-key",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinify/tinify-php.git",
-                "reference": "e53e5a6837cdb0f3c85a1a5332aff3d83fd5a2da"
+                "reference": "78c31dae0fe077c7a774d822d77bdf11682918f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/e53e5a6837cdb0f3c85a1a5332aff3d83fd5a2da",
-                "reference": "e53e5a6837cdb0f3c85a1a5332aff3d83fd5a2da",
+                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/78c31dae0fe077c7a774d822d77bdf11682918f1",
+                "reference": "78c31dae0fe077c7a774d822d77bdf11682918f1",
                 "shasum": ""
             },
             "require": {
@@ -141,7 +141,6 @@
                     "Tinify\\": "lib/Tinify/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -161,7 +160,12 @@
                 "tinyjpg",
                 "tinypng"
             ],
-            "time": "2016-04-01 08:35:40"
+            "support": {
+                "email": "support@tinify.com",
+                "source": "https://github.com/tinify/tinify-php/tree/create-key",
+                "issues": "https://github.com/tinify/tinify-php/issues"
+            },
+            "time": "2016-05-30 09:49:55"
         }
     ],
     "packages-dev": [
@@ -1323,7 +1327,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "tinify/tinify": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
