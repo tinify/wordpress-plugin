@@ -239,7 +239,7 @@ class Tiny_Settings extends Tiny_WP_Base {
             } else {
                 echo '<div class=' . $field . '_exists>';
                 echo '<span class="dashicons-before dashicons-yes"></span>';
-                echo '<input class=' . $field . '_input type="text" id="' . $field . '" name="' . $field . '" size="40" value="' . htmlspecialchars($key) . '" disabled />';
+                echo '<p class="api-key-status"> Your key is valid! </p>';
                 add_thickbox();
                 echo '<a href="#TB_inline?width=450&height=190&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
                 echo '</div>';
