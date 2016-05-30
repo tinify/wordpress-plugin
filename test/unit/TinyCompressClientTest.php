@@ -12,12 +12,12 @@ class Tiny_Compress_Client_Test extends TinyTestCase {
     }
 
     public function testShouldReturnCompressor() {
-        $compressor = Tiny_Compress::get_compressor('api1234');
+        $compressor = Tiny_Compress::create('api1234');
         $this->assertInstanceOf('Tiny_Compress', $compressor);
     }
 
     public function testShouldReturnCurlCompressorByDefault() {
-        $compressor = Tiny_Compress::get_compressor('api1234');
+        $compressor = Tiny_Compress::create('api1234');
         $this->assertInstanceOf('Tiny_Compress_Client', $compressor);
     }
 }

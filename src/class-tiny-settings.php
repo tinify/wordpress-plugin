@@ -31,7 +31,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     private function init_compressor() {
-        $this->compressor = Tiny_Compress::get_compressor($this->get_api_key(), $this->get_method('after_compress_callback'));
+        $this->compressor = Tiny_Compress::create($this->get_api_key(), $this->get_method('after_compress_callback'));
     }
 
     public function xmlrpc_init() {

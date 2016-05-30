@@ -105,7 +105,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
         return array($buffer, $meta);
     }
 
-    public static function create_key($email, $options) {
+    public function create_key($email, $options) {
         $this->set_request_options(\Tinify\Tinify::getAnonymousClient());
 
         \Tinify\createKey($email, $options);

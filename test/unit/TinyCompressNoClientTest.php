@@ -13,7 +13,7 @@ class Tiny_Compress_No_Client_Test extends TinyTestCase {
 
     public function testShouldReturnFopenCompressorIfCurlUnavailable() {
         $this->php_mock->shouldReceive('fopen_available')->andReturn(true);
-        $compressor = Tiny_Compress::get_compressor('api1234');
+        $compressor = Tiny_Compress::create('api1234');
         $this->assertInstanceOf('Tiny_Compress_Fopen', $compressor);
     }
 
@@ -22,7 +22,7 @@ class Tiny_Compress_No_Client_Test extends TinyTestCase {
      */
     public function testShouldThrowErrorWhenCurlAndFopenUnavailable() {
         $this->php_mock->shouldReceive('fopen_available')->andReturn(false);
-        $compressor = Tiny_Compress::get_compressor('api1234');
+        $compressor = Tiny_Compress::create('api1234');
         $this->assertInstanceOf('Tiny_Compress', $compressor);
     }
 }

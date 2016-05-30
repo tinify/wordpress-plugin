@@ -205,13 +205,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $compressor = $this->settings->get_compressor();
         if ($compressor->can_create_key()) {
             try {
-                $compressor->create_key($_POST['mail'], array(
+                $compressor->create_key($_POST['email'], array(
                     "name" => $_POST['name'],
                     "identifier" => $_POST['identifier'],
                     "link" => $_POST['link'],
                 ));
-                echo Tiny_Plugin::getKey();
-            } catch (Exception $e) {
+            } catch (Exception $err) {
                 throw new Tiny_Exception('Could not connect trough the API', 'ClientLibraryConnectionProblem');
             }
         } else {
@@ -220,12 +219,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function save_api_key() {
-        $valid = false;
-        $key = $_POST['key'];
-        if (Tiny_PHP::client_library_supported()) {
-            $valid = Tiny_Compress_Client::validate($key);
-        }
-        if ($valid) {
+        $status = Tiny_Compress::create($_POST['key'])->validate();
+        error_log($status->ok);
+        error_log($status->message);
+        if ($status->ok) {
             update_option('tinypng_api_key', $key);
             echo 'valid';
         } else {

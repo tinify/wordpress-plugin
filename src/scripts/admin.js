@@ -30,7 +30,7 @@
 
   function save_api_key() {
     jQuery('.api-error').hide()
-    var key = jQuery(tinypng_api_key_modal).val()
+    var key = jQuery("#tinypng_api_key_modal").val()
 
     jQuery.ajax({
       url: ajaxurl,
@@ -41,11 +41,7 @@
         key: key
       },
       success: function(data) {
-        if (data == "valid0")
-          location.reload();
-        else {
-          jQuery('.api-error').show()
-        }
+        location.reload()
       },
       error: function() {
         console.log("Failure")
@@ -54,9 +50,9 @@
   }
 
   function create_api_key() {
-    var name = jQuery(tinypng_api_key_name).val()
-    var email = jQuery(tinypng_api_key_email).val()
-    var identifier = "WordPress plugin for " + jQuery(tinypng_api_key_identifier).val()
+    var name = jQuery("#tinypng_api_key_name").val()
+    var email = jQuery("#tinypng_api_key_email").val()
+    var identifier = "WordPress plugin for " + jQuery("#tinypng_api_key_identifier").val()
     var link = jQuery(location).attr('href')
     jQuery.ajax({
       url: ajaxurl,
