@@ -226,6 +226,8 @@ class Tiny_Metadata {
        if (!$this->statistics_calculated) $this->calculate_statistics();
        $before = $this->get_total_size_before_optimization();
        $after = $this->get_total_size_after_optimization();
+       /* Avoid division by zero. */
+       if ($before == 0) return 0;
        return ($before - $after) / $before * 100;
     }
 

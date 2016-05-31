@@ -91,6 +91,10 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $this->assertEquals(1, $this->subject->get_image_sizes_to_be_optimized($active_sizes));
     }
 
+    public function testGetSavings() {
+        $this->assertEquals(7.9381443298969, $this->subject->get_savings());
+    }
+
     public function testGetInitialTotalSize() {
         $this->assertEquals(325920, $this->subject->get_total_size_before_optimization());
     }
