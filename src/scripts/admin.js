@@ -30,6 +30,7 @@
 
   function save_api_key() {
     jQuery('.tinypng-api-key-message.invalid-key').hide()
+    jQuery('.tinypng-api-key-message.save-error').hide()
     var key = jQuery("#tinypng_api_key_modal").val()
 
     jQuery.ajax({

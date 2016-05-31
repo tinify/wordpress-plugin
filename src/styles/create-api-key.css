@@ -18,14 +18,35 @@
 }
 
 .tinypng-api-key-message {
-  width: 270px;
+  width: 271px;
   position: relative;
   padding-left: 30px !important;
 }
 
+.tinypng-api-key-message.save-error {
+  color: #D54E21;
+}
+
+.tinypng-api-key-message.error {
+  color: #D54E21;
+}
+
+.tinypng-api-key-message.invalid-key {
+  color: #F0AD4E;
+}
+
+.tinypng-api-key-message.already-registered {
+  color: #F0AD4E;
+}
+
+.tinypng-api-key-message.success {
+  color: #5CB85C;
+}
+
 .tinypng-api-key-message span {
   position: absolute;
-  left: 0px;
+  top: 3px;
+  left: 5px;
 }
 
 #tinypng_api_key_container input {
