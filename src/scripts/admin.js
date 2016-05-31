@@ -55,6 +55,7 @@
   }
 
   function create_api_key() {
+    jQuery('.tinypng-create-api-key').prop("disabled",true)
     var name = jQuery("#tinypng_api_key_name").val()
     var email = jQuery("#tinypng_api_key_email").val()
     var identifier = "WordPress plugin for " + jQuery("#tinypng_api_key_identifier").val()
@@ -82,9 +83,11 @@
          } else {
             jQuery('.tinypng-api-key-message.error').show()
          }
+         jQuery('.tinypng-create-api-key').prop("disabled",false)
       },
       error: function() {
         jQuery('.tinypng-api-key-message.error').show()
+        jQuery('.tinypng-create-api-key').prop("disabled",false)
       }
     })
   }

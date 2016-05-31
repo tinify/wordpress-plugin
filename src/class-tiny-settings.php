@@ -251,12 +251,21 @@ class Tiny_Settings extends Tiny_WP_Base {
             if (defined('TINY_API_KEY')) {
             echo '<p>' . sprintf(__('The API key has been configured in %s', 'tiny-compress-images'), 'wp-config.php') . '.</p>';
             } else {
+                $status = $this->compressor->get_status();
                 echo '<div class=' . $field . '_exists>';
-                echo '<span class="dashicons-before dashicons-yes"></span>';
-                echo '<p class="api-key-status"> Your key is valid! </p>';
-                add_thickbox();
-                echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
-                echo '</div>';
+                if (!$status->ok && $status->message == "Credentials are invalid") {
+                    echo '<span class="dashicons-before dashicons-no"></span>';
+                    echo '<p class="api-key-status-error"> You need to activate your account.</p>';
+                    add_thickbox();
+                    echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
+                    echo '</div>';
+                } else {
+                    echo '<span class="dashicons-before dashicons-yes"></span>';
+                    echo '<p class="api-key-status"> Your key is valid! </p>';
+                    add_thickbox();
+                    echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
+                    echo '</div>';
+                }
             }
         }
     }

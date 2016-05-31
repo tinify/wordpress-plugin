@@ -114,12 +114,24 @@
   color: #5CB85C;
 }
 
+.tinypng_api_key_exists .dashicons-no {
+  position: absolute;
+  display: block;
+  top: 5px;
+  left: 226px;
+  color: #D54E21;
+}
+
 .tinypng_api_key_exists #tinypng_api_key {
   margin: 0 10px 0 0;
 }
 
-.tinypng_api_key_exists p {
+.api-key-status {
   color: #5CB85C;
+}
+
+.api-key-status-error {
+  color: #D54E21
 }
 
 .tinypng_api_key_exists a {
@@ -138,12 +150,6 @@
   display: block !important;
   margin-bottom: 4px !important;
   width: 300px;
-}
-
-.key-error {
-  display: none;
-  font-size: 13px;
-  color: red;
 }
 
 #TB_ajaxContent p {
