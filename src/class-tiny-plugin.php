@@ -210,20 +210,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
                     "identifier" => $_POST['identifier'],
                     "link" => $_POST['link'],
                 ));
-                echo 'created';
+                echo json_encode(array('created' => true, 'exists' => false));
             } catch (Exception $err) {
-                echo 'exists';
+                error_log($err);
+                echo json_encode(array('created' => false, 'exists' => true, 'message' => 'add me'));
             }
         } else {
             throw new Tiny_Exception('Old PHP/cURL version', 'ClientLibraryNotSupported');
         }
+        die();
     }
 
     public function save_api_key() {
         $key = $_POST['key'];
         if ($key == '') {
             update_option('tinypng_api_key', $key);
-            echo 'valid';
+            echo json_encode(array('valid' => true));
+            die();
         }
         $status = Tiny_Compress::create($key)->get_status();
         error_log($status->ok);
@@ -231,10 +234,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if ($status->ok) {
 
             update_option('tinypng_api_key', $key);
-            echo 'valid';
+            echo json_encode(array('valid' => true));
         } else {
-            echo 'invalid';
+            echo json_encode(array('valid' => false));
         }
+        die();
     }
 
     public function get_optimization_statistics() {

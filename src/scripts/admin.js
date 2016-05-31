@@ -41,21 +41,22 @@
         action: 'tiny_save_api_key',
         key: key
       },
-      success: function(data) {
-        if(data == "invalid0") {
-          jQuery('.tinypng-api-key-message.invalid-key').show()
+      success: function(json) {
+        var data = JSON.parse(json)
+        if(data.valid) {
+          location.reload()
         } else {
-            location.reload()
+            jQuery('.tinypng-api-key-message.invalid-key').show()
           }
       },
       error: function() {
         jQuery('.tinypng-api-key-message.save-error').show()
       }
     })
+    return false
   }
 
   function create_api_key() {
-    jQuery('.tinypng-create-api-key').prop("disabled",true)
     var name = jQuery("#tinypng_api_key_name").val()
     var email = jQuery("#tinypng_api_key_email").val()
     var identifier = "WordPress plugin for " + jQuery("#tinypng_api_key_identifier").val()
@@ -71,25 +72,25 @@
         identifier: identifier,
         link: link,
       },
-      success: function(data) {
+      success: function(json) {
+        var data = JSON.parse(json)
         jQuery('.tinypng-api-key-message.success').hide()
         jQuery('.tinypng-api-key-message.already-registered').hide()
         jQuery('.tinypng-api-key-message.error').hide()
 
-        if (data == "created0"){
+        if (data.created){
           jQuery('.tinypng-api-key-message.success').show()
-        } else if (data == "exists0") {
+        } else if (data.exists) {
            jQuery('.tinypng-api-key-message.already-registered').show()
          } else {
             jQuery('.tinypng-api-key-message.error').show()
          }
-         jQuery('.tinypng-create-api-key').prop("disabled",false)
       },
       error: function() {
         jQuery('.tinypng-api-key-message.error').show()
-        jQuery('.tinypng-create-api-key').prop("disabled",false)
       }
     })
+    return false
   }
 
   function dismiss_notice(event) {
