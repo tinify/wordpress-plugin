@@ -113,12 +113,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinify/tinify-php.git",
-                "reference": "e7d975e80a2bef474b2fe8a08f3d68991a37eb45"
+                "reference": "94280d155ca64761cc697f0d34725f35810f3a78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/e7d975e80a2bef474b2fe8a08f3d68991a37eb45",
-                "reference": "e7d975e80a2bef474b2fe8a08f3d68991a37eb45",
+                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/94280d155ca64761cc697f0d34725f35810f3a78",
+                "reference": "94280d155ca64761cc697f0d34725f35810f3a78",
                 "shasum": ""
             },
             "require": {
@@ -165,7 +165,7 @@
                 "source": "https://github.com/tinify/tinify-php/tree/create-key",
                 "issues": "https://github.com/tinify/tinify-php/issues"
             },
-            "time": "2016-05-30 13:17:55"
+            "time": "2016-05-31 13:22:14"
         }
     ],
     "packages-dev": [

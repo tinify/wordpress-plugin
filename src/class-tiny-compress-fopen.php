@@ -31,7 +31,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
     }
 
     public function get_compression_count() {
-        return \Tinify\getCompressionCount();
+        return 0;
     }
 
     public function is_limit_reached() {

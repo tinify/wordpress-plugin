@@ -9,7 +9,6 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\UselessFileDetector;
 
 abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
-
     protected static $driver;
 
     public static function setUpBeforeClass() {

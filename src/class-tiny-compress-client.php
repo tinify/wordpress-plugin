@@ -114,22 +114,28 @@ class Tiny_Compress_Client extends Tiny_Compress {
     }
 
     private function set_request_options($client) {
+        /* The client does not let us override cURL properties yet, so we have
+           to use a reflection property. */
+        $property = new ReflectionProperty($client, "options");
+        $property->setAccessible(true);
+        $options = $property->getValue();
+
         if (TINY_DEBUG) {
             $file = fopen(dirname(__FILE__) . '/curl.log', 'w');
             if (is_resource($file)) {
-                $client->options[CURLOPT_VERBOSE] = true;
-                $client->options[CURLOPT_STDERR] = $file;
+                $options[CURLOPT_VERBOSE] = true;
+                $options[CURLOPT_STDERR] = $file;
             }
         }
 
         if ($this->proxy->is_enabled() && $this->proxy->send_through_proxy($url)) {
-            $client->options[CURLOPT_PROXYTYPE] = CURLPROXY_HTTP;
-            $client->options[CURLOPT_PROXY] = $this->proxy->host();
-            $client->options[CURLOPT_PROXYPORT] = $this->proxy->port();
+            $options[CURLOPT_PROXYTYPE] = CURLPROXY_HTTP;
+            $options[CURLOPT_PROXY] = $this->proxy->host();
+            $options[CURLOPT_PROXYPORT] = $this->proxy->port();
 
             if ($this->proxy->use_authentication()) {
-                $client->options[CURLOPT_PROXYAUTH] = CURLAUTH_ANY;
-                $client->options[CURLOPT_PROXYUSERPWD] = $this->proxy->authentication();
+                $options[CURLOPT_PROXYAUTH] = CURLAUTH_ANY;
+                $options[CURLOPT_PROXYUSERPWD] = $this->proxy->authentication();
             }
         }
     }

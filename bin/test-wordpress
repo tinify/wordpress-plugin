@@ -43,12 +43,15 @@ export WORDPRESS_URL=http://$HOST_IP:$HOST_PORT
 function prepare_test_config {
   printf "\nPreparing test config\n\n"
   mv src/config/tiny-config.php src/config/tiny-config.php.bak
+  mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
   cp test/fixtures/tiny-config.php src/config/tiny-config.php
+  cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
 }
 
 function restore_config {
   printf "\n\nRestoring config\n\n"
   mv src/config/tiny-config.php.bak src/config/tiny-config.php
+  mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
 }
 
 trap 'restore_config' EXIT
