@@ -24,7 +24,6 @@ class Tiny_PHP {
     }
 
     public static function client_library_supported() {
-        return true;
-        // return version_compare(PHP_VERSION, '5.3', '>') && extension_loaded('curl');
+        return version_compare(PHP_VERSION, '5.3', '>') && extension_loaded('curl');
     }
 }

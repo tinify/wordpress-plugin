@@ -47,7 +47,21 @@ class Tiny_Settings extends Tiny_WP_Base {
                 esc_html__('Please fill in an API key to start compressing images', 'tiny-compress-images'));
             $this->notices->show('setting', $link, 'error', false);
         }
-         try {
+
+        if (current_user_can('manage_options') && !Tiny_PHP::client_library_supported()) {
+            $details = 'PHP ' . PHP_VERSION;
+            if (extension_loaded('curl')) {
+                $curlinfo = curl_version();
+                $details .= ' with curl ' . $curlinfo['version'];
+            } else {
+                $details .= ' without curl';
+            }
+
+            $message = esc_html__('You are using an outdated platform (' . $details . ') – some features are disabled', 'tiny-compress-images');
+            $this->notices->show('setting', $message, 'notice-warning', false);
+        }
+
+        try {
             $this->init_compressor();
         } catch (Tiny_Exception $e) {
             $this->notices->show('compressor_exception', esc_html__($e->getMessage(), 'tiny-compress-images'), 'error', false);
