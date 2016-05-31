@@ -111,7 +111,7 @@
   display: block;
   top: 4px;
   left: 105px;
-  color: #42AD00;
+  color: #5CB85C;
 }
 
 .tinypng_api_key_exists #tinypng_api_key {
@@ -119,7 +119,7 @@
 }
 
 .tinypng_api_key_exists p {
-  color: #42AD00;
+  color: #5CB85C;
 }
 
 .tinypng_api_key_exists a {

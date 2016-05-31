@@ -31,7 +31,7 @@
   function save_api_key() {
     jQuery('.tinypng-api-key-message.invalid-key').hide()
     jQuery('.tinypng-api-key-message.save-error').hide()
-    var key = jQuery("#tinypng_api_key_modal").val()
+    var key = jQuery("#tinypng_api_key").val()
 
     jQuery.ajax({
       url: ajaxurl,
@@ -42,7 +42,7 @@
         key: key
       },
       success: function(data) {
-        if(data == "invalid") {
+        if(data == "invalid0") {
           jQuery('.tinypng-api-key-message.invalid-key').show()
         } else {
             location.reload()
@@ -75,9 +75,9 @@
         jQuery('.tinypng-api-key-message.already-registered').hide()
         jQuery('.tinypng-api-key-message.error').hide()
 
-        if (data == "created"){
+        if (data == "created0"){
           jQuery('.tinypng-api-key-message.success').show()
-        } else if (data == "exists") {
+        } else if (data == "exists0") {
            jQuery('.tinypng-api-key-message.already-registered').show()
          } else {
             jQuery('.tinypng-api-key-message.error').show()

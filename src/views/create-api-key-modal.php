@@ -10,7 +10,7 @@ $key = $this->get_api_key();
       <p class='tinypng-api-key-information'>
         <?php printf(__('Enter your new API key.', 'tiny-compress-images')) ?>
       </p>
-      <input class='tinypng_api_key_input' type='text' id='tinypng_api_key_modal' name='tinypng_api_key' size='40' value="<?php echo htmlspecialchars($key) ?>" />
+      <input class='tinypng_api_key_input' type='text' id='tinypng_api_key' name='tinypng_api_key' size='40' value="<?php echo htmlspecialchars($key) ?>" />
       <button type='button' class='tinypng-save-api-key button button-primary'>
         <?php echo esc_html__('Save', 'tiny-compress-images') ?>
       </button>
