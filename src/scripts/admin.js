@@ -84,6 +84,7 @@
            jQuery('.tinypng-api-key-message.already-registered').show()
          } else {
             jQuery('.tinypng-api-key-message.error').show()
+            jQuery('.tinypng-error-message').text(data.message)
          }
       },
       error: function() {

@@ -211,9 +211,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
                     "link" => $_POST['link'],
                 ));
                 echo json_encode(array('created' => true, 'exists' => false));
-            } catch (Exception $err) {
-                error_log($err);
-                echo json_encode(array('created' => false, 'exists' => true, 'message' => 'add me'));
+            } catch (Tiny_Exception $err) {
+                error_log($err->getMessage());
+                echo json_encode(array('created' => false, 'exists' => true, 'message' => $err->getMessage()));
             }
         } else {
             throw new Tiny_Exception('Old PHP/cURL version', 'ClientLibraryNotSupported');

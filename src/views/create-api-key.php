@@ -31,7 +31,8 @@ $free_images_per_month = (count(self::get_active_tinify_sizes()) > 0) ? (floor( 
     </p>
     <p class='tinypng-api-key-message error' style="display: none">
       <span class="dashicons-before dashicons-warning"></span>
-      <?php printf(esc_html__('Something went wrong. Please try again later.', 'tiny-compress-images')) ?>
+      <?php printf(esc_html__('Something went wrong:', 'tiny-compress-images')) ?>
+      <p class='tinypng-error-message'></p>
     </p>
     </div>
   <div class='tinypng_api_key_step2'>

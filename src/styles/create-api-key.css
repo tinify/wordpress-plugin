@@ -23,6 +23,12 @@
   padding-left: 30px !important;
 }
 
+.tinypng-error-message {
+  width: 271px;
+  position: relative;
+  padding-left: 30px !important;
+}
+
 .tinypng-api-key-message.save-error {
   color: #D54E21;
 }
