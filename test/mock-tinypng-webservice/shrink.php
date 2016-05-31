@@ -58,7 +58,7 @@ function mock_empty_response() {
     header("Compression-Count: {$session['Compression-Count']}");
 
     $response = array(
-        "error" => "InputMissing",
+        "error" => "Input missing",
         "message" => "File is empty"
     );
     return json_encode($response);
@@ -72,7 +72,7 @@ function mock_limit_reached_response() {
     header("Compression-Count: 500");
 
     $response = array(
-        "error" => "TooManyRequests",
+        "error" => "Too many requests",
         "message" => "Your monthly limit has been exceeded"
     );
     return json_encode($response);
