@@ -29,6 +29,8 @@ if (!defined("\Tinify\VERSION")) {
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
+    const KEY_MISSING = "Register an account or provide an API key first";
+
     protected function __construct($api_key, $after_compress_callback) {
         parent::__construct($after_compress_callback);
 
@@ -56,7 +58,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
         if (\Tinify\getKey() == null) {
             return (object) array(
                 "ok" => false,
-                "message" => "Register an account or provide an API key",
+                "message" => self::KEY_MISSING,
             );
         }
 
@@ -80,6 +82,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
     }
 
     protected function compress($input, $resize_options, $preserve_options) {
+        if (\Tinify\getKey() == null) {
+            throw new Tiny_Exception(self::KEY_MISSING, 'NoKey');
+        }
+
         try {
             $this->set_request_options(\Tinify\Tinify::getClient());
 
