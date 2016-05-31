@@ -66,9 +66,9 @@ class Tiny_Compress_Client extends Tiny_Compress {
     }
 
     protected function compress($input, $resize_options, $preserve_options) {
-        $this->set_request_options(\Tinify\Tinify::getClient());
-
         try {
+            $this->set_request_options(\Tinify\Tinify::getClient());
+
             $this->last_status_code = 0;
             $source = \Tinify\fromBuffer($input);
 
@@ -102,15 +102,20 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
-            throw $err;
+            throw new Tiny_Exception($err->getMessage(), $err);
         }
     }
 
     public function create_key($email, $options) {
-        $this->set_request_options(\Tinify\Tinify::getAnonymousClient());
+        try {
+            $this->set_request_options(\Tinify\Tinify::getAnonymousClient());
 
-        \Tinify\createKey($email, $options);
-        update_option('tinypng_api_key', \Tinify\getKey());
+            \Tinify\createKey($email, $options);
+            update_option('tinypng_api_key', \Tinify\getKey());
+        } catch(\Tinify\Exception $err) {
+            $this->last_status_code = $err->status;
+            throw new Tiny_Exception($err->getMessage(), $err);
+        }
     }
 
     private function set_request_options($client) {
@@ -118,7 +123,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
            to use a reflection property. */
         $property = new ReflectionProperty($client, "options");
         $property->setAccessible(true);
-        $options = $property->getValue();
+        $options = $property->getValue($client);
 
         if (TINY_DEBUG) {
             $file = fopen(dirname(__FILE__) . '/curl.log', 'w');
