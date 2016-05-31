@@ -53,13 +53,27 @@ class Tiny_Compress_Client extends Tiny_Compress {
     }
 
     protected function validate() {
+        if (\Tinify\getKey() == null) {
+            return (object) array(
+                "ok" => false,
+                "message" => "Register an account or provide an API key",
+            );
+        }
+
         try {
             $this->last_status_code = 0;
-            return (object) array("ok" => \Tinify\validate());
+
+            return (object) array(
+                "ok" => \Tinify\validate()
+            );
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
+
             list($message) = explode(" (HTTP", $err->getMessage(), 2);
-            return (object) array("ok" => false, "message" => $message);
+            return (object) array(
+                "ok" => false,
+                "message" => $message,
+            );
         }
 
         return true;
