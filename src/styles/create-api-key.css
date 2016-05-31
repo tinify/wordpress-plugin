@@ -76,14 +76,6 @@
   min-width: 300px;
 }
 
-.dashicons-yes {
-  position: absolute;
-  display: block;
-  top: 4px;
-  left: 105px;
-  color: #42AD00;
-}
-
 .dashicons-yes::before {
   font-size: 25px;
 }
@@ -91,6 +83,14 @@
 .tinypng_api_key_exists {
   display: inline-block;
   position: relative;
+}
+
+.tinypng_api_key_exists .dashicons-yes {
+  position: absolute;
+  display: block;
+  top: 4px;
+  left: 105px;
+  color: #42AD00;
 }
 
 .tinypng_api_key_exists #tinypng_api_key {
