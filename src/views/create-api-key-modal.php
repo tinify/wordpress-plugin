@@ -18,7 +18,7 @@ $key = $this->get_api_key();
         <span class="dashicons-before dashicons-info"></span>
         <?php printf(esc_html__('The key that you have entered does not exist. Please try a different key.', 'tiny-compress-images')) ?>
       </p>
-      <p class='tinypng-api-key-message error' style="display: none">
+      <p class='tinypng-api-key-message save-error' style="display: none">
         <span class="dashicons-before dashicons-warning"></span>
         <?php printf(esc_html__('Something went wrong. Please try again later.', 'tiny-compress-images')) ?>
       </p>

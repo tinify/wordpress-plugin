@@ -39,9 +39,19 @@ $free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / count(s
       <?php printf(esc_html__('Already have an account?', 'tiny-compress-images')) ?>
     </h4>
     <p class='tinypng-api-key-information'>
-      <?php printf(esc_html__('Then you can fill in your API key here. If you have lost your key then head over to %s to retrieve it.', 'tiny-compress-images'), $link) ?>
+    <?php printf(esc_html__('Then you can fill in your API key here. If you have lost your key then head over to %s to retrieve it.', 'tiny-compress-images'), $link) ?>
     </p>
     <input class='tinypng_api_key_input' type='text' id='tinypng_api_key' name='tinypng_api_key' />
-    <?php echo submit_button('Save', 'button-primary', 'tinypng_submit_api_key') ?>
+    <button type='button' class='tinypng-save-api-key button button-primary'>
+      <?php echo esc_html__('Save', 'tiny-compress-images') ?>
+    </button>
+    <p class='tinypng-api-key-message invalid-key' style="display: none">
+      <span class="dashicons-before dashicons-info"></span>
+      <?php printf(esc_html__('The key that you have entered does not exist. Please try a different key.', 'tiny-compress-images')) ?>
+    </p>
+    <p class='tinypng-api-key-message save-error' style="display: none">
+      <span class="dashicons-before dashicons-warning"></span>
+      <?php printf(esc_html__('Something went wrong. Please try again later.', 'tiny-compress-images')) ?>
+    </p>
   </div>
 </div>

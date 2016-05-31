@@ -48,7 +48,7 @@
           }
       },
       error: function() {
-        jQuery('.tinypng-api-key-message.error').show()
+        jQuery('.tinypng-api-key-message.save-error').show()
       }
     })
   }

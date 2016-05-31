@@ -113,7 +113,9 @@
   margin-bottom: 4px;
 }
 
-#tinypng_submit_api_key {
+.tinypng-save-api-key {
+  display: block !important;
+  margin-bottom: 4px !important;
   width: 300px;
 }
 
