@@ -5,7 +5,7 @@ $name = $current_user->user_firstname . ' ' . $current_user->user_lastname;
 $email = $current_user->user_email;
 $identifier = get_bloginfo( 'url' );
 $link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__('TinyPNG Developer section', 'tiny-compress-images') . '</a>';
-$free_images_per_month = floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / count(self::get_active_tinify_sizes()));
+$free_images_per_month = (count(self::get_active_tinify_sizes()) > 0) ? (floor( Tiny_Config::MONTHLY_FREE_COMPRESSIONS / count(self::get_active_tinify_sizes()))) : 500;
 ?>
 <div id='tinypng_api_key_container' class='wp-core-ui'>
   <div class='tinypng_api_key_step1'>
