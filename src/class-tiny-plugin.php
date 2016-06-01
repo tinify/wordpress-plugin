@@ -47,15 +47,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function admin_init() {
-        add_filter('manage_media_columns', $this->get_method('add_media_columns'));
-        add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
-        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
-        add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
-        add_action('wp_ajax_tiny_create_api_key', $this->get_method('create_api_key'));
-        add_action('wp_ajax_tiny_save_api_key', $this->get_method('save_api_key'));
-        add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
         add_action('admin_action_tiny_bulk_optimization', $this->get_method('bulk_optimization'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
+        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
+
+        add_filter('manage_media_columns', $this->get_method('add_media_columns'));
+        add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
+
+        add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
+        add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
+
         $plugin = plugin_basename(dirname(dirname(__FILE__)) . '/tiny-compress-images.php');
         add_filter("plugin_action_links_$plugin", $this->get_method('add_plugin_links'));
         add_thickbox();
@@ -199,42 +200,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
 
         exit();
-    }
-
-    public function create_api_key() {
-        $compressor = $this->settings->get_compressor();
-        if ($compressor->can_create_key()) {
-            try {
-                $compressor->create_key($_POST['email'], array(
-                    "name" => $_POST['name'],
-                    "identifier" => $_POST['identifier'],
-                    "link" => $_POST['link'],
-                ));
-                echo json_encode(array('created' => true, 'exists' => false));
-            } catch (Tiny_Exception $err) {
-                echo json_encode(array('created' => false, 'exists' => true, 'message' => $err->getMessage()));
-            }
-        } else {
-            throw new Tiny_Exception('Old PHP/cURL version', 'ClientLibraryNotSupported');
-        }
-        die();
-    }
-
-    public function save_api_key() {
-        $key = $_POST['key'];
-        if ($key == '') {
-            update_option(self::get_prefixed_name('api_key'), $key);
-            echo json_encode(array('valid' => true));
-            die();
-        }
-        $status = Tiny_Compress::create($key)->get_status();
-        if ($status->ok) {
-            update_option(self::get_prefixed_name('api_key'), $key);
-            echo json_encode(array('valid' => true));
-        } else {
-            echo json_encode(array('valid' => false));
-        }
-        die();
     }
 
     public function get_optimization_statistics() {

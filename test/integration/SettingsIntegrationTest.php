@@ -24,7 +24,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     }
 
     public function testApiKeyInputPresence() {
-        $elements = self::$driver->findElements(WebDriverBy::name('tinypng_api_key'));
+        $elements = self::$driver->findElements(WebDriverBy::name('tinypng-api-key'));
         $this->assertEquals(1, count($elements));
     }
 

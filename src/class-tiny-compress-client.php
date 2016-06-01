@@ -129,7 +129,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
     public function create_key($email, $options) {
         try {
             $this->set_request_options(\Tinify\Tinify::getAnonymousClient());
-
             \Tinify\createKey($email, $options);
             update_option(self::get_prefixed_name('api_key'), \Tinify\getKey());
         } catch(\Tinify\Exception $err) {

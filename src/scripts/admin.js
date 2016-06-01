@@ -28,32 +28,32 @@
     })
   }
 
-  function save_api_key() {
-    jQuery('.tinypng-api-key-message.invalid-key').hide()
-    jQuery('.tinypng-api-key-message.save-error').hide()
-    var key = jQuery("#tinypng_api_key").val()
-
-    jQuery.ajax({
-      url: ajaxurl,
-      type: "POST",
-      data: {
-        _nonce: tinyCompress.nonce,
-        action: 'tiny_save_api_key',
-        key: key
-      },
-      success: function(json) {
-        var data = JSON.parse(json)
-        if(data.valid) {
-          location.reload()
-        } else {
-            jQuery('.tinypng-api-key-message.invalid-key').show()
-          }
-      },
-      error: function() {
-        jQuery('.tinypng-api-key-message.save-error').show()
-      }
-    })
-    return false
+  function update_api_key() {
+  //   jQuery('.tinypng-api-key-message.invalid-key').hide()
+  //   jQuery('.tinypng-api-key-message.save-error').hide()
+  //   var key = jQuery("#tinypng_api_key").val()
+  //
+  //   jQuery.ajax({
+  //     url: ajaxurl,
+  //     type: "POST",
+  //     data: {
+  //       _nonce: tinyCompress.nonce,
+  //       action: 'tiny_update_api_key',
+  //       key: key
+  //     },
+  //     success: function(json) {
+  //       var data = JSON.parse(json)
+  //       if(data.valid) {
+  //         location.reload()
+  //       } else {
+  //           jQuery('.tinypng-api-key-message.invalid-key').show()
+  //         }
+  //     },
+  //     error: function() {
+  //       jQuery('.tinypng-api-key-message.save-error').show()
+  //     }
+  //   })
+  //   return false
   }
 
   function create_api_key() {
@@ -160,9 +160,9 @@
     adminpage = window.adminpage
   }
 
-  function eventOn(parentSelector, event, eventSelector, callback) {
+  function eventOn(event, eventSelector, callback) {
     if (typeof jQuery.fn.on === "function") {
-      jQuery(parentSelector).on(event, eventSelector, callback)
+      jQuery(document).on(event, eventSelector, callback)
     } else {
       jQuery(eventSelector).live(event, callback)
     }
@@ -179,7 +179,7 @@
   }
 
   if (adminpage === "upload-php") {
-    eventOn('table', 'click', 'button.tiny-compress', compress_image)
+    eventOn('click', 'button.tiny-compress', compress_image)
 
     if (typeof jQuery.fn.prop === "function") {
       jQuery('button.tiny-compress').prop('disabled', null)
@@ -190,12 +190,12 @@
     jQuery('<option>').val('tiny_bulk_optimization').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
     jQuery('<option>').val('tiny_bulk_optimization').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
   } else if (adminpage === "post-php") {
-    eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
+    eventOn('click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
-    changeEnterKeyTarget('.tinypng_api_key_step1', '.tinypng-create-api-key')
-    changeEnterKeyTarget('.tinypng_api_key_step2', '.tinypng-save-api-key')
-    eventOn('div', 'click', 'button.tinypng-create-api-key', create_api_key)
-    eventOn('div', 'click', 'button.tinypng-save-api-key', save_api_key)
+    changeEnterKeyTarget('.tiny-update-account-step1', '.tiny-account-create-key')
+    changeEnterKeyTarget('.tiny-update-account-step2', '.tiny-account-save-key')
+    eventOn('click', 'button.tiny-account-create-key', create_api_key)
+    eventOn('click', 'button.tiny-account-save-key', update_api_key)
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 

@@ -1,11 +1,11 @@
-#tinypng_api_key_container {
+/*#tiny-account-container {
   display: inline-block;
   padding: 30px;
   border: solid #E1E1E1 1px;
   background-color: white;
 }
 
-#tinypng_api_key_container h4 {
+#tiny-account-container h4 {
   margin-top: 0;
   margin-bottom: 5px;
   font-size: 16px;
@@ -59,21 +59,21 @@
   left: 5px;
 }
 
-#tinypng_api_key_container input {
+#tiny-account-container input {
   margin-bottom: 10px;
 }
 
-#tinypng_api_key_container:before,
-#tinypng_api_key_container:after {
+#tiny-account-container:before,
+#tiny-account-container:after {
   content: " ";
   display: table;
 }
 
-#tinypng_api_key_container:after {
+#tiny-account-container:after {
   clear: both;
 }
 
-.tinypng_api_key_step1 {
+.tinypng-api-key-step1 {
   float: left;
   padding-right: 30px;
   border-right: solid #E5E5E5 1px;
@@ -89,21 +89,21 @@
   min-width: 300px;
 }
 
-.tinypng-create-api-key {
+.tiny-account-create-key {
   width: 100%;
 }
 
-.tinypng_api_key_step2 {
+.tinypng-api-key-step2 {
   float: left;
   padding-left: 30px;
 }
 
-.form-table td .tinypng_api_key_step2 p {
+.form-table td .tinypng-api-key-step2 p {
   margin: 0;
   padding: 0;
 }
 
-#tinypng_api_key {
+#tinypng-api-key {
   min-width: 300px;
 }
 
@@ -111,12 +111,12 @@
   font-size: 25px;
 }
 
-.tinypng_api_key_exists {
+.tinypng-api-key-exists {
   display: inline-block;
   position: relative;
 }
 
-.tinypng_api_key_exists .dashicons-yes {
+.tinypng-api-key-exists .dashicons-yes {
   position: absolute;
   display: block;
   top: 4px;
@@ -124,7 +124,7 @@
   color: #5CB85C;
 }
 
-.tinypng_api_key_exists .dashicons-no {
+.tinypng-api-key-exists .dashicons-no {
   position: absolute;
   display: block;
   top: 5px;
@@ -132,31 +132,31 @@
   color: #D54E21;
 }
 
-.tinypng_api_key_exists #tinypng_api_key {
+.tinypng-api-key-exists #tinypng-api-key {
   margin: 0 10px 0 0;
 }
 
-.api-key-status {
+.tiny-account-status {
   color: #5CB85C;
 }
 
-.api-key-status-error {
+.tiny-account-status-error {
   color: #D54E21
 }
 
-.tinypng_api_key_exists a {
+.tinypng-api-key-exists a {
   display: inline-block;
   margin-top: 4px;
   font-size: 14px;
   text-decoration: none;
 }
 
-.tinypng_api_key_exists #tinypng_api_key {
+.tinypng-api-key-exists #tinypng-api-key {
   display: block;
   margin-bottom: 4px;
 }
 
-.tinypng-save-api-key {
+.tiny-account-save-key {
   display: block !important;
   margin-bottom: 4px !important;
   width: 300px;
@@ -165,3 +165,4 @@
 #TB_ajaxContent p {
    margin-top: 0px !important;
 }
+*/

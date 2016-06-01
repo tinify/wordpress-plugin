@@ -12,7 +12,7 @@ class Tiny_Settings_Test extends TinyTestCase {
 
     public function testAdminInitShouldRegisterKeys() {
         $this->assertEquals(array(
-            array('media', 'tinypng_api_key'),
+            array('media', 'tinypng-api-key'),
             array('media', 'tinypng_sizes'),
             array('media', 'tinypng_resize_original'),
             array('media', 'tinypng_status'),
@@ -28,7 +28,7 @@ class Tiny_Settings_Test extends TinyTestCase {
 
     public function testAdminInitShouldAddSettingsField() {
         $this->assertEquals(array(
-            array('tinypng_api_key', 'TinyPNG account', array($this->subject, 'render_api_key'), 'media', 'tinypng_settings', array('label_for' => 'tinypng_api_key')),
+            array('tinypng-api-key', 'TinyPNG account', array($this->subject, 'render_api_key'), 'media', 'tinypng_settings', array('label_for' => 'tinypng-api-key')),
             array('tinypng_sizes', 'File compression', array($this->subject, 'render_sizes'), 'media', 'tinypng_settings'),
             array('tinypng_resize_original', 'Original image', array($this->subject, 'render_resize'), 'media', 'tinypng_settings'),
             array('tinypng_status', 'Connection status', array($this->subject, 'render_pending_status'), 'media', 'tinypng_settings'),

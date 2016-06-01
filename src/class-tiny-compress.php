@@ -44,7 +44,9 @@ abstract class Tiny_Compress {
     protected abstract function compress($input, $resize_options, $preserve_options);
 
     public function get_status() {
-        return $this->validate();
+        $status = $this->validate();
+        $this->call_after_compress_callback();
+        return $status;
     }
 
     public function compress_file($file, $resize_options, $preserve_options) {

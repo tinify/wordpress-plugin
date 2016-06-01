@@ -51,9 +51,9 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         if (self::$driver->getCurrentUrl() != $url) {
             self::$driver->get($url);
         }
-        self::$driver->findElement(WebDriverBy::name('tinypng_api_key'))->clear()->sendKeys($api_key);
+        self::$driver->findElement(WebDriverBy::name('tinypng-api-key'))->clear()->sendKeys($api_key);
         self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
-        return self::$driver->findElement(WebDriverBy::name('tinypng_api_key'));
+        return self::$driver->findElement(WebDriverBy::name('tinypng-api-key'));
     }
 
     protected function enable_compression_sizes($sizes) {
