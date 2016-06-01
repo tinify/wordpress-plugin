@@ -2,22 +2,26 @@
 
 $status = $this->compressor->get_status();
 
-echo '<p>';
 if ($status->ok) {
-    echo '<img src="images/yes.png"> ';
+    echo '<p class="api-key-status">';
+    echo '<span class="dashicons-before dashicons-yes"></span>';
     echo esc_html__('API connection successful', 'tiny-compress-images');
+    echo '</p>';
 } else {
-    echo '<img src="images/no.png"> ';
     if (!$status->ok) {
+        echo '<p class="api-key-status-error">';
+        echo '<span class="dashicons-before dashicons-no"></span>';
         echo esc_html__('API connection unsuccessful', 'tiny-compress-images') . '<br>';
+        echo '</p>';
         if (isset($status->message)) {
             echo esc_html__('Error', 'tiny-compress-images') . ': ' . esc_html__($status->message, 'tiny-compress-images');
         }
     } else {
+        echo '<p class="api-key-status">';
         esc_html_e('API status could not be checked, enable cURL for more information', 'tiny-compress-images');
+        echo '</p>';
     }
 }
-echo '</p>';
 
 if ($status->ok) {
     $compressions = self::get_compression_count();

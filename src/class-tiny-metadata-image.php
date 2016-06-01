@@ -111,7 +111,8 @@ class Tiny_Metadata_Image {
     }
 
     public function in_progress() {
-        return is_array($this->meta) && $this->recentlyStarted($this->meta['start']) && !isset($this->meta['output']);
+        return is_array($this->meta) && $this->recentlyStarted($this->meta['start'])
+            && !isset($this->meta['output']);
     }
 
     public function resized() {

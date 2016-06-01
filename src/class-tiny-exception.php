@@ -21,8 +21,13 @@
 class Tiny_Exception extends Exception {
     private $error;
 
-    public function __construct($message, $error=null) {
+    public function __construct($message, $error = null) {
         parent::__construct($message);
+
+        if (!is_string($message) || ($error && !is_string($error))) {
+            throw new InvalidArgumentException('Tiny_Exception arguments must be strings');
+        }
+
         $this->error = $error;
     }
 

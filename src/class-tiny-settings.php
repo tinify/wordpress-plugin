@@ -72,7 +72,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         $field = self::get_prefixed_name('api_key');
         register_setting('media', $field);
-        add_settings_field($field, __('TinyPNG API key', 'tiny-compress-images'), $this->get_method('render_api_key'), 'media', $section, array('label_for' => $field));
+        add_settings_field($field, __('TinyPNG account', 'tiny-compress-images'), $this->get_method('render_api_key'), 'media', $section, array('label_for' => $field));
 
         $field = self::get_prefixed_name('sizes');
         register_setting('media', $field);
@@ -257,13 +257,13 @@ class Tiny_Settings extends Tiny_WP_Base {
                     echo '<span class="dashicons-before dashicons-no"></span>';
                     echo '<p class="api-key-status-error"> You need to activate your account.</p>';
                     add_thickbox();
-                    echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
+                    echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change API key', 'tiny-compress-images') . '</a>';
                     echo '</div>';
                 } else {
                     echo '<span class="dashicons-before dashicons-yes"></span>';
-                    echo '<p class="api-key-status"> Your key is valid! </p>';
+                    echo '<p class="api-key-status"> Your account is working correctly! </p>';
                     add_thickbox();
-                    echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change key', 'tiny-compress-images') . '</a>';
+                    echo '<a href="#TB_inline?width=450&height=210&inlineId=tinypng_api_key_wrapper" class="thickbox">' . esc_html__('Change API key', 'tiny-compress-images') . '</a>';
                     echo '</div>';
                 }
             }

@@ -119,7 +119,8 @@ class Tiny_Metadata {
                 $values[$size] = $image->meta;
             }
         }
-        update_post_meta($this->id, self::META_KEY, $values);
+
+        $val = update_post_meta($this->id, self::META_KEY, $values);
     }
 
     public function get_id() {

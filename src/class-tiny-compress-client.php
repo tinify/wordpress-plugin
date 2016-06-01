@@ -122,7 +122,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
-            throw new Tiny_Exception($err->getMessage(), $err);
+            throw new Tiny_Exception($err->getMessage(), get_class($err));
         }
     }
 
@@ -134,7 +134,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
             update_option(self::get_prefixed_name('api_key'), \Tinify\getKey());
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
-            throw new Tiny_Exception($err->getMessage(), $err);
+            throw new Tiny_Exception($err->getMessage(), get_class($err));
         }
     }
 

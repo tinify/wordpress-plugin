@@ -212,7 +212,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 ));
                 echo json_encode(array('created' => true, 'exists' => false));
             } catch (Tiny_Exception $err) {
-                error_log($err->getMessage());
                 echo json_encode(array('created' => false, 'exists' => true, 'message' => $err->getMessage()));
             }
         } else {
@@ -229,10 +228,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             die();
         }
         $status = Tiny_Compress::create($key)->get_status();
-        error_log($status->ok);
-        error_log($status->message);
         if ($status->ok) {
-
             update_option(self::get_prefixed_name('api_key'), $key);
             echo json_encode(array('valid' => true));
         } else {
