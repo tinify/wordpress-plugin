@@ -29,6 +29,10 @@ $free_images_per_month = (count(self::get_active_tinify_sizes()) > 0) ? (floor( 
       <span class="dashicons-before dashicons-info"></span>
       <?php printf(esc_html__('You have already registed with this email. Please go to %s to retrieve your key.', 'tiny-compress-images'), $link) ?>
     </p>
+    <p class='tinypng-api-key-message invalid-form' style="display: none">
+      <span class="dashicons-before dashicons-info"></span>
+      <?php printf(esc_html__('You have to fill in your name and email address.', 'tiny-compress-images')) ?>
+    </p>
     <p class='tinypng-api-key-message error' style="display: none">
       <span class="dashicons-before dashicons-warning"></span>
       <?php printf(esc_html__('Something went wrong:', 'tiny-compress-images')) ?>

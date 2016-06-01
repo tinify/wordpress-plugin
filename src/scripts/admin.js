@@ -57,10 +57,18 @@
   }
 
   function create_api_key() {
+    jQuery('.tinypng-api-key-message.success').hide()
+    jQuery('.tinypng-api-key-message.already-registered').hide()
+    jQuery('.tinypng-api-key-message.error').hide()
+    jQuery('.tinypng-api-key-message.invalid-form').hide()
     var name = jQuery("#tinypng_api_key_name").val()
     var email = jQuery("#tinypng_api_key_email").val()
     var identifier = "WordPress plugin for " + jQuery("#tinypng_api_key_identifier").val()
     var link = jQuery(location).attr('href')
+    if (name == '' || email == '') {
+      jQuery('.tinypng-api-key-message.invalid-form').show()
+      return false
+    }
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -74,9 +82,6 @@
       },
       success: function(json) {
         var data = JSON.parse(json)
-        jQuery('.tinypng-api-key-message.success').hide()
-        jQuery('.tinypng-api-key-message.already-registered').hide()
-        jQuery('.tinypng-api-key-message.error').hide()
 
         if (data.created){
           jQuery('.tinypng-api-key-message.success').show()
@@ -163,6 +168,16 @@
     }
   }
 
+  function changeEnterKeyTarget(forDiv, toButton) {
+    jQuery(forDiv).bind("keyup keypress", function(e) {
+    var code = e.keyCode || e.which
+    if (code == 13) {
+      jQuery(toButton).click()
+      return false
+    }
+    })
+  }
+
   if (adminpage === "upload-php") {
     eventOn('table', 'click', 'button.tiny-compress', compress_image)
 
@@ -177,6 +192,8 @@
   } else if (adminpage === "post-php") {
     eventOn('div.postbox-container div.tiny-compress-images', 'click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
+    changeEnterKeyTarget('.tinypng_api_key_step1', '.tinypng-create-api-key')
+    changeEnterKeyTarget('.tinypng_api_key_step2', '.tinypng-save-api-key')
     eventOn('div', 'click', 'button.tinypng-create-api-key', create_api_key)
     eventOn('div', 'click', 'button.tinypng-save-api-key', save_api_key)
     jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')

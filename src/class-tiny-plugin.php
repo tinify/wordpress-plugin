@@ -224,7 +224,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function save_api_key() {
         $key = $_POST['key'];
         if ($key == '') {
-            update_option('tinypng_api_key', $key);
+            update_option(self::get_prefixed_name('api_key'), $key);
             echo json_encode(array('valid' => true));
             die();
         }
@@ -233,7 +233,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         error_log($status->message);
         if ($status->ok) {
 
-            update_option('tinypng_api_key', $key);
+            update_option(self::get_prefixed_name('api_key'), $key);
             echo json_encode(array('valid' => true));
         } else {
             echo json_encode(array('valid' => false));

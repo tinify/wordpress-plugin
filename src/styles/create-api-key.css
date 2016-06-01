@@ -45,6 +45,10 @@
   color: #F0AD4E;
 }
 
+.tinypng-api-key-message.invalid-form {
+  color: #F0AD4E;
+}
+
 .tinypng-api-key-message.success {
   color: #5CB85C;
 }
