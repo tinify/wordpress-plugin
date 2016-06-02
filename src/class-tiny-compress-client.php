@@ -20,12 +20,12 @@
 
 if (!defined("\Tinify\VERSION")) {
     /* Load vendored client if it is not yet loaded. */
-    require_once("vendor/tinify/Tinify/Exception.php");
-    require_once("vendor/tinify/Tinify/ResultMeta.php");
-    require_once("vendor/tinify/Tinify/Result.php");
-    require_once("vendor/tinify/Tinify/Source.php");
-    require_once("vendor/tinify/Tinify/Client.php");
-    require_once("vendor/tinify/Tinify.php");
+    require_once(dirname(__FILE__) . "/vendor/tinify/Tinify/Exception.php");
+    require_once(dirname(__FILE__) . "/vendor/tinify/Tinify/ResultMeta.php");
+    require_once(dirname(__FILE__) . "/vendor/tinify/Tinify/Result.php");
+    require_once(dirname(__FILE__) . "/vendor/tinify/Tinify/Source.php");
+    require_once(dirname(__FILE__) . "/vendor/tinify/Tinify/Client.php");
+    require_once(dirname(__FILE__) . "/vendor/tinify/Tinify.php");
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
