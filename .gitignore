@@ -1,5 +1,4 @@
 *.log
-src/vendor
 /vendor
 .DS_Store
 /tmp/*
