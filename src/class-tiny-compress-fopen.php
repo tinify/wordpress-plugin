@@ -46,7 +46,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         list($details, $headers, $status_code) = $this->shrink(null);
 
         if ($status_code >= 400 && $status_code < 500 && $status_code != 401) {
-            return (object) array("ok" => true);
+            return (object) array(
+                "ok" => true,
+                "message" => null,
+                "code" => null,
+            );
         } else {
             return (object) array(
                 "ok" => false,

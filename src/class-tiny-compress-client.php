@@ -71,7 +71,9 @@ class Tiny_Compress_Client extends Tiny_Compress {
             $this->last_status_code = 0;
 
             return (object) array(
-                "ok" => \Tinify\validate()
+                "ok" => \Tinify\validate(),
+                "message" => null,
+                "code" => null,
             );
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
