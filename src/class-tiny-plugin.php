@@ -80,8 +80,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
             array(), self::plugin_version());
         wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url('/styles/bulk-optimization.css', __FILE__),
             array(), self::plugin_version());
-        wp_enqueue_style(self::NAME .'_create-api-key', plugins_url('/styles/create-api-key.css', __FILE__),
-            array(), self::plugin_version());
 
         wp_register_script(self::NAME .'_admin', plugins_url('/scripts/admin.js', __FILE__),
             array(), self::plugin_version(), true);

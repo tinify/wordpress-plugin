@@ -26,14 +26,14 @@ div.tiny-account-container p {
     margin-bottom: 15px;
 }
 
-div.tiny-account-container .tinypng-api-key-step1 {
+div.tiny-account-container .tiny-update-account-step1 {
     float: left;
     padding-right: 30px;
     width: 280px;
     border-right: solid #E5E5E5 1px;
 }
 
-div.tiny-account-container .tinypng-api-key-step2 {
+div.tiny-account-container .tiny-update-account-step2 {
     float: left;
     width: 280px;
     padding-left: 30px;
@@ -49,12 +49,10 @@ div.tiny-account-container button {
     width: 100%;
 }
 
-
-
-
-
-
-
+div.tiny-update-account-step1 p.tiny-create-account-message, div.tiny-update-account-step2 p.tiny-update-account-message {
+    margin-top: 0;
+    color: #D54E21;
+}
 
 .tiny-compress-images .spinner.hidden {
     display: none;
@@ -84,8 +82,8 @@ div.tiny-account-container button {
 }
 
 .tiny-compress-images span.dashicons-before::before {
-    font-size: 25px;
-    margin-left: -3px;
+    font-size: 23px;
+    margin-left: -2px;
 }
 
 .tiny-compress-images .details-container {
@@ -108,6 +106,10 @@ div.tiny-account-container button {
 
 .tiny-compress-images span.success {
     color: #0EE00E;
+}
+
+.tiny-compress-images span.warning {
+    color: #F0AD4E;
 }
 
 .tiny-compress-images span.error {

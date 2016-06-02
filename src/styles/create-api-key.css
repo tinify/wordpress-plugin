@@ -73,7 +73,7 @@
   clear: both;
 }
 
-.tinypng-api-key-step1 {
+.tiny-update-account-step1 {
   float: left;
   padding-right: 30px;
   border-right: solid #E5E5E5 1px;
@@ -93,12 +93,12 @@
   width: 100%;
 }
 
-.tinypng-api-key-step2 {
+.tiny-update-account-step2 {
   float: left;
   padding-left: 30px;
 }
 
-.form-table td .tinypng-api-key-step2 p {
+.form-table td .tiny-update-account-step2 p {
   margin: 0;
   padding: 0;
 }

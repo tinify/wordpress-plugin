@@ -50,6 +50,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
         return \Tinify\getCompressionCount();
     }
 
+    public function get_api_key() {
+        return \Tinify\getKey();
+    }
+
     public function is_limit_reached() {
         return $this->last_status_code == 429;
     }
@@ -59,6 +63,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
             return (object) array(
                 "ok" => false,
                 "message" => self::KEY_MISSING,
+                "code" => 0,
             );
         }
 
@@ -75,6 +80,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
             return (object) array(
                 "ok" => false,
                 "message" => $message,
+                "code" => $err->status,
             );
         }
 
@@ -130,10 +136,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
         try {
             $this->set_request_options(\Tinify\Tinify::getAnonymousClient());
             \Tinify\createKey($email, $options);
-            update_option(self::get_prefixed_name('api_key'), \Tinify\getKey());
         } catch(\Tinify\Exception $err) {
             $this->last_status_code = $err->status;
-            throw new Tiny_Exception($err->getMessage(), get_class($err));
+            list($message) = explode(" (HTTP", $err->getMessage(), 2);
+            throw new Tiny_Exception($message, get_class($err));
         }
     }
 

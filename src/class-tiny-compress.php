@@ -45,6 +45,10 @@ abstract class Tiny_Compress {
 
     public function get_status() {
         $status = $this->validate();
+        if ($status->code == 401) {
+            $status->message = "The key that you have entered is not valid";
+        }
+
         $this->call_after_compress_callback();
         return $status;
     }

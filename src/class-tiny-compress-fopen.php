@@ -31,7 +31,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
     }
 
     public function get_compression_count() {
-        return 0;
+        return null;
+    }
+
+    public function get_api_key() {
+        return $this->api_key;
     }
 
     public function is_limit_reached() {
@@ -44,7 +48,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
         if ($status_code >= 400 && $status_code < 500 && $status_code != 401) {
             return (object) array("ok" => true);
         } else {
-            return (object) array("ok" => false, "message" => $details["message"]);
+            return (object) array(
+                "ok" => false,
+                "message" => $details["message"],
+                "code" => $status_code,
+            );
         }
     }
 

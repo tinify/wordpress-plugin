@@ -34,6 +34,10 @@ class Tiny_Settings extends Tiny_WP_Base {
         $this->compressor = Tiny_Compress::create($this->get_api_key(), $this->get_method('after_compress_callback'));
     }
 
+    public function get_absolute_url() {
+        return get_admin_url( null, 'options-media.php#' . self::NAME );
+    }
+
     public function xmlrpc_init() {
         try {
             $this->init_compressor();
@@ -83,6 +87,9 @@ class Tiny_Settings extends Tiny_WP_Base {
         add_settings_field($field, __('Original image', 'tiny-compress-images'), $this->get_method('render_resize'), 'media', $section);
 
         $field = self::get_prefixed_name('preserve_data');
+        register_setting('media', $field);
+
+        $field = self::get_prefixed_name('api_key_automated');
         register_setting('media', $field);
 
         add_settings_section('section_end', '', $this->get_method('render_section_end'), 'media');
@@ -343,7 +350,7 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function after_compress_callback($compressor) {
-        if ($count = $compressor->get_compression_count()) {
+        if (!is_null($count = $compressor->get_compression_count())) {
             $field = self::get_prefixed_name('status');
             update_option($field, $count);
         }
@@ -359,16 +366,33 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_status() {
-        $status = $this->compressor->get_status();
-        include(dirname(__FILE__) . '/views/account-update-modal.php');
-        include(dirname(__FILE__) . '/views/account-status-connected.php');
-    }
-
-    public function render_pending_status() {
         if (empty($this->get_api_key())) {
             include(dirname(__FILE__) . '/views/account-status-missing.php');
         } else {
+            $status = $this->compressor->get_status();
+            if (!$status->ok && $status->code == 401) {
+                $field = self::get_prefixed_name('api_key_automated');
+                if (get_option($field)) {
+                    $status->ok = true;
+                    $status->message = "An email has been sent with a link to activate your account";
+                }
+            }
+
+            include(dirname(__FILE__) . '/views/account-status-connected.php');
+        }
+    }
+
+    public function render_pending_status() {
+        include(dirname(__FILE__) . '/views/account-update-modal.php');
+
+        if (empty($this->get_api_key())) {
+            echo '<div id="tiny-compress-status" data-state="missing">';
+            include(dirname(__FILE__) . '/views/account-status-missing.php');
+            echo '</div>';
+        } else {
+            echo '<div id="tiny-compress-status" data-state="pending">';
             include(dirname(__FILE__) . '/views/account-status-pending.php');
+            echo '</div>';
         }
     }
 
@@ -377,40 +401,61 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function create_api_key() {
-        $compressor = $this->settings->get_compressor();
+        $compressor = $this->get_compressor();
         if ($compressor->can_create_key()) {
             try {
+                $site = str_replace(array('http://', 'https://'), '', get_bloginfo( 'url' ));
+                $identifier = 'WordPress plugin for ' . $site;
+                $link = $this->get_absolute_url();
+
                 $compressor->create_key($_POST['email'], array(
-                    "name" => $_POST['name'],
-                    "identifier" => $_POST['identifier'],
-                    "link" => $_POST['link'],
+                    'name' => $_POST['name'],
+                    'identifier' => $identifier,
+                    'link' => $link,
                 ));
-                echo json_encode(array('created' => true, 'exists' => false));
+
+                update_option(self::get_prefixed_name('api_key_automated'), true);
+                update_option(self::get_prefixed_name('api_key'), $compressor->get_api_key());
+                update_option(self::get_prefixed_name('status'), 0);
+
+                $status = (object) array(
+                    'ok' => true,
+                    'key' => $compressor->get_api_key(),
+                );
             } catch (Tiny_Exception $err) {
-                echo json_encode(array('created' => false, 'exists' => true, 'message' => $err->getMessage()));
+                $status = (object) array(
+                    'ok' => false,
+                    'message' => $err->getMessage(),
+                );
             }
         } else {
-            throw new Tiny_Exception('Old PHP/cURL version', 'ClientLibraryNotSupported');
+            $status = (object) array(
+                'ok' => false,
+                'message' => 'This feature is not available on your platform',
+            );
         }
 
+        $status->message = __($status->message, 'tiny-compress-images');
+        echo json_encode($status);
         exit();
     }
 
     public function update_api_key() {
         $key = $_POST['key'];
-        if ($key == '') {
-            update_option(self::get_prefixed_name('api_key'), $key);
-            echo json_encode(array('valid' => true));
-            exit();
-        }
-        $status = Tiny_Compress::create($key)->get_status();
-        if ($status->ok) {
-            update_option(self::get_prefixed_name('api_key'), $key);
-            echo json_encode(array('valid' => true));
+        if (empty($key)) {
+            /* Always save if key is blank, so the key can be deleted. */
+            $status = (object) array('ok' => true);
         } else {
-            echo json_encode(array('valid' => false));
+            $status = Tiny_Compress::create($key)->get_status();
         }
 
+        if ($status->ok) {
+            update_option(self::get_prefixed_name('api_key_automated'), false);
+            update_option(self::get_prefixed_name('api_key'), $key);
+        }
+
+        $status->message = __($status->message, 'tiny-compress-images');
+        echo json_encode($status);
         exit();
     }
 }

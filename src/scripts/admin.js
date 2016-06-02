@@ -28,72 +28,77 @@
     })
   }
 
-  function update_api_key() {
-  //   jQuery('.tinypng-api-key-message.invalid-key').hide()
-  //   jQuery('.tinypng-api-key-message.save-error').hide()
-  //   var key = jQuery("#tinypng_api_key").val()
-  //
-  //   jQuery.ajax({
-  //     url: ajaxurl,
-  //     type: "POST",
-  //     data: {
-  //       _nonce: tinyCompress.nonce,
-  //       action: 'tiny_update_api_key',
-  //       key: key
-  //     },
-  //     success: function(json) {
-  //       var data = JSON.parse(json)
-  //       if(data.valid) {
-  //         location.reload()
-  //       } else {
-  //           jQuery('.tinypng-api-key-message.invalid-key').show()
-  //         }
-  //     },
-  //     error: function() {
-  //       jQuery('.tinypng-api-key-message.save-error').show()
-  //     }
-  //   })
-  //   return false
-  }
+  function update_api_key(event) {
+    event.preventDefault()
+    jQuery(event.target).attr({disabled: true})
+    var parent = jQuery(event.target).closest("div")
 
-  function create_api_key() {
-    jQuery('.tinypng-api-key-message.success').hide()
-    jQuery('.tinypng-api-key-message.already-registered').hide()
-    jQuery('.tinypng-api-key-message.error').hide()
-    jQuery('.tinypng-api-key-message.invalid-form').hide()
-    var name = jQuery("#tinypng_api_key_name").val()
-    var email = jQuery("#tinypng_api_key_email").val()
-    var identifier = "WordPress plugin for " + jQuery("#tinypng_api_key_identifier").val()
-    var link = jQuery(location).attr('href')
-    if (name == '' || email == '') {
-      jQuery('.tinypng-api-key-message.invalid-form').show()
-      return false
-    }
+    var key = parent.find("#tinypng_api_key").val()
+    jQuery("#tinypng_api_key").val(key) /* Replace all key input fields. */
+
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
       data: {
         _nonce: tinyCompress.nonce,
-        action: 'tiny_create_api_key',
+        action: 'tiny_settings_update_api_key',
+        key: key,
+      },
+
+      success: function(json) {
+        jQuery(event.target).attr({disabled: false})
+        var status = JSON.parse(json)
+        if (status.ok) {
+          tb_remove()
+          parent.find('.tiny-update-account-message').text("").hide()
+          jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
+        } else {
+          parent.find('.tiny-update-account-message').text(status.message).show()
+        }
+      },
+
+      error: function() {
+        jQuery(event.target).attr({disabled: false})
+        parent.find('.tiny-update-account-message').text("Something went wrong, try again soon").show()
+      }
+    })
+
+    return false
+  }
+
+  function create_api_key(event) {
+    event.preventDefault()
+    jQuery(event.target).attr({disabled: true})
+    var parent = jQuery(event.target).closest("div")
+
+    var name = jQuery("#tinypng_api_key_name").val()
+    var email = jQuery("#tinypng_api_key_email").val()
+
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_settings_create_api_key',
         name: name,
         email: email,
-        identifier: identifier,
-        link: link,
       },
-      success: function(json) {
-        var data = JSON.parse(json)
 
-        if (data.created){
-          jQuery('.tinypng-api-key-message.success').show()
-        } else if (data.exists) {
-           jQuery('.tinypng-api-key-message.already-registered').show()
-         } else {
-            jQuery('.tinypng-api-key-message.error').show()
-            jQuery('.tinypng-error-message').text(data.message)
-         }
+      success: function(json) {
+        jQuery(event.target).attr({disabled: false})
+        var status = JSON.parse(json)
+        if (status.ok) {
+          parent.find('.tiny-create-account-message').text("").hide()
+          jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
+          jQuery("#tinypng_api_key").val(status.key)
+        } else {
+          parent.find('.tiny-create-account-message').text(status.message).show()
+        }
       },
+
       error: function() {
-        jQuery('.tinypng-api-key-message.error').show()
+        jQuery(event.target).attr({disabled: false})
+        parent.find('.tiny-create-account-message').text("Something went wrong, try again soon").show()
       }
     })
     return false
@@ -168,13 +173,13 @@
     }
   }
 
-  function changeEnterKeyTarget(forDiv, toButton) {
-    jQuery(forDiv).bind("keyup keypress", function(e) {
-    var code = e.keyCode || e.which
-    if (code == 13) {
-      jQuery(toButton).click()
-      return false
-    }
+  function changeEnterKeyTarget(selector, button) {
+    jQuery(selector).bind("keyup keypress", function(e) {
+      var code = e.keyCode || e.which
+      if (code == 13) {
+        jQuery(button).click()
+        return false
+      }
     })
   }
 
@@ -194,9 +199,11 @@
   } else if (adminpage === "options-media-php") {
     changeEnterKeyTarget('.tiny-update-account-step1', '.tiny-account-create-key')
     changeEnterKeyTarget('.tiny-update-account-step2', '.tiny-account-save-key')
+
     eventOn('click', 'button.tiny-account-create-key', create_api_key)
     eventOn('click', 'button.tiny-account-save-key', update_api_key)
-    jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
+
+    jQuery('#tiny-compress-status[data-state=pending]').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
 
     jQuery('input[name*="tinypng_sizes"], input#tinypng_resize_original_enabled').on("click", function() {
