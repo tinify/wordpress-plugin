@@ -366,7 +366,8 @@ class Tiny_Settings extends Tiny_WP_Base {
     }
 
     public function render_status() {
-        if (empty($this->get_api_key())) {
+        $key = $this->get_api_key();
+        if (empty($key)) {
             include(dirname(__FILE__) . '/views/account-status-missing.php');
         } else {
             $status = $this->compressor->get_status();
@@ -385,7 +386,8 @@ class Tiny_Settings extends Tiny_WP_Base {
     public function render_pending_status() {
         include(dirname(__FILE__) . '/views/account-update-modal.php');
 
-        if (empty($this->get_api_key())) {
+        $key = $this->get_api_key();
+        if (empty($key)) {
             echo '<div id="tiny-compress-status" data-state="missing">';
             include(dirname(__FILE__) . '/views/account-status-missing.php');
             echo '</div>';
