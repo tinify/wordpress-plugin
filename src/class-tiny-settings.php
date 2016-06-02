@@ -78,6 +78,9 @@ class Tiny_Settings extends Tiny_WP_Base {
         register_setting('media', $field);
         add_settings_field($field, __('TinyPNG account', 'tiny-compress-images'), $this->get_method('render_pending_status'), 'media', $section);
 
+        $field = self::get_prefixed_name('api_key_automated');
+        register_setting('media', $field);
+
         $field = self::get_prefixed_name('sizes');
         register_setting('media', $field);
         add_settings_field($field, __('File compression', 'tiny-compress-images'), $this->get_method('render_sizes'), 'media', $section);
@@ -87,9 +90,6 @@ class Tiny_Settings extends Tiny_WP_Base {
         add_settings_field($field, __('Original image', 'tiny-compress-images'), $this->get_method('render_resize'), 'media', $section);
 
         $field = self::get_prefixed_name('preserve_data');
-        register_setting('media', $field);
-
-        $field = self::get_prefixed_name('api_key_automated');
         register_setting('media', $field);
 
         add_settings_section('section_end', '', $this->get_method('render_section_end'), 'media');
