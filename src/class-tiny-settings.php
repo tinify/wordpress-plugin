@@ -422,18 +422,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 
                 $status = (object) array(
                     'ok' => true,
+                    'message' => null,
+                    'code' => null,
                     'key' => $compressor->get_api_key(),
                 );
             } catch (Tiny_Exception $err) {
                 $status = (object) array(
                     'ok' => false,
                     'message' => $err->getMessage(),
+                    'code' => null,
                 );
             }
         } else {
             $status = (object) array(
                 'ok' => false,
                 'message' => 'This feature is not available on your platform',
+                'code' => null,
             );
         }
 
@@ -446,7 +450,11 @@ class Tiny_Settings extends Tiny_WP_Base {
         $key = $_POST['key'];
         if (empty($key)) {
             /* Always save if key is blank, so the key can be deleted. */
-            $status = (object) array('ok' => true);
+            $status = (object) array(
+                'ok' => true,
+                'message' => null,
+                'code' => null,
+            );
         } else {
             $status = Tiny_Compress::create($key)->get_status();
         }
