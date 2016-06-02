@@ -15,8 +15,8 @@ $free_images_per_month = (count(self::get_active_tinify_sizes()) > 0) ? (floor( 
 
         <p><?php printf(__('Provide your name and email address to start optimizing images.', 'tiny-compress-images'), $free_images_per_month) ?></p>
 
-        <input class='tinypng-api-key-input' type='text' id='tinypng_api_key_name' name='tinypng_api_key_name' value="<?php echo htmlspecialchars($name) ?>" />
-        <input class='tinypng-api-key-input' type='text' id='tinypng_api_key_email' name='tinypng_api_key_email' value="<?php echo htmlspecialchars($email) ?>" />
+        <input class='tinypng-api-key-input' type='text' id='tinypng_api_key_name' name='tinypng_api_key_name' placeholder="Name" value="<?php echo htmlspecialchars($name) ?>" />
+        <input class='tinypng-api-key-input' type='text' id='tinypng_api_key_email' name='tinypng_api_key_email' placeholder="Email address" value="<?php echo htmlspecialchars($email) ?>" />
         <input type='hidden' id='tinypng_api_key_identifier' name='tinypng_api_key_identifier' value="<?php echo htmlspecialchars($identifier) ?>" />
         <p class="tiny-create-account-message error" style="display: none"></p>
         <button type='submit' class='tiny-account-create-key button button-primary'>
