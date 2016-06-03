@@ -6,7 +6,7 @@
             <?php printf(esc_html__("Enter your API key. If you have lost your key then head over to the %s to retrieve it.", "tiny-compress-images"), $link) ?>
             </p>
             <input class="tiny-update-account-input" type="text" id="tinypng_api_key" name="tinypng_api_key" size="35" spellcheck="false" value="<?php echo htmlspecialchars($this->get_api_key()) ?>" />
-            <button class="tiny-account-save-key button button-primary">
+            <button class="tiny-account-update-key button button-primary">
                 <?php echo esc_html__("Update", "tiny-compress-images") ?>
             </button>
             <p class="tiny-update-account-message error" style="display: none"></p>

@@ -174,8 +174,8 @@
   }
 
   function changeEnterKeyTarget(selector, button) {
-    jQuery(selector).bind("keyup keypress", function(e) {
-      var code = e.keyCode || e.which
+    eventOn('keyup keypress', selector, function(event) {
+      var code = event.keyCode || event.which
       if (code == 13) {
         jQuery(button).click()
         return false
@@ -198,10 +198,10 @@
     eventOn('click', 'button.tiny-compress', compress_image)
   } else if (adminpage === "options-media-php") {
     changeEnterKeyTarget('.tiny-update-account-step1', '.tiny-account-create-key')
-    changeEnterKeyTarget('.tiny-update-account-step2', '.tiny-account-save-key')
+    changeEnterKeyTarget('.tiny-update-account-step2', '.tiny-account-update-key')
 
     eventOn('click', 'button.tiny-account-create-key', create_api_key)
-    eventOn('click', 'button.tiny-account-save-key', update_api_key)
+    eventOn('click', 'button.tiny-account-update-key', update_api_key)
 
     jQuery('#tiny-compress-status[data-state=pending]').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
