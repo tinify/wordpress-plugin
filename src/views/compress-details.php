@@ -10,7 +10,7 @@ $size_exists = array_fill_keys($available_sizes, true);
 ksort($size_exists);
 
 ?><div class="details-container">
-    <div class="details" id="tinify-compress-details">
+    <div class="details" id="tiny-compress-details">
         <?php if ($tiny_metadata->can_be_compressed()) { ?>
             <?php if ($error) { ?>
                 <span class="icon dashicons dashicons-warning error"></span>

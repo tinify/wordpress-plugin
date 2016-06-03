@@ -33,8 +33,8 @@
     jQuery(event.target).attr({disabled: true})
     var parent = jQuery(event.target).closest("div")
 
-    var key = parent.find("#tinypng_api_key").val()
-    jQuery("#tinypng_api_key").val(key) /* Replace all key input fields. */
+    var key = parent.find("#tinypng_api_key, #tinypng_api_key_modal").val()
+    jQuery("#tinypng_api_key, #tinypng_api_key_modal").val(key) /* Replace all key input fields. */
 
     jQuery.ajax({
       url: ajaxurl,

@@ -15,7 +15,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
                                  ->getMock();
         $this->subject->set_compressor($this->compressor);
 
-        $this->wp->addOption("tinypng-api-key", "test123");
+        $this->wp->addOption("tinypng_api_key", "test123");
         $this->wp->addOption("tinypng_sizes[0]", "on");
         $this->wp->addOption("tinypng_sizes[large]", "on");
         $this->wp->addOption("tinypng_sizes[post-thumbnail]", "on");

@@ -24,13 +24,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     }
 
     public function testApiKeyInputPresence() {
-        $elements = self::$driver->findElements(WebDriverBy::name('tinypng-api-key'));
+        $elements = self::$driver->findElements(WebDriverBy::name('tinypng_api_key'));
         $this->assertEquals(1, count($elements));
-    }
-
-    public function testShouldPersistApiKey() {
-        $element = $this->set_api_key('1234');
-        $this->assertEquals('1234', $element->getAttribute('value'));
     }
 
     public function testShouldShowNoticeIfNoApiKeyIsSet() {
@@ -39,7 +34,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
     }
 
     public function testShouldShowNoNoticeIfApiKeyIsSet() {
-        $this->set_api_key('1234');
+        $this->set_api_key('PNG123');
+        self::$driver->navigate()->refresh(); /* Reload first. */
         $elements = self::$driver->findElements(WebDriverBy::cssSelector('.error a'));
         $this->assertEquals(0, count($elements));
     }
@@ -160,14 +156,14 @@ class SettingsIntegrationTest extends IntegrationTestCase {
         reset_webservice();
         $this->set_api_key('PNG123');
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-compress-status'),
-           "API connection successful\nYou have made"));
+            WebDriverBy::cssSelector('#tiny-compress-status p.tiny-account-status'),
+            "Your account is connected"));
     }
 
     public function testStatusPresenseFail() {
-        $this->set_api_key('INVALID123');
+        $this->set_api_key('INVALID123', false);
         self::$driver->wait(2)->until(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#tiny-compress-status'),
-           "API connection unsuccessful\nError: Credentials are invalid"));
+            WebDriverBy::cssSelector('#tiny-compress-status p.tiny-update-account-message'),
+            "The key that you have entered is not valid"));
     }
 }
