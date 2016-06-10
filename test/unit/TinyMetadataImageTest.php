@@ -160,6 +160,10 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
         $this->assertFalse($this->original->in_progress());
     }
 
+    public function testInProgressShouldReturnFalseIfMetaContainsTimestampAndOutput() {
+        $this->assertFalse($this->thumbnail->in_progress());
+    }
+
     public function testResizedShouldReturnTrueIfMetaHaveOutputAndResized() {
         $this->assertTrue($this->original->resized());
     }
