@@ -189,17 +189,17 @@ class Tiny_Metadata {
     }
 
     public function get_latest_error() {
-        $last_time = null;
-        $message = null;
+        $error_message = null;
+        $last_timestamp = null;
         foreach ($this->images as $size => $image) {
-            if (!is_array($image->meta)) continue;
-            $m = $image->meta;
-            if (isset($m['error']) && isset($m['message']) && ($last_time === null || $last_time < $m['timestamp'])) {
-                $last_time = $m['timestamp'];
-                $message = $m['message'];
+            if (isset($image->meta['error']) && isset($image->meta['message'])) {
+                if ($last_timestamp === null || $last_timestamp < $image->meta['timestamp']) {
+                    $last_timestamp = $image->meta['timestamp'];
+                    $error_message = $image->meta['message'];
+                }
             }
         }
-        return $message;
+        return $error_message;
     }
 
     public function get_image_sizes_optimized() {
@@ -236,7 +236,6 @@ class Tiny_Metadata {
         if ($this->statistics_calculated) return;
 
         foreach ($this->images as $image_size) {
-            if (!is_array($image_size->meta)) continue;
 
             // It is assumed that all active sizes are present in the meta information.
             if (isset($image_size->meta['input'])) {
