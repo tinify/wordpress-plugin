@@ -74,7 +74,7 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
 
     public function testAddResponseShouldNotAddIfNoRequestWasMade() {
         $this->large->add_response(array('input' => array('size' => 1024), 'output' => array('size' => 1024)));
-        $this->assertEquals(null, $this->large->meta);
+        $this->assertEquals(array(), $this->large->meta);
     }
 
     public function testAddExceptionShouldAddMessageAndError() {
@@ -93,7 +93,7 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
     public function testAddExceptionShouldNotAddIfNoRequestWasMade() {
         $this->large->add_exception(new Tiny_Exception("Image could not be found", "Not found"));
         unset($this->large->meta['timestamp']);
-        $this->assertEquals(null,  $this->large->meta);
+        $this->assertEquals(array(), $this->large->meta);
     }
 
     public function testImageHasBeenCompressedIfMetaHasOutput() {
@@ -142,17 +142,15 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
 
     public function testInProgressShouldReturnFalseIfMetaStartIsLongAgo() {
         $image = new Tiny_Metadata_Image("test.jpg", "");
-        $oneHourAgo = date('U') - (60 * 60);
-        $image->meta['start'] = $oneHourAgo;
-
+        $one_hour_ago = date('U') - (60 * 60);
+        $image->meta['start'] = $one_hour_ago;
         $this->assertFalse($image->in_progress());
     }
 
     public function testInProgressShouldReturnTruefMetaStartIsRecent() {
         $image = new Tiny_Metadata_Image("test.jpg", "");
-        $twoMinutesAgo = date('U') - (60 * 2);
-        $image->meta['start'] = $twoMinutesAgo;
-
+        $two_minutes_ago = date('U') - (60 * 2);
+        $image->meta['start'] = $two_minutes_ago;
         $this->assertTrue($image->in_progress());
     }
 

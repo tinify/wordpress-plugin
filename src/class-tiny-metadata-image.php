@@ -21,7 +21,7 @@
 class Tiny_Metadata_Image {
     public $filename;
     public $url;
-    public $meta;
+    public $meta = array();
 
     /* Used more than once and not trivial, so we are memoizing these */
     private $_exists;
@@ -33,9 +33,7 @@ class Tiny_Metadata_Image {
     }
 
     public function end_time() {
-        if (!is_array($this->meta))
-            return null;
-        elseif (isset($this->meta['end']))
+        if (isset($this->meta['end']))
             return $this->meta['end'];
         elseif (isset($this->meta['timestamp']))
             return $this->meta['timestamp'];
@@ -48,14 +46,14 @@ class Tiny_Metadata_Image {
     }
 
     public function add_response($response) {
-        if (is_array($this->meta)) {
+        if (isset($this->meta['start'])) {
             $this->meta = $response;
             $this->meta['end'] = time();
         }
     }
 
     public function add_exception($exception) {
-        if (is_array($this->meta)) {
+        if (isset($this->meta['start'])) {
             $this->meta = array(
                 'error'   => $exception->get_error(),
                 'message' => $exception->getMessage(),
@@ -65,7 +63,7 @@ class Tiny_Metadata_Image {
     }
 
     public function has_been_compressed() {
-        return is_array($this->meta) && isset($this->meta['output']);
+        return isset($this->meta['output']);
     }
 
     public function never_compressed() {
@@ -111,12 +109,11 @@ class Tiny_Metadata_Image {
     }
 
     public function in_progress() {
-        return is_array($this->meta) && $this->recently_started() && !isset( $this->meta['output'] );
+        return $this->recently_started() && !isset( $this->meta['output'] );
     }
 
     public function resized() {
-        return is_array($this->meta) && isset($this->meta['output']) && isset($this->meta['output']['resized'])
-            && $this->meta['output']['resized'];
+        return isset($this->meta['output']) && isset($this->meta['output']['resized']) && $this->meta['output']['resized'];
     }
 
     private function recently_started() {

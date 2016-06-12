@@ -96,7 +96,7 @@ ksort($size_exists);
                 $images = $tiny_metadata->get_images() + $size_exists;
                 foreach ($images as $size => $image) {
                     if (!is_object($image)) $image = new Tiny_Metadata_Image();
-                    $meta = $image->meta ? $image->meta : array() ?>
+                    ?>
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
                         echo (Tiny_Metadata::is_original($size) ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
@@ -105,12 +105,12 @@ ksort($size_exists);
                         } else if ($image->modified()) {
                             echo '<em>' . esc_html__('(modified after compression)', 'tiny-compress-images') . '</em>';
                         } else if ($image->resized()) {
-                            printf('<em>' . esc_html__('(resized to %dx%d)', 'tiny-compress-images') . '</em>', $meta['output']['width'], $meta['output']['height']);
+                            printf('<em>' . esc_html__('(resized to %dx%d)', 'tiny-compress-images') . '</em>', $image->meta['output']['width'], $image->meta['output']['height']);
                         }
                     ?></td>
                     <td><?php
                         if ($image->has_been_compressed()) {
-                            echo size_format($meta["input"]["size"], 1);
+                            echo size_format($image->meta["input"]["size"], 1);
                         } else if ($image->exists()) {
                             echo size_format($image->filesize(), 1);
                         } else {
@@ -120,7 +120,7 @@ ksort($size_exists);
                     <?php
                         if ($image->has_been_compressed()) {
                             echo '<td>';
-                            echo size_format($meta["output"]["size"], 1);
+                            echo size_format($image->meta["output"]["size"], 1);
                             echo '</td>';
                             echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
                         } elseif (!$image->exists()) {
