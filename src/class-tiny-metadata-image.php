@@ -111,7 +111,7 @@ class Tiny_Metadata_Image {
     }
 
     public function in_progress() {
-        return is_array($this->meta) && $this->recentlyStarted($this->meta['start']) && !isset($this->meta['output']);
+        return is_array($this->meta) && $this->recently_started() && !isset( $this->meta['output'] );
     }
 
     public function resized() {
@@ -119,7 +119,8 @@ class Tiny_Metadata_Image {
             && $this->meta['output']['resized'];
     }
 
-    private function recentlyStarted($start) {
-        return (date('U') - $start) < 60 * 30;
+    private function recently_started() {
+        $thirty_minutes_ago = date('U') - ( 60 * 30 );
+        return isset( $this->meta['start'] ) && ( $this->meta['start'] > $thirty_minutes_ago );
     }
 }
