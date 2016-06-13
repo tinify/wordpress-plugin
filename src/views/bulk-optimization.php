@@ -2,11 +2,11 @@
 require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
 ?>
 
-<div class='wrap tiny-bulk-optimization tiny-compress-images' id='tiny-bulk-optimization'>
+<div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization">
 <?php echo '<h1>' . __('Bulk Optimization', 'tiny-compress-images') . '</h2>' ?>
 
-    <div class='overview whitebox'>
-        <div class='statistics'>
+    <div class="overview whitebox">
+        <div class="statistics">
             <h3><?php echo __('Available images for optimization', 'tiny-compress-images') ?></h3>
 
             <p>
@@ -31,40 +31,39 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                 ?>
             </p>
 
-            <div class='totals'>
-                <div class='item'>
+            <div class="totals">
+                <div class="item">
                     <h3>
                         <?php echo __('Uploaded', 'tiny-compress-images') ?>
                         <br>
                         <?php echo __('images', 'tiny-compress-images') ?>
                     </h3>
-                    <span id='uploaded-images'>
+                    <span id="uploaded-images">
                         <?php echo $uploaded_images ?>
                     </span>
                 </div>
-                <div class='item'>
+                <div class="item">
                     <h3>
                         <?php echo __('Uncompressed', 'tiny-compress-images') ?>
                         <br>
                         <?php echo __('image sizes', 'tiny-compress-images') ?>
                     </h3>
-                    <span id='optimizable-image-sizes'>
+                    <span id="optimizable-image-sizes">
                         <?php echo $unoptimized_image_sizes ?>
                     </span>
-                    <div class='tooltip'>
-                        <span class='dashicons dashicons-info'></span>
-                        <div class='tip'>
+                    <div class="tooltip">
+                        <span class="dashicons dashicons-info"></span>
+                        <div class="tip">
                             <?php if ($uploaded_images > 0 && sizeof($active_tinify_sizes) > 0 && $unoptimized_image_sizes > 0) { ?>
                                 <p>
                                     <?php
-                                    printf(esc_html__('With your current settings you can still optimize a total of %d images sizes across your %d images.',
+                                    printf(esc_html__('With your current settings you can still optimize %d images sizes from your %d uploaded JPEG and PNG images.',
                                                       'tiny-compress-images'), $unoptimized_image_sizes, $uploaded_images);
                                     ?>
                                 </p>
                             <?php } ?>
                             <p>
                                 <?php
-
                                 if (sizeof($active_tinify_sizes) == 0) {
                                     echo __('Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.');
                                 } else {
@@ -85,7 +84,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                         </div>
                     </div>
                 </div>
-                <div class='item'>
+                <div class="item">
                     <h3>
                         <?php echo __('Estimated', 'tiny-compress-images') ?>
                         <br>
@@ -95,7 +94,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                     USD
                 </div>
             </div>
-            <div class='notes'>
+            <div class="notes">
                 <p><?php echo __('Remember') ?></p>
                 <p>
                     <?php echo __('In order to let us do the work for you, you need to keep this page open. But no worries - when stopped, we\'ll continue where you left off!'); ?>
@@ -103,17 +102,17 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
             </div>
         </div>
 
-        <div class='savings'>
-            <h3><?php echo __('Average Savings') ?></h3>
+        <div class="savings">
+            <h3><?php echo __('Total Savings') ?></h3>
             <p>
-                <?php echo __('Statistics based on the compressed JPEG and PNG images in your media library.'); ?>
+                <?php echo __('Statistics based on all available JPEG and PNG images in your media library.'); ?>
             </p>
             <?php
                 render_percentage_chart(round($savings_percentage, 1));
             ?>
-            <table class='savings-numbers'>
+            <table class="savings-numbers">
                 <tr>
-                    <td id='optimized-image-sizes' class='green'>
+                    <td id="optimized-image-sizes" class="green">
                         <?php echo ($optimized_image_sizes ? $optimized_image_sizes : '0'); ?>
                     </td>
                     <td>
@@ -121,7 +120,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                     </td>
                 </tr>
                 <tr>
-                    <td id='unoptimized-library-size'>
+                    <td id="unoptimized-library-size">
                         <?php echo ($unoptimized_library_size ? size_format($unoptimized_library_size, 2) : '-'); ?>
                     </td>
                     <td>
@@ -129,7 +128,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                     </td>
                 </tr>
                 <tr>
-                    <td class='green' id='optimized-library-size'>
+                    <td id="optimized-library-size" class="green">
                         <?php echo ($optimized_library_size ? size_format($optimized_library_size, 2) : '-') ?>
                     </td>
                     <td>
@@ -139,15 +138,15 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
             </table>
         </div>
 
-        <div class='optimize'>
+        <div class="optimize">
             <?php if (sizeof($ids_to_compress) > 0) { ?>
-                <div class='progressbar' id='compression-progress' data-amount-to-optimize='<?php echo $optimized_image_sizes + $unoptimized_image_sizes ?>' data-amount-optimized='0'>
-                    <div class='progressbar-progress'></div>
-                    <span id='optimized-so-far'>
+                <div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $optimized_image_sizes + $unoptimized_image_sizes ?>" data-amount-optimized="0">
+                    <div class="progressbar-progress"></div>
+                    <span id="optimized-so-far">
                         <?php echo $optimized_image_sizes ?>
                     </span> /
                     <?php echo $optimized_image_sizes + $unoptimized_image_sizes ?>
-                    <span id='percentage'></span>
+                    <span id="percentage"></span>
                 </div>
             <?php } ?>
             <?php
@@ -162,9 +161,9 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
     if (sizeof($ids_to_compress) > 0) {
         echo "<script type='text/javascript'>jQuery(function() { startBulkOptimization(" . json_encode($ids_to_compress) . ")})</script>";
     ?>
-    <table class='wp-list-table widefat fixed striped media whitebox' id='media-items'>
+    <table class="wp-list-table widefat fixed striped media whitebox" id="media-items">
         <tr>
-            <th class='thumbnail'></th>
+            <th class="thumbnail"></th>
             <th><?php echo __('File', 'tiny-compress-images') ?></th>
             <th><?php echo __('Sizes optimized', 'tiny-compress-images') ?></th>
             <th><?php echo __('Original total size', 'tiny-compress-images') ?></th>
