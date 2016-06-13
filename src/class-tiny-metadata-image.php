@@ -25,7 +25,7 @@ class Tiny_Metadata_Image {
 
     /* Used more than once and not trivial, so we are memoizing these */
     private $_exists;
-    private $_same_size;
+    private $_file_size;
 
     public function __construct($filename=null, $url=null) {
         $this->filename = $filename;
@@ -71,7 +71,14 @@ class Tiny_Metadata_Image {
     }
 
     public function filesize() {
-        return filesize($this->filename);
+        if ( is_null( $this->_file_size ) ) {
+            if ( $this->exists() ) {
+                $this->_file_size = filesize( $this->filename );
+            } else {
+                $this->_file_size = 0;
+            }
+        }
+        return $this->_file_size;
     }
 
     public function exists() {
@@ -82,10 +89,7 @@ class Tiny_Metadata_Image {
     }
 
     private function same_size() {
-        if (is_null($this->_same_size)) {
-            $this->_same_size = $this->filesize() == $this->meta['output']['size'];
-        }
-        return $this->_same_size;
+        return ( $this->filesize() == $this->meta['output']['size'] );
     }
 
     public function still_exists() {

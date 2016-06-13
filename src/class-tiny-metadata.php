@@ -235,22 +235,28 @@ class Tiny_Metadata {
     protected function calculate_statistics() {
         if ($this->statistics_calculated) return;
 
-        foreach ($this->images as $image_size) {
+        $settings = new Tiny_Settings();
+        $active_sizes = $settings->get_sizes();
 
-            // It is assumed that all active sizes are present in the meta information.
-            if (isset($image_size->meta['input'])) {
-                $this->initial_total_size += intval($image_size->meta['input']['size']);
+        foreach ($this->images as $image => $image_size) {
+            if (array_key_exists( $image, $active_sizes )) {
+                if (isset($image_size->meta['input'])) {
+                    $this->initial_total_size += intval($image_size->meta['input']['size']);
 
-                if (isset($image_size->meta['output'])) {
-                    $this->optimized_total_size += intval($image_size->meta['output']['size']);
-                    $this->image_sizes_optimized += 1;
-                } else {
-                    $this->optimized_total_size += intval($image_size->meta['input']['size']);
+                    if (isset($image_size->meta['output'])) {
+                        $this->optimized_total_size += intval($image_size->meta['output']['size']);
+                        $this->image_sizes_optimized += 1;
+                    } else {
+                        $this->optimized_total_size += intval($image_size->meta['input']['size']);
+                    }
+                } elseif ( $image_size->exists() ) {
+                    $this->initial_total_size += $image_size->filesize();
+                    $this->optimized_total_size += $image_size->filesize();
                 }
-            } // else we have not analysed this image yet
+            }
+
         }
 
-        $settings = new Tiny_Settings();
         $active = $this->get_count(array('uncompressed', 'never_compressed'), $settings->get_active_tinify_sizes());
         $this->image_sizes_unoptimized = $active['never_compressed'];
 
