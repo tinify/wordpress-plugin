@@ -100,7 +100,9 @@ ksort($size_exists);
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
                         echo (Tiny_Metadata::is_original($size) ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
-                        if ($image->missing()) {
+                        if (!array_key_exists( $size, $active_sizes )) {
+                            echo '<em>' . esc_html__('(not in use)', 'tiny-compress-images') . '</em>';
+                        } else if ($image->missing()) {
                             echo '<em>' . esc_html__('(file removed)', 'tiny-compress-images') . '</em>';
                         } else if ($image->modified()) {
                             echo '<em>' . esc_html__('(modified after compression)', 'tiny-compress-images') . '</em>';
@@ -123,14 +125,16 @@ ksort($size_exists);
                             echo size_format($image->meta["output"]["size"], 1);
                             echo '</td>';
                             echo '<td>' . human_time_diff($image->end_time($size)) . ' ' . esc_html__('ago', 'tiny-compress-images') .'</td>';
-                        } elseif (!$image->exists()) {
+                        } else if (!$image->exists()) {
                             echo '<td colspan=2><em>' . esc_html__('Not present or duplicate', 'tiny-compress-images') . '</em></td>';
-                        } elseif (isset($size_active[$size])) {
+                        } else if (isset($size_active[$size])) {
                             echo '<td colspan=2><em>' . esc_html__('Not compressed', 'tiny-compress-images') . '</em></td>';
-                        } elseif (isset($size_exists[$size])) {
+                        } else if (isset($size_exists[$size])) {
                             echo '<td colspan=2><em>' . esc_html__('Not configured to be compressed', 'tiny-compress-images') . '</em></td>';
+                        } else if (!array_key_exists( $size, $active_sizes )) {
+                            echo '<td colspan=2><em>' . esc_html__('Size is not in use', 'tiny-compress-images') . '</em></td>';
                         } else {
-                            echo '<td colspan=2><em>' . esc_html__('Size is no longer in use', 'tiny-compress-images') . '</em></td>';
+                            echo '<td>-</td>';
                         }
                      ?>
                 </tr>

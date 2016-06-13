@@ -11,10 +11,10 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
 
             <p>
                 <?php
-                if ($optimized_image_sizes + $unoptimized_image_sizes == 0) {
-                    echo __('This page is designed to bulk compress all your images. You don\'t seem to have uploaded any.');
+                if ($optimized_image_sizes + $available_unoptimised_sizes == 0) {
+                    echo __('This page is designed to bulk compress all your images. There don\'t seem to be any available.');
                 } else {
-                    $percentage = round($optimized_image_sizes / ($optimized_image_sizes + $unoptimized_image_sizes) * 100, 2);
+                    $percentage = round($optimized_image_sizes / ($optimized_image_sizes + $available_unoptimised_sizes) * 100, 2);
                     if ($percentage == 100) {
                         echo __('Great! Your entire library is optimimized!');
                         // TODO: If we have 0 active sizes, show a different message.
@@ -49,16 +49,16 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
                         <?php echo __('image sizes', 'tiny-compress-images') ?>
                     </h3>
                     <span id="optimizable-image-sizes">
-                        <?php echo $unoptimized_image_sizes ?>
+                        <?php echo $available_unoptimised_sizes ?>
                     </span>
                     <div class="tooltip">
                         <span class="dashicons dashicons-info"></span>
                         <div class="tip">
-                            <?php if ($uploaded_images > 0 && sizeof($active_tinify_sizes) > 0 && $unoptimized_image_sizes > 0) { ?>
+                            <?php if ($uploaded_images > 0 && sizeof($active_tinify_sizes) > 0 && $available_unoptimised_sizes > 0) { ?>
                                 <p>
                                     <?php
                                     printf(esc_html__('With your current settings you can still optimize %d images sizes from your %d uploaded JPEG and PNG images.',
-                                                      'tiny-compress-images'), $unoptimized_image_sizes, $uploaded_images);
+                                                      'tiny-compress-images'), $available_unoptimised_sizes, $uploaded_images);
                                     ?>
                                 </p>
                             <?php } ?>
@@ -97,7 +97,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
             <div class="notes">
                 <p><?php echo __('Remember') ?></p>
                 <p>
-                    <?php echo __('In order to let us do the work for you, you need to keep this page open. But no worries - when stopped, we\'ll continue where you left off!'); ?>
+                    <?php echo __('For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!'); ?>
                 </p>
             </div>
         </div>
@@ -140,17 +140,17 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
 
         <div class="optimize">
             <?php if (sizeof($ids_to_compress) > 0) { ?>
-                <div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $optimized_image_sizes + $unoptimized_image_sizes ?>" data-amount-optimized="0">
+                <div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $optimized_image_sizes + $available_unoptimised_sizes ?>" data-amount-optimized="0">
                     <div class="progressbar-progress"></div>
                     <span id="optimized-so-far">
                         <?php echo $optimized_image_sizes ?>
                     </span> /
-                    <?php echo $optimized_image_sizes + $unoptimized_image_sizes ?>
+                    <?php echo $optimized_image_sizes + $available_unoptimised_sizes ?>
                     <span id="percentage"></span>
                 </div>
             <?php } ?>
             <?php
-            if ($unoptimized_image_sizes > 0) {
+            if ($available_unoptimised_sizes > 0) {
                 require_once(dirname(__FILE__) . '/bulk-optimization/form.php');
             }
             ?>
