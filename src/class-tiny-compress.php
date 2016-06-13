@@ -92,6 +92,10 @@ abstract class Tiny_Compress {
             throw new Tiny_Exception('File does not exist', 'FileError');
         }
 
+        if (!is_writable($file)) {
+            throw new Tiny_Exception('No permission to write to file', 'FileError');
+        }
+
         if (!self::needs_resize($file, $resize_options)) {
             $resize_options = false;
         }
