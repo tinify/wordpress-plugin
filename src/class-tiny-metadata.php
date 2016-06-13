@@ -242,8 +242,15 @@ class Tiny_Metadata {
                     $this->initial_total_size += intval($image_size->meta['input']['size']);
 
                     if (isset($image_size->meta['output'])) {
-                        $this->optimized_total_size += intval($image_size->meta['output']['size']);
-                        $this->image_sizes_optimized += 1;
+                        if ($image_size->modified()) {
+                            $this->optimized_total_size += $image_size->filesize();
+                            if (in_array($image, $active_tinify_sizes, true)) {
+                                $this->image_sizes_available_for_compression += 1;
+                            }
+                        } else {
+                            $this->optimized_total_size += intval($image_size->meta['output']['size']);
+                            $this->image_sizes_optimized += 1;
+                        }
                     } else {
                         $this->optimized_total_size += intval($image_size->meta['input']['size']);
                     }
