@@ -21,11 +21,11 @@
 class Tiny_Metadata_Image {
     public $filename;
     public $url;
-    public $meta;
+    public $meta = array();
 
     /* Used more than once and not trivial, so we are memoizing these */
     private $_exists;
-    private $_same_size;
+    private $_file_size;
 
     public function __construct($filename=null, $url=null) {
         $this->filename = $filename;
@@ -33,9 +33,7 @@ class Tiny_Metadata_Image {
     }
 
     public function end_time() {
-        if (!is_array($this->meta))
-            return null;
-        elseif (isset($this->meta['end']))
+        if (isset($this->meta['end']))
             return $this->meta['end'];
         elseif (isset($this->meta['timestamp']))
             return $this->meta['timestamp'];
@@ -48,14 +46,14 @@ class Tiny_Metadata_Image {
     }
 
     public function add_response($response) {
-        if (is_array($this->meta)) {
+        if (isset($this->meta['start'])) {
             $this->meta = $response;
             $this->meta['end'] = time();
         }
     }
 
     public function add_exception($exception) {
-        if (is_array($this->meta)) {
+        if (isset($this->meta['start'])) {
             $this->meta = array(
                 'error'   => $exception->get_error(),
                 'message' => $exception->getMessage(),
@@ -65,7 +63,7 @@ class Tiny_Metadata_Image {
     }
 
     public function has_been_compressed() {
-        return is_array($this->meta) && isset($this->meta['output']);
+        return isset($this->meta['output']);
     }
 
     public function never_compressed() {
@@ -73,7 +71,14 @@ class Tiny_Metadata_Image {
     }
 
     public function filesize() {
-        return filesize($this->filename);
+        if ( is_null( $this->_file_size ) ) {
+            if ( $this->exists() ) {
+                $this->_file_size = filesize( $this->filename );
+            } else {
+                $this->_file_size = 0;
+            }
+        }
+        return $this->_file_size;
     }
 
     public function exists() {
@@ -84,10 +89,7 @@ class Tiny_Metadata_Image {
     }
 
     private function same_size() {
-        if (is_null($this->_same_size)) {
-            $this->_same_size = $this->filesize() == $this->meta['output']['size'];
-        }
-        return $this->_same_size;
+        return ( $this->filesize() == $this->meta['output']['size'] );
     }
 
     public function still_exists() {
@@ -111,16 +113,15 @@ class Tiny_Metadata_Image {
     }
 
     public function in_progress() {
-        return is_array($this->meta) && $this->recentlyStarted($this->meta['start'])
-            && !isset($this->meta['output']);
+        return $this->recently_started() && !isset( $this->meta['output'] );
     }
 
     public function resized() {
-        return is_array($this->meta) && isset($this->meta['output']) && isset($this->meta['output']['resized'])
-            && $this->meta['output']['resized'];
+        return isset($this->meta['output']) && isset($this->meta['output']['resized']) && $this->meta['output']['resized'];
     }
 
-    private function recentlyStarted($start) {
-        return (date('U') - $start) < 60 * 30;
+    private function recently_started() {
+        $thirty_minutes_ago = date('U') - ( 60 * 30 );
+        return isset( $this->meta['start'] ) && ( $this->meta['start'] > $thirty_minutes_ago );
     }
 }

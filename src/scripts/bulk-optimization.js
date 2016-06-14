@@ -5,7 +5,7 @@
     var optimizedSoFar = parseInt(jQuery("#optimized-so-far").text());;
     jQuery("#optimized-so-far").html(amountOptimized + optimizedSoFar);
 
-    var percentage = Math.round((amountOptimized + optimizedSoFar) / totalToOptimize * 100, 2) + "%";
+    var percentage = Math.round((amountOptimized + optimizedSoFar) / totalToOptimize * 100, 1) + "%";
     jQuery('div.progressbar-progress').css('width', percentage);
     jQuery('div.progressbar span#percentage').html("(" + percentage + ")");
 

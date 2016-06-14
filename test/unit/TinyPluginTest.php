@@ -128,12 +128,16 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $metadata = $this->wp->getMetadata(1, 'tiny_compress_images', true);
         foreach ($metadata as $key => $values) {
-            $this->assertBetween(-1, +1, $values['end'] - time());
-            unset($metadata[$key]['end']);
-            unset($metadata[$key]['start']);
+            if (!empty($values)) {
+                $this->assertBetween(-1, +1, $values['end'] - time());
+                unset($metadata[$key]['end']);
+                unset($metadata[$key]['start']);
+            }
         }
         $this->assertEquals(array(
             0 => array('input' => array('size' => 12345), 'output' => array('size' => 10000, 'width' => 4000, 'height' => 3000)),
+            'thumbnail' => array(),
+            'medium' => array(),
             'large' => array('input' => array('size' => 10000), 'output' => array('size' => 6789, 'width' => 1024, 'height' => 1024)),
             'post-thumbnail' => array('input' => array('size' => 1234), 'output' => array('size' => 1000, 'width' => 800, 'height' => 500)),
         ), $metadata);
@@ -150,11 +154,15 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $metadata = $this->wp->getMetadata(1, 'tiny_compress_images', true);
         foreach ($metadata as $key => $values) {
-            $this->assertEquals(time(), $values['timestamp'], 2);
-            unset($metadata[$key]['timestamp']);
+            if (!empty($values)) {
+                $this->assertEquals(time(), $values['timestamp'], 2);
+                unset($metadata[$key]['timestamp']);
+            }
         }
         $this->assertEquals(array(
             0 => array('error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file'),
+            'thumbnail' => array(),
+            'medium' => array(),
             'large' => array('error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file'),
             'post-thumbnail' => array('error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file'),
         ), $metadata);

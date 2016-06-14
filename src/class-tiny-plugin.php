@@ -208,31 +208,31 @@ class Tiny_Plugin extends Tiny_WP_Base {
              ORDER BY ID DESC", ARRAY_A);
 
         $optimized_image_sizes = 0;
-        $unoptimized_image_sizes = 0;
+        $available_unoptimised_sizes = 0;
         $optimized_library_size = 0;
         $unoptimized_library_size = 0;
 
         for ($i = 0; $i < sizeof($result); $i++) {
             $tiny_metadata = new Tiny_Metadata($result[$i]["ID"]);
-            $unoptimized_image_sizes += $tiny_metadata->get_image_sizes_to_be_optimized();
+            $available_unoptimised_sizes += $tiny_metadata->get_image_sizes_available_for_compression();
             $optimized_image_sizes += $tiny_metadata->get_image_sizes_optimized();
             $optimized_library_size += $tiny_metadata->get_total_size_after_optimization();
             $unoptimized_library_size += $tiny_metadata->get_total_size_before_optimization();
         }
 
         $usage_this_month = $this->settings->get_compression_count();
-        $estimated_cost = $this->estimate_cost($unoptimized_image_sizes + $usage_this_month) -
+        $estimated_cost = $this->estimate_cost($available_unoptimised_sizes + $usage_this_month) -
             $this->estimate_cost($usage_this_month);
 
         $savings_percentage = 0;
         if ($optimized_library_size != 0 && $unoptimized_library_size != 0) {
             $savings_percentage = (100 - ($optimized_library_size / $unoptimized_library_size * 100));
-            $savings_percentage  = round($savings_percentage, 2);
+            $savings_percentage  = round($savings_percentage, 1);
         }
 
         return array(
             'optimized-image-sizes' => $optimized_image_sizes,
-            'unoptimized-image-sizes' => $unoptimized_image_sizes,
+            'available-unoptimised-sizes' => $available_unoptimised_sizes,
             'optimized-library-size' => $optimized_library_size,
             'unoptimized-library-size' => $unoptimized_library_size,
             'estimated-cost' => $estimated_cost,
@@ -248,7 +248,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         echo json_encode(array(
             'optimized-image-sizes' => $stats['optimized-image-sizes'],
-            'unoptimized-image-sizes' => $stats['unoptimized-image-sizes'],
+            'available-unoptimised-sizes' => $stats['available-unoptimised-sizes'],
             'optimized-library-size' => ($stats['optimized-library-size'] ? size_format($stats['optimized-library-size'], 2) : '-'),
             'unoptimized-library-size' => ($stats['unoptimized-library-size'] ? size_format($stats['unoptimized-library-size'], 2) : '-'),
             'estimated-cost' => $stats['estimated-cost'],
@@ -297,6 +297,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     private function render_compress_details($tiny_metadata) {
         $available_sizes = array_keys($this->settings->get_sizes());
+        $active_sizes = $this->settings->get_sizes();;
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
         $in_progress = count($tiny_metadata->filter_images('in_progress'));
 
@@ -315,7 +316,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         $stats = $this->get_optimization_statistics();
         $optimized_image_sizes = $stats['optimized-image-sizes'];
-        $unoptimized_image_sizes = $stats['unoptimized-image-sizes'];
+        $available_unoptimised_sizes = $stats['available-unoptimised-sizes'];
         $optimized_library_size = $stats['optimized-library-size'];
         $unoptimized_library_size = $stats['unoptimized-library-size'];
         $estimated_cost = $stats['estimated-cost'];

@@ -27,7 +27,7 @@ class Tiny_Metadata {
     private $images = array();
     private $statistics_calculated = false;
     private $image_sizes_optimized = 0;
-    private $image_sizes_unoptimized = 0;
+    private $image_sizes_available_for_compression = 0;
     private $initial_total_size = 0;
     private $optimized_total_size = 0;
 
@@ -190,17 +190,17 @@ class Tiny_Metadata {
     }
 
     public function get_latest_error() {
-        $last_time = null;
-        $message = null;
+        $error_message = null;
+        $last_timestamp = null;
         foreach ($this->images as $size => $image) {
-            if (!is_array($image->meta)) continue;
-            $m = $image->meta;
-            if (isset($m['error']) && isset($m['message']) && ($last_time === null || $last_time < $m['timestamp'])) {
-                $last_time = $m['timestamp'];
-                $message = $m['message'];
+            if (isset($image->meta['error']) && isset($image->meta['message'])) {
+                if ($last_timestamp === null || $last_timestamp < $image->meta['timestamp']) {
+                    $last_timestamp = $image->meta['timestamp'];
+                    $error_message = $image->meta['message'];
+                }
             }
         }
-        return $message;
+        return $error_message;
     }
 
     public function get_image_sizes_optimized() {
@@ -208,9 +208,9 @@ class Tiny_Metadata {
         return $this->image_sizes_optimized;
     }
 
-    public function get_image_sizes_to_be_optimized() {
+    public function get_image_sizes_available_for_compression() {
         if (!$this->statistics_calculated) $this->calculate_statistics();
-        return $this->image_sizes_unoptimized;
+        return $this->image_sizes_available_for_compression;
     }
 
     public function get_total_size_before_optimization() {
@@ -227,36 +227,49 @@ class Tiny_Metadata {
        if (!$this->statistics_calculated) $this->calculate_statistics();
        $before = $this->get_total_size_before_optimization();
        $after = $this->get_total_size_after_optimization();
+
        /* Avoid division by zero. */
-       if ($before == 0) return 0;
-       return ($before - $after) / $before * 100;
+       if ($before === 0) {
+           return 0;
+       } else {
+           return ($before - $after) / $before * 100;
+       }
     }
 
-    // Only takes into account all images that have been processed by our plugin.
-    // They need to have 'tiny_compress_images' metadata in wp_postmeta.
-    // We only check the sizes that are present in the installation and exist.
     protected function calculate_statistics() {
         if ($this->statistics_calculated) return;
 
-        foreach ($this->images as $image_size) {
-            if (!is_array($image_size->meta)) continue;
-
-            // It is assumed that all active sizes are present in the meta information.
-            if (isset($image_size->meta['input'])) {
-                $this->initial_total_size += intval($image_size->meta['input']['size']);
-
-                if (isset($image_size->meta['output'])) {
-                    $this->optimized_total_size += intval($image_size->meta['output']['size']);
-                    $this->image_sizes_optimized += 1;
-                } else {
-                    $this->optimized_total_size += intval($image_size->meta['input']['size']);
-                }
-            } // else we have not analysed this image yet
-        }
-
         $settings = new Tiny_Settings();
-        $active = $this->get_count(array('uncompressed', 'never_compressed'), $settings->get_active_tinify_sizes());
-        $this->image_sizes_unoptimized = $active['never_compressed'];
+        $active_sizes = $settings->get_sizes();
+        $active_tinify_sizes = $settings->get_active_tinify_sizes();
+
+        foreach ($this->images as $image => $image_size) {
+            if (array_key_exists( $image, $active_sizes )) {
+                if (isset($image_size->meta['input'])) {
+                    $this->initial_total_size += intval($image_size->meta['input']['size']);
+
+                    if (isset($image_size->meta['output'])) {
+                        if ($image_size->modified()) {
+                            $this->optimized_total_size += $image_size->filesize();
+                            if (in_array($image, $active_tinify_sizes, true)) {
+                                $this->image_sizes_available_for_compression += 1;
+                            }
+                        } else {
+                            $this->optimized_total_size += intval($image_size->meta['output']['size']);
+                            $this->image_sizes_optimized += 1;
+                        }
+                    } else {
+                        $this->optimized_total_size += intval($image_size->meta['input']['size']);
+                    }
+                } elseif ( $image_size->exists() ) {
+                    $this->initial_total_size += $image_size->filesize();
+                    $this->optimized_total_size += $image_size->filesize();
+                    if (in_array($image, $active_tinify_sizes, true)) {
+                        $this->image_sizes_available_for_compression += 1;
+                    }
+                }
+            }
+        }
 
         $this->statistics_calculated = true;
     }
