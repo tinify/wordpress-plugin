@@ -16,7 +16,7 @@ class Tiny_Metadata_Empty_Test extends TinyTestCase {
 
     public function testGetImageSizesUnCompressed() {
         $active_sizes = array(0 => Tiny_Metadata::ORIGINAL, 1 => "thumbnail", 2 => "small", 3 => "medium", 4 => "large");
-        $this->assertEquals(4, $this->subject->get_image_sizes_to_be_optimized($active_sizes));
+        $this->assertEquals(4, $this->subject->get_image_sizes_available_for_compression($active_sizes));
     }
 
     public function testGetSavings() {
