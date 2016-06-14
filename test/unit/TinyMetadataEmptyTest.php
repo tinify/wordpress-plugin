@@ -6,8 +6,13 @@ class Tiny_Metadata_Empty_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
-        $this->wp->setMetadata(1, array());
-        $this->subject = new Tiny_Metadata(1, $this->json("wp_meta_default_sizes"));
+        $wp_meta = $this->json("_wp_attachment_metadata");
+        $tiny_meta = $this->json("tiny_compress_images");
+
+        $this->wp->setMetadata(1, "");
+        $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
+        $this->subject = new Tiny_Metadata(1, $wp_meta);
+
     }
 
     public function testGetImageSizesCompressed() {
@@ -15,8 +20,7 @@ class Tiny_Metadata_Empty_Test extends TinyTestCase {
     }
 
     public function testGetImageSizesUnCompressed() {
-        $active_sizes = array(0 => Tiny_Metadata::ORIGINAL, 1 => "thumbnail", 2 => "small", 3 => "medium", 4 => "large");
-        $this->assertEquals(4, $this->subject->get_image_sizes_available_for_compression($active_sizes));
+        $this->assertEquals(3, $this->subject->get_image_sizes_available_for_compression());
     }
 
     public function testGetSavings() {
@@ -24,10 +28,10 @@ class Tiny_Metadata_Empty_Test extends TinyTestCase {
     }
 
     public function testGetInitialTotalSize() {
-        $this->assertEquals(0, $this->subject->get_total_size_before_optimization());
+        $this->assertEquals(233568, $this->subject->get_total_size_before_optimization());
     }
 
     public function testGetCompressedTotalSize() {
-        $this->assertEquals(0, $this->subject->get_total_size_after_optimization());
+        $this->assertEquals(233568, $this->subject->get_total_size_after_optimization());
     }
 }

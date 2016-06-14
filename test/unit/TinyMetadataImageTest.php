@@ -6,29 +6,13 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
-        $meta = array(Tiny_Metadata::META_KEY => array(
-            Tiny_Metadata::ORIGINAL => array(
-                "input" => array("size" => 146480),
-                "output" => array("size" => 137856, "resized" => true),
-                'end' => 1447925138,
-                'start' => 1447925134),
-            "thumbnail" => array(
-                "input" => array("size" => 46480),
-                "output" => array("size" => 37856),
-                'timestamp' => 1447925244),
-            "medium" => array(
-                "input" => array("size" => 66480),
-                "output" => array("size" => 57856)),
-            "small" => array(
-                "input" => array("size" => 66480),
-                'start' => 1447925134),
-            "failed" => array(
-                "input" => array()
-            )
-        ));
-        $this->wp->setMetadata(1, $meta);
-        $this->wp->createImagesFromMeta($this->json("wp_meta_default_sizes"), $meta, 137856);
-        $metadata = new Tiny_Metadata(1, $this->json("wp_meta_default_sizes"));
+        $wp_meta = $this->json("_wp_attachment_metadata");
+        $tiny_meta = $this->json("tiny_compress_images");
+
+        $this->wp->setMetadata(1, $tiny_meta);
+        $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
+        $metadata = new Tiny_Metadata(1, $wp_meta);
+
         $this->original = $metadata->get_image();
         $this->thumbnail = $metadata->get_image('thumbnail');
         $this->small = $metadata->get_image('small');

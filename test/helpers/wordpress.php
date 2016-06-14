@@ -143,7 +143,7 @@ class WordPressStubs {
     }
 
     public function setMetadata($id, $values) {
-        $this->metadata[$id] = $values;
+        $this->metadata[$id] = array(Tiny_Metadata::META_KEY => $values);
     }
 
     public function getCalls($method) {
@@ -209,11 +209,11 @@ class WordPressStubs {
             ->at($dir);
 
         foreach ($wp_meta["sizes"] as $image_size => $values) {
-            if (isset($tiny_meta[Tiny_Metadata::META_KEY][$image_size])) {
-                if (isset($tiny_meta[Tiny_Metadata::META_KEY][$image_size]["output"])) {
-                    $file_size = $tiny_meta[Tiny_Metadata::META_KEY][$image_size]["output"]["size"];
+            if (isset($tiny_meta[$image_size])) {
+                if (isset($tiny_meta[$image_size]["output"])) {
+                    $file_size = $tiny_meta[$image_size]["output"]["size"];
                 } else {
-                    $file_size = $tiny_meta[Tiny_Metadata::META_KEY][$image_size]["input"]["size"];
+                    $file_size = $tiny_meta[$image_size]["input"]["size"];
                 }
                 vfsStream::newFile($values["file"])
                     ->withContent(new LargeFileContent($file_size))
