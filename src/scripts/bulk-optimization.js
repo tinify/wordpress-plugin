@@ -27,7 +27,6 @@
         json: true
       },
       success: function(data) {
-        console.log(data);
         jQuery("#unoptimized-library-size").html(data['unoptimized-library-size']);
         jQuery("#optimized-library-size").html(data['optimized-library-size']);
         var size = jQuery('div.savings-chart').data('full-circle-size')

@@ -119,7 +119,8 @@ class Tiny_Metadata {
                 $values[$size] = $image->meta;
             }
         }
-        update_post_meta($this->id, self::META_KEY, $values);
+
+        $val = update_post_meta($this->id, self::META_KEY, $values);
     }
 
     public function get_id() {
@@ -226,6 +227,8 @@ class Tiny_Metadata {
        if (!$this->statistics_calculated) $this->calculate_statistics();
        $before = $this->get_total_size_before_optimization();
        $after = $this->get_total_size_after_optimization();
+
+       /* Avoid division by zero. */
        if ($before === 0) {
            return 0;
        } else {

@@ -47,13 +47,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function admin_init() {
-        add_filter('manage_media_columns', $this->get_method('add_media_columns'));
-        add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
-        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
-        add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
-        add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
         add_action('admin_action_tiny_bulk_optimization', $this->get_method('bulk_optimization'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
+        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
+
+        add_filter('manage_media_columns', $this->get_method('add_media_columns'));
+        add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
+
+        add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
+        add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
+
         $plugin = plugin_basename(dirname(dirname(__FILE__)) . '/tiny-compress-images.php');
         add_filter("plugin_action_links_$plugin", $this->get_method('add_plugin_links'));
         add_thickbox();

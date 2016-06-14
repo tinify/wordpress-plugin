@@ -11,6 +11,9 @@ function mock_png_response() {
     header("Location: http://webservice/output/example.png");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
+    header("Image-Width: 720");
+    header("Image-Height: 1080");
+
     $response = array(
         "input" => array("size" => 161885, "type" => "image/png"),
         "output" => array("size" => 151021, "type" => "image/png", "ratio" => 0.933)
@@ -26,6 +29,8 @@ function mock_jpg_response() {
     header("Location: http://webservice/output/example.jpg");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
+    header("Image-Width: 200");
+    header("Image-Height: 150");
 
     $response = array(
         "input" => array("size" => 15391, "type" => "image/jpeg"),
@@ -42,6 +47,8 @@ function mock_preserve_jpg_copyright_response() {
     header("Location: http://webservice/output/copyright.jpg");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
+    header("Image-Width: 330");
+    header("Image-Height: 1080");
 
     $response = array(
         "input" => array("size" => 110329, "type" => "image/jpeg"),
@@ -58,7 +65,7 @@ function mock_empty_response() {
     header("Compression-Count: {$session['Compression-Count']}");
 
     $response = array(
-        "error" => "InputMissing",
+        "error" => "Input missing",
         "message" => "File is empty"
     );
     return json_encode($response);
@@ -72,7 +79,7 @@ function mock_limit_reached_response() {
     header("Compression-Count: 500");
 
     $response = array(
-        "error" => "TooManyRequests",
+        "error" => "Too many requests",
         "message" => "Your monthly limit has been exceeded"
     );
     return json_encode($response);

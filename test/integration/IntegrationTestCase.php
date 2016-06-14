@@ -9,7 +9,6 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\UselessFileDetector;
 
 abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
-
     protected static $driver;
 
     public static function setUpBeforeClass() {
@@ -44,17 +43,32 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
         $file_input->setFileDetector(new UselessFileDetector());
         $file_input->sendKeys($path);
         self::$driver->findElement(WebDriverBy::xpath('//input[@value="Upload"]'))->click();
-        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath('//h1[contains(text(),"Media Library")]|//h2[contains(text(),"Media Library")]')));
+        self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(
+            WebDriverBy::xpath('//h1[contains(text(),"Media Library")]|//h2[contains(text(),"Media Library")]')));
     }
 
-    protected function set_api_key($api_key) {
+    protected function set_api_key($api_key, $wait = true) {
         $url = wordpress('/wp-admin/options-media.php');
         if (self::$driver->getCurrentUrl() != $url) {
             self::$driver->get($url);
         }
-        self::$driver->findElement(WebDriverBy::name('tinypng_api_key'))->clear()->sendKeys($api_key);
-        self::$driver->findElement(WebDriverBy::tagName('form'))->submit();
-        return self::$driver->findElement(WebDriverBy::name('tinypng_api_key'));
+
+        $status = self::$driver->findElements(WebDriverBy::id('tiny-compress-status'));
+        if (empty($status)) {
+            $status[0]->findElement(WebDriverBy::linkText('Change API key'))->click();
+
+            $modal = self::$driver->findElement(WebDriverBy::id('tiny-update-account-container'));
+            $modal->findElement(WebDriverBy::name('tinypng_api_key_modal'))->clear()->sendKeys($api_key);
+            $modal->findElement(WebDriverBy::cssSelector('button.tiny-account-update-key'))->click();
+        } else {
+            $status[0]->findElement(WebDriverBy::name('tinypng_api_key'))->clear()->sendKeys($api_key);
+            $status[0]->findElement(WebDriverBy::cssSelector('button.tiny-account-update-key'))->click();
+        }
+
+        if ($wait) {
+            self::$driver->wait(2)->until(WebDriverExpectedCondition::presenceOfElementLocated(
+                WebDriverBy::cssSelector('#tiny-compress-status p.tiny-account-status')));
+        }
     }
 
     protected function enable_compression_sizes($sizes) {

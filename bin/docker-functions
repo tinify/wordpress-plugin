@@ -64,6 +64,6 @@ run_mock_tinypng_webservice() {
   echo "Starting mock TinyPNG webservice container..."
   docker run --name mock-tinypng-webservice \
     --volume="$DIR/../test/mock-tinypng-webservice":/var/www/html \
-    -p 8080:80 \
+    -p 8080:80 -p 8443:443 \
     -d mock-tinypng-webservice
 }

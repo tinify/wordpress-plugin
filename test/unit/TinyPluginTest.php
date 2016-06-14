@@ -224,4 +224,20 @@ class Tiny_Plugin_Test extends TinyTestCase {
     public function testAnalyzeMediaLibrary() {
         // $this->assertEquals("analyze all JPEG/PNG and store file size for each image size in the tiny_compress_images metadata", "todo");
     }
+
+    public function testCreateApiKeyNewUserShouldReturnApiKey() {
+        //Test if we get a api key back
+    }
+
+    public function testCreateApiKeyExistingUserShouldNotReturnApiKey() {
+        //Test if we get a api key back. We should not
+    }
+
+    public function testSaveApiKeyShouldSetKeyIfValid() {
+        //Set the key if it is valid
+    }
+
+    public function testSaveApiKeyShouldNotSetKeyIfInvalid() {
+        //Do not set key if invalid
+    }
 }

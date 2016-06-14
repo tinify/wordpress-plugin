@@ -1,0 +1,168 @@
+/*#tiny-account-container {
+  display: inline-block;
+  padding: 30px;
+  border: solid #E1E1E1 1px;
+  background-color: white;
+}
+
+#tiny-account-container h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.tinypng-api-key-information {
+  display: block;
+  width: 300px;
+  margin-bottom: 10px !important;
+}
+
+.tinypng-api-key-message {
+  width: 271px;
+  position: relative;
+  padding-left: 30px !important;
+}
+
+.tinypng-error-message {
+  width: 271px;
+  position: relative;
+  padding-left: 30px !important;
+}
+
+.tinypng-api-key-message.save-error {
+  color: #D54E21;
+}
+
+.tinypng-api-key-message.error {
+  color: #D54E21;
+}
+
+.tinypng-api-key-message.invalid-key {
+  color: #F0AD4E;
+}
+
+.tinypng-api-key-message.already-registered {
+  color: #F0AD4E;
+}
+
+.tinypng-api-key-message.invalid-form {
+  color: #F0AD4E;
+}
+
+.tinypng-api-key-message.success {
+  color: #5CB85C;
+}
+
+.tinypng-api-key-message span {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+}
+
+#tiny-account-container input {
+  margin-bottom: 10px;
+}
+
+#tiny-account-container:before,
+#tiny-account-container:after {
+  content: " ";
+  display: table;
+}
+
+#tiny-account-container:after {
+  clear: both;
+}
+
+.tiny-update-account-step1 {
+  float: left;
+  padding-right: 30px;
+  border-right: solid #E5E5E5 1px;
+}
+
+#tinypng_api_key_name {
+  display: block;
+  min-width: 300px;
+}
+
+#tinypng_api_key_email {
+  display: block;
+  min-width: 300px;
+}
+
+.tiny-account-create-key {
+  width: 100%;
+}
+
+.tiny-update-account-step2 {
+  float: left;
+  padding-left: 30px;
+}
+
+.form-table td .tiny-update-account-step2 p {
+  margin: 0;
+  padding: 0;
+}
+
+#tinypng-api-key {
+  min-width: 300px;
+}
+
+.dashicons-yes::before {
+  font-size: 25px;
+}
+
+.tinypng-api-key-exists {
+  display: inline-block;
+  position: relative;
+}
+
+.tinypng-api-key-exists .dashicons-yes {
+  position: absolute;
+  display: block;
+  top: 4px;
+  left: 105px;
+  color: #5CB85C;
+}
+
+.tinypng-api-key-exists .dashicons-no {
+  position: absolute;
+  display: block;
+  top: 5px;
+  left: 226px;
+  color: #D54E21;
+}
+
+.tinypng-api-key-exists #tinypng-api-key {
+  margin: 0 10px 0 0;
+}
+
+.tiny-account-status {
+  color: #5CB85C;
+}
+
+.tiny-account-status-error {
+  color: #D54E21
+}
+
+.tinypng-api-key-exists a {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.tinypng-api-key-exists #tinypng-api-key {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.tiny-account-update-key {
+  display: block !important;
+  margin-bottom: 4px !important;
+  width: 300px;
+}
+
+#TB_ajaxContent p {
+   margin-top: 0px !important;
+}
+*/
