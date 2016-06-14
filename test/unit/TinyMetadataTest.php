@@ -86,10 +86,9 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $this->assertEquals(3, $this->subject->get_image_sizes_optimized());
     }
 
-    public function testGetImageSizesAvailableForCompression() {
-        $active_sizes = array(0 => Tiny_Metadata::ORIGINAL, 1 => "thumbnail", 2 => "small", 3 => "medium", 4 => "large");
-        // 1 size (small) can be compressed but it doesn't exist on the filesystem
-        $this->assertEquals(0, $this->subject->get_image_sizes_available_for_compression($active_sizes));
+    public function testGetImageSizesAvailableForCompressionWhenFileModified() {
+        $this->wp->createImage(37857, "2015/09", "tinypng_gravatar-150x150.png");
+        $this->assertEquals(1, $this->subject->get_image_sizes_available_for_compression());
     }
 
     public function testGetInitialTotalSize() {
