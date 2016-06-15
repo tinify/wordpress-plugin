@@ -143,7 +143,7 @@ class WordPressStubs {
     }
 
     public function setMetadata($id, $values) {
-        $this->metadata[$id] = array(Tiny_Metadata::META_KEY => $values);
+        $this->metadata[$id] = array(Tiny_Image::META_KEY => $values);
     }
 
     public function getCalls($method) {

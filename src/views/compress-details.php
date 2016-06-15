@@ -95,11 +95,11 @@ ksort($size_exists);
             <?php
                 $images = $tiny_metadata->get_images() + $size_exists;
                 foreach ($images as $size => $image) {
-                    if (!is_object($image)) $image = new Tiny_Metadata_Image();
+                    if (!is_object($image)) $image = new Tiny_Image_Size();
                     ?>
                 <tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td><?php
-                        echo (Tiny_Metadata::is_original($size) ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
+                        echo (Tiny_Image::is_original($size) ? esc_html__('original', 'tiny-compress-images') : $size ) . ' ';
                         if (!array_key_exists( $size, $active_sizes )) {
                             echo '<em>' . esc_html__('(not in use)', 'tiny-compress-images') . '</em>';
                         } else if ($image->missing()) {

@@ -2,7 +2,7 @@
 
 require_once(dirname(__FILE__) . "/TinyTestCase.php");
 
-class Tiny_Metadata_Image_Test extends TinyTestCase {
+class Tiny_Image_Size_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
@@ -11,7 +11,7 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
 
         $this->wp->setMetadata(1, $tiny_meta);
         $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
-        $metadata = new Tiny_Metadata(1, $wp_meta);
+        $metadata = new Tiny_Image(1, $wp_meta);
 
         $this->original = $metadata->get_image();
         $this->thumbnail = $metadata->get_image('thumbnail');
@@ -89,7 +89,7 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
     }
 
     public function testImageDoesNotStillExistIfFileDoesNotExist() {
-        $image = new Tiny_Metadata_Image('does_not_exist');
+        $image = new Tiny_Image_Size('does_not_exist');
         $this->assertFalse($image->still_exists());
     }
 
@@ -125,14 +125,14 @@ class Tiny_Metadata_Image_Test extends TinyTestCase {
     }
 
     public function testInProgressShouldReturnFalseIfMetaStartIsLongAgo() {
-        $image = new Tiny_Metadata_Image("test.jpg", "");
+        $image = new Tiny_Image_Size("test.jpg", "");
         $one_hour_ago = date('U') - (60 * 60);
         $image->meta['start'] = $one_hour_ago;
         $this->assertFalse($image->in_progress());
     }
 
     public function testInProgressShouldReturnTruefMetaStartIsRecent() {
-        $image = new Tiny_Metadata_Image("test.jpg", "");
+        $image = new Tiny_Image_Size("test.jpg", "");
         $two_minutes_ago = date('U') - (60 * 2);
         $image->meta['start'] = $two_minutes_ago;
         $this->assertTrue($image->in_progress());

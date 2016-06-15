@@ -2,7 +2,7 @@
 
 require_once(dirname(__FILE__) . "/TinyTestCase.php");
 
-class Tiny_Metadata_Empty_Test extends TinyTestCase {
+class Tiny_Image_Empty_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
@@ -11,7 +11,7 @@ class Tiny_Metadata_Empty_Test extends TinyTestCase {
 
         $this->wp->setMetadata(1, "");
         $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
-        $this->subject = new Tiny_Metadata(1, $wp_meta);
+        $this->subject = new Tiny_Image(1, $wp_meta);
 
     }
 

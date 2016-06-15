@@ -158,7 +158,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
         $setting = get_option(self::get_prefixed_name('sizes'));
 
-        $size = Tiny_Metadata::ORIGINAL;
+        $size = Tiny_Image::ORIGINAL;
         $this->sizes = array($size => array(
             'width' => null, 'height' => null,
             'tinify' => !is_array($setting) || (isset($setting[$size]) && $setting[$size] === 'on'),
@@ -266,7 +266,7 @@ class Tiny_Settings extends Tiny_WP_Base {
         $id = self::get_prefixed_name("sizes_$size");
         $name = self::get_prefixed_name("sizes[$size]");
         $checked = ( $option['tinify'] ? ' checked="checked"' : '' );
-        if (Tiny_Metadata::is_original($size)) {
+        if (Tiny_Image::is_original($size)) {
             $label = esc_html__('original', 'tiny-compress-images') . ' (' . esc_html__('overwritten by compressed image', 'tiny-compress-images') . ')';
         } else {
             $label = $size . ' - ' . $option['width'] . 'x' . $option['height'];

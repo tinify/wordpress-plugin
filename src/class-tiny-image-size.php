@@ -18,7 +18,7 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Metadata_Image {
+class Tiny_Image_Size {
     public $filename;
     public $url;
     public $meta = array();

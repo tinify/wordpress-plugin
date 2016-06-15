@@ -2,7 +2,7 @@
 
 require_once(dirname(__FILE__) . "/TinyTestCase.php");
 
-class Tiny_Metadata_Test extends TinyTestCase {
+class Tiny_Image_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
@@ -11,11 +11,11 @@ class Tiny_Metadata_Test extends TinyTestCase {
 
         $this->wp->setMetadata(1, $tiny_meta);
         $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
-        $this->subject = new Tiny_Metadata(1, $wp_meta);
+        $this->subject = new Tiny_Image(1, $wp_meta);
     }
 
     public function testUpdateWpMetadataShouldNotUpdateWithNoResizedOriginal() {
-        $tiny_meta = new Tiny_Metadata(150, $this->json("_wp_attachment_metadata_duplicates"));
+        $tiny_meta = new Tiny_Image(150, $this->json("_wp_attachment_metadata_duplicates"));
         $wp_metadata = array(
             'width' => 2000,
             'height' => 1000
@@ -24,7 +24,7 @@ class Tiny_Metadata_Test extends TinyTestCase {
     }
 
     public function testUpdateWpMetadataShouldUpdateWithResizedOriginal() {
-        $tiny_meta = new Tiny_Metadata(150, $this->json("_wp_attachment_metadata_duplicates"));
+        $tiny_meta = new Tiny_Image(150, $this->json("_wp_attachment_metadata_duplicates"));
         $wp_metadata = array(
             'width' => 2000,
             'height' => 1000
@@ -35,18 +35,18 @@ class Tiny_Metadata_Test extends TinyTestCase {
     }
 
     public function testGetImagesShouldReturnAllImages() {
-        $this->assertEquals(array(Tiny_Metadata::ORIGINAL, 'medium', 'thumbnail', 'failed', 'large', 'small'), array_keys(
+        $this->assertEquals(array(Tiny_Image::ORIGINAL, 'medium', 'thumbnail', 'failed', 'large', 'small'), array_keys(
             $this->subject->get_images()));
     }
 
     public function testFilterImagesShouldFilterCorrectly() {
-        $this->assertEquals(array(Tiny_Metadata::ORIGINAL, 'medium', 'thumbnail'), array_keys(
+        $this->assertEquals(array(Tiny_Image::ORIGINAL, 'medium', 'thumbnail'), array_keys(
             $this->subject->filter_images('compressed')));
     }
 
     public function testFilterImagesShouldFilterCorrectlyWhenSizesAreGiven() {
-        $this->assertEquals(array(Tiny_Metadata::ORIGINAL), array_keys(
-            $this->subject->filter_images('compressed', array(Tiny_Metadata::ORIGINAL, 'invalid'))
+        $this->assertEquals(array(Tiny_Image::ORIGINAL), array_keys(
+            $this->subject->filter_images('compressed', array(Tiny_Image::ORIGINAL, 'invalid'))
         ));
     }
 
@@ -62,7 +62,7 @@ class Tiny_Metadata_Test extends TinyTestCase {
         $this->assertEquals(array(
             'compressed' => 1,
             'resized' => 1,
-            ), $this->subject->get_count(array('compressed', 'resized'), array(Tiny_Metadata::ORIGINAL, 'invalid'))
+            ), $this->subject->get_count(array('compressed', 'resized'), array(Tiny_Image::ORIGINAL, 'invalid'))
         );
     }
 

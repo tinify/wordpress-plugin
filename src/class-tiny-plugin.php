@@ -110,7 +110,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     private function compress($metadata, $attachment_id) {
         $mime_type = get_post_mime_type($attachment_id);
-        $tiny_metadata = new Tiny_Metadata($attachment_id, $metadata);
+        $tiny_metadata = new Tiny_Image($attachment_id, $metadata);
 
         if ($this->settings->get_compressor() === null || !$tiny_metadata->can_be_compressed()) {
             return array($tiny_metadata, null);
@@ -128,7 +128,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 $image->add_request();
                 $tiny_metadata->update();
 
-                $resize = Tiny_Metadata::is_original($size) ? $this->settings->get_resize_options() : false;
+                $resize = Tiny_Image::is_original($size) ? $this->settings->get_resize_options() : false;
                 $preserve = count($this->settings->get_preserve_options()) > 0 ? $this->settings->get_preserve_options() : false;
                 $response = $compressor->compress_file($image->filename, $resize, $preserve);
 
@@ -213,7 +213,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $unoptimized_library_size = 0;
 
         for ($i = 0; $i < sizeof($result); $i++) {
-            $tiny_metadata = new Tiny_Metadata($result[$i]["ID"]);
+            $tiny_metadata = new Tiny_Image($result[$i]["ID"]);
             $available_unoptimised_sizes += $tiny_metadata->get_image_sizes_available_for_compression();
             $optimized_image_sizes += $tiny_metadata->get_image_sizes_optimized();
             $optimized_library_size += $tiny_metadata->get_total_size_after_optimization();
@@ -281,7 +281,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function render_media_column($column, $id) {
         if ($column === self::MEDIA_COLUMN) {
             echo '<div class="tiny-ajax-container">';
-            $this->render_compress_details(new Tiny_Metadata($id));
+            $this->render_compress_details(new Tiny_Image($id));
             echo '</div>';
         }
     }
@@ -291,7 +291,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         echo '<div class="misc-pub-section tiny-compress-images">';
         echo '<h4>' . __('Compress JPEG & PNG Images', 'tiny-compress-images') . '</h4>';
         echo '<div class="tiny-ajax-container">';
-        $this->render_compress_details(new Tiny_Metadata($post->ID));
+        $this->render_compress_details(new Tiny_Image($post->ID));
         echo '</div></div>';
     }
 

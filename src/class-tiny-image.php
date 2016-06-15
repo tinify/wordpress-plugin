@@ -18,7 +18,7 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Metadata {
+class Tiny_Image {
     const META_KEY = 'tiny_compress_images';
     const ORIGINAL = 0;
 
@@ -49,7 +49,7 @@ class Tiny_Metadata {
         }
         foreach ($values as $size => $meta) {
             if (!isset($this->images[$size])) {
-                $this->images[$size] = new Tiny_Metadata_Image();
+                $this->images[$size] = new Tiny_Image_Size();
             }
             $this->images[$size]->meta = $meta;
         }
@@ -71,7 +71,7 @@ class Tiny_Metadata {
 
         $this->name = $path_info['basename'];
 
-        $this->images[self::ORIGINAL] = new Tiny_Metadata_Image(
+        $this->images[self::ORIGINAL] = new Tiny_Image_Size(
             "$path_prefix${path_info['basename']}",
             "$url_prefix${path_info['basename']}");
 
@@ -82,7 +82,7 @@ class Tiny_Metadata {
 
                 if (!isset($unique_sizes[$filename])) {
                     $unique_sizes[$filename] = true;
-                    $this->images[$size] = new Tiny_Metadata_Image(
+                    $this->images[$size] = new Tiny_Image_Size(
                         "$path_prefix$filename", "$url_prefix$filename");
                 }
             }
@@ -93,7 +93,7 @@ class Tiny_Metadata {
         if (isset($this->images[$size]))
             return $this->images[$size];
         elseif ($create)
-            return new Tiny_Metadata_Image();
+            return new Tiny_Image_Size();
         else
             return null;
     }
