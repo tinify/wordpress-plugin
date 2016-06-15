@@ -85,10 +85,10 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $testmeta = $this->wp->getTestMetadata();
         $meta = new Tiny_Image(1, $testmeta);
-        $meta->get_image()->add_request();
-        $meta->get_image()->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
-        $meta->get_image('large')->add_request();
-        $meta->get_image('large')->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'));
+        $meta->get_image_size()->add_request();
+        $meta->get_image_size()->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
+        $meta->get_image_size('large')->add_request();
+        $meta->get_image_size('large')->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'));
         $meta->update();
 
         $this->compressor->expects($this->once())->method('compress_file')->withConsecutive(
@@ -102,12 +102,12 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $testmeta = $this->wp->getTestMetadata();
         $meta = new Tiny_Image(1, $testmeta);
-        $meta->get_image()->add_request();
-        $meta->get_image()->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
-        $meta->get_image('large')->add_request();
-        $meta->get_image('large')->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'));
-        $meta->get_image('post-thumbnail')->add_request();
-        $meta->get_image('post-thumbnail')->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png'));
+        $meta->get_image_size()->add_request();
+        $meta->get_image_size()->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test.png'));
+        $meta->get_image_size('large')->add_request();
+        $meta->get_image_size('large')->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-large.png'));
+        $meta->get_image_size('post-thumbnail')->add_request();
+        $meta->get_image_size('post-thumbnail')->add_response(self::successCompress('vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png'));
         $meta->update();
 
         $this->vfs->getChild('wp-content/uploads/14/01/test-large.png')->truncate(100000);

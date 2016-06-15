@@ -13,11 +13,11 @@ class Tiny_Image_Size_Test extends TinyTestCase {
         $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
         $metadata = new Tiny_Image(1, $wp_meta);
 
-        $this->original = $metadata->get_image();
-        $this->thumbnail = $metadata->get_image('thumbnail');
-        $this->small = $metadata->get_image('small');
-        $this->medium = $metadata->get_image('medium');
-        $this->large = $metadata->get_image('large');
+        $this->original = $metadata->get_image_size();
+        $this->thumbnail = $metadata->get_image_size('thumbnail');
+        $this->small = $metadata->get_image_size('small');
+        $this->medium = $metadata->get_image_size('medium');
+        $this->large = $metadata->get_image_size('large');
     }
 
     public function testEndTimeShouldReturnEndFromMeta() {

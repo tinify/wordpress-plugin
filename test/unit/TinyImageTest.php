@@ -29,24 +29,24 @@ class Tiny_Image_Test extends TinyTestCase {
             'width' => 2000,
             'height' => 1000
         );
-        $tiny_meta->get_image()->add_request();
-        $tiny_meta->get_image()->add_response(array('output' => array('width' => 200, 'height' => 100)));
+        $tiny_meta->get_image_size()->add_request();
+        $tiny_meta->get_image_size()->add_response(array('output' => array('width' => 200, 'height' => 100)));
         $this->assertEquals(array('width' => 200, 'height' => 100), $tiny_meta->update_wp_metadata($wp_metadata));
     }
 
     public function testGetImagesShouldReturnAllImages() {
         $this->assertEquals(array(Tiny_Image::ORIGINAL, 'medium', 'thumbnail', 'failed', 'large', 'small'), array_keys(
-            $this->subject->get_images()));
+            $this->subject->get_image_sizes()));
     }
 
     public function testFilterImagesShouldFilterCorrectly() {
         $this->assertEquals(array(Tiny_Image::ORIGINAL, 'medium', 'thumbnail'), array_keys(
-            $this->subject->filter_images('compressed')));
+            $this->subject->filter_image_sizes('compressed')));
     }
 
     public function testFilterImagesShouldFilterCorrectlyWhenSizesAreGiven() {
         $this->assertEquals(array(Tiny_Image::ORIGINAL), array_keys(
-            $this->subject->filter_images('compressed', array(Tiny_Image::ORIGINAL, 'invalid'))
+            $this->subject->filter_image_sizes('compressed', array(Tiny_Image::ORIGINAL, 'invalid'))
         ));
     }
 
@@ -67,8 +67,8 @@ class Tiny_Image_Test extends TinyTestCase {
     }
 
     public function testGetLatestErrorShouldReturnMessage() {
-        $this->subject->get_image()->add_request("large");
-        $this->subject->get_image()->add_exception(new Tiny_Exception('Could not download output', 'OutputError'), "large");
+        $this->subject->get_image_size()->add_request("large");
+        $this->subject->get_image_size()->add_exception(new Tiny_Exception('Could not download output', 'OutputError'), "large");
         $this->assertEquals("Could not download output", $this->subject->get_latest_error());
     }
 

@@ -121,7 +121,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         $compressor = $this->settings->get_compressor();
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-        $uncompressed_images = $tiny_metadata->filter_images('uncompressed', $active_tinify_sizes);
+        $uncompressed_images = $tiny_metadata->filter_image_sizes('uncompressed', $active_tinify_sizes);
 
         foreach ($uncompressed_images as $size => $image) {
             try {
@@ -187,9 +187,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $result['optimized_total_size'] = size_format($tiny_metadata->get_total_size_after_optimization(), 2);
             $result['savings'] = "" . number_format($tiny_metadata->get_savings(), 1);
             $result['status'] = $this->settings->get_status();
-            $thumb = $tiny_metadata->get_image('thumbnail');
+            $thumb = $tiny_metadata->get_image_size('thumbnail');
             if (!$thumb) {
-                $thumb = $tiny_metadata->get_image();
+                $thumb = $tiny_metadata->get_image_size();
             }
             $result['thumbnail'] = $thumb->url;
             echo json_encode($result);
@@ -299,7 +299,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $available_sizes = array_keys($this->settings->get_sizes());
         $active_sizes = $this->settings->get_sizes();;
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-        $in_progress = count($tiny_metadata->filter_images('in_progress'));
+        $in_progress = count($tiny_metadata->filter_image_sizes('in_progress'));
 
         if ($in_progress > 0) {
             include(dirname(__FILE__) . '/views/compress-details-processing.php');

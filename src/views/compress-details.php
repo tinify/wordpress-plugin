@@ -93,7 +93,7 @@ ksort($size_exists);
             </tr>
             <?php $i = 0 ?>
             <?php
-                $images = $tiny_metadata->get_images() + $size_exists;
+                $images = $tiny_metadata->get_image_sizes() + $size_exists;
                 foreach ($images as $size => $image) {
                     if (!is_object($image)) $image = new Tiny_Image_Size();
                     ?>

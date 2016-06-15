@@ -24,7 +24,7 @@ class Tiny_Image {
 
     private $id;
     private $name;
-    private $images = array();
+    private $sizes = array();
     private $statistics_calculated = false;
     private $image_sizes_optimized = 0;
     private $image_sizes_available_for_compression = 0;
@@ -48,10 +48,10 @@ class Tiny_Image {
             $values = array();
         }
         foreach ($values as $size => $meta) {
-            if (!isset($this->images[$size])) {
-                $this->images[$size] = new Tiny_Image_Size();
+            if (!isset($this->sizes[$size])) {
+                $this->sizes[$size] = new Tiny_Image_Size();
             }
-            $this->images[$size]->meta = $meta;
+            $this->sizes[$size]->meta = $meta;
         }
     }
 
@@ -71,7 +71,7 @@ class Tiny_Image {
 
         $this->name = $path_info['basename'];
 
-        $this->images[self::ORIGINAL] = new Tiny_Image_Size(
+        $this->sizes[self::ORIGINAL] = new Tiny_Image_Size(
             "$path_prefix${path_info['basename']}",
             "$url_prefix${path_info['basename']}");
 
@@ -82,16 +82,16 @@ class Tiny_Image {
 
                 if (!isset($unique_sizes[$filename])) {
                     $unique_sizes[$filename] = true;
-                    $this->images[$size] = new Tiny_Image_Size(
+                    $this->sizes[$size] = new Tiny_Image_Size(
                         "$path_prefix$filename", "$url_prefix$filename");
                 }
             }
         }
     }
 
-    public function get_image($size=self::ORIGINAL, $create=false) {
-        if (isset($this->images[$size]))
-            return $this->images[$size];
+    public function get_image_size($size=self::ORIGINAL, $create=false) {
+        if (isset($this->sizes[$size]))
+            return $this->sizes[$size];
         elseif ($create)
             return new Tiny_Image_Size();
         else
@@ -99,7 +99,7 @@ class Tiny_Image {
     }
 
     public function update_wp_metadata($wp_metadata) {
-        $original = $this->get_image();
+        $original = $this->get_image_size();
         if (is_null($original) || !is_array($original->meta)) {
             return $wp_metadata;
         }
@@ -114,9 +114,9 @@ class Tiny_Image {
 
     public function update() {
         $values = array();
-        foreach ($this->images as $size => $image) {
-            if (is_array($image->meta)) {
-                $values[$size] = $image->meta;
+        foreach ($this->sizes as $size_name => $size) {
+            if (is_array($size->meta)) {
+                $values[$size_name] = $size->meta;
             }
         }
 
@@ -139,18 +139,18 @@ class Tiny_Image {
         return get_post_mime_type($this->id);
     }
 
-    public function get_images() {
-        $original = isset($this->images[self::ORIGINAL])
-            ? array(self::ORIGINAL => $this->images[self::ORIGINAL])
+    public function get_image_sizes() {
+        $original = isset($this->sizes[self::ORIGINAL])
+            ? array(self::ORIGINAL => $this->sizes[self::ORIGINAL])
             : array();
         $compressed = array();
         $uncompressed = array();
-        foreach ($this->images as $size => $image) {
-            if (self::is_original($size)) continue;
-            if ($image->has_been_compressed()) {
-                $compressed[$size] = $image;
+        foreach ($this->sizes as $size_name => $size) {
+            if (self::is_original($size_name)) continue;
+            if ($size->has_been_compressed()) {
+                $compressed[$size_name] = $size;
             } else {
-                $uncompressed[$size] = $image;
+                $uncompressed[$size_name] = $size;
             }
         }
         ksort($compressed);
@@ -158,30 +158,30 @@ class Tiny_Image {
         return $original + $compressed + $uncompressed;
     }
 
-    public function filter_images($method, $sizes=null) {
+    public function filter_image_sizes($method, $filter_sizes = null) {
         $selection = array();
-        if (is_null($sizes)) {
-            $sizes = array_keys($this->images);
+        if (is_null($filter_sizes)) {
+            $filter_sizes = array_keys($this->sizes);
         }
-        foreach ($sizes as $size) {
-            if (!isset($this->images[$size])) continue;
-            $image = $this->images[$size];
+        foreach ($filter_sizes as $size_name) {
+            if (!isset($this->sizes[$size_name])) continue;
+            $image = $this->sizes[$size_name];
             if ($image->$method()) {
-                $selection[$size] = $image;
+                $selection[$size_name] = $image;
             }
         }
         return $selection;
     }
 
-    public function get_count($methods, $sizes=null) {
+    public function get_count($methods, $count_sizes = null) {
         $stats = array_fill_keys($methods, 0);
-        if (is_null($sizes)) {
-            $sizes = array_keys($this->images);
+        if (is_null($count_sizes)) {
+            $count_sizes = array_keys($this->sizes);
         }
-        foreach ($sizes as $size) {
-            if (!isset($this->images[$size])) continue;
+        foreach ($count_sizes as $size) {
+            if (!isset($this->sizes[$size])) continue;
             foreach ($methods as $method) {
-                if ($this->images[$size]->$method()) {
+                if ($this->sizes[$size]->$method()) {
                     $stats[$method]++;
                 }
             }
@@ -192,11 +192,11 @@ class Tiny_Image {
     public function get_latest_error() {
         $error_message = null;
         $last_timestamp = null;
-        foreach ($this->images as $size => $image) {
-            if (isset($image->meta['error']) && isset($image->meta['message'])) {
-                if ($last_timestamp === null || $last_timestamp < $image->meta['timestamp']) {
-                    $last_timestamp = $image->meta['timestamp'];
-                    $error_message = $image->meta['message'];
+        foreach ($this->sizes as $size) {
+            if (isset($size->meta['error']) && isset($size->meta['message'])) {
+                if ($last_timestamp === null || $last_timestamp < $size->meta['timestamp']) {
+                    $last_timestamp = $size->meta['timestamp'];
+                    $error_message = $size->meta['message'];
                 }
             }
         }
@@ -243,28 +243,28 @@ class Tiny_Image {
         $active_sizes = $settings->get_sizes();
         $active_tinify_sizes = $settings->get_active_tinify_sizes();
 
-        foreach ($this->images as $image => $image_size) {
-            if (array_key_exists( $image, $active_sizes )) {
-                if (isset($image_size->meta['input'])) {
-                    $this->initial_total_size += intval($image_size->meta['input']['size']);
+        foreach ($this->sizes as $size_name => $size) {
+            if (array_key_exists( $size_name, $active_sizes )) {
+                if (isset($size->meta['input'])) {
+                    $this->initial_total_size += intval($size->meta['input']['size']);
 
-                    if (isset($image_size->meta['output'])) {
-                        if ($image_size->modified()) {
-                            $this->optimized_total_size += $image_size->filesize();
-                            if (in_array($image, $active_tinify_sizes, true)) {
+                    if (isset($size->meta['output'])) {
+                        if ($size->modified()) {
+                            $this->optimized_total_size += $size->filesize();
+                            if (in_array($size_name, $active_tinify_sizes, true)) {
                                 $this->image_sizes_available_for_compression += 1;
                             }
                         } else {
-                            $this->optimized_total_size += intval($image_size->meta['output']['size']);
+                            $this->optimized_total_size += intval($size->meta['output']['size']);
                             $this->image_sizes_optimized += 1;
                         }
                     } else {
-                        $this->optimized_total_size += intval($image_size->meta['input']['size']);
+                        $this->optimized_total_size += intval($size->meta['input']['size']);
                     }
-                } elseif ( $image_size->exists() ) {
-                    $this->initial_total_size += $image_size->filesize();
-                    $this->optimized_total_size += $image_size->filesize();
-                    if (in_array($image, $active_tinify_sizes, true)) {
+                } elseif ( $size->exists() ) {
+                    $this->initial_total_size += $size->filesize();
+                    $this->optimized_total_size += $size->filesize();
+                    if (in_array($size_name, $active_tinify_sizes, true)) {
                         $this->image_sizes_available_for_compression += 1;
                     }
                 }
