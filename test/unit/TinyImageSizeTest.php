@@ -6,18 +6,15 @@ class Tiny_Image_Size_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
-        $wp_meta = $this->json("_wp_attachment_metadata");
-        $tiny_meta = $this->json("tiny_compress_images");
+        $this->wp->createImagesFromJSON($this->json("virtual_images"));
+        $this->wp->setTinyMetadata(1, $this->json("tiny_compress_images"));
+        $tiny_image = new Tiny_Image(1, $this->json("_wp_attachment_metadata"));
 
-        $this->wp->setMetadata(1, $tiny_meta);
-        $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
-        $metadata = new Tiny_Image(1, $wp_meta);
-
-        $this->original = $metadata->get_image_size();
-        $this->thumbnail = $metadata->get_image_size('thumbnail');
-        $this->small = $metadata->get_image_size('small');
-        $this->medium = $metadata->get_image_size('medium');
-        $this->large = $metadata->get_image_size('large');
+        $this->original = $tiny_image->get_image_size();
+        $this->thumbnail = $tiny_image->get_image_size('thumbnail');
+        $this->small = $tiny_image->get_image_size('small');
+        $this->medium = $tiny_image->get_image_size('medium');
+        $this->large = $tiny_image->get_image_size('large');
     }
 
     public function testEndTimeShouldReturnEndFromMeta() {

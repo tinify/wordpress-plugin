@@ -126,7 +126,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $this->subject->compress_attachment($this->wp->getTestMetadata(), 1);
 
-        $metadata = $this->wp->getMetadata(1, 'tiny_compress_images', true);
+        $metadata = $this->wp->getMetadata(1, Tiny_Image::META_KEY, true);
         foreach ($metadata as $key => $values) {
             if (!empty($values)) {
                 $this->assertBetween(-1, +1, $values['end'] - time());
@@ -152,7 +152,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 
         $this->subject->compress_attachment($this->wp->getTestMetadata(), 1);
 
-        $metadata = $this->wp->getMetadata(1, 'tiny_compress_images', true);
+        $metadata = $this->wp->getMetadata(1, Tiny_Image::META_KEY, true);
         foreach ($metadata as $key => $values) {
             if (!empty($values)) {
                 $this->assertEquals(time(), $values['timestamp'], 2);

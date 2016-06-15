@@ -142,7 +142,7 @@ class WordPressStubs {
         $this->metadata[$id][$key] = $values;
     }
 
-    public function setMetadata($id, $values) {
+    public function setTinyMetadata($id, $values) {
         $this->metadata[$id] = array(Tiny_Image::META_KEY => $values);
     }
 
@@ -196,31 +196,10 @@ class WordPressStubs {
         }
     }
 
-    public function createImagesFromMeta($wp_meta, $tiny_meta, $original_size = 1234567) {
-        $parts = explode("/", $wp_meta["file"]);
-        $file = array_pop($parts);
-        $path = implode("/", $parts);
-
-        vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
-        $dir = $this->vfs->getChild(self::UPLOAD_DIR . "/" . $path);
-
-        vfsStream::newFile($file)
-            ->withContent(new LargeFileContent($original_size))
-            ->at($dir);
-
-        foreach ($wp_meta["sizes"] as $image_size => $values) {
-            if (isset($tiny_meta[$image_size])) {
-                if (isset($tiny_meta[$image_size]["output"])) {
-                    $file_size = $tiny_meta[$image_size]["output"]["size"];
-                } else {
-                    $file_size = $tiny_meta[$image_size]["input"]["size"];
-                }
-                vfsStream::newFile($values["file"])
-                    ->withContent(new LargeFileContent($file_size))
-                    ->at($dir);
-            }
+    public function createImagesFromJSON($virtual_images) {
+        foreach ($virtual_images["images"] as $image) {
+            self::createImage($image["size"], $virtual_images["path"], $image["file"]);
         }
-
     }
 
     public function getTestMetadata($path='14/01', $name='test') {

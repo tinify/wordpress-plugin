@@ -6,32 +6,29 @@ class Tiny_Image_Test extends TinyTestCase {
     public function setUp() {
         parent::setUp();
 
-        $wp_meta = $this->json("_wp_attachment_metadata");
-        $tiny_meta = $this->json("tiny_compress_images");
-
-        $this->wp->setMetadata(1, $tiny_meta);
-        $this->wp->createImagesFromMeta($wp_meta, $tiny_meta, 137856);
-        $this->subject = new Tiny_Image(1, $wp_meta);
+        $this->wp->createImagesFromJSON($this->json("virtual_images"));
+        $this->wp->setTinyMetadata(1, $this->json("tiny_compress_images"));
+        $this->subject = new Tiny_Image(1, $this->json("_wp_attachment_metadata"));
     }
 
     public function testUpdateWpMetadataShouldNotUpdateWithNoResizedOriginal() {
-        $tiny_meta = new Tiny_Image(150, $this->json("_wp_attachment_metadata_duplicates"));
+        $tiny_image = new Tiny_Image(150, $this->json("_wp_attachment_metadata_duplicates"));
         $wp_metadata = array(
             'width' => 2000,
             'height' => 1000
         );
-        $this->assertEquals(array('width' => 2000, 'height' => 1000), $tiny_meta->update_wp_metadata($wp_metadata));
+        $this->assertEquals(array('width' => 2000, 'height' => 1000), $tiny_image->update_wp_metadata($wp_metadata));
     }
 
     public function testUpdateWpMetadataShouldUpdateWithResizedOriginal() {
-        $tiny_meta = new Tiny_Image(150, $this->json("_wp_attachment_metadata_duplicates"));
+        $tiny_image = new Tiny_Image(150, $this->json("_wp_attachment_metadata_duplicates"));
         $wp_metadata = array(
             'width' => 2000,
             'height' => 1000
         );
-        $tiny_meta->get_image_size()->add_request();
-        $tiny_meta->get_image_size()->add_response(array('output' => array('width' => 200, 'height' => 100)));
-        $this->assertEquals(array('width' => 200, 'height' => 100), $tiny_meta->update_wp_metadata($wp_metadata));
+        $tiny_image->get_image_size()->add_request();
+        $tiny_image->get_image_size()->add_response(array('output' => array('width' => 200, 'height' => 100)));
+        $this->assertEquals(array('width' => 200, 'height' => 100), $tiny_image->update_wp_metadata($wp_metadata));
     }
 
     public function testGetImagesShouldReturnAllImages() {
@@ -78,18 +75,18 @@ class Tiny_Image_Test extends TinyTestCase {
 
     public function testGetImageSizesAvailableForCompressionWhenFileModified() {
         $this->wp->createImage(37857, "2015/09", "tinypng_gravatar-150x150.png");
-        $this->assertEquals(1, $this->subject->get_image_sizes_available_for_compression());
+        $this->assertEquals(2, $this->subject->get_image_sizes_available_for_compression());
     }
 
     public function testGetSavings() {
-        $this->assertEquals(9.9722479185939, $this->subject->get_savings());
+        $this->assertEquals(7.2973018711464, $this->subject->get_savings());
     }
 
     public function testGetInitialTotalSize() {
-        $this->assertEquals(259440, $this->subject->get_total_size_before_optimization());
+        $this->assertEquals(354542, $this->subject->get_total_size_before_optimization());
     }
 
     public function testGetCompressedTotalSize() {
-        $this->assertEquals(233568, $this->subject->get_total_size_after_optimization());
+        $this->assertEquals(328670, $this->subject->get_total_size_after_optimization());
     }
 }
