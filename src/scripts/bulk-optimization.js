@@ -87,8 +87,12 @@
       updateViewAfterSuccess(row, parseInt(data.success))
     }
 
-    if (!data.initial_total_size) data.initial_total_size = '-';
-    if (!data.optimized_total_size) data.optimized_total_size = '-';
+    if (!data.initial_total_size) {
+        data.initial_total_size = '-';
+    }
+    if (!data.optimized_total_size) {
+        data.optimized_total_size = '-';
+    }
     if (!data.savings || data.savings == 0) {
       data.savings = '-';
     } else {
@@ -101,7 +105,7 @@
     row.find('.savings').html(data.savings);
 
     if (items[++i]) {
-      bulk_optimization_item(items, i)
+      bulkOptimizeItem(items, i)
     } else {
       var message = jQuery('<div class="updated"><p></p></div>');
       message.find('p').html(tinyCompress.L10nAllDone)
@@ -109,12 +113,11 @@
       jQuery("#tiny-bulk-optimization form div.spinner").css('display', 'none');
       jQuery('div.progressbar-progress').css('width', '100%');
       jQuery('form button').hide()
-
       jQuery('div.progressbar-progress').css('animation', 'none');
     }
   }
 
-  function bulk_optimization_item(items, i) {
+  function bulkOptimizeItem(items, i) {
     if (window.optimizationCancelled) {
       return;
     }
@@ -139,14 +142,13 @@
     jQuery('#tiny-progress span').html(i + 1)
   }
 
-  function bulk_optimization(items) {
+  function prepareBulkOptimization(items) {
     window.optimizationCancelled = false;
     updateProgressBar(0);
     updateSavings(0);
 
     var list = jQuery('#media-items tbody')
     var row
-
     jQuery("#tiny-bulk-optimization form div.spinner").css('display', 'inline-block');
     for (var i = 0; i < items.length; i++) {
       row = jQuery('<tr class="media-item"><td class="thumbnail" /><td class="name" /><td class="image-sizes-optimized" /><td class="initial-total-size" /><td class="optimized-total-size" /><td class="savings" /><td class="status todo" /></tr>')
@@ -154,7 +156,7 @@
       row.find('.name').html(items[i].post_title)
       list.append(row)
     }
-    bulk_optimization_item(items, 0)
+    bulkOptimizeItem(items, 0)
   }
 
   function cancelOptimization() {
@@ -185,7 +187,7 @@
     }
   });
 
-  window.startBulkOptimization = bulk_optimization
+  window.bulkOptimization = prepareBulkOptimization
   updateSavings(0);
 
 }).call()

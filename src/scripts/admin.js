@@ -1,9 +1,5 @@
 (function() {
-  function check_wp_version(version) {
-    return parseFloat(tinyCompress.wpVersion) >= version
-  }
-
-  function compress_image(event) {
+  function compressImage(event) {
     var element = jQuery(event.target)
     var container = element.closest('.tiny-ajax-container')
 
@@ -28,7 +24,7 @@
     })
   }
 
-  function update_api_key(event) {
+  function updateApiKey(event) {
     event.preventDefault()
     jQuery(event.target).attr({disabled: true})
     var parent = jQuery(event.target).closest("div")
@@ -66,7 +62,7 @@
     return false
   }
 
-  function create_api_key(event) {
+  function createApiKey(event) {
     event.preventDefault()
     jQuery(event.target).attr({disabled: true})
     var parent = jQuery(event.target).closest("div")
@@ -104,7 +100,7 @@
     return false
   }
 
-  function dismiss_notice(event) {
+  function dismissNotice(event) {
     var element = jQuery(event.target)
     var notice = element.closest(".tiny-notice")
     element.attr('disabled', 'disabled')
@@ -129,7 +125,7 @@
     return false
   }
 
-  function update_resize_settings() {
+  function updateResizeSettings() {
     if (jQuery('#tinypng_sizes_0').prop('checked')) {
       jQuery('.tiny-resize-available').show()
       jQuery('.tiny-resize-unavailable').hide()
@@ -144,7 +140,7 @@
     })
   }
 
-  function update_preserve_settings() {
+  function updatePreserveSettings() {
     if (jQuery('#tinypng_sizes_0').prop('checked')) {
       jQuery('.tiny-preserve').show()
     } else {
@@ -155,9 +151,9 @@
     }
   }
 
-  function update_settings() {
-    update_resize_settings()
-    update_preserve_settings()
+  function updateSettings() {
+    updateResizeSettings()
+    updatePreserveSettings()
   }
 
   var adminpage = ""
@@ -184,7 +180,8 @@
   }
 
   if (adminpage === "upload-php") {
-    eventOn('click', 'button.tiny-compress', compress_image)
+
+    eventOn('click', 'button.tiny-compress', compressImage)
 
     if (typeof jQuery.fn.prop === "function") {
       jQuery('button.tiny-compress').prop('disabled', null)
@@ -194,14 +191,18 @@
 
     jQuery('<option>').val('tiny_bulk_optimization').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
     jQuery('<option>').val('tiny_bulk_optimization').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
+
   } else if (adminpage === "post-php") {
-    eventOn('click', 'button.tiny-compress', compress_image)
+
+    eventOn('click', 'button.tiny-compress', compressImage)
+
   } else if (adminpage === "options-media-php") {
+
     changeEnterKeyTarget('.tiny-update-account-step1', '.tiny-account-create-key')
     changeEnterKeyTarget('.tiny-update-account-step2', '.tiny-account-update-key')
 
-    eventOn('click', 'button.tiny-account-create-key', create_api_key)
-    eventOn('click', 'button.tiny-account-update-key', update_api_key)
+    eventOn('click', 'button.tiny-account-create-key', createApiKey)
+    eventOn('click', 'button.tiny-account-update-key', updateApiKey)
 
     jQuery('#tiny-compress-status[data-state=pending]').load(ajaxurl + '?action=tiny_compress_status')
     jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
@@ -216,12 +217,14 @@
       jQuery('#tiny-image-sizes-notice').load(image_count_url)
     })
 
-    jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(update_settings)
-    update_settings()
+    jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(updateSettings)
+    updateSettings()
+
   }
 
-  jQuery('.tiny-notice a.tiny-dismiss').click(dismiss_notice)
+  jQuery('.tiny-notice a.tiny-dismiss').click(dismissNotice)
   jQuery(function() {
-    jQuery('.tiny-notice.is-dismissible button').unbind('click').click(dismiss_notice)
+    jQuery('.tiny-notice.is-dismissible button').unbind('click').click(dismissNotice)
   })
+
 }).call()

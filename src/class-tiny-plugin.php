@@ -321,8 +321,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $unoptimized_library_size = $stats['unoptimized-library-size'];
         $estimated_cost = $stats['estimated-cost'];
         $savings_percentage = $stats['savings-percentage'];
-        $ids_to_compress = $this->get_ids_to_compress();
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+
+        $ids_to_compress = $this->get_ids_to_compress();
 
         include(dirname(__FILE__) . '/views/bulk-optimization.php');
     }

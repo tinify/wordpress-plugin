@@ -159,7 +159,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
 
     <?php
     if (sizeof($ids_to_compress) > 0) {
-        echo "<script type='text/javascript'>jQuery(function() { startBulkOptimization(" . json_encode($ids_to_compress) . ")})</script>";
+        echo "<script type='text/javascript'>jQuery(function() { bulkOptimization(" . json_encode($ids_to_compress) . ")})</script>";
     ?>
     <table class="wp-list-table widefat fixed striped media whitebox" id="media-items">
         <tr>
