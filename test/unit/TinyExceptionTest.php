@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . "/TinyTestCase.php");
+require_once dirname(__FILE__) . "/TinyTestCase.php";
 
 class Tiny_Exception_Test extends TinyTestCase {
     public function testConstructorCreatesExceptionWithMessage() {

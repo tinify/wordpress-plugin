@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . "/IntegrationTestCase.php");
+require_once dirname(__FILE__) . "/IntegrationTestCase.php";
 
 use Facebook\WebDriver\WebDriverBy;
 

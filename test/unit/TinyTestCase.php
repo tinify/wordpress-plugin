@@ -1,7 +1,7 @@
 <?php
 
 require 'vendor/autoload.php';
-require(dirname(__FILE__) . '/../helpers/wordpress.php');
+require dirname(__FILE__) . '/../helpers/wordpress.php';
 
 use org\bovigo\vfs\vfsStream;
 

@@ -1,7 +1,7 @@
 <?php
 ob_start();
 
-require_once('common.php');
+require_once 'common.php';
 
 function mock_png_response() {
     global $session;

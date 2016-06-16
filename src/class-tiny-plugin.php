@@ -76,14 +76,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function enqueue_scripts($hook) {
-        wp_enqueue_style(self::NAME .'_admin', plugins_url('/styles/admin.css', __FILE__),
+        wp_enqueue_style(self::NAME .'_admin', plugins_url('/css/admin.css', __FILE__),
             array(), self::plugin_version());
-        wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url('/styles/bulk-optimization.css', __FILE__),
+        wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url('/css/bulk-optimization.css', __FILE__),
             array(), self::plugin_version());
 
-        wp_register_script(self::NAME .'_admin', plugins_url('/scripts/admin.js', __FILE__),
+        wp_register_script(self::NAME .'_admin', plugins_url('/js/admin.js', __FILE__),
             array(), self::plugin_version(), true);
-        wp_register_script(self::NAME . '_tiny_bulk_optimization', plugins_url('/scripts/bulk-optimization.js', __FILE__),
+        wp_register_script(self::NAME . '_tiny_bulk_optimization', plugins_url('/js/bulk-optimization.js', __FILE__),
             array(), self::plugin_version(), true);
 
         // WordPress < 3.3 does not handle multidimensional arrays

@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . "/TinyTestCase.php");
+require_once dirname(__FILE__) . "/TinyTestCase.php";
 
 class Tiny_Compress_No_Client_Test extends TinyTestCase {
     protected $php_mock;

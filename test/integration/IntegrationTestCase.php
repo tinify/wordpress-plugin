@@ -1,7 +1,7 @@
 <?php
 
-require(dirname(__FILE__) . '/../helpers/integration_helper.php');
-require(dirname(__FILE__) . '/../helpers/setup.php');
+require dirname(__FILE__) . '/../helpers/integration_helper.php';
+require dirname(__FILE__) . '/../helpers/setup.php';
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;

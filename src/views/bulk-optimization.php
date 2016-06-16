@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
+require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
 ?>
 
 <div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization">
@@ -151,7 +151,7 @@ require_once(dirname(__FILE__) . '/bulk-optimization/savings-chart.php');
             <?php } ?>
             <?php
             if ($available_unoptimised_sizes > 0) {
-                require_once(dirname(__FILE__) . '/bulk-optimization/form.php');
+                require_once dirname(__FILE__) . '/bulk-optimization-form.php';
             }
             ?>
         </div>

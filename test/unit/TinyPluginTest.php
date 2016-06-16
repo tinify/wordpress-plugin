@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . "/TinyTestCase.php");
+require_once dirname(__FILE__) . "/TinyTestCase.php";
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;

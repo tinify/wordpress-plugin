@@ -1,7 +1,7 @@
 <?php
 ob_start();
 
-require_once('common.php');
+require_once 'common.php';
 
 if (preg_match('#output/.+[.](png|jpg)$#', $_SERVER['REQUEST_URI'], $match)) {
     $file = str_replace('/', '-', $match[0]);
