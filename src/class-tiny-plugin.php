@@ -203,7 +203,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function get_optimization_statistics() {
         global $wpdb;
         $result = $wpdb->get_results(
-            "SELECT ID FROM $wpdb->posts
+            "SELECT ID, post_title FROM $wpdb->posts
              WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
              ORDER BY ID DESC", ARRAY_A);
 
@@ -212,12 +212,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $optimized_library_size = 0;
         $unoptimized_library_size = 0;
 
+        $available_for_optimization = array();
+
         for ($i = 0; $i < sizeof($result); $i++) {
             $tiny_metadata = new Tiny_Image($result[$i]["ID"]);
             $available_unoptimised_sizes += $tiny_metadata->get_image_sizes_available_for_compression();
             $optimized_image_sizes += $tiny_metadata->get_image_sizes_optimized();
             $optimized_library_size += $tiny_metadata->get_total_size_after_optimization();
             $unoptimized_library_size += $tiny_metadata->get_total_size_before_optimization();
+            if ( $tiny_metadata->get_image_sizes_available_for_compression() > 0 ) {
+                $available_for_optimization[] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
+            }
         }
 
         $usage_this_month = $this->settings->get_compression_count();
@@ -231,6 +236,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
 
         return array(
+            'available-for-optimization' => $available_for_optimization,
             'optimized-image-sizes' => $optimized_image_sizes,
             'available-unoptimised-sizes' => $available_unoptimised_sizes,
             'optimized-library-size' => $optimized_library_size,
@@ -323,7 +329,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $savings_percentage = $stats['savings-percentage'];
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
-        $ids_to_compress = $this->get_ids_to_compress();
+        if (isset($_POST['start-optimization'])) {
+            $ids_to_compress = $stats['available-for-optimization'];
+        } else {
+            $ids_to_compress = $this->get_ids_to_compress();
+        }
 
         include(dirname(__FILE__) . '/views/bulk-optimization.php');
     }
@@ -348,15 +358,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     private function get_ids_to_compress() {
-        if (empty($_POST['start-optimization']) && empty($_REQUEST['ids'])) {
+        if (empty($_REQUEST['ids'])) {
             return array();
         }
 
-        $condition = "";
-        if (!empty($_REQUEST['ids'])) {
-            $ids = implode(',', array_map('intval', explode('-', $_REQUEST['ids'])));
-            $condition = "AND ID IN($ids)";
-        }
+        $ids = implode(',', array_map('intval', explode('-', $_REQUEST['ids'])));
+        $condition = "AND ID IN($ids)";
 
         global $wpdb;
         return $wpdb->get_results(

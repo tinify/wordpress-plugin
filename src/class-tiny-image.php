@@ -44,6 +44,7 @@ class Tiny_Image {
         $this->parse_wp_metadata($wp_metadata);
 
         $values = get_post_meta($this->id, self::META_KEY, true);
+
         if (!is_array($values)) {
             $values = array();
         }
@@ -59,7 +60,6 @@ class Tiny_Image {
         if (!is_array($wp_metadata)) {
             return;
         }
-
         $path_info = pathinfo($wp_metadata['file']);
         $upload_dir = wp_upload_dir();
         $path_prefix = $upload_dir['basedir'] . '/';
