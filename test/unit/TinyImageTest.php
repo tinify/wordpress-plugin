@@ -32,8 +32,15 @@ class Tiny_Image_Test extends TinyTestCase {
     }
 
     public function testGetImagesShouldReturnAllImages() {
-        $this->assertEquals(array(Tiny_Image::ORIGINAL, 'medium', 'thumbnail', 'failed', 'large', 'small'), array_keys(
-            $this->subject->get_image_sizes()));
+        $this->assertEquals(array(
+            Tiny_Image::ORIGINAL,
+            'medium',
+            'thumbnail',
+            'twentyfourteen-full-width',
+            'failed',
+            'large',
+            'small'
+            ), array_keys($this->subject->get_image_sizes()));
     }
 
     public function testFilterImagesShouldFilterCorrectly() {
@@ -79,11 +86,11 @@ class Tiny_Image_Test extends TinyTestCase {
     }
 
     public function testGetSavings() {
-        $this->assertEquals(7.2973018711464, $this->subject->get_savings());
+        $this->assertEquals(8.8400241858091, $this->subject->get_savings());
     }
 
     public function testGetInitialTotalSize() {
-        $this->assertEquals(354542, $this->subject->get_total_size_before_optimization());
+        $this->assertEquals(360542, $this->subject->get_total_size_before_optimization());
     }
 
     public function testGetCompressedTotalSize() {

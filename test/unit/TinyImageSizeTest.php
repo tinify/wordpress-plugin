@@ -22,7 +22,7 @@ class Tiny_Image_Size_Test extends TinyTestCase {
     }
 
     public function testEndTimeShouldReturnEndFromTimestampIfEndIsUnavailable() {
-        $this->assertEquals(1447925244, $this->thumbnail->end_time());
+        $this->assertEquals(1437925244, $this->thumbnail->end_time());
     }
 
     public function testEndTimeShouldReturnNullIfUnavailable() {

@@ -18,7 +18,7 @@
   },
   "medium": {
     "input": {
-      "size": 66480
+      "size": 72480
     },
     "output": {
       "size": 57856
@@ -31,7 +31,16 @@
     "output": {
       "size": 37856
     },
-    "timestamp": 1447925244
+    "timestamp": 1437925244
+  },
+  "twentyfourteen-full-width": {
+    "input": {
+      "size": 139127
+    },
+    "output": {
+      "size": 121873
+    },
+    "end": 1447925214
   },
   "failed": {
     "input": { }
