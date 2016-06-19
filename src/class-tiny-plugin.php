@@ -81,13 +81,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_register_script(self::NAME .'_admin', plugins_url('/js/admin.js', __FILE__),
             array(), self::plugin_version(), true);
 
-        if ($hook == "media_page_tiny-bulk-optimization") {
-            wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url('/css/bulk-optimization.css', __FILE__),
-                array(), self::plugin_version());
-            wp_register_script(self::NAME . '_tiny_bulk_optimization', plugins_url('/js/bulk-optimization.js', __FILE__),
-                array(), self::plugin_version(), true);
-        }
-
         // WordPress < 3.3 does not handle multidimensional arrays
         wp_localize_script(self::NAME .'_admin', 'tinyCompress', array(
             'nonce' => wp_create_nonce('tiny-compress'),
@@ -107,15 +100,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
         ));
 
         wp_enqueue_script(self::NAME .'_admin');
-        wp_enqueue_script(self::NAME .'_tiny_bulk_optimization');
+
+        if ($hook == "media_page_tiny-bulk-optimization") {
+            wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url('/css/bulk-optimization.css', __FILE__),
+                array(), self::plugin_version());
+            wp_register_script(self::NAME . '_tiny_bulk_optimization', plugins_url('/js/bulk-optimization.js', __FILE__),
+                array(), self::plugin_version(), true);
+            wp_enqueue_script(self::NAME .'_tiny_bulk_optimization');
+        }
+
     }
 
     private function compress($metadata, $attachment_id) {
         $mime_type = get_post_mime_type($attachment_id);
-        $tiny_metadata = new Tiny_Image($attachment_id, $metadata);
+        $tiny_image = new Tiny_Image($attachment_id, $metadata);
 
-        if ($this->settings->get_compressor() === null || !$tiny_metadata->can_be_compressed()) {
-            return array($tiny_metadata, null);
+        if ($this->settings->get_compressor() === null || !$tiny_image->can_be_compressed()) {
+            return array($tiny_image, null);
         }
 
         $success = 0;
@@ -123,34 +124,34 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         $compressor = $this->settings->get_compressor();
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-        $uncompressed_images = $tiny_metadata->filter_image_sizes('uncompressed', $active_tinify_sizes);
+        $uncompressed_sizes = $tiny_image->filter_image_sizes('uncompressed', $active_tinify_sizes);
 
-        foreach ($uncompressed_images as $size => $image) {
+        foreach ($uncompressed_sizes as $size_name => $size) {
             try {
-                $image->add_request();
-                $tiny_metadata->update();
+                $size->add_request();
+                $tiny_image->update();
 
-                $resize = Tiny_Image::is_original($size) ? $this->settings->get_resize_options() : false;
+                $resize = Tiny_Image::is_original($size_name) ? $this->settings->get_resize_options() : false;
                 $preserve = count($this->settings->get_preserve_options()) > 0 ? $this->settings->get_preserve_options() : false;
-                $response = $compressor->compress_file($image->filename, $resize, $preserve);
+                $response = $compressor->compress_file($size->filename, $resize, $preserve);
 
-                $image->add_response($response);
-                $tiny_metadata->update();
+                $size->add_response($response);
+                $tiny_image->update();
                 $success++;
             } catch (Tiny_Exception $e) {
-                $image->add_exception($e);
-                $tiny_metadata->update();
+                $size->add_exception($e);
+                $tiny_image->update();
                 $failed++;
             }
         }
 
-        return array($tiny_metadata, array('success' => $success, 'failed' => $failed));
+        return array($tiny_image, array('success' => $success, 'failed' => $failed));
     }
 
     public function compress_attachment($metadata, $attachment_id) {
         if (!empty($metadata)) {
-            list($tiny_metadata, $result) = $this->compress($metadata, $attachment_id);
-            return $tiny_metadata->update_wp_metadata($metadata);
+            list($tiny_image, $result) = $this->compress($metadata, $attachment_id);
+            return $tiny_image->update_wp_metadata($metadata);
         } else {
             return $metadata;
         }
@@ -179,24 +180,24 @@ class Tiny_Plugin extends Tiny_WP_Base {
             exit;
         }
 
-        list($tiny_metadata, $result) = $this->compress($metadata, $id);
-        wp_update_attachment_metadata($id, $tiny_metadata->update_wp_metadata($metadata));
+        list($tiny_image, $result) = $this->compress($metadata, $id);
+        wp_update_attachment_metadata($id, $tiny_image->update_wp_metadata($metadata));
 
         if ($json) {
-            $result['message'] = $tiny_metadata->get_latest_error();
-            $result['image_sizes_optimized'] = $tiny_metadata->get_image_sizes_optimized();
-            $result['initial_total_size'] = size_format($tiny_metadata->get_total_size_before_optimization(), 2);
-            $result['optimized_total_size'] = size_format($tiny_metadata->get_total_size_after_optimization(), 2);
-            $result['savings'] = "" . number_format($tiny_metadata->get_savings(), 1);
+            $result['message'] = $tiny_image->get_latest_error();
+            $result['image_sizes_optimized'] = $tiny_image->get_image_sizes_optimized();
+            $result['initial_total_size'] = size_format($tiny_image->get_total_size_before_optimization(), 2);
+            $result['optimized_total_size'] = size_format($tiny_image->get_total_size_after_optimization(), 2);
+            $result['savings'] = "" . number_format($tiny_image->get_savings(), 1);
             $result['status'] = $this->settings->get_status();
-            $thumb = $tiny_metadata->get_image_size('thumbnail');
+            $thumb = $tiny_image->get_image_size('thumbnail');
             if (!$thumb) {
-                $thumb = $tiny_metadata->get_image_size();
+                $thumb = $tiny_image->get_image_size();
             }
             $result['thumbnail'] = $thumb->url;
             echo json_encode($result);
         } else {
-            echo $this->render_compress_details($tiny_metadata);
+            echo $this->render_compress_details($tiny_image);
         }
 
         exit();
@@ -217,12 +218,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $available_for_optimization = array();
 
         for ($i = 0; $i < sizeof($result); $i++) {
-            $tiny_metadata = new Tiny_Image($result[$i]["ID"]);
-            $available_unoptimised_sizes += $tiny_metadata->get_image_sizes_available_for_compression();
-            $optimized_image_sizes += $tiny_metadata->get_image_sizes_optimized();
-            $optimized_library_size += $tiny_metadata->get_total_size_after_optimization();
-            $unoptimized_library_size += $tiny_metadata->get_total_size_before_optimization();
-            if ( $tiny_metadata->get_image_sizes_available_for_compression() > 0 ) {
+            $tiny_image = new Tiny_Image($result[$i]["ID"]);
+            $available_unoptimised_sizes += $tiny_image->get_image_sizes_available_for_compression();
+            $optimized_image_sizes += $tiny_image->get_image_sizes_optimized();
+            $optimized_library_size += $tiny_image->get_total_size_after_optimization();
+            $unoptimized_library_size += $tiny_image->get_total_size_before_optimization();
+            if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
                 $available_for_optimization[] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
             }
         }
@@ -303,13 +304,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         echo '</div></div>';
     }
 
-    private function render_compress_details($tiny_metadata) {
-        $available_sizes = array_keys($this->settings->get_sizes());
-        $active_sizes = $this->settings->get_sizes();;
-        $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-        $in_progress = count($tiny_metadata->filter_image_sizes('in_progress'));
-
-        if ($in_progress > 0) {
+    private function render_compress_details($tiny_image) {
+        $in_progress = $tiny_image->filter_image_sizes('in_progress');
+        if (count($in_progress) > 0) {
             include(dirname(__FILE__) . '/views/compress-details-processing.php');
         } else {
             include(dirname(__FILE__) . '/views/compress-details.php');

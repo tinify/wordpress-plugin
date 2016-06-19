@@ -165,9 +165,9 @@ class Tiny_Image {
         }
         foreach ($filter_sizes as $size_name) {
             if (!isset($this->sizes[$size_name])) continue;
-            $image = $this->sizes[$size_name];
-            if ($image->$method()) {
-                $selection[$size_name] = $image;
+            $tiny_image_size = $this->sizes[$size_name];
+            if ($tiny_image_size->$method()) {
+                $selection[$size_name] = $tiny_image_size;
             }
         }
         return $selection;

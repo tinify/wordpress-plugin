@@ -1,9 +1,12 @@
 <?php
-$error = $tiny_metadata->get_latest_error();
-$total = $tiny_metadata->get_count(array('modified', 'missing', 'has_been_compressed', 'compressed'));
-$active = $tiny_metadata->get_count(array('uncompressed', 'never_compressed'), $active_tinify_sizes);
-$size_before = $tiny_metadata->get_total_size_before_optimization();
-$size_after = $tiny_metadata->get_total_size_after_optimization();
+$available_sizes = array_keys($this->settings->get_sizes());
+$active_sizes = $this->settings->get_sizes();;
+$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+$error = $tiny_image->get_latest_error();
+$total = $tiny_image->get_count(array('modified', 'missing', 'has_been_compressed', 'compressed'));
+$active = $tiny_image->get_count(array('uncompressed', 'never_compressed'), $active_tinify_sizes);
+$size_before = $tiny_image->get_total_size_before_optimization();
+$size_after = $tiny_image->get_total_size_after_optimization();
 
 $size_active = array_fill_keys($active_tinify_sizes, true);
 $size_exists = array_fill_keys($available_sizes, true);
@@ -11,7 +14,7 @@ ksort($size_exists);
 
 ?><div class="details-container">
     <div class="details" id="tiny-compress-details">
-        <?php if ($tiny_metadata->can_be_compressed()) { ?>
+        <?php if ($tiny_image->can_be_compressed()) { ?>
             <?php if ($error) { ?>
                 <span class="icon dashicons dashicons-warning error"></span>
             <?php } else if ($total['missing'] > 0 || $total['modified'] > 0) { ?>
@@ -68,21 +71,21 @@ ksort($size_exists);
                 <br/>
             <?php } ?>
 
-            <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_metadata->get_id() ?>">Details</a>
+            <a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_image->get_id() ?>">Details</a>
         <?php } ?>
     </div>
 
-    <?php if ($tiny_metadata->can_be_compressed() && $active['uncompressed'] > 0) { ?>
-        <button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_metadata->get_id() ?>">
+    <?php if ($tiny_image->can_be_compressed() && $active['uncompressed'] > 0) { ?>
+        <button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
             <?php echo esc_html__('Compress', 'tiny-compress-images') ?>
         </button>
     <?php } ?>
 </div>
 
-<div class="modal" id="modal_<?php echo $tiny_metadata->get_id() ?>">
+<div class="modal" id="modal_<?php echo $tiny_image->get_id() ?>">
     <div class="tiny-compression-details">
         <h3>
-            <?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_metadata->get_name()) ?>
+            <?php printf(esc_html__('Compression details for %s', 'tiny-compress-images'), $tiny_image->get_name()) ?>
         </h3>
         <table>
             <tr>
@@ -93,7 +96,7 @@ ksort($size_exists);
             </tr>
             <?php $i = 0 ?>
             <?php
-                $images = $tiny_metadata->get_image_sizes() + $size_exists;
+                $images = $tiny_image->get_image_sizes() + $size_exists;
                 foreach ($images as $size => $image) {
                     if (!is_object($image)) $image = new Tiny_Image_Size();
                     ?>
@@ -140,7 +143,7 @@ ksort($size_exists);
                 </tr>
                 <?php $i++ ?>
             <?php } ?>
-            <?php if ($tiny_metadata->get_image_sizes_optimized() > 0) { ?>
+            <?php if ($tiny_image->get_image_sizes_optimized() > 0) { ?>
             <tfoot>
                 <tr>
                     <td><?php esc_html_e('Combined', 'tiny-compress-images') ?></td>
