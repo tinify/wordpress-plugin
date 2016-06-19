@@ -236,7 +236,7 @@ class Tiny_Image {
        }
     }
 
-    protected function calculate_statistics() {
+    private function calculate_statistics() {
         if ($this->statistics_calculated) return;
 
         $settings = new Tiny_Settings();

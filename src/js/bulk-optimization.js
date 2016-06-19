@@ -188,6 +188,5 @@
   });
 
   window.bulkOptimization = prepareBulkOptimization
-  updateSavings(0);
 
 }).call()
