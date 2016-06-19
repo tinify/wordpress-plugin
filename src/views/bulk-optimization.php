@@ -11,14 +11,14 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
 
             <p>
                 <?php
-                if ($optimized_image_sizes + $available_unoptimised_sizes == 0) {
+                if ($stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] == 0) {
                     echo __('This page is designed to bulk compress all your images. There don\'t seem to be any available.');
                 } else {
-                    $percentage = round($optimized_image_sizes / ($optimized_image_sizes + $available_unoptimised_sizes) * 100, 2);
+                    $percentage = round($stats['optimized-image-sizes'] / ($stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes']) * 100, 2);
                     if ($percentage == 100) {
                         echo __('Great! Your entire library is optimimized!');
                         // TODO: If we have 0 active sizes, show a different message.
-                    } else if ($optimized_image_sizes > 0) {
+                    } else if ($stats['optimized-image-sizes'] > 0) {
                         echo __('You are doing great!');
                         echo ' ';
                         printf(esc_html__('%d%% of your image library is optimized.', 'tiny-compress-images'), $percentage);
@@ -39,7 +39,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                         <?php echo __('images', 'tiny-compress-images') ?>
                     </h3>
                     <span id="uploaded-images">
-                        <?php echo $uploaded_images ?>
+                        <?php echo $stats['uploaded-images']; ?>
                     </span>
                 </div>
                 <div class="item">
@@ -49,16 +49,16 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                         <?php echo __('image sizes', 'tiny-compress-images') ?>
                     </h3>
                     <span id="optimizable-image-sizes">
-                        <?php echo $available_unoptimised_sizes ?>
+                        <?php echo $stats['available-unoptimised-sizes'] ?>
                     </span>
                     <div class="tooltip">
                         <span class="dashicons dashicons-info"></span>
                         <div class="tip">
-                            <?php if ($uploaded_images > 0 && sizeof($active_tinify_sizes) > 0 && $available_unoptimised_sizes > 0) { ?>
+                            <?php if ($stats['uploaded-images'] > 0 && sizeof($active_tinify_sizes) > 0 && $stats['available-unoptimised-sizes'] > 0) { ?>
                                 <p>
                                     <?php
                                     printf(esc_html__('With your current settings you can still optimize %d images sizes from your %d uploaded JPEG and PNG images.',
-                                                      'tiny-compress-images'), $available_unoptimised_sizes, $uploaded_images);
+                                                      'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images']);
                                     ?>
                                 </p>
                             <?php } ?>
@@ -90,7 +90,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                         <br>
                         <?php echo __('cost', 'tiny-compress-images') ?>
                     </h3>
-                    <span id='estimated-cost'>$ <?php echo number_format(round($estimated_cost, 2), 2) ?></span>
+                    <span id='estimated-cost'>$ <?php echo number_format(round($stats['estimated-cost'], 2), 2) ?></span>
                     USD
                 </div>
             </div>
@@ -108,20 +108,20 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                 <?php echo __('Statistics based on all available JPEG and PNG images in your media library.'); ?>
             </p>
             <?php
-                render_percentage_chart(round($savings_percentage, 1));
+                render_percentage_chart(round($stats['savings-percentage'], 1));
             ?>
             <table class="savings-numbers">
                 <tr>
                     <td id="optimized-image-sizes" class="green">
-                        <?php echo ($optimized_image_sizes ? $optimized_image_sizes : '0'); ?>
+                        <?php echo $stats['optimized-image-sizes']; ?>
                     </td>
                     <td>
-                        <?php echo _n('image size optimized', 'image sizes optimized', $optimized_image_sizes, 'tiny-compress-images') ?>
+                        <?php echo _n('image size optimized', 'image sizes optimized', $stats['optimized-image-sizes'], 'tiny-compress-images') ?>
                     </td>
                 </tr>
                 <tr>
                     <td id="unoptimized-library-size">
-                        <?php echo ($unoptimized_library_size ? size_format($unoptimized_library_size, 2) : '-'); ?>
+                        <?php echo ($stats['unoptimized-library-size'] ? size_format($stats['unoptimized-library-size'], 2) : '-'); ?>
                     </td>
                     <td>
                         <?php echo __('initial size', 'tiny-compress-images') ?>
@@ -129,7 +129,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                 </tr>
                 <tr>
                     <td id="optimized-library-size" class="green">
-                        <?php echo ($optimized_library_size ? size_format($optimized_library_size, 2) : '-') ?>
+                        <?php echo ($stats['optimized-library-size'] ? size_format($stats['optimized-library-size'], 2) : '-') ?>
                     </td>
                     <td>
                         <?php echo __('current size', 'tiny-compress-images') ?>
@@ -140,17 +140,17 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
 
         <div class="optimize">
             <?php if (sizeof($ids_to_compress) > 0) { ?>
-                <div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $optimized_image_sizes + $available_unoptimised_sizes ?>" data-amount-optimized="0">
+                <div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
                     <div class="progressbar-progress"></div>
                     <span id="optimized-so-far">
-                        <?php echo $optimized_image_sizes ?>
+                        <?php echo $stats['optimized-image-sizes'] ?>
                     </span> /
-                    <?php echo $optimized_image_sizes + $available_unoptimised_sizes ?>
+                    <?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>
                     <span id="percentage"></span>
                 </div>
             <?php } ?>
             <?php
-            if ($available_unoptimised_sizes > 0) {
+            if ($stats['available-unoptimised-sizes'] > 0) {
                 require_once dirname(__FILE__) . '/bulk-optimization-form.php';
             }
             ?>

@@ -210,6 +210,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
              WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
              ORDER BY ID DESC", ARRAY_A);
 
+        $uploaded_images = 0;
         $optimized_image_sizes = 0;
         $available_unoptimised_sizes = 0;
         $optimized_library_size = 0;
@@ -219,6 +220,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         for ($i = 0; $i < sizeof($result); $i++) {
             $tiny_image = new Tiny_Image($result[$i]["ID"]);
+            $uploaded_images++;
             $available_unoptimised_sizes += $tiny_image->get_image_sizes_available_for_compression();
             $optimized_image_sizes += $tiny_image->get_image_sizes_optimized();
             $optimized_library_size += $tiny_image->get_total_size_after_optimization();
@@ -239,6 +241,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
 
         return array(
+            'uploaded-images' => $uploaded_images,
             'available-for-optimization' => $available_for_optimization,
             'optimized-image-sizes' => $optimized_image_sizes,
             'available-unoptimised-sizes' => $available_unoptimised_sizes,
@@ -314,18 +317,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function render_bulk_optimization_page() {
-        $attachment_counts = ((array) wp_count_attachments());
-        $number_of_png_images = array_key_exists('image/png', $attachment_counts) ? intval($attachment_counts['image/png']) : 0;
-        $number_of_jpeg_images = array_key_exists('image/jpeg', $attachment_counts) ? intval($attachment_counts['image/jpeg']) : 0;
-        $uploaded_images = $number_of_png_images + $number_of_jpeg_images;
-
         $stats = $this->get_optimization_statistics();
-        $optimized_image_sizes = $stats['optimized-image-sizes'];
-        $available_unoptimised_sizes = $stats['available-unoptimised-sizes'];
-        $optimized_library_size = $stats['optimized-library-size'];
-        $unoptimized_library_size = $stats['unoptimized-library-size'];
-        $estimated_cost = $stats['estimated-cost'];
-        $savings_percentage = $stats['savings-percentage'];
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
         if (isset($_POST['start-optimization'])) {
