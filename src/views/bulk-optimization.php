@@ -139,7 +139,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
         </div>
 
         <div class="optimize">
-            <?php if (sizeof($ids_to_compress) > 0) { ?>
+            <?php if (true) { ?>
                 <div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
                     <div class="progressbar-progress"></div>
                     <span id="optimized-so-far">
@@ -157,10 +157,16 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
         </div>
     </div>
 
+    <script type="text/javascript">
     <?php
-    if (sizeof($ids_to_compress) > 0) {
-        echo "<script type='text/javascript'>jQuery(function() { bulkOptimization(" . json_encode($ids_to_compress) . ")})</script>";
+    if ($auto_start_bulk) {
+        echo "jQuery(function() { bulkOptimizationAutorun(" . json_encode($this->get_ids_to_compress()) . ")})";
+    } else {
+        echo "jQuery(function() { bulkOptimization(" . json_encode($stats['available-for-optimization']) . ")})";
+    }
     ?>
+    </script>
+
     <table class="wp-list-table widefat fixed striped media whitebox" id="media-items">
         <tr>
             <th class="thumbnail"></th>
@@ -172,5 +178,4 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
             <th><?php echo __('Status', 'tiny-compress-images') ?></th>
         </tr>
     </table>
-    <?php } ?>
 </div>

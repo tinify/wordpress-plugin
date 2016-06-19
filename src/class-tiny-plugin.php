@@ -308,11 +308,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         $stats = $this->get_optimization_statistics();
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
-        if (isset($_POST['start-optimization'])) {
-            $ids_to_compress = $stats['available-for-optimization'];
-        } else {
-            $ids_to_compress = $this->get_ids_to_compress();
-        }
+        $auto_start_bulk = isset($_REQUEST['ids']);
 
         include(dirname(__FILE__) . '/views/bulk-optimization.php');
     }

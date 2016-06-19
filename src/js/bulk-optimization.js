@@ -143,6 +143,10 @@
   }
 
   function prepareBulkOptimization(items) {
+      window.allBulkOptimizationItems = items;
+  }
+
+  function startBulkOptimization(items) {
     window.optimizationCancelled = false;
     updateProgressBar(0);
     updateSavings(0);
@@ -168,6 +172,12 @@
   }
 
   jQuery("button").click(function(event) {
+    if (jQuery(jQuery(event.target).find("span.start-optimizing")).hasClass('active')) {
+      event.preventDefault();
+      jQuery("form button > span.start-optimizing").removeClass('active')
+      jQuery("form button > span.optimizing").addClass('active')
+      startBulkOptimization(window.allBulkOptimizationItems);
+    }
     if (jQuery(jQuery(event.target).find("span.cancel")).hasClass('active')) {
       event.preventDefault();
       cancelOptimization();
@@ -187,6 +197,7 @@
     }
   });
 
+  window.bulkOptimizationAutorun = startBulkOptimization
   window.bulkOptimization = prepareBulkOptimization
 
 }).call()
