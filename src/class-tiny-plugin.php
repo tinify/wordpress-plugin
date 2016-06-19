@@ -210,45 +210,33 @@ class Tiny_Plugin extends Tiny_WP_Base {
              WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
              ORDER BY ID DESC", ARRAY_A);
 
-        $uploaded_images = 0;
-        $optimized_image_sizes = 0;
-        $available_unoptimised_sizes = 0;
-        $optimized_library_size = 0;
-        $unoptimized_library_size = 0;
-
-        $available_for_optimization = array();
+        $stats = array();
+        $stats['uploaded-images'] = 0;
+        $stats['optimized-image-sizes'] = 0;
+        $stats['available-unoptimised-sizes'] = 0;
+        $stats['optimized-library-size'] = 0;
+        $stats['unoptimized-library-size'] = 0;
+        $stats['available-for-optimization'] = array();
 
         for ($i = 0; $i < sizeof($result); $i++) {
             $tiny_image = new Tiny_Image($result[$i]["ID"]);
-            $uploaded_images++;
-            $available_unoptimised_sizes += $tiny_image->get_image_sizes_available_for_compression();
-            $optimized_image_sizes += $tiny_image->get_image_sizes_optimized();
-            $optimized_library_size += $tiny_image->get_total_size_after_optimization();
-            $unoptimized_library_size += $tiny_image->get_total_size_before_optimization();
+            $stats['uploaded-images']++;
+            $stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
+            $stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
+            $stats['optimized-library-size'] += $tiny_image->get_total_size_after_optimization();
+            $stats['unoptimized-library-size'] += $tiny_image->get_total_size_before_optimization();
             if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
-                $available_for_optimization[] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
+                $stats['available-for-optimization'][] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
             }
         }
-
-        $usage_this_month = $this->settings->get_compression_count();
-        $estimated_cost = $this->estimate_cost($available_unoptimised_sizes + $usage_this_month) -
-            $this->estimate_cost($usage_this_month);
-
-        $savings_percentage = 0;
-        if ($optimized_library_size != 0 && $unoptimized_library_size != 0) {
-            $savings_percentage = (100 - ($optimized_library_size / $unoptimized_library_size * 100));
-            $savings_percentage  = round($savings_percentage, 1);
+        $stats['estimated-cost'] = $this->estimate_cost($stats['available-unoptimised-sizes'], $this->settings->get_compression_count());
+        if ($stats['unoptimized-library-size'] != 0) {
+            $stats['savings-percentage'] = round(100 - ($stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100), 1);
+        } else {
+            $stats['savings-percentage'] = 0;
         }
 
-        return array(
-            'uploaded-images' => $uploaded_images,
-            'available-for-optimization' => $available_for_optimization,
-            'optimized-image-sizes' => $optimized_image_sizes,
-            'available-unoptimised-sizes' => $available_unoptimised_sizes,
-            'optimized-library-size' => $optimized_library_size,
-            'unoptimized-library-size' => $unoptimized_library_size,
-            'estimated-cost' => $estimated_cost,
-            'savings-percentage' => $savings_percentage);
+        return $stats;
     }
 
     public function ajax_optimization_statistics() {
@@ -330,21 +318,22 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     // Based on pricing April 2016.
-    public function estimate_cost($compressions) {
+    public function estimate_cost($compressions, $usage) {
+        return $this->compression_cost($compressions + $usage) - $this->compression_cost($usage);
+    }
+
+    private function compression_cost($total) {
         $cost = 0;
-
-        if ($compressions > 10000) {
-            $cheap = ($compressions - 10000);
-            $cost += $cheap * 0.002;
-            $compressions -= $cheap;
+        if ($total > 10000) {
+            $compressions = $total - 10000;
+            $cost += $compressions * 0.002;
+            $total -= $compressions;
         }
-
-        if ($compressions > 500) {
-            $normal = ($compressions - 500);
-            $cost += $normal * 0.009;
-            $compressions -= $normal;
+        if ($total > 500) {
+            $compressions = $total - 500;
+            $cost += $compressions * 0.009;
+            $total -= $compressions;
         }
-
         return $cost;
     }
 

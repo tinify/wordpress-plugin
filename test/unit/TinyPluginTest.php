@@ -209,15 +209,15 @@ class Tiny_Plugin_Test extends TinyTestCase {
     }
 
     public function testEstimateCostFree() {
-        $this->assertEquals(150 * 0, $this->subject->estimate_cost(150));
+        $this->assertEquals(150 * 0, $this->subject->estimate_cost(150, 0));
     }
 
     public function testEstimateCostNormalAndFree() {
-        $this->assertEquals(500 * 0 + 2500 * 0.009, $this->subject->estimate_cost(3000));
+        $this->assertEquals(350 * 0 + 2650 * 0.009, $this->subject->estimate_cost(3000, 150));
     }
 
     public function testEstimateCostCheapAndNormalAndFree() {
-        $this->assertEquals(500 * 0 + 9500 * 0.009 + 40000 * 0.002, $this->subject->estimate_cost(50000));
+        $this->assertEquals(500 * 0 + 9500 * 0.009 + 40000 * 0.002, $this->subject->estimate_cost(50000, 0));
     }
 
     // skip TODO
