@@ -213,20 +213,20 @@ class Tiny_Image {
         return $this->image_sizes_available_for_compression;
     }
 
-    public function get_total_size_before_optimization() {
+    public function get_total_size_without_optimization() {
         if (!$this->statistics_calculated) $this->calculate_statistics();
         return $this->initial_total_size;
     }
 
-    public function get_total_size_after_optimization() {
+    public function get_total_size_with_optimization() {
         if (!$this->statistics_calculated) $this->calculate_statistics();
         return $this->optimized_total_size;
     }
 
     public function get_savings() {
        if (!$this->statistics_calculated) $this->calculate_statistics();
-       $before = $this->get_total_size_before_optimization();
-       $after = $this->get_total_size_after_optimization();
+       $before = $this->get_total_size_without_optimization();
+       $after = $this->get_total_size_with_optimization();
 
        /* Avoid division by zero. */
        if ($before === 0) {

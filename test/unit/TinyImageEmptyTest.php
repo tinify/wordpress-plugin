@@ -24,10 +24,10 @@ class Tiny_Image_Empty_Test extends TinyTestCase {
     }
 
     public function testGetInitialTotalSize() {
-        $this->assertEquals(328670, $this->subject->get_total_size_before_optimization());
+        $this->assertEquals(328670, $this->subject->get_total_size_without_optimization());
     }
 
     public function testGetCompressedTotalSize() {
-        $this->assertEquals(328670, $this->subject->get_total_size_after_optimization());
+        $this->assertEquals(328670, $this->subject->get_total_size_with_optimization());
     }
 }

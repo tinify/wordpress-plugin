@@ -5,8 +5,8 @@ $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count(array('modified', 'missing', 'has_been_compressed', 'compressed'));
 $active = $tiny_image->get_count(array('uncompressed', 'never_compressed'), $active_tinify_sizes);
-$size_before = $tiny_image->get_total_size_before_optimization();
-$size_after = $tiny_image->get_total_size_after_optimization();
+$size_before = $tiny_image->get_total_size_without_optimization();
+$size_after = $tiny_image->get_total_size_with_optimization();
 
 $size_active = array_fill_keys($active_tinify_sizes, true);
 $size_exists = array_fill_keys($available_sizes, true);

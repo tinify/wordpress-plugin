@@ -56,6 +56,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
         add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
         add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
+        add_action('wp_ajax_tiny_size_format', $this->get_method('ajax_size_format'));
 
         $plugin = plugin_basename(dirname(dirname(__FILE__)) . '/tiny-compress-images.php');
         add_filter("plugin_action_links_$plugin", $this->get_method('add_plugin_links'));
@@ -180,14 +181,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
             exit;
         }
 
+        $tiny_image = new Tiny_Image($id, $metadata);
+        $size_before = $tiny_image->get_total_size_with_optimization();
+
         list($tiny_image, $result) = $this->compress($metadata, $id);
+
         wp_update_attachment_metadata($id, $tiny_image->update_wp_metadata($metadata));
+
+        $size_after = $tiny_image->get_total_size_with_optimization();
 
         if ($json) {
             $result['message'] = $tiny_image->get_latest_error();
             $result['image_sizes_optimized'] = $tiny_image->get_image_sizes_optimized();
-            $result['initial_total_size'] = size_format($tiny_image->get_total_size_before_optimization(), 2);
-            $result['optimized_total_size'] = size_format($tiny_image->get_total_size_after_optimization(), 2);
+            $result['initial_total_size'] = size_format($tiny_image->get_total_size_without_optimization(), 2);
+            $result['optimized_total_size'] = size_format($tiny_image->get_total_size_with_optimization(), 2);
             $result['savings'] = "" . number_format($tiny_image->get_savings(), 1);
             $result['status'] = $this->settings->get_status();
             $thumb = $tiny_image->get_image_size('thumbnail');
@@ -195,8 +202,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
                 $thumb = $tiny_image->get_image_size();
             }
             $result['thumbnail'] = $thumb->url;
+            $result['change'] = $size_after - $size_before;
             echo json_encode($result);
         } else {
+            error_log("Please check the code this may actually never be executed.");
             echo $this->render_compress_details($tiny_image);
         }
 
@@ -223,8 +232,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $stats['uploaded-images']++;
             $stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
             $stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
-            $stats['optimized-library-size'] += $tiny_image->get_total_size_after_optimization();
-            $stats['unoptimized-library-size'] += $tiny_image->get_total_size_before_optimization();
+            $stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
+            $stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
             if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
                 $stats['available-for-optimization'][] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
             }
@@ -254,6 +263,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
             'estimated-cost' => $stats['estimated-cost'],
             'savings-percentage' => $stats['savings-percentage']));
 
+        exit();
+    }
+
+    public function ajax_size_format() {
+        if (!$this->check_ajax_referer()) {
+            exit();
+        }
+        $bytes = intval($_POST['size']);
+        echo json_encode(array('formatted-size' => size_format($bytes, 3)));
         exit();
     }
 

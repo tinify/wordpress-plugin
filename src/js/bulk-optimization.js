@@ -1,21 +1,26 @@
 (function() {
-  function updateProgressBar(amountOptimized) {
+  function updateProgressBar(successFullCompressions) {
     var totalToOptimize = parseInt(jQuery('div.progressbar').data('amount-to-optimize'));
 
     var optimizedSoFar = parseInt(jQuery("#optimized-so-far").text());;
-    jQuery("#optimized-so-far").html(amountOptimized + optimizedSoFar);
+    jQuery("#optimized-so-far").html(successFullCompressions + optimizedSoFar);
 
-    var percentage = Math.round((amountOptimized + optimizedSoFar) / totalToOptimize * 100, 1) + "%";
+    var percentage = Math.round((successFullCompressions + optimizedSoFar) / totalToOptimize * 100, 1) + "%";
     jQuery('div.progressbar-progress').css('width', percentage);
     jQuery('div.progressbar span#percentage').html("(" + percentage + ")");
 
-    var amountToOptimize = parseInt(jQuery("#optimizable-image-sizes").html())
-    jQuery("#optimizable-image-sizes").html(amountToOptimize - amountOptimized)
+    var numberToOptimize = parseInt(jQuery("#optimizable-image-sizes").html())
+    jQuery("#optimizable-image-sizes").html(numberToOptimize - successFullCompressions)
   }
 
-  function updateSavings(amountOptimized) {
-    var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text());
-    jQuery("#optimized-image-sizes").html(imagesSizedOptimized + amountOptimized);
+  function updateSavings(successFullCompressions, successFullSaved) {
+
+    var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text()) + successFullCompressions;
+    var initialLibraryBytes = parseInt(jQuery("#unoptimized-library-size").data("bytes"));
+    var optimizedLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes")) + successFullSaved;
+
+    jQuery("#optimized-image-sizes").html(imagesSizedOptimized);
+    jQuery("#optimized-library-size").attr("data-bytes", optimizedLibraryBytes);
 
     jQuery.ajax({
       url: ajaxurl,
@@ -23,17 +28,16 @@
       dataType: "json",
       data: {
         _nonce: tinyCompress.nonce,
-        action: 'tiny_get_optimization_statistics',
+        action: 'tiny_size_format',
+        size: optimizedLibraryBytes,
         json: true
       },
       success: function(data) {
-        jQuery("#unoptimized-library-size").html(data['unoptimized-library-size']);
-        jQuery("#optimized-library-size").html(data['optimized-library-size']);
-        var size = jQuery('div.savings-chart').data('full-circle-size')
-        var percentageFactor = size / 100;
-        var percentage = percentageFactor * parseFloat(data['savings-percentage']);
-        jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + percentage + " " + size)
-        jQuery("#savings-percentage").html(data['savings-percentage'] + "%");
+        jQuery("#optimized-library-size").html(data['formatted-size']);
+        var percentage = (1 - optimizedLibraryBytes / initialLibraryBytes)
+        var chartSize = jQuery('div.savings-chart').data('full-circle-size')
+        jQuery("#savings-percentage").html(Math.round(percentage * 100, 1) + "%");
+        jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(errorThrown);
@@ -46,15 +50,16 @@
     jQuery('div.progressbar-progress').css('animation', 'none');
   }
 
-  function updateViewAfterSuccess(row, amountOptimized) {
+  function updateViewAfterSuccess(row, data) {
+    var successFullCompressions = parseInt(data.success)
+    var successFullSaved = parseInt(data.change)
     row.find('.status').addClass('success')
-
-    if (amountOptimized == 0) {
+    if (successFullCompressions == 0) {
       row.find('.status').html(tinyCompress.L10nNoActionTaken)
     } else {
-      row.find('.status').html(amountOptimized + " " + tinyCompress.L10nCompressed)
-      updateProgressBar(amountOptimized);
-      updateSavings(amountOptimized);
+      row.find('.status').html(successFullCompressions + " " + tinyCompress.L10nCompressed)
+      updateProgressBar(successFullCompressions);
+      updateSavings(successFullCompressions, successFullSaved);
     }
   }
 
@@ -84,7 +89,8 @@
       row.find('.status').html("<span class=\"icon dashicons dashicons-warning error\"></span><span class=\"message\">" + tinyCompress.L10nLatestError + ": " + data.message + "</span>");
       row.find('.status').attr("title", data.message)
     } else {
-      updateViewAfterSuccess(row, parseInt(data.success))
+      // This recalculates all statistics
+      updateViewAfterSuccess(row, data)
     }
 
     if (!data.initial_total_size) {
@@ -148,9 +154,6 @@
 
   function startBulkOptimization(items) {
     window.optimizationCancelled = false;
-    updateProgressBar(0);
-    updateSavings(0);
-
     var list = jQuery('#media-items tbody')
     var row
     jQuery("#tiny-bulk-optimization form div.spinner").css('display', 'inline-block');

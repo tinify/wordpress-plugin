@@ -120,7 +120,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                     </td>
                 </tr>
                 <tr>
-                    <td id="unoptimized-library-size">
+                    <td id="unoptimized-library-size" data-bytes="<?php echo $stats['unoptimized-library-size']; ?>" >
                         <?php echo ($stats['unoptimized-library-size'] ? size_format($stats['unoptimized-library-size'], 2) : '-'); ?>
                     </td>
                     <td>
@@ -128,7 +128,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                     </td>
                 </tr>
                 <tr>
-                    <td id="optimized-library-size" class="green">
+                    <td id="optimized-library-size" data-bytes="<?php echo $stats['optimized-library-size'] ?>" class="green">
                         <?php echo ($stats['optimized-library-size'] ? size_format($stats['optimized-library-size'], 2) : '-') ?>
                     </td>
                     <td>
