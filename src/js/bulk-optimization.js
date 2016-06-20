@@ -36,7 +36,7 @@
         jQuery("#optimized-library-size").html(data['formatted-size']);
         var percentage = (1 - optimizedLibraryBytes / initialLibraryBytes)
         var chartSize = jQuery('div.savings-chart').data('full-circle-size')
-        jQuery("#savings-percentage").html(Math.round(percentage * 100, 1) + "%");
+        jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%");
         jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
       },
       error: function(xhr, textStatus, errorThrown) {

@@ -239,11 +239,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
             }
         }
         $stats['estimated-cost'] = $this->estimate_cost($stats['available-unoptimised-sizes'], $this->settings->get_compression_count());
-        if ($stats['unoptimized-library-size'] != 0) {
-            $stats['savings-percentage'] = round(100 - ($stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100), 1);
-        } else {
-            $stats['savings-percentage'] = 0;
-        }
 
         return $stats;
     }
@@ -271,7 +266,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             exit();
         }
         $bytes = intval($_POST['size']);
-        echo json_encode(array('formatted-size' => size_format($bytes, 3)));
+        echo json_encode(array('formatted-size' => size_format($bytes, 2)));
         exit();
     }
 

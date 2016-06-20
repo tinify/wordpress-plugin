@@ -108,7 +108,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                 <?php echo __('Statistics based on all available JPEG and PNG images in your media library.'); ?>
             </p>
             <?php
-                render_percentage_chart(round($stats['savings-percentage'], 1));
+                render_percentage_chart($stats['optimized-library-size'], $stats['unoptimized-library-size']);
             ?>
             <table class="savings-numbers">
                 <tr>

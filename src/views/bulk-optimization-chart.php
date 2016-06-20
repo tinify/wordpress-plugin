@@ -1,7 +1,13 @@
 <?php
-function render_percentage_chart($percentage) {
+function render_percentage_chart($optimized_library_size, $unoptimized_library_size) {
     $width = 200; // same as width of ' .savings-chart > .textual'
     $radius = 80;
+
+    if ($unoptimized_library_size != 0) {
+        $percentage = round(100 - ($optimized_library_size / $unoptimized_library_size * 100), 1);
+    } else {
+        $percentage = 0;
+    }
 
     $height = $width;
     $offset = $width / 2;
