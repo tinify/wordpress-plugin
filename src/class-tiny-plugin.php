@@ -247,17 +247,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
         if (!$this->check_ajax_referer()) {
             exit();
         }
-
         $stats = $this->get_optimization_statistics();
-
-        echo json_encode(array(
-            'optimized-image-sizes' => $stats['optimized-image-sizes'],
-            'available-unoptimised-sizes' => $stats['available-unoptimised-sizes'],
-            'optimized-library-size' => ($stats['optimized-library-size'] ? size_format($stats['optimized-library-size'], 2) : '-'),
-            'unoptimized-library-size' => ($stats['unoptimized-library-size'] ? size_format($stats['unoptimized-library-size'], 2) : '-'),
-            'estimated-cost' => $stats['estimated-cost'],
-            'savings-percentage' => $stats['savings-percentage']));
-
+        echo json_encode($stats);
         exit();
     }
 
