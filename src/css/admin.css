@@ -10,7 +10,7 @@ div.tiny-compress-images p.tiny-account-status + p {
 div.tiny-account-container {
     display: inline-block;
     padding: 30px;
-    border: solid #E1E1E1 1px;
+    border: 1px solid #e1e1e1;
     background-color: white;
 }
 
@@ -26,9 +26,9 @@ div.tiny-account-container p {
 
 div.tiny-account-container .tiny-update-account-step1 {
     float: left;
-    padding-right: 30px;
     width: 280px;
-    border-right: solid #E5E5E5 1px;
+    padding-right: 30px;
+    border-right: 1px solid #e5e5e5;
 }
 
 div.tiny-account-container .tiny-update-account-step2 {
@@ -38,18 +38,19 @@ div.tiny-account-container .tiny-update-account-step2 {
 }
 
 div.tiny-account-container input {
-    margin-bottom: 10px;
     width: 100%;
+    margin-bottom: 10px;
 }
 
 div.tiny-account-container button {
-    margin-bottom: 0;
     width: 100%;
+    margin-bottom: 0;
 }
 
-div.tiny-update-account-step1 p.tiny-create-account-message, div.tiny-update-account-step2 p.tiny-update-account-message {
+div.tiny-update-account-step1 p.tiny-create-account-message,
+div.tiny-update-account-step2 p.tiny-update-account-message {
     margin-top: 0;
-    color: #D54E21;
+    color: #d54e21;
 }
 
 .tiny-compress-images .spinner.hidden {
@@ -80,8 +81,8 @@ div.tiny-update-account-step1 p.tiny-create-account-message, div.tiny-update-acc
 }
 
 .tiny-compress-images span.dashicons-before::before {
-    font-size: 23px;
     margin-left: -2px;
+    font-size: 23px;
 }
 
 .tiny-compress-images .details-container {
@@ -103,27 +104,28 @@ div.tiny-update-account-step1 p.tiny-create-account-message, div.tiny-update-acc
 }
 
 .tiny-compress-images span.success {
-    color: #0EE00E;
+    color: #0ee00e;
 }
 
 .tiny-compress-images span.warning {
-    color: #F0AD4E;
+    color: #f0ad4e;
 }
 
 .tiny-compress-images span.error {
-    color: #D54E21;
+    color: #d54e21;
 }
 
 .tiny-compress-images span.alert {
     color: gray;
 }
 
-#tiny-compress-status .spinner, #tiny-compress-savings .spinner {
+#tiny-compress-status .spinner,
+#tiny-compress-savings .spinner {
+    visibility: visible;
     display: inline;
+    float: left;
     width: 20px;
     height: 20px;
-    visibility: visible;
-    float: left;
     margin: 0;
 }
 
@@ -132,14 +134,14 @@ div.tiny-update-account-step1 p.tiny-create-account-message, div.tiny-update-acc
 }
 
 .tiny-compression-details table {
-    border: 1px solid #E5E5E5;
+    width: 100%;
+    border: 1px solid #e5e5e5;
     border-collapse: collapse;
     white-space: nowrap;
-    width: 100%;
 }
 
 .tiny-compression-details table tr.even {
-    background-color: #F9F9F9;
+    background-color: #f9f9f9;
 }
 
 .tiny-compression-details table td {
@@ -148,12 +150,12 @@ div.tiny-update-account-step1 p.tiny-create-account-message, div.tiny-update-acc
 
 .tiny-compression-details table th {
     padding: 8px 10px;
-    border-bottom: 1px solid #E5E5E5;
+    border-bottom: 1px solid #e5e5e5;
     font-size: 14px;
 }
 
 .tiny-compression-details table tfoot {
-    border-top: 1px solid #E5E5E5;
+    border-top: 1px solid #e5e5e5;
 }
 
 .tiny-compression-details table tfoot td {
