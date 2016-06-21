@@ -97,6 +97,9 @@
     row.find('.savings').html(data.savings);
 
     if (items[++i]) {
+      if (!window.optimizationCancelled) {
+        drawSomeRows(items, 1);
+      }
       bulkOptimizeItem(items, i)
     } else {
       var message = jQuery('<div class="updated"><p></p></div>');
@@ -140,18 +143,24 @@
 
   function startBulkOptimization(items) {
     window.optimizationCancelled = false;
+    window.totalRowsDrawn = 0;
     window.currentLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes"))
 
+    jQuery("#tiny-bulk-optimization form div.spinner").css('display', 'inline-block');
+    drawSomeRows(items, 10);
+    bulkOptimizeItem(items, 0)
+  }
+
+  function drawSomeRows(items, rowsToDraw) {
     var list = jQuery('#media-items tbody')
     var row
-    jQuery("#tiny-bulk-optimization form div.spinner").css('display', 'inline-block');
-    for (var i = 0; i < items.length; i++) {
+    for (var drawNow = window.totalRowsDrawn; drawNow < Math.min( rowsToDraw + window.totalRowsDrawn, items.length); drawNow++) {
       row = jQuery('<tr class="media-item"><td class="thumbnail" /><td class="name" /><td class="image-sizes-optimized" /><td class="initial-total-size" /><td class="optimized-total-size" /><td class="savings" /><td class="status todo" /></tr>')
       row.find('.status').html(tinyCompress.L10nWaiting)
-      row.find('.name').html(items[i].post_title)
+      row.find('.name').html(items[drawNow].post_title)
       list.append(row)
     }
-    bulkOptimizeItem(items, 0)
+    window.totalRowsDrawn = drawNow
   }
 
   function cancelOptimization() {
