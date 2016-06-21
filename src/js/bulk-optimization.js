@@ -138,9 +138,8 @@
       dataType: "json",
       data: {
         _nonce: tinyCompress.nonce,
-        action: 'tiny_compress_image',
-        id: items[i].ID,
-        json: true
+        action: 'tiny_compress_image_for_bulk',
+        id: items[i].ID
       },
       success: function(data) { bulkOptimizationCallback(null, data, items, i)},
       error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, {}, items, i) }

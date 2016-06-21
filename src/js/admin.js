@@ -11,7 +11,7 @@
       type: "POST",
       data: {
         _nonce: tinyCompress.nonce,
-        action: 'tiny_compress_image',
+        action: 'tiny_compress_image_from_library',
         id: element.data('id') || element.attr('data-id')
       },
       success: function(data) {

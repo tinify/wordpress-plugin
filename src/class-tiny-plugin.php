@@ -54,7 +54,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
         add_filter('manage_media_columns', $this->get_method('add_media_columns'));
         add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
 
-        add_action('wp_ajax_tiny_compress_image', $this->get_method('compress_image'));
+        add_action('wp_ajax_tiny_compress_image_from_library', $this->get_method('compress_image_from_library'));
+        add_action('wp_ajax_tiny_compress_image_for_bulk', $this->get_method('compress_image_for_bulk'));
         add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
         add_action('wp_ajax_tiny_size_format', $this->get_method('ajax_size_format'));
 
@@ -122,55 +123,80 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
     }
 
-    public function compress_image() {
+    public function compress_image_from_library() {
         if (!$this->check_ajax_referer()) {
             exit();
         }
-        $json = !empty($_POST['json']) && $_POST['json'];
         if (!current_user_can('upload_files')) {
             $message = __("You don't have permission to upload files.", 'tiny-compress-images');
-            echo $json ? json_encode(array('error' => $message)) : $message;
+            echo $message;
             exit();
         }
         if (empty($_POST['id'])) {
             $message = __('Not a valid media file.', 'tiny-compress-images');
-            echo $json ? json_encode(array('error' => $message)) : $message;
+            echo $message;
             exit();
         }
         $id = intval($_POST['id']);
         $metadata = wp_get_attachment_metadata($id);
         if (!is_array($metadata)) {
             $message = __('Could not find metadata of media file.', 'tiny-compress-images');
-            echo $json ? json_encode(array('error' => $message)) : $message;
+            echo $message;
             exit;
         }
 
-        $tiny_image_before = new Tiny_Image($id);
+        $tiny_image = new Tiny_Image($id, $metadata);
+        $result = $tiny_image->compress( $this->settings );
+        wp_update_attachment_metadata($id, $tiny_image->update_wp_metadata($metadata));
+
+        echo $this->render_compress_details($tiny_image);
+
+        exit();
+    }
+
+    public function compress_image_for_bulk() {
+        if (!$this->check_ajax_referer()) {
+            exit();
+        }
+        if (!current_user_can('upload_files')) {
+            $message = __("You don't have permission to upload files.", 'tiny-compress-images');
+            echo json_encode(array('error' => $message));
+            exit();
+        }
+        if (empty($_POST['id'])) {
+            $message = __('Not a valid media file.', 'tiny-compress-images');
+            echo json_encode(array('error' => $message));
+            exit();
+        }
+        $id = intval($_POST['id']);
+        $metadata = wp_get_attachment_metadata($id);
+        if (!is_array($metadata)) {
+            $message = __('Could not find metadata of media file.', 'tiny-compress-images');
+            echo json_encode(array('error' => $message));
+            exit;
+        }
+
+        $tiny_image_before = new Tiny_Image($id, $metadata);
         $size_before = $tiny_image_before->get_total_size_with_optimization();
 
-        $tiny_image = new Tiny_Image($id);
+        $tiny_image = new Tiny_Image($id, $metadata);
         $result = $tiny_image->compress( $this->settings );
         wp_update_attachment_metadata($id, $tiny_image->update_wp_metadata($metadata));
         $size_after = $tiny_image->get_total_size_with_optimization();
 
-        if ($json) {
-            $result['message'] = $tiny_image->get_latest_error();
-            $result['image_sizes_optimized'] = $tiny_image->get_image_sizes_optimized();
-            $result['initial_total_size'] = size_format($tiny_image->get_total_size_without_optimization(), 2);
-            $result['optimized_total_size'] = size_format($tiny_image->get_total_size_with_optimization(), 2);
-            $result['savings'] = "" . number_format($tiny_image->get_savings(), 1);
-            $result['status'] = $this->settings->get_status();
-            $thumb = $tiny_image->get_image_size('thumbnail');
-            if (!$thumb) {
-                $thumb = $tiny_image->get_image_size();
-            }
-            $result['thumbnail'] = $thumb->url;
-            $result['change'] = $size_after - $size_before;
-            echo json_encode($result);
-        } else {
-            error_log("Please check the code this may actually never be executed.");
-            echo $this->render_compress_details($tiny_image);
+        $result['message'] = $tiny_image->get_latest_error();
+        $result['image_sizes_optimized'] = $tiny_image->get_image_sizes_optimized();
+        $result['initial_total_size'] = size_format($tiny_image->get_total_size_without_optimization(), 2);
+        $result['optimized_total_size'] = size_format($tiny_image->get_total_size_with_optimization(), 2);
+        $result['savings'] = "" . number_format($tiny_image->get_savings(), 1);
+        $result['status'] = $this->settings->get_status();
+        $thumb = $tiny_image->get_image_size('thumbnail');
+        if (!$thumb) {
+            $thumb = $tiny_image->get_image_size();
         }
+        $result['thumbnail'] = $thumb->url;
+        $result['change'] = $size_after - $size_before;
+        echo json_encode($result);
 
         exit();
     }
