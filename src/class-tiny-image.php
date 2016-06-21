@@ -139,6 +139,41 @@ class Tiny_Image {
         return get_post_mime_type($this->id);
     }
 
+    public function compress( $settingsObject ) {
+
+        if ($settingsObject->get_compressor() === null || !$this->can_be_compressed()) {
+            return;
+        }
+
+        $success = 0;
+        $failed = 0;
+
+        $compressor = $settingsObject->get_compressor();
+        $active_tinify_sizes = $settingsObject->get_active_tinify_sizes();
+        $uncompressed_sizes = $this->filter_image_sizes('uncompressed', $active_tinify_sizes);
+
+        foreach ($uncompressed_sizes as $size_name => $size) {
+            try {
+                $size->add_request();
+                $this->update();
+
+                $resize = self::is_original($size_name) ? $settingsObject->get_resize_options() : false;
+                $preserve = count($settingsObject->get_preserve_options()) > 0 ? $settingsObject->get_preserve_options() : false;
+                $response = $compressor->compress_file($size->filename, $resize, $preserve);
+
+                $size->add_response($response);
+                $this->update();
+                $success++;
+            } catch (Tiny_Exception $e) {
+                $size->add_exception($e);
+                $this->update();
+                $failed++;
+            }
+        }
+
+        return array('success' => $success, 'failed' => $failed);
+    }
+
     public function get_image_sizes() {
         $original = isset($this->sizes[self::ORIGINAL])
             ? array(self::ORIGINAL => $this->sizes[self::ORIGINAL])

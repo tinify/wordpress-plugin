@@ -42,7 +42,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
     public function init() {
         add_filter('jpeg_quality', $this->get_static_method('jpeg_quality'));
         add_filter('wp_editor_set_quality', $this->get_static_method('jpeg_quality'));
-        add_filter('wp_generate_attachment_metadata', $this->get_method('compress_attachment'), 10, 2);
+        add_filter('wp_generate_attachment_metadata', $this->get_method('compress_on_upload'), 10, 2);
         load_plugin_textdomain(self::NAME, false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
@@ -112,46 +112,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
     }
 
-    private function compress($metadata, $attachment_id) {
-        $mime_type = get_post_mime_type($attachment_id);
-        $tiny_image = new Tiny_Image($attachment_id, $metadata);
-
-        if ($this->settings->get_compressor() === null || !$tiny_image->can_be_compressed()) {
-            return array($tiny_image, null);
-        }
-
-        $success = 0;
-        $failed = 0;
-
-        $compressor = $this->settings->get_compressor();
-        $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-        $uncompressed_sizes = $tiny_image->filter_image_sizes('uncompressed', $active_tinify_sizes);
-
-        foreach ($uncompressed_sizes as $size_name => $size) {
-            try {
-                $size->add_request();
-                $tiny_image->update();
-
-                $resize = Tiny_Image::is_original($size_name) ? $this->settings->get_resize_options() : false;
-                $preserve = count($this->settings->get_preserve_options()) > 0 ? $this->settings->get_preserve_options() : false;
-                $response = $compressor->compress_file($size->filename, $resize, $preserve);
-
-                $size->add_response($response);
-                $tiny_image->update();
-                $success++;
-            } catch (Tiny_Exception $e) {
-                $size->add_exception($e);
-                $tiny_image->update();
-                $failed++;
-            }
-        }
-
-        return array($tiny_image, array('success' => $success, 'failed' => $failed));
-    }
-
-    public function compress_attachment($metadata, $attachment_id) {
+    public function compress_on_upload($metadata, $attachment_id) {
         if (!empty($metadata)) {
-            list($tiny_image, $result) = $this->compress($metadata, $attachment_id);
+            $tiny_image = new Tiny_Image( $attachment_id, $metadata );
+            $result = $tiny_image->compress( $this->settings );
             return $tiny_image->update_wp_metadata($metadata);
         } else {
             return $metadata;
@@ -181,13 +145,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
             exit;
         }
 
-        $tiny_image = new Tiny_Image($id, $metadata);
-        $size_before = $tiny_image->get_total_size_with_optimization();
+        $tiny_image_before = new Tiny_Image($id);
+        $size_before = $tiny_image_before->get_total_size_with_optimization();
 
-        list($tiny_image, $result) = $this->compress($metadata, $id);
-
+        $tiny_image = new Tiny_Image($id);
+        $result = $tiny_image->compress( $this->settings );
         wp_update_attachment_metadata($id, $tiny_image->update_wp_metadata($metadata));
-
         $size_after = $tiny_image->get_total_size_with_optimization();
 
         if ($json) {
