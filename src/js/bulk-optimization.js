@@ -66,6 +66,9 @@
       row.find(".status").addClass("failed")
       row.find(".status").html(tinyCompress.L10nInternalError + "<br>" + error.toString())
       row.find(".status").attr("title", error.toString())
+    } else if (data == null) {
+      row.find(".status").addClass("failed")
+      row.find(".status").html(tinyCompress.L10nCancelled)
     } else if (data.error) {
       row.find(".status").addClass("failed")
       row.find(".status").html(tinyCompress.L10nError + "<br>" + data.error)
@@ -135,7 +138,7 @@
         current_size: window.currentLibraryBytes
       },
       success: function(data) { bulkOptimizationCallback(null, data, items, i)},
-      error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, {}, items, i) }
+      error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, null, items, i) }
     })
     jQuery("#tiny-progress span").html(i + 1)
   }
@@ -177,13 +180,11 @@
 
   jQuery("button.tiny-bulk-optimization-actions").click(function(event) {
     if (jQuery(jQuery(event.target).find("span.start-optimizing")).hasClass("active")) {
-      event.preventDefault();
       jQuery("button.tiny-bulk-optimization-actions span.start-optimizing").removeClass("active")
       jQuery("button.tiny-bulk-optimization-actions span.optimizing").addClass("active")
       startBulkOptimization(window.allBulkOptimizationItems);
     }
     if (jQuery(jQuery(event.target).find("span.cancel")).hasClass("active")) {
-      event.preventDefault();
       cancelOptimization();
     }
   });
