@@ -1,5 +1,7 @@
 <?php
+
 function render_percentage_chart($optimized_library_size, $unoptimized_library_size) {
+
     $width = 200; // same as width of ' .savings-chart > .textual'
     $radius = 80;
 
@@ -17,22 +19,22 @@ function render_percentage_chart($optimized_library_size, $unoptimized_library_s
     $full_circle = 2 * pi() * $radius;
     $dash_array_1 = $percentage * $full_circle / 100;
 
-    echo "
+    ?>
         <style>
-            .savings-chart svg circle.main {
+            div.savings-chart svg circle.main {
                 fill: #ebebeb;
                 stroke: #7acb44;
-                stroke-width: $stroke_width;
-                stroke-dasharray: $dash_array_1 $full_circle;
+                stroke-width: <?php echo $stroke_width; ?>;
+                stroke-dasharray: <?php echo $dash_array_1 . " " . $full_circle; ?>;
                 animation: shwoosh 1s ease;
                 transition: all 1s ease;
             }
             @keyframes shwoosh {
                 from {
-                    stroke-dasharray: 0 $full_circle;
+                    stroke-dasharray: 0 <?php echo $full_circle; ?>
                 }
                 to {
-                    stroke-dasharray: $dash_array_1 $full_circle;
+                    stroke-dasharray: <?php echo $dash_array_1 . " " . $full_circle; ?>
                 }
             }
             .savings-chart svg circle.inner {
@@ -41,22 +43,23 @@ function render_percentage_chart($optimized_library_size, $unoptimized_library_s
             .savings-chart svg circle.outer {
                 fill: #fff;
                 fill: none;
-                stroke-width: $stroke_width;
+                stroke-width: <?php echo $stroke_width; ?>;
                 stroke: #fff;
             }
         </style>
 
-    <div class='savings-chart' data-full-circle-size='$full_circle' data-percentage-factor='$radius'>
-        <svg width='$width' height='$height'>
-          <circle class='main' transform='rotate(-90, $offset, $offset)' r='$radius' cx='$offset' cy='$offset'/>
-          <circle class='inner' r='$inner_radius' cx='$offset' cy='$offset' />
-          <circle class='outer' r='$outer_radius' cx='$offset' cy='$offset' />
+    <div class="savings-chart" data-full-circle-size="<?php echo $full_circle; ?>" data-percentage-factor="<?php echo $radius; ?>" >
+        <svg width="<?php echo $width; ?>" height="<?php echo $height; ?>">
+          <circle class="main" transform="rotate(-90, <?php echo $offset; ?>, <?php echo $offset; ?>)" r="<?php echo $radius; ?>" cx="<?php echo $offset; ?>" cy="<?php echo $offset; ?>"/>
+          <circle class="inner" r="<?php echo $inner_radius; ?>" cx="<?php echo $offset; ?>" cy="<?php echo $offset; ?>" />
+          <circle class="outer" r="<?php echo $outer_radius; ?>" cx="<?php echo $offset; ?>" cy="<?php echo $offset; ?>" />
         </svg>
-        <div class='textual'>
-            <div class='percentage' id='savings-percentage'>$percentage%</div>
-            <div class='savings'>savings</div>
+        <div class="textual">
+            <div class="percentage" id="savings-percentage"><?php echo $percentage; ?>%</div>
+            <div>savings</div>
         </div>
-    </div>";
+    </div>
+
+<?php
 }
 ?>
-
