@@ -15,14 +15,15 @@
 
   function updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize) {
 
+    window.currentLibraryBytes = window.currentLibraryBytes + successFullSaved;
+
     var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text()) + successFullCompressions;
     var initialLibraryBytes = parseInt(jQuery("#unoptimized-library-size").data("bytes"));
-    var optimizedLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes")) + successFullSaved;
-    var percentage = (1 - optimizedLibraryBytes / initialLibraryBytes)
+    var percentage = (1 - window.currentLibraryBytes / initialLibraryBytes)
     var chartSize = jQuery('div.savings-chart').data('full-circle-size')
 
     jQuery("#optimized-image-sizes").html(imagesSizedOptimized);
-    jQuery("#optimized-library-size").attr("data-bytes", optimizedLibraryBytes);
+    jQuery("#optimized-library-size").attr("data-bytes", window.currentLibraryBytes);
     jQuery("#optimized-library-size").html(newHumanReadableLibrarySize);
     jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%");
     jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
@@ -113,8 +114,6 @@
       return;
     }
 
-    var currentLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes"))
-
     var item = items[i]
     var row = jQuery('#media-items tr').eq(parseInt(i)+1)
     row.find('.status').removeClass('todo')
@@ -127,7 +126,7 @@
         _nonce: tinyCompress.nonce,
         action: 'tiny_compress_image_for_bulk',
         id: items[i].ID,
-        current_size: currentLibraryBytes
+        current_size: window.currentLibraryBytes
       },
       success: function(data) { bulkOptimizationCallback(null, data, items, i)},
       error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, {}, items, i) }
@@ -141,6 +140,8 @@
 
   function startBulkOptimization(items) {
     window.optimizationCancelled = false;
+    window.currentLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes"))
+
     var list = jQuery('#media-items tbody')
     var row
     jQuery("#tiny-bulk-optimization form div.spinner").css('display', 'inline-block');
