@@ -13,36 +13,20 @@
     jQuery("#optimizable-image-sizes").html(numberToOptimize - successFullCompressions)
   }
 
-  function updateSavings(successFullCompressions, successFullSaved) {
+  function updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize) {
 
     var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text()) + successFullCompressions;
     var initialLibraryBytes = parseInt(jQuery("#unoptimized-library-size").data("bytes"));
     var optimizedLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes")) + successFullSaved;
+    var percentage = (1 - optimizedLibraryBytes / initialLibraryBytes)
+    var chartSize = jQuery('div.savings-chart').data('full-circle-size')
 
     jQuery("#optimized-image-sizes").html(imagesSizedOptimized);
     jQuery("#optimized-library-size").attr("data-bytes", optimizedLibraryBytes);
+    jQuery("#optimized-library-size").html(newHumanReadableLibrarySize);
+    jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%");
+    jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
 
-    jQuery.ajax({
-      url: ajaxurl,
-      type: "POST",
-      dataType: "json",
-      data: {
-        _nonce: tinyCompress.nonce,
-        action: 'tiny_size_format',
-        size: optimizedLibraryBytes,
-        json: true
-      },
-      success: function(data) {
-        jQuery("#optimized-library-size").html(data['formatted-size']);
-        var percentage = (1 - optimizedLibraryBytes / initialLibraryBytes)
-        var chartSize = jQuery('div.savings-chart').data('full-circle-size')
-        jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%");
-        jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log(errorThrown);
-      }
-    })
   }
 
   function handleCancellation() {
@@ -52,14 +36,15 @@
 
   function updateViewAfterSuccess(row, data) {
     var successFullCompressions = parseInt(data.success)
-    var successFullSaved = parseInt(data.change)
+    var successFullSaved = parseInt(data.size_change)
+    var newHumanReadableLibrarySize = data.human_readable_library_size
     row.find('.status').addClass('success')
     if (successFullCompressions == 0) {
       row.find('.status').html(tinyCompress.L10nNoActionTaken)
     } else {
       row.find('.status').html(successFullCompressions + " " + tinyCompress.L10nCompressed)
       updateProgressBar(successFullCompressions);
-      updateSavings(successFullCompressions, successFullSaved);
+      updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize);
     }
   }
 
@@ -128,6 +113,8 @@
       return;
     }
 
+    var currentLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes"))
+
     var item = items[i]
     var row = jQuery('#media-items tr').eq(parseInt(i)+1)
     row.find('.status').removeClass('todo')
@@ -139,7 +126,8 @@
       data: {
         _nonce: tinyCompress.nonce,
         action: 'tiny_compress_image_for_bulk',
-        id: items[i].ID
+        id: items[i].ID,
+        current_size: currentLibraryBytes
       },
       success: function(data) { bulkOptimizationCallback(null, data, items, i)},
       error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, {}, items, i) }

@@ -57,7 +57,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
         add_action('wp_ajax_tiny_compress_image_from_library', $this->get_method('compress_image_from_library'));
         add_action('wp_ajax_tiny_compress_image_for_bulk', $this->get_method('compress_image_for_bulk'));
         add_action('wp_ajax_tiny_get_optimization_statistics', $this->get_method('ajax_optimization_statistics'));
-        add_action('wp_ajax_tiny_size_format', $this->get_method('ajax_size_format'));
 
         $plugin = plugin_basename(dirname(dirname(__FILE__)) . '/tiny-compress-images.php');
         add_filter("plugin_action_links_$plugin", $this->get_method('add_plugin_links'));
@@ -184,6 +183,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
         wp_update_attachment_metadata($id, $tiny_image->update_wp_metadata($metadata));
         $size_after = $tiny_image->get_total_size_with_optimization();
 
+        $currentLibrarySize = intval($_POST['current_size']);
+        $newLibrarySize = $currentLibrarySize + $size_after - $size_before;
+
         $result['message'] = $tiny_image->get_latest_error();
         $result['image_sizes_optimized'] = $tiny_image->get_image_sizes_optimized();
         $result['initial_total_size'] = size_format($tiny_image->get_total_size_without_optimization(), 2);
@@ -195,7 +197,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
             $thumb = $tiny_image->get_image_size();
         }
         $result['thumbnail'] = $thumb->url;
-        $result['change'] = $size_after - $size_before;
+        $result['size_change'] = $size_after - $size_before;
+        $result['human_readable_library_size'] = size_format($newLibrarySize, 2);
+
         echo json_encode($result);
 
         exit();
@@ -238,15 +242,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
         }
         $stats = $this->get_optimization_statistics();
         echo json_encode($stats);
-        exit();
-    }
-
-    public function ajax_size_format() {
-        if (!$this->check_ajax_referer()) {
-            exit();
-        }
-        $bytes = intval($_POST['size']);
-        echo json_encode(array('formatted-size' => size_format($bytes, 2)));
         exit();
     }
 
