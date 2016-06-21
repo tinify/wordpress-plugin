@@ -189,8 +189,8 @@
       jQuery('button.tiny-compress').attr('disabled', null)
     }
 
-    jQuery('<option>').val('tiny_bulk_optimization').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
-    jQuery('<option>').val('tiny_bulk_optimization').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
+    jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
+    jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
 
   } else if (adminpage === "post-php") {
 

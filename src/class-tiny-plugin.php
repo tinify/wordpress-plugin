@@ -47,12 +47,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function admin_init() {
-        add_action('admin_action_tiny_bulk_optimization', $this->get_method('bulk_optimization'));
         add_action('admin_enqueue_scripts', $this->get_method('enqueue_scripts'));
-        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
 
+        add_action('admin_action_tiny_bulk_action', $this->get_method('media_library_bulk_action'));
         add_filter('manage_media_columns', $this->get_method('add_media_columns'));
         add_action('manage_media_custom_column', $this->get_method('render_media_column'), 10, 2);
+
+        add_action('attachment_submitbox_misc_actions', $this->get_method('show_media_info'));
 
         add_action('wp_ajax_tiny_compress_image_from_library', $this->get_method('compress_image_from_library'));
         add_action('wp_ajax_tiny_compress_image_for_bulk', $this->get_method('compress_image_for_bulk'));
@@ -89,7 +90,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
             'pluginVersion' => self::plugin_version(),
             'L10nAllDone' => __('All images are processed', 'tiny-compress-images'),
             'L10nNoActionTaken' => __('No action taken', 'tiny-compress-images'),
-            'L10nBulkAction' => __('Bulk Optimization', 'tiny-compress-images'),
+            'L10nBulkAction' => __('Compress Images', 'tiny-compress-images'),
             'L10nCancelled' => __('Cancelled', 'tiny-compress-images'),
             'L10nCompressing' => __('Compressing', 'tiny-compress-images'),
             'L10nCompressed' => __('compressed', 'tiny-compress-images'),
@@ -214,7 +215,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
         exit();
     }
 
-    public function bulk_optimization() {
+    public function media_library_bulk_action() {
         check_admin_referer('bulk-media');
 
         if (empty($_REQUEST['media']) || !is_array( $_REQUEST['media'])) {
