@@ -1,8 +1,6 @@
-div.tiny-compress-images {
-    background-color: #fff;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    padding: 0 15px 5px;
+div.misc-pub-section.tiny-compress-images {
+    border-top: 1px solid #e1e1e1;
+    padding-bottom: 16px;
 }
 
 div.tiny-compress-images p.tiny-account-status + p {
