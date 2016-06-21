@@ -205,42 +205,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
         exit();
     }
 
-    public function get_optimization_statistics() {
-        global $wpdb;
-        $result = $wpdb->get_results(
-            "SELECT ID, post_title FROM $wpdb->posts
-             WHERE post_type = 'attachment' AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-             ORDER BY ID DESC", ARRAY_A);
-
-        $stats = array();
-        $stats['uploaded-images'] = 0;
-        $stats['optimized-image-sizes'] = 0;
-        $stats['available-unoptimised-sizes'] = 0;
-        $stats['optimized-library-size'] = 0;
-        $stats['unoptimized-library-size'] = 0;
-        $stats['available-for-optimization'] = array();
-
-        for ($i = 0; $i < sizeof($result); $i++) {
-            $tiny_image = new Tiny_Image($result[$i]["ID"]);
-            $stats['uploaded-images']++;
-            $stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
-            $stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
-            $stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
-            $stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
-            if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
-                $stats['available-for-optimization'][] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
-            }
-        }
-        $stats['estimated-cost'] = $this->estimate_cost($stats['available-unoptimised-sizes'], $this->settings->get_compression_count());
-
-        return $stats;
-    }
-
     public function ajax_optimization_statistics() {
         if (!$this->check_ajax_referer()) {
             exit();
         }
-        $stats = $this->get_optimization_statistics();
+        $stats = Tiny_Image::get_optimization_statistics();
         echo json_encode($stats);
         exit();
     }
@@ -293,32 +262,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
     }
 
     public function render_bulk_optimization_page() {
-        $stats = $this->get_optimization_statistics();
+        $stats = Tiny_Image::get_optimization_statistics();
+        $estimated_costs = Tiny_Compress::estimate_cost( $stats['available-unoptimised-sizes'], $this->settings->get_compression_count() );
+
         $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
         $auto_start_bulk = isset($_REQUEST['ids']);
 
         include(dirname(__FILE__) . '/views/bulk-optimization.php');
-    }
-
-    // Based on pricing April 2016.
-    public function estimate_cost($compressions, $usage) {
-        return $this->compression_cost($compressions + $usage) - $this->compression_cost($usage);
-    }
-
-    private function compression_cost($total) {
-        $cost = 0;
-        if ($total > 10000) {
-            $compressions = $total - 10000;
-            $cost += $compressions * 0.002;
-            $total -= $compressions;
-        }
-        if ($total > 500) {
-            $compressions = $total - 500;
-            $cost += $compressions * 0.009;
-            $total -= $compressions;
-        }
-        return $cost;
     }
 
     private function get_ids_to_compress() {

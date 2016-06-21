@@ -208,18 +208,6 @@ class Tiny_Plugin_Test extends TinyTestCase {
         $this->assertEquals(2, count($this->wp->getCalls('update_post_meta')));
     }
 
-    public function testEstimateCostFree() {
-        $this->assertEquals(150 * 0, $this->subject->estimate_cost(150, 0));
-    }
-
-    public function testEstimateCostNormalAndFree() {
-        $this->assertEquals(350 * 0 + 2650 * 0.009, $this->subject->estimate_cost(3000, 150));
-    }
-
-    public function testEstimateCostCheapAndNormalAndFree() {
-        $this->assertEquals(500 * 0 + 9500 * 0.009 + 40000 * 0.002, $this->subject->estimate_cost(50000, 0));
-    }
-
     // skip TODO
     public function testAnalyzeMediaLibrary() {
         // $this->assertEquals("analyze all JPEG/PNG and store file size for each image size in the tiny_compress_images metadata", "todo");

@@ -91,4 +91,25 @@ abstract class Tiny_Compress {
         list($width, $height) = getimagesize($file);
         return $width > $resize_options['width'] || $height > $resize_options['height'];
     }
+
+    // Based on pricing April 2016.
+    public static function estimate_cost( $compressions, $usage ) {
+        return round( self::compression_cost( $compressions + $usage ) - self::compression_cost( $usage ), 2 );
+    }
+
+    private static function compression_cost( $total ) {
+        $cost = 0;
+        if ( $total > 10000 ) {
+            $compressions = $total - 10000;
+            $cost += $compressions * 0.002;
+            $total -= $compressions;
+        }
+        if ( $total > 500 ) {
+            $compressions = $total - 500;
+            $cost += $compressions * 0.009;
+            $total -= $compressions;
+        }
+        return $cost;
+    }
+
 }

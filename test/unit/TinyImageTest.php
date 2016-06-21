@@ -96,4 +96,23 @@ class Tiny_Image_Test extends TinyTestCase {
     public function testGetCompressedTotalSize() {
         $this->assertEquals(328670, $this->subject->get_total_size_with_optimization());
     }
+
+    public function testGetOptimizationStatistics() {
+        $wpdb_results = array(
+            array('ID' => 1, 'post_title' => 'I am the one and only'),
+            array('ID' => 3628, 'post_title' => 'Ferrari.jpeg'),
+            array('ID' => 4350, 'post_title' => 'IMG 3092'),
+        );
+        $this->assertEquals(
+            array(
+                'uploaded-images' => 3,
+                'optimized-image-sizes' => 3,
+                'available-unoptimised-sizes' => 0,
+                'optimized-library-size' => 233568,
+                'unoptimized-library-size' => 265440,
+                'available-for-optimization' => array ()
+            ),
+            Tiny_Image::get_optimization_statistics($wpdb_results));
+    }
+
 }

@@ -308,4 +308,37 @@ class Tiny_Image {
 
         $this->statistics_calculated = true;
     }
+
+    public static function get_optimization_statistics( $result = null ) {
+        global $wpdb;
+
+        if ( is_null( $result ) ) {
+            $result = $wpdb->get_results(
+                "SELECT ID, post_title FROM $wpdb->posts
+                 WHERE post_type = 'attachment' AND ( post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png' )
+                 ORDER BY ID DESC", ARRAY_A );
+        }
+
+        $stats = array();
+        $stats['uploaded-images'] = 0;
+        $stats['optimized-image-sizes'] = 0;
+        $stats['available-unoptimised-sizes'] = 0;
+        $stats['optimized-library-size'] = 0;
+        $stats['unoptimized-library-size'] = 0;
+        $stats['available-for-optimization'] = array();
+
+        for ( $i = 0; $i < sizeof( $result ); $i++ ) {
+            $tiny_image = new Tiny_Image( $result[$i]["ID"] );
+            $stats['uploaded-images']++;
+            $stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
+            $stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
+            $stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
+            $stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
+            if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
+                $stats['available-for-optimization'][] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
+            }
+        }
+        return $stats;
+    }
+
 }

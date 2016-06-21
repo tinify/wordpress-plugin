@@ -90,7 +90,7 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
                         <br>
                         <?php echo __('cost', 'tiny-compress-images') ?>
                     </h3>
-                    <span id='estimated-cost'>$ <?php echo number_format(round($stats['estimated-cost'], 2), 2) ?></span>
+                    <span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
                     USD
                 </div>
             </div>
