@@ -44,10 +44,10 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function testCompressButton() {
-		$this->enable_compression_sizes( array('medium') );
+		$this->enable_compression_sizes( array( 'medium') );
 		$this->set_api_key( 'PNG123' );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
-		$this->enable_compression_sizes( array('medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
 
 		self::$driver->get( wordpress( '/wp-admin/upload.php' ) );
 		$this->assertContains('1 size compressed',
@@ -80,7 +80,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function testIncorrectJsonButton() {
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
-		$this->enable_compression_sizes( array('medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
 
 		$this->set_api_key( 'JSON1234' );
 		self::$driver->get( wordpress( '/wp-admin/upload.php' ) );
@@ -170,7 +170,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function testPreserveCopyrightShouldDisplayCorrectImageSizeInMediaLibrary() {
 		$this->set_api_key( 'PRESERVEJPG123' );
-		$this->enable_preserve( array('copyright') );
+		$this->enable_preserve( array( 'copyright') );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-copyright.jpg' );
 		$this->assertNotContains('files modified after compression',
 		self::$driver->findElement( WebDriverBy::cssSelector( 'div#tiny-compress-details' ) )->getText());
@@ -181,7 +181,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->set_api_key( 'PNG123' );
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
-		$this->enable_compression_sizes( array('medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
 		$this->view_edit_image();
 		$this->assertContains("Compress JPEG & PNG Images\n2 sizes not compressed\nDetails\nCompress",
 		self::$driver->findElement( WebDriverBy::cssSelector( 'div.postbox-container div.tiny-compress-images' ) )->getText());
@@ -191,7 +191,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
 		$this->set_api_key( 'PNG123' );
-		$this->enable_compression_sizes( array('medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
 		$this->view_edit_image();
 		self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compress-images button.tiny-compress' ) )->click();
 		self::$driver->wait( 2 )->until(WebDriverExpectedCondition::textToBePresentInElement(
@@ -201,7 +201,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function testEditScreenShouldShowDetailsPopup() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'PNG123' );
-		$this->enable_compression_sizes( array('medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
 		$this->view_edit_image();
 		self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compress-images a.thickbox' ) )->click();
@@ -212,7 +212,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function testEditScreenShouldShowCorrectDetailsInPopup() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'PNG123' );
-		$this->enable_compression_sizes( array('medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
 		$this->view_edit_image();
 
@@ -221,8 +221,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$texts = array_map( 'innerText', $cells );
 		// Remove sizes that are version specific
 		for ( $i = 0; $i < count( $texts ); ) {
-			$row_size = (substr( $texts[$i + 2], 0, 3 ) == 'Not') ? 3 : 4;
-			if ( in_array( $texts[$i], array('original', 'thumbnail', 'medium', 'large', 'Combined') ) ) {
+			$row_size = (substr( $texts[ $i + 2 ], 0, 3 ) == 'Not') ? 3 : 4;
+			if ( in_array( $texts[ $i ], array( 'original', 'thumbnail', 'medium', 'large', 'Combined') )  ) {
 				$i += $row_size;
 			} else {
 				$texts = array_merge( array_slice( $texts, 0, $i ), array_slice( $texts, $i + $row_size ) );
@@ -253,7 +253,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		/* We can't set invalid credentials via integration test now? */
 		$this->markTestIncomplete();
 
-		$this->enable_compression_sizes( array('medium') );
+		$this->enable_compression_sizes( array( 'medium') );
 		$this->set_api_key( 'GATEWAYTIMEOUT' );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
 		$this->assertContains('JSON: Syntax error [4]',
@@ -264,8 +264,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		/* We can't set invalid credentials via integration test now? */
 		$this->markTestIncomplete();
 
-		$this->enable_compression_sizes( array('0', 'medium') );
-		$this->enable_preserve( array('copyright') );
+		$this->enable_compression_sizes( array( '0', 'medium') );
+		$this->enable_preserve( array( 'copyright') );
 		$this->set_api_key( 'GATEWAYTIMEOUT' );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
 		$this->assertContains('Error while parsing response',
@@ -276,8 +276,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		/* We can't set invalid credentials via integration test now? */
 		$this->markTestIncomplete();
 
-		$this->enable_compression_sizes( array('0', 'medium') );
-		$this->enable_preserve( array('copyright') );
+		$this->enable_compression_sizes( array( '0', 'medium') );
+		$this->enable_preserve( array( 'copyright') );
 		$this->set_api_key( 'INVALID' );
 		$this->upload_media( dirname( __FILE__ ) . '/../fixtures/input-example.png' );
 		$this->assertContains("Metadata key 'author' not supported",

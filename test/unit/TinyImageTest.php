@@ -17,7 +17,7 @@ class Tiny_Image_Test extends TinyTestCase {
 			'width' => 2000,
 			'height' => 1000
 		);
-		$this->assertEquals( array('width' => 2000, 'height' => 1000), $tiny_image->update_wp_metadata( $wp_metadata ) );
+		$this->assertEquals( array( 'width' => 2000, 'height' => 1000), $tiny_image->update_wp_metadata( $wp_metadata ) );
 	}
 
 	public function testUpdateWpMetadataShouldUpdateWithResizedOriginal() {
@@ -27,8 +27,8 @@ class Tiny_Image_Test extends TinyTestCase {
 			'height' => 1000
 		);
 		$tiny_image->get_image_size()->add_request();
-		$tiny_image->get_image_size()->add_response( array('output' => array('width' => 200, 'height' => 100)) );
-		$this->assertEquals( array('width' => 200, 'height' => 100), $tiny_image->update_wp_metadata( $wp_metadata ) );
+		$tiny_image->get_image_size()->add_response( array( 'output' => array('width' => 200, 'height' => 100)) );
+		$this->assertEquals( array( 'width' => 200, 'height' => 100), $tiny_image->update_wp_metadata( $wp_metadata ) );
 	}
 
 	public function testGetImagesShouldReturnAllImages() {
@@ -44,13 +44,13 @@ class Tiny_Image_Test extends TinyTestCase {
 	}
 
 	public function testFilterImagesShouldFilterCorrectly() {
-		$this->assertEquals(array(Tiny_Image::ORIGINAL, 'medium', 'thumbnail'), array_keys(
+		$this->assertEquals(array( Tiny_Image::ORIGINAL, 'medium', 'thumbnail' ), array_keys(
 		$this->subject->filter_image_sizes( 'compressed' )));
 	}
 
 	public function testFilterImagesShouldFilterCorrectlyWhenSizesAreGiven() {
-		$this->assertEquals(array(Tiny_Image::ORIGINAL), array_keys(
-			$this->subject->filter_image_sizes( 'compressed', array(Tiny_Image::ORIGINAL, 'invalid') )
+		$this->assertEquals(array( Tiny_Image::ORIGINAL ), array_keys(
+			$this->subject->filter_image_sizes( 'compressed', array( Tiny_Image::ORIGINAL, 'invalid') )
 		));
 	}
 
@@ -58,7 +58,7 @@ class Tiny_Image_Test extends TinyTestCase {
 		$this->assertEquals(array(
 			'compressed' => 3,
 			'resized' => 1,
-			), $this->subject->get_count( array('compressed', 'resized') )
+			), $this->subject->get_count( array( 'compressed', 'resized') )
 		);
 	}
 
@@ -66,7 +66,7 @@ class Tiny_Image_Test extends TinyTestCase {
 		$this->assertEquals(array(
 			'compressed' => 1,
 			'resized' => 1,
-			), $this->subject->get_count( array('compressed', 'resized'), array(Tiny_Image::ORIGINAL, 'invalid') )
+			), $this->subject->get_count( array( 'compressed', 'resized'), array(Tiny_Image::ORIGINAL, 'invalid') )
 		);
 	}
 
@@ -99,9 +99,9 @@ class Tiny_Image_Test extends TinyTestCase {
 
 	public function testGetOptimizationStatistics() {
 		$wpdb_results = array(
-			array('ID' => 1, 'post_title' => 'I am the one and only'),
-			array('ID' => 3628, 'post_title' => 'Ferrari.jpeg'),
-			array('ID' => 4350, 'post_title' => 'IMG 3092'),
+			array( 'ID' => 1, 'post_title' => 'I am the one and only' ),
+			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg' ),
+			array( 'ID' => 4350, 'post_title' => 'IMG 3092' ),
 		);
 
 		$this->assertEquals(

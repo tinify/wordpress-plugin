@@ -15,8 +15,8 @@ function mock_png_response() {
     header("Image-Height: 1080");
 
     $response = array(
-        "input" => array("size" => 161885, "type" => "image/png"),
-        "output" => array("size" => 151021, "type" => "image/png", "ratio" => 0.933)
+        "input" => array( "size" => 161885, "type" => "image/png" ),
+        "output" => array( "size" => 151021, "type" => "image/png", "ratio" => 0.933 )
     );
     return json_encode($response);
 }
@@ -33,8 +33,8 @@ function mock_jpg_response() {
     header("Image-Height: 150");
 
     $response = array(
-        "input" => array("size" => 15391, "type" => "image/jpeg"),
-        "output" => array("size" => 13910, "type" => "image/jpeg", "ratio" => 0.904)
+        "input" => array( "size" => 15391, "type" => "image/jpeg" ),
+        "output" => array( "size" => 13910, "type" => "image/jpeg", "ratio" => 0.904 )
     );
     return json_encode($response);
 }
@@ -51,8 +51,8 @@ function mock_preserve_jpg_copyright_response() {
     header("Image-Height: 1080");
 
     $response = array(
-        "input" => array("size" => 110329, "type" => "image/jpeg"),
-        "output" => array("size" => 97835, "type" => "image/jpeg", "ratio" => 0.8868)
+        "input" => array( "size" => 110329, "type" => "image/jpeg" ),
+        "output" => array( "size" => 97835, "type" => "image/jpeg", "ratio" => 0.8868 )
     );
     return json_encode($response);
 }

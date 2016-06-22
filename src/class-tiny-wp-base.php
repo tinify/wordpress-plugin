@@ -73,11 +73,11 @@ abstract class Tiny_WP_Base {
 	}
 
 	protected function get_method($name) {
-		return array($this, $name);
+		return array( $this, $name );
 	}
 
 	protected function get_static_method($name) {
-		return array(get_class( $this ), $name);
+		return array( get_class( $this ), $name );
 	}
 
 	protected function get_user_id() {

@@ -6,7 +6,7 @@ class TinifyMockClient extends Tinify\Client {
 		$this->handlers = array();
 	}
 
-	public function request($method, $url, $body = null, $header = array()) {
+	public function request($method, $url, $body = null, $header = array() ) {
 		$key = $this->get_key( $method, $url );
 		if ( isset( $this->handlers[ $key ] ) ) {
 			$handler = $this->handlers[ $key ];

@@ -27,7 +27,7 @@ class Tiny_Image_Size {
 	private $_exists;
 	private $_file_size;
 
-	public function __construct($filename=null, $url=null) {
+	public function __construct($filename = null, $url = null) {
 		$this->filename = $filename;
 		$this->url = $url;
 	}
@@ -42,7 +42,7 @@ class Tiny_Image_Size {
 	}
 
 	public function add_request() {
-		$this->meta = array('start' => time());
+		$this->meta = array( 'start' => time() );
 	}
 
 	public function add_response($response) {

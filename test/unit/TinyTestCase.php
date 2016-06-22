@@ -29,12 +29,12 @@ abstract class TinyTestCase extends PHPUnit_Framework_TestCase {
 	protected function tearDown() {
 	}
 
-	protected function assertBetween($lower_bound, $upper_bound, $actual, $message='') {
+	protected function assertBetween($lower_bound, $upper_bound, $actual, $message = '') {
 		$this->assertGreaterThanOrEqual( $lower_bound, $actual, $message );
 		$this->assertLessThanOrEqual( $upper_bound, $actual, $message );
 	}
 
-	protected function assertEqualWithinDelta($expected, $actual, $delta, $message='') {
+	protected function assertEqualWithinDelta($expected, $actual, $delta, $message = '') {
 		$this->assertGreaterThanOrEqual( $expected - $delta, $actual, $message );
 		$this->assertLessThanOrEqual( $expected + $delta, $actual, $message );
 	}

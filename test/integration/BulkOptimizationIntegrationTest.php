@@ -10,7 +10,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->set_api_key( 'PNG123' );
-		$this->enable_compression_sizes( array('0', 'thumbnail', 'medium', 'large') );
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium', 'large') );
 		$this->setupFixtures();
 		self::$driver->get( wordpress( '/wp-admin/upload.php?page=tiny-bulk-optimization' ) );
 	}

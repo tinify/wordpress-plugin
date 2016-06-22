@@ -79,9 +79,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function enqueue_scripts($hook) {
 		wp_enqueue_style(self::NAME .'_admin', plugins_url( '/css/admin.css', __FILE__ ),
-		array(), self::plugin_version());
+		array(), self::plugin_version() );
 		wp_register_script(self::NAME .'_admin', plugins_url( '/js/admin.js', __FILE__ ),
-		array(), self::plugin_version(), true);
+		array(), self::plugin_version(), true );
 
 		// WordPress < 3.3 does not handle multidimensional arrays
 		wp_localize_script(self::NAME .'_admin', 'tinyCompress', array(
@@ -103,11 +103,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		wp_enqueue_script( self::NAME .'_admin' );
 
-		if ( $hook == 'media_page_tiny-bulk-optimization' ) {
+		if ( 'media_page_tiny-bulk-optimization' == $hook ) {
 			wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url( '/css/bulk-optimization.css', __FILE__ ),
-			array(), self::plugin_version());
+			array(), self::plugin_version() );
 			wp_register_script(self::NAME . '_tiny_bulk_optimization', plugins_url( '/js/bulk-optimization.js', __FILE__ ),
-			array(), self::plugin_version(), true);
+			array(), self::plugin_version(), true );
 			wp_enqueue_script( self::NAME .'_tiny_bulk_optimization' );
 		}
 
@@ -160,19 +160,19 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
 			$message = __( "You don't have permission to upload files.", 'tiny-compress-images' );
-			echo json_encode( array('error' => $message) );
+			echo json_encode( array( 'error' => $message ) );
 			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
 			$message = __( 'Not a valid media file.', 'tiny-compress-images' );
-			echo json_encode( array('error' => $message) );
+			echo json_encode( array( 'error' => $message ) );
 			exit();
 		}
 		$id = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( ! is_array( $metadata ) ) {
 			$message = __( 'Could not find metadata of media file.', 'tiny-compress-images' );
-			echo json_encode( array('error' => $message) );
+			echo json_encode( array( 'error' => $message ) );
 			exit;
 		}
 
@@ -232,7 +232,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function add_media_columns($columns) {
-		$columns[self::MEDIA_COLUMN] = __( 'Compression', 'tiny-compress-images' );
+		$columns[ self::MEDIA_COLUMN ] = __( 'Compression', 'tiny-compress-images' );
 		return $columns;
 	}
 

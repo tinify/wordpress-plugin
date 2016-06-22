@@ -70,7 +70,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 	private function show_stored() {
 		$this->load();
 		foreach ( $this->notices as $name => $message ) {
-			if ( empty( $this->dismissals[$name] ) ) {
+			if ( empty( $this->dismissals[ $name ] ) ) {
 				$this->show( $name, $message );
 			}
 		}
@@ -78,18 +78,18 @@ class Tiny_Notices extends Tiny_WP_Base {
 
 	public function add($name, $message) {
 		$this->load_notices();
-		$this->notices[$name] = $message;
+		$this->notices[ $name ] = $message;
 		$this->save_notices();
 	}
 
 	public function remove($name) {
 		$this->load();
-		if ( isset( $this->notices[$name] ) ) {
-			unset( $this->notices[$name] );
+		if ( isset( $this->notices[ $name ] ) ) {
+			unset( $this->notices[ $name ] );
 			$this->save_notices();
 		}
-		if ( isset( $this->dismissals[$name] ) ) {
-			unset( $this->dismissals[$name] );
+		if ( isset( $this->dismissals[ $name ] ) ) {
+			unset( $this->dismissals[ $name ] );
 			$this->save_dismissals();
 		}
 	}
@@ -100,14 +100,14 @@ class Tiny_Notices extends Tiny_WP_Base {
 			exit();
 		}
 		$this->load_dismissals();
-		$this->dismissals[$_POST['name']] = true;
+		$this->dismissals[ $_POST['name'] ] = true;
 		$this->save_dismissals();
 		echo json_encode( true );
 		exit();
 	}
 
-	public function show($name, $message, $klass='error', $dismissible=true) {
-		$css = array($klass, 'notice', 'tiny-notice');
+	public function show($name, $message, $klass = 'error', $dismissible = true) {
+		$css = array( $klass, 'notice', 'tiny-notice' );
 		if ( ! $dismissible ) {
 			$add = '</p>';
 		} else if ( self::check_wp_version( 4.2 ) ) {

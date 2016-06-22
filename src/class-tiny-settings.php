@@ -138,17 +138,17 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$width  = get_option( $size . '_size_w' );
 		$height = get_option( $size . '_size_h' );
 		if ( $width && $height ) {
-			return array($width, $height);
+			return array( $width, $height );
 		}
 
-		if ( isset( $_wp_additional_image_sizes[$size] ) ) {
-			$sizes = $_wp_additional_image_sizes[$size];
+		if ( isset( $_wp_additional_image_sizes[ $size ] ) ) {
+			$sizes = $_wp_additional_image_sizes[ $size ];
 			return array(
 				isset( $sizes['width'] ) ? $sizes['width'] : null,
 				isset( $sizes['height'] ) ? $sizes['height'] : null,
 			);
 		}
-		return array(null, null);
+		return array( null, null );
 	}
 
 	public function get_sizes() {
@@ -159,10 +159,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$setting = get_option( self::get_prefixed_name( 'sizes' ) );
 
 		$size = Tiny_Image::ORIGINAL;
-		$this->sizes = array($size => array(
-			'width' => null, 'height' => null,
-			'tinify' => ! is_array( $setting ) || (isset( $setting[$size] ) && $setting[$size] === 'on'),
-		));
+		$this->sizes = array(
+			$size => array(
+				'width' => null, 'height' => null,
+				'tinify' => ! is_array( $setting ) || (isset( $setting[ $size ] ) && $setting[ $size ] === 'on'),
+			)
+		);
 
 		foreach ( get_intermediate_image_sizes() as $size ) {
 			if ( $size === self::DUMMY_SIZE ) {
@@ -170,9 +172,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 			}
 			list($width, $height) = self::get_intermediate_size( $size );
 			if ( $width || $height ) {
-				$this->sizes[$size] = array(
+				$this->sizes[ $size ] = array(
 					'width' => $width, 'height' => $height,
-					'tinify' => ! is_array( $setting ) || (isset( $setting[$size] ) && $setting[$size] === 'on'),
+					'tinify' => ! is_array( $setting ) || (isset( $setting[ $size ] ) && $setting[ $size ] === 'on'),
 				);
 			}
 		}
@@ -200,7 +202,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function get_preserve_enabled($name) {
 		$setting = get_option( self::get_prefixed_name( 'preserve_data' ) );
-		return isset( $setting[$name] ) && $setting[$name] === 'on';
+		return isset( $setting[ $name ] ) && $setting[ $name ] === 'on';
 	}
 
 	public function get_preserve_options() {
@@ -209,7 +211,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $settings ) {
 			$keys = array_keys( $settings );
 			foreach ( $keys as &$key ) {
-				if ( $settings[$key] === 'on' ) {
+				if ( 'on' === $settings[ $key ] ) {
 					array_push( $options, $key );
 				}
 			}
@@ -264,7 +266,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	private function render_size_checkbox($size, $option) {
 		$id = self::get_prefixed_name( "sizes_$size" );
-		$name = self::get_prefixed_name( "sizes[$size]" );
+		$name = self::get_prefixed_name( "sizes[ $size ]" );
 		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'original', 'tiny-compress-images' ) . ' (' . esc_html__( 'overwritten by compressed image', 'tiny-compress-images' ) . ')';
@@ -340,7 +342,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$id = sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name );
 		$field = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
-		$value = isset( $settings[$name] ) ? $settings[$name] : '2048';
+		$value = isset( $settings[ $name] ) ? $settings[ $name ] : '2048';
 		echo '<input type="number" id="'. $id .'" name="' . $field . '" value="' . $value . '" size="5" />';
 	}
 
@@ -406,7 +408,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$compressor = $this->get_compressor();
 		if ( $compressor->can_create_key() ) {
 			try {
-				$site = str_replace( array('http://', 'https://'), '', get_bloginfo( 'url' ) );
+				$site = str_replace( array( 'http://', 'https://'), '', get_bloginfo( 'url' ) );
 				$identifier = 'WordPress plugin for ' . $site;
 				$link = $this->get_absolute_url();
 

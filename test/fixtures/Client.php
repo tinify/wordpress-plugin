@@ -17,7 +17,7 @@ class Client {
 	}
 
 	function __construct($key, $appIdentifier = null) {
-		$userAgent = join( ' ', array_filter( array(self::userAgent(), $appIdentifier) ) );
+		$userAgent = join( ' ', array_filter( array( self::userAgent(), $appIdentifier) ) );
 		$this->options = array(
 			CURLOPT_BINARYTRANSFER => true,
 			CURLOPT_RETURNTRANSFER => true,
@@ -27,7 +27,7 @@ class Client {
 		);
 	}
 
-	function request($method, $url, $body = null, $header = array()) {
+	function request($method, $url, $body = null, $header = array() ) {
 		if ( is_array( $body ) ) {
 			if ( ! empty( $body ) ) {
 				$body = json_encode( $body );
@@ -90,7 +90,7 @@ class Client {
 				throw Exception::create( $body->message, $body->error, $status );
 			}
 
-			return (object) array('body' => $body, 'headers' => $headers);
+			return (object) array( 'body' => $body, 'headers' => $headers );
 		} else {
 			$message = sprintf( '%s (#%d)', curl_error( $request ), curl_errno( $request ) );
 			curl_close( $request );

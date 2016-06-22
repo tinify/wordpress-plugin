@@ -24,7 +24,7 @@ class Tinify {
     }
 
     public static function createKey($email, $options) {
-        $body = array_merge(array("email" => $email), $options);
+        $body = array_merge(array( "email" => $email), $options );
         $response = self::getClient(self::ANONYMOUS)->request("post", "/keys", $body);
         self::setKey($response->body->key);
     }

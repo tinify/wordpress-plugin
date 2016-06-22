@@ -21,7 +21,7 @@
 abstract class Tiny_Compress {
 	protected $after_compress_callback;
 
-	public static function create($api_key, $after_compress_callback=null) {
+	public static function create($api_key, $after_compress_callback = null) {
 		if ( Tiny_PHP::client_library_supported() ) {
 			$class = 'Tiny_Compress_Client';
 		} elseif ( Tiny_PHP::fopen_available() ) {

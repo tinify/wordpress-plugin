@@ -70,7 +70,7 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 									echo __( 'These sizes are currently activated for compression:' );
 									echo '<ul>';
 									for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
-										$name = $active_tinify_sizes[$i];
+										$name = $active_tinify_sizes[ $i ];
 										if ( $name == '0' ) {
 											echo '<li>- ' . __( 'original' ) . '</li>';
 										} else {

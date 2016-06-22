@@ -11,7 +11,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		$this->subject = new Tiny_Plugin();
 		$this->subject->init();
 		$this->compressor = $this->getMockBuilder( 'TestCompressor' )
-								 ->setMethods( array('compress_file') )
+								 ->setMethods( array( 'compress_file') )
 								 ->getMock();
 		$this->subject->set_compressor( $this->compressor );
 
@@ -20,7 +20,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		$this->wp->addOption( 'tinypng_sizes[large]', 'on' );
 		$this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
 
-		$this->wp->addImageSize( 'post-thumbnail', array('width' => 825, 'height' => 510) );
+		$this->wp->addImageSize( 'post-thumbnail', array( 'width' => 825, 'height' => 510) );
 		$this->wp->createImages();
 	}
 
@@ -59,24 +59,24 @@ class Tiny_Plugin_Test extends TinyTestCase {
 				$height = '3000';
 		}
 		$this->vfs->getChild( vfsStream::path( $file ) )->truncate( $output );
-		return array('input' => array('size' => $input), 'output' => array('size' => $output, 'width' => $width, 'height' => $height));
+		return array( 'input' => array('size' => $input), 'output' => array('size' => $output, 'width' => $width, 'height' => $height) );
 	}
 
 	public function testInitShouldAddFilters() {
 		$this->assertEquals(array(
-			array('jpeg_quality', array('Tiny_Plugin', 'jpeg_quality')),
-			array('wp_editor_set_quality', array('Tiny_Plugin', 'jpeg_quality')),
-			array('wp_generate_attachment_metadata', array($this->subject, 'compress_on_upload'), 10, 2),
+			array( 'jpeg_quality', array('Tiny_Plugin', 'jpeg_quality') ),
+			array( 'wp_editor_set_quality', array('Tiny_Plugin', 'jpeg_quality') ),
+			array( 'wp_generate_attachment_metadata', array($this->subject, 'compress_on_upload'), 10, 2 ),
 		), $this->wp->getCalls( 'add_filter' ));
 	}
 
 	public function testCompressShouldRespectSettings() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->withConsecutive(
-			array($this->equalTo( 'vfs://root/wp-content/uploads/14/01/test.png' )),
-			array($this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' )),
-			array($this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ))
-		)->will( $this->returnCallback( array($this, 'successCompress') ) );
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test.png' ) ),
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) ),
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
+		)->will( $this->returnCallback( array( $this, 'successCompress') ) );
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
@@ -92,8 +92,8 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		$meta->update();
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
-			array($this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ))
-		)->will( $this->returnCallback( array($this, 'successCompress') ) );
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
+		)->will( $this->returnCallback( array( $this, 'successCompress') ) );
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
@@ -113,15 +113,15 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		$this->vfs->getChild( 'wp-content/uploads/14/01/test-large.png' )->truncate( 100000 );
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
-			array($this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ))
-		)->will( $this->returnCallback( array($this, 'successCompress') ) );
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) )
+		)->will( $this->returnCallback( array( $this, 'successCompress') ) );
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
 	public function testCompressShouldUpdateMetadata() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array($this, 'successCompress') )
+			$this->returnCallback( array( $this, 'successCompress') )
 		);
 
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
@@ -130,16 +130,16 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		foreach ( $metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertBetween( -1, + 1, $values['end'] - time() );
-				unset( $metadata[$key]['end'] );
-				unset( $metadata[$key]['start'] );
+				unset( $metadata[ $key]['end' ] );
+				unset( $metadata[ $key]['start' ] );
 			}
 		}
 		$this->assertEquals(array(
-			0 => array('input' => array('size' => 12345), 'output' => array('size' => 10000, 'width' => 4000, 'height' => 3000)),
+			0 => array( 'input' => array('size' => 12345), 'output' => array('size' => 10000, 'width' => 4000, 'height' => 3000) ),
 			'thumbnail' => array(),
 			'medium' => array(),
-			'large' => array('input' => array('size' => 10000), 'output' => array('size' => 6789, 'width' => 1024, 'height' => 1024)),
-			'post-thumbnail' => array('input' => array('size' => 1234), 'output' => array('size' => 1000, 'width' => 800, 'height' => 500)),
+			'large' => array( 'input' => array('size' => 10000), 'output' => array('size' => 6789, 'width' => 1024, 'height' => 1024) ),
+			'post-thumbnail' => array( 'input' => array('size' => 1234), 'output' => array('size' => 1000, 'width' => 800, 'height' => 500) ),
 		), $metadata);
 	}
 
@@ -156,15 +156,15 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		foreach ( $metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertEquals( time(), $values['timestamp'], 2 );
-				unset( $metadata[$key]['timestamp'] );
+				unset( $metadata[ $key]['timestamp' ] );
 			}
 		}
 		$this->assertEquals(array(
-			0 => array('error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file'),
+			0 => array( 'error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file' ),
 			'thumbnail' => array(),
 			'medium' => array(),
-			'large' => array('error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file'),
-			'post-thumbnail' => array('error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file'),
+			'large' => array( 'error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file' ),
+			'post-thumbnail' => array( 'error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file' ),
 		), $metadata);
 	}
 
@@ -186,7 +186,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 	public function testWrongMetadataShouldNotShowWarnings() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array($this, 'successCompress') )
+			$this->returnCallback( array( $this, 'successCompress') )
 		);
 
 		$testmeta = $this->wp->getTestMetadata();
@@ -198,7 +198,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 	public function testWrongMetadataShouldSaveTinyMetadata() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array($this, 'successCompress') )
+			$this->returnCallback( array( $this, 'successCompress') )
 		);
 
 		$testmeta = $this->wp->getTestMetadata();

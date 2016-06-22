@@ -85,13 +85,13 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function testShouldShowTotalImagesInfo() {
-		$this->enable_compression_sizes( array('0', 'thumbnail', 'medium', 'large') );
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium', 'large') );
 		$element = self::$driver->findElement( WebDriverBy::id( 'tiny-image-sizes-notice' ) );
 		$this->assertContains( 'With these settings you can compress at least 125 images for free each month.', $element->getText() );
 	}
 
 	public function testShouldUpdateTotalImagesInfo() {
-		$this->enable_compression_sizes( array('0', 'thumbnail', 'medium', 'large') );
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium', 'large') );
 		$element = self::$driver->findElement(
 		WebDriverBy::xpath( '//input[@type="checkbox" and @name="tinypng_sizes[0]" and @checked="checked"]' ));
 		$element->click();
@@ -140,7 +140,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function testShouldNotShowResizingWhenOriginalDisabledWhenShownFirst() {
-		$this->enable_compression_sizes( array('original') );
+		$this->enable_compression_sizes( array( 'original') );
 		self::$driver->navigate()->refresh();
 		$this->assertEquals('Enable compression of the original image size for more options.',
 		self::$driver->findElement( WebDriverBy::cssSelector( '.tiny-resize-unavailable' ) )->getText());

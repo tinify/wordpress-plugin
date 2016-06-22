@@ -31,7 +31,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 
 ### Running the integration tests
 1. Start PhantomJS server: `phantomjs --wd`. Tested with version 2.1.1.
-2. Run `bin/integration-tests $version [$to_version]` (When $to_version is
+2. Run `bin/integration-tests $version [ $to_version ]` (When $to_version is
 added, all versions between $version and $to_version are tested). E.g.
 `bin/integration-tests 41` or `bin/integration-tests 40 42`.
 

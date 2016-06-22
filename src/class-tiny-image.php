@@ -35,7 +35,7 @@ class Tiny_Image {
 		return $size === self::ORIGINAL;
 	}
 
-	public function __construct($id, $wp_metadata=null) {
+	public function __construct($id, $wp_metadata = null) {
 		$this->id = $id;
 
 		if ( is_null( $wp_metadata ) ) {
@@ -49,10 +49,10 @@ class Tiny_Image {
 			$values = array();
 		}
 		foreach ( $values as $size => $meta ) {
-			if ( ! isset( $this->sizes[$size] ) ) {
-				$this->sizes[$size] = new Tiny_Image_Size();
+			if ( ! isset( $this->sizes[ $size ] ) ) {
+				$this->sizes[ $size ] = new Tiny_Image_Size();
 			}
-			$this->sizes[$size]->meta = $meta;
+			$this->sizes[ $size ]->meta = $meta;
 		}
 	}
 
@@ -71,27 +71,28 @@ class Tiny_Image {
 
 		$this->name = $path_info['basename'];
 
-		$this->sizes[self::ORIGINAL] = new Tiny_Image_Size(
+		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size(
 			"$path_prefix${path_info['basename']}",
-		"$url_prefix${path_info['basename']}");
+			"$url_prefix${path_info['basename']}"
+		);
 
 		$unique_sizes = array();
 		if ( isset( $wp_metadata['sizes'] ) && is_array( $wp_metadata['sizes'] ) ) {
 			foreach ( $wp_metadata['sizes'] as $size => $info ) {
 				$filename = $info['file'];
 
-				if ( ! isset( $unique_sizes[$filename] ) ) {
-					$unique_sizes[$filename] = true;
-					$this->sizes[$size] = new Tiny_Image_Size(
+				if ( ! isset( $unique_sizes[ $filename ] ) ) {
+					$unique_sizes[ $filename ] = true;
+					$this->sizes[ $size ] = new Tiny_Image_Size(
 					"$path_prefix$filename", "$url_prefix$filename");
 				}
 			}
 		}
 	}
 
-	public function get_image_size($size=self::ORIGINAL, $create=false) {
-		if ( isset( $this->sizes[$size] ) ) {
-			return $this->sizes[$size]; }
+	public function get_image_size($size = self::ORIGINAL, $create = false) {
+		if ( isset( $this->sizes[ $size ] ) ) {
+			return $this->sizes[ $size ]; }
 		elseif ( $create ) {
 			return new Tiny_Image_Size(); }
 		else {
@@ -116,7 +117,7 @@ class Tiny_Image {
 		$values = array();
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( is_array( $size->meta ) ) {
-				$values[$size_name] = $size->meta;
+				$values[ $size_name ] = $size->meta;
 			}
 		}
 
@@ -132,7 +133,7 @@ class Tiny_Image {
 	}
 
 	public function can_be_compressed() {
-		return in_array( $this->get_mime_type(), array('image/jpeg', 'image/png') );
+		return in_array( $this->get_mime_type(), array( 'image/jpeg', 'image/png' ) );
 	}
 
 	public function get_mime_type() {
@@ -171,21 +172,21 @@ class Tiny_Image {
 			}
 		}
 
-		return array('success' => $success, 'failed' => $failed);
+		return array( 'success' => $success, 'failed' => $failed );
 	}
 
 	public function get_image_sizes() {
-		$original = isset( $this->sizes[self::ORIGINAL] )
-			? array(self::ORIGINAL => $this->sizes[self::ORIGINAL])
+		$original = isset( $this->sizes[ self::ORIGINAL ] )
+			? array( self::ORIGINAL => $this->sizes[ self::ORIGINAL ] )
 			: array();
 		$compressed = array();
 		$uncompressed = array();
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( self::is_original( $size_name ) ) { continue; }
 			if ( $size->has_been_compressed() ) {
-				$compressed[$size_name] = $size;
+				$compressed[ $size_name ] = $size;
 			} else {
-				$uncompressed[$size_name] = $size;
+				$uncompressed[ $size_name ] = $size;
 			}
 		}
 		ksort( $compressed );
@@ -199,10 +200,10 @@ class Tiny_Image {
 			$filter_sizes = array_keys( $this->sizes );
 		}
 		foreach ( $filter_sizes as $size_name ) {
-			if ( ! isset( $this->sizes[$size_name] ) ) { continue; }
-			$tiny_image_size = $this->sizes[$size_name];
+			if ( ! isset( $this->sizes[ $size_name ] ) ) { continue; }
+			$tiny_image_size = $this->sizes[ $size_name ];
 			if ( $tiny_image_size->$method() ) {
-				$selection[$size_name] = $tiny_image_size;
+				$selection[ $size_name ] = $tiny_image_size;
 			}
 		}
 		return $selection;
@@ -214,10 +215,10 @@ class Tiny_Image {
 			$count_sizes = array_keys( $this->sizes );
 		}
 		foreach ( $count_sizes as $size ) {
-			if ( ! isset( $this->sizes[$size] ) ) { continue; }
+			if ( ! isset( $this->sizes[ $size ] ) ) { continue; }
 			foreach ( $methods as $method ) {
-				if ( $this->sizes[$size]->$method() ) {
-					$stats[$method]++;
+				if ( $this->sizes[ $size ]->$method() ) {
+					$stats[ $method ]++;
 				}
 			}
 		}
@@ -264,7 +265,7 @@ class Tiny_Image {
 		$after = $this->get_total_size_with_optimization();
 
 		/* Avoid division by zero. */
-		if ( $before === 0 ) {
+		if ( 0 === $before ) {
 			return 0;
 		} else {
 			return ($before - $after) / $before * 100;
@@ -328,14 +329,14 @@ class Tiny_Image {
 		$stats['available-for-optimization'] = array();
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-			$tiny_image = new Tiny_Image( $result[$i]['ID'] );
+			$tiny_image = new Tiny_Image( $result[ $i ]['ID'] );
 			$stats['uploaded-images']++;
 			$stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
 			$stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
 			$stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
 			$stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
 			if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
-				$stats['available-for-optimization'][] = array( 'ID' => $result[$i]['ID'], 'post_title' => $result[$i]['post_title'] );
+				$stats['available-for-optimization'][] = array( 'ID' => $result[ $i ]['ID'], 'post_title' => $result[ $i ]['post_title'] );
 			}
 		}
 		return $stats;

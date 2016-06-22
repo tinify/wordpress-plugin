@@ -3,8 +3,8 @@ $available_sizes = array_keys( $this->settings->get_sizes() );
 $active_sizes = $this->settings->get_sizes();;
 $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
-$total = $tiny_image->get_count( array('modified', 'missing', 'has_been_compressed', 'compressed') );
-$active = $tiny_image->get_count( array('uncompressed', 'never_compressed'), $active_tinify_sizes );
+$total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed') );
+$active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed'), $active_tinify_sizes );
 $size_before = $tiny_image->get_total_size_without_optimization();
 $size_after = $tiny_image->get_total_size_with_optimization();
 
@@ -130,9 +130,9 @@ ksort( $size_exists );
 						echo '<td>' . human_time_diff( $image->end_time( $size ) ) . ' ' . esc_html__( 'ago', 'tiny-compress-images' ) .'</td>';
 					} else if ( ! $image->exists() ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not present or duplicate', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( isset( $size_active[$size] ) ) {
+					} else if ( isset( $size_active[ $size ] ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not compressed', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( isset( $size_exists[$size] ) ) {
+					} else if ( isset( $size_exists[ $size ] ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not configured to be compressed', 'tiny-compress-images' ) . '</em></td>';
 					} else if ( ! array_key_exists( $size, $active_sizes ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Size is not in use', 'tiny-compress-images' ) . '</em></td>';

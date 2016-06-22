@@ -41,20 +41,20 @@ class Tiny_Image_Size_Test extends TinyTestCase {
 
 	public function testAddResponseShouldAddEndTime() {
 		$this->large->add_request();
-		$this->large->add_response( array('input' => array('size' => 1024), 'output' => array('size' => 1024)) );
+		$this->large->add_response( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)) );
 		$this->assertEqualWithinDelta( time(), $this->large->meta['end'], 2 );
 	}
 
 	public function testAddResponseShouldResponse() {
 		$this->large->add_request();
-		$this->large->add_response( array('input' => array('size' => 1024), 'output' => array('size' => 1024)) );
+		$this->large->add_response( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)) );
 		$actual = $this->large->meta;
 		unset( $actual['end'] );
-		$this->assertEquals( array('input' => array('size' => 1024), 'output' => array('size' => 1024)), $actual );
+		$this->assertEquals( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)), $actual );
 	}
 
 	public function testAddResponseShouldNotAddIfNoRequestWasMade() {
-		$this->large->add_response( array('input' => array('size' => 1024), 'output' => array('size' => 1024)) );
+		$this->large->add_response( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)) );
 		$this->assertEquals( array(), $this->large->meta );
 	}
 
@@ -62,7 +62,7 @@ class Tiny_Image_Size_Test extends TinyTestCase {
 		$this->large->add_request();
 		$this->large->add_exception( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
 		unset( $this->large->meta['timestamp'] );
-		$this->assertEquals( array('error' => 'Not found', 'message' => 'Image could not be found'),  $this->large->meta );
+		$this->assertEquals( array( 'error' => 'Not found', 'message' => 'Image could not be found'),  $this->large->meta );
 	}
 
 	public function testAddExceptionShouldAddTimestamp() {
