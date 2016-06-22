@@ -21,7 +21,9 @@
     "facebook/webdriver": "~1.1",
     "mikey179/vfsStream": "~1.5",
     "mockery/mockery": "~0.9",
+    "phpdocumentor/reflection-docblock": "~2.0",
     "symfony/yaml": "~2.8",
+    "squizlabs/php_codesniffer": "~2.2",
     "tinify/tinify": "dev-create-key",
     "wp-coding-standards/wpcs": "*"
   },
