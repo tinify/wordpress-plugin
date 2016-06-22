@@ -292,12 +292,14 @@ div.tiny-bulk-optimization #media-items tr.media-item td.failed span.message {
   margin-left: 24px;
 }
 
-div.tiny-bulk-optimization #media-items tr th.thumbnail,
-div.tiny-bulk-optimization #media-items tr.media-item td.thumbnail {
+div.tiny-bulk-optimization #media-items tr th.thumbnail {
+  width: 30px;
+}
+div.tiny-bulk-optimization #media-items tr td.thumbnail {
   width: 30px;
   height: 30px;
 }
 
-div.tiny-bulk-optimization #media-items tr.media-item td {
+div.tiny-bulk-optimization #media-items tr td {
   vertical-align: middle;
 }

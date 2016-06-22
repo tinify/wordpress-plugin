@@ -167,15 +167,19 @@ require_once dirname(__FILE__) . '/bulk-optimization-chart.php';
     ?>
     </script>
 
-    <table class="wp-list-table widefat fixed striped media whitebox" id="media-items">
-        <tr>
-            <th class="thumbnail"></th>
-            <th><?php echo __('File', 'tiny-compress-images') ?></th>
-            <th><?php echo __('Sizes optimized', 'tiny-compress-images') ?></th>
-            <th><?php echo __('Original total size', 'tiny-compress-images') ?></th>
-            <th><?php echo __('Optimized total size', 'tiny-compress-images') ?></th>
-            <th><?php echo __('Savings', 'tiny-compress-images') ?></th>
-            <th><?php echo __('Status', 'tiny-compress-images') ?></th>
-        </tr>
+    <table class="wp-list-table widefat fixed striped media whitebox" id="media-items" >
+        <thead>
+            <tr>
+                <th class="thumbnail"></th>
+                <th><?php echo __('File', 'tiny-compress-images') ?></th>
+                <th><?php echo __('Sizes optimized', 'tiny-compress-images') ?></th>
+                <th><?php echo __('Original total size', 'tiny-compress-images') ?></th>
+                <th><?php echo __('Optimized total size', 'tiny-compress-images') ?></th>
+                <th><?php echo __('Savings', 'tiny-compress-images') ?></th>
+                <th><?php echo __('Status', 'tiny-compress-images') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
     </table>
 </div>
