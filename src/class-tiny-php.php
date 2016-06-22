@@ -19,11 +19,11 @@
 */
 
 class Tiny_PHP {
-    public static function fopen_available() {
-        return ini_get('allow_url_fopen');
-    }
+	public static function fopen_available() {
+		return ini_get( 'allow_url_fopen' );
+	}
 
-    public static function client_library_supported() {
-        return version_compare(PHP_VERSION, '5.3', '>') && extension_loaded('curl');
-    }
+	public static function client_library_supported() {
+		return version_compare( PHP_VERSION, '5.3', '>' ) && extension_loaded( 'curl' );
+	}
 }

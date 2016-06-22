@@ -19,326 +19,326 @@
 */
 
 class Tiny_Image {
-    const META_KEY = 'tiny_compress_images';
-    const ORIGINAL = 0;
+	const META_KEY = 'tiny_compress_images';
+	const ORIGINAL = 0;
 
-    private $id;
-    private $name;
-    private $sizes = array();
-    private $statistics_calculated = false;
-    private $image_sizes_optimized = 0;
-    private $image_sizes_available_for_compression = 0;
-    private $initial_total_size = 0;
-    private $optimized_total_size = 0;
+	private $id;
+	private $name;
+	private $sizes = array();
+	private $statistics_calculated = false;
+	private $image_sizes_optimized = 0;
+	private $image_sizes_available_for_compression = 0;
+	private $initial_total_size = 0;
+	private $optimized_total_size = 0;
 
-    public static function is_original($size) {
-        return $size === self::ORIGINAL;
-    }
+	public static function is_original($size) {
+		return $size === self::ORIGINAL;
+	}
 
-    public function __construct($id, $wp_metadata=null) {
-        $this->id = $id;
+	public function __construct($id, $wp_metadata=null) {
+		$this->id = $id;
 
-        if (is_null($wp_metadata)) {
-            $wp_metadata = wp_get_attachment_metadata($id);
-        }
-        $this->parse_wp_metadata($wp_metadata);
+		if ( is_null( $wp_metadata ) ) {
+			$wp_metadata = wp_get_attachment_metadata( $id );
+		}
+		$this->parse_wp_metadata( $wp_metadata );
 
-        $values = get_post_meta($this->id, self::META_KEY, true);
+		$values = get_post_meta( $this->id, self::META_KEY, true );
 
-        if (!is_array($values)) {
-            $values = array();
-        }
-        foreach ($values as $size => $meta) {
-            if (!isset($this->sizes[$size])) {
-                $this->sizes[$size] = new Tiny_Image_Size();
-            }
-            $this->sizes[$size]->meta = $meta;
-        }
-    }
+		if ( ! is_array( $values ) ) {
+			$values = array();
+		}
+		foreach ( $values as $size => $meta ) {
+			if ( ! isset( $this->sizes[$size] ) ) {
+				$this->sizes[$size] = new Tiny_Image_Size();
+			}
+			$this->sizes[$size]->meta = $meta;
+		}
+	}
 
-    private function parse_wp_metadata($wp_metadata) {
-        if (!is_array($wp_metadata)) {
-            return;
-        }
-        $path_info = pathinfo($wp_metadata['file']);
-        $upload_dir = wp_upload_dir();
-        $path_prefix = $upload_dir['basedir'] . '/';
-        $url_prefix = $upload_dir['baseurl'] . '/';
-        if (isset($path_info['dirname'])) {
-            $path_prefix .= $path_info['dirname'] .'/';
-            $url_prefix .= $path_info['dirname'] .'/';
-        }
+	private function parse_wp_metadata($wp_metadata) {
+		if ( ! is_array( $wp_metadata ) ) {
+			return;
+		}
+		$path_info = pathinfo( $wp_metadata['file'] );
+		$upload_dir = wp_upload_dir();
+		$path_prefix = $upload_dir['basedir'] . '/';
+		$url_prefix = $upload_dir['baseurl'] . '/';
+		if ( isset( $path_info['dirname'] ) ) {
+			$path_prefix .= $path_info['dirname'] .'/';
+			$url_prefix .= $path_info['dirname'] .'/';
+		}
 
-        $this->name = $path_info['basename'];
+		$this->name = $path_info['basename'];
 
-        $this->sizes[self::ORIGINAL] = new Tiny_Image_Size(
-            "$path_prefix${path_info['basename']}",
-            "$url_prefix${path_info['basename']}");
+		$this->sizes[self::ORIGINAL] = new Tiny_Image_Size(
+			"$path_prefix${path_info['basename']}",
+		"$url_prefix${path_info['basename']}");
 
-        $unique_sizes = array();
-        if (isset($wp_metadata['sizes']) && is_array($wp_metadata['sizes'])) {
-            foreach ($wp_metadata['sizes'] as $size => $info) {
-                $filename = $info['file'];
+		$unique_sizes = array();
+		if ( isset( $wp_metadata['sizes'] ) && is_array( $wp_metadata['sizes'] ) ) {
+			foreach ( $wp_metadata['sizes'] as $size => $info ) {
+				$filename = $info['file'];
 
-                if (!isset($unique_sizes[$filename])) {
-                    $unique_sizes[$filename] = true;
-                    $this->sizes[$size] = new Tiny_Image_Size(
-                        "$path_prefix$filename", "$url_prefix$filename");
-                }
-            }
-        }
-    }
+				if ( ! isset( $unique_sizes[$filename] ) ) {
+					$unique_sizes[$filename] = true;
+					$this->sizes[$size] = new Tiny_Image_Size(
+					"$path_prefix$filename", "$url_prefix$filename");
+				}
+			}
+		}
+	}
 
-    public function get_image_size($size=self::ORIGINAL, $create=false) {
-        if (isset($this->sizes[$size]))
-            return $this->sizes[$size];
-        elseif ($create)
-            return new Tiny_Image_Size();
-        else
-            return null;
-    }
+	public function get_image_size($size=self::ORIGINAL, $create=false) {
+		if ( isset( $this->sizes[$size] ) ) {
+			return $this->sizes[$size]; }
+		elseif ( $create ) {
+			return new Tiny_Image_Size(); }
+		else {
+			return null; }
+	}
 
-    public function update_wp_metadata($wp_metadata) {
-        $original = $this->get_image_size();
-        if (is_null($original) || !is_array($original->meta)) {
-            return $wp_metadata;
-        }
+	public function update_wp_metadata($wp_metadata) {
+		$original = $this->get_image_size();
+		if ( is_null( $original ) || ! is_array( $original->meta ) ) {
+			return $wp_metadata;
+		}
 
-        $m = $original->meta;
-        if (isset($m['output']) && isset($m['output']['width']) && isset($m['output']['height'])) {
-            $wp_metadata['width'] = $m['output']['width'];
-            $wp_metadata['height'] = $m['output']['height'];
-        }
-        return $wp_metadata;
-    }
+		$m = $original->meta;
+		if ( isset( $m['output'] ) && isset( $m['output']['width'] ) && isset( $m['output']['height'] ) ) {
+			$wp_metadata['width'] = $m['output']['width'];
+			$wp_metadata['height'] = $m['output']['height'];
+		}
+		return $wp_metadata;
+	}
 
-    public function update() {
-        $values = array();
-        foreach ($this->sizes as $size_name => $size) {
-            if (is_array($size->meta)) {
-                $values[$size_name] = $size->meta;
-            }
-        }
+	public function update() {
+		$values = array();
+		foreach ( $this->sizes as $size_name => $size ) {
+			if ( is_array( $size->meta ) ) {
+				$values[$size_name] = $size->meta;
+			}
+		}
 
-        $val = update_post_meta($this->id, self::META_KEY, $values);
-    }
+		$val = update_post_meta( $this->id, self::META_KEY, $values );
+	}
 
-    public function get_id() {
-        return $this->id;
-    }
+	public function get_id() {
+		return $this->id;
+	}
 
-    public function get_name() {
-        return $this->name;
-    }
+	public function get_name() {
+		return $this->name;
+	}
 
-    public function can_be_compressed() {
-        return in_array($this->get_mime_type(), array("image/jpeg", "image/png"));
-    }
+	public function can_be_compressed() {
+		return in_array( $this->get_mime_type(), array('image/jpeg', 'image/png') );
+	}
 
-    public function get_mime_type() {
-        return get_post_mime_type($this->id);
-    }
+	public function get_mime_type() {
+		return get_post_mime_type( $this->id );
+	}
 
-    public function compress( $settingsObject ) {
+	public function compress( $settingsObject ) {
 
-        if ($settingsObject->get_compressor() === null || !$this->can_be_compressed()) {
-            return;
-        }
+		if ( $settingsObject->get_compressor() === null || ! $this->can_be_compressed() ) {
+			return;
+		}
 
-        $success = 0;
-        $failed = 0;
+		$success = 0;
+		$failed = 0;
 
-        $compressor = $settingsObject->get_compressor();
-        $active_tinify_sizes = $settingsObject->get_active_tinify_sizes();
-        $uncompressed_sizes = $this->filter_image_sizes('uncompressed', $active_tinify_sizes);
+		$compressor = $settingsObject->get_compressor();
+		$active_tinify_sizes = $settingsObject->get_active_tinify_sizes();
+		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 
-        foreach ($uncompressed_sizes as $size_name => $size) {
-            try {
-                $size->add_request();
-                $this->update();
+		foreach ( $uncompressed_sizes as $size_name => $size ) {
+			try {
+				$size->add_request();
+				$this->update();
 
-                $resize = self::is_original($size_name) ? $settingsObject->get_resize_options() : false;
-                $preserve = count($settingsObject->get_preserve_options()) > 0 ? $settingsObject->get_preserve_options() : false;
-                $response = $compressor->compress_file($size->filename, $resize, $preserve);
+				$resize = self::is_original( $size_name ) ? $settingsObject->get_resize_options() : false;
+				$preserve = count( $settingsObject->get_preserve_options() ) > 0 ? $settingsObject->get_preserve_options() : false;
+				$response = $compressor->compress_file( $size->filename, $resize, $preserve );
 
-                $size->add_response($response);
-                $this->update();
-                $success++;
-            } catch (Tiny_Exception $e) {
-                $size->add_exception($e);
-                $this->update();
-                $failed++;
-            }
-        }
+				$size->add_response( $response );
+				$this->update();
+				$success++;
+			} catch (Tiny_Exception $e) {
+				$size->add_exception( $e );
+				$this->update();
+				$failed++;
+			}
+		}
 
-        return array('success' => $success, 'failed' => $failed);
-    }
+		return array('success' => $success, 'failed' => $failed);
+	}
 
-    public function get_image_sizes() {
-        $original = isset($this->sizes[self::ORIGINAL])
-            ? array(self::ORIGINAL => $this->sizes[self::ORIGINAL])
-            : array();
-        $compressed = array();
-        $uncompressed = array();
-        foreach ($this->sizes as $size_name => $size) {
-            if (self::is_original($size_name)) continue;
-            if ($size->has_been_compressed()) {
-                $compressed[$size_name] = $size;
-            } else {
-                $uncompressed[$size_name] = $size;
-            }
-        }
-        ksort($compressed);
-        ksort($uncompressed);
-        return $original + $compressed + $uncompressed;
-    }
+	public function get_image_sizes() {
+		$original = isset( $this->sizes[self::ORIGINAL] )
+			? array(self::ORIGINAL => $this->sizes[self::ORIGINAL])
+			: array();
+		$compressed = array();
+		$uncompressed = array();
+		foreach ( $this->sizes as $size_name => $size ) {
+			if ( self::is_original( $size_name ) ) { continue; }
+			if ( $size->has_been_compressed() ) {
+				$compressed[$size_name] = $size;
+			} else {
+				$uncompressed[$size_name] = $size;
+			}
+		}
+		ksort( $compressed );
+		ksort( $uncompressed );
+		return $original + $compressed + $uncompressed;
+	}
 
-    public function filter_image_sizes($method, $filter_sizes = null) {
-        $selection = array();
-        if (is_null($filter_sizes)) {
-            $filter_sizes = array_keys($this->sizes);
-        }
-        foreach ($filter_sizes as $size_name) {
-            if (!isset($this->sizes[$size_name])) continue;
-            $tiny_image_size = $this->sizes[$size_name];
-            if ($tiny_image_size->$method()) {
-                $selection[$size_name] = $tiny_image_size;
-            }
-        }
-        return $selection;
-    }
+	public function filter_image_sizes($method, $filter_sizes = null) {
+		$selection = array();
+		if ( is_null( $filter_sizes ) ) {
+			$filter_sizes = array_keys( $this->sizes );
+		}
+		foreach ( $filter_sizes as $size_name ) {
+			if ( ! isset( $this->sizes[$size_name] ) ) { continue; }
+			$tiny_image_size = $this->sizes[$size_name];
+			if ( $tiny_image_size->$method() ) {
+				$selection[$size_name] = $tiny_image_size;
+			}
+		}
+		return $selection;
+	}
 
-    public function get_count($methods, $count_sizes = null) {
-        $stats = array_fill_keys($methods, 0);
-        if (is_null($count_sizes)) {
-            $count_sizes = array_keys($this->sizes);
-        }
-        foreach ($count_sizes as $size) {
-            if (!isset($this->sizes[$size])) continue;
-            foreach ($methods as $method) {
-                if ($this->sizes[$size]->$method()) {
-                    $stats[$method]++;
-                }
-            }
-        }
-        return $stats;
-    }
+	public function get_count($methods, $count_sizes = null) {
+		$stats = array_fill_keys( $methods, 0 );
+		if ( is_null( $count_sizes ) ) {
+			$count_sizes = array_keys( $this->sizes );
+		}
+		foreach ( $count_sizes as $size ) {
+			if ( ! isset( $this->sizes[$size] ) ) { continue; }
+			foreach ( $methods as $method ) {
+				if ( $this->sizes[$size]->$method() ) {
+					$stats[$method]++;
+				}
+			}
+		}
+		return $stats;
+	}
 
-    public function get_latest_error() {
-        $error_message = null;
-        $last_timestamp = null;
-        foreach ($this->sizes as $size) {
-            if (isset($size->meta['error']) && isset($size->meta['message'])) {
-                if ($last_timestamp === null || $last_timestamp < $size->meta['timestamp']) {
-                    $last_timestamp = $size->meta['timestamp'];
-                    $error_message = $size->meta['message'];
-                }
-            }
-        }
-        return $error_message;
-    }
+	public function get_latest_error() {
+		$error_message = null;
+		$last_timestamp = null;
+		foreach ( $this->sizes as $size ) {
+			if ( isset( $size->meta['error'] ) && isset( $size->meta['message'] ) ) {
+				if ( $last_timestamp === null || $last_timestamp < $size->meta['timestamp'] ) {
+					$last_timestamp = $size->meta['timestamp'];
+					$error_message = $size->meta['message'];
+				}
+			}
+		}
+		return $error_message;
+	}
 
-    public function get_image_sizes_optimized() {
-        if (!$this->statistics_calculated) $this->calculate_statistics();
-        return $this->image_sizes_optimized;
-    }
+	public function get_image_sizes_optimized() {
+		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
+		return $this->image_sizes_optimized;
+	}
 
-    public function get_image_sizes_available_for_compression() {
-        if (!$this->statistics_calculated) $this->calculate_statistics();
-        return $this->image_sizes_available_for_compression;
-    }
+	public function get_image_sizes_available_for_compression() {
+		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
+		return $this->image_sizes_available_for_compression;
+	}
 
-    public function get_total_size_without_optimization() {
-        if (!$this->statistics_calculated) $this->calculate_statistics();
-        return $this->initial_total_size;
-    }
+	public function get_total_size_without_optimization() {
+		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
+		return $this->initial_total_size;
+	}
 
-    public function get_total_size_with_optimization() {
-        if (!$this->statistics_calculated) $this->calculate_statistics();
-        return $this->optimized_total_size;
-    }
+	public function get_total_size_with_optimization() {
+		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
+		return $this->optimized_total_size;
+	}
 
-    public function get_savings() {
-       if (!$this->statistics_calculated) $this->calculate_statistics();
-       $before = $this->get_total_size_without_optimization();
-       $after = $this->get_total_size_with_optimization();
+	public function get_savings() {
+		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
+		$before = $this->get_total_size_without_optimization();
+		$after = $this->get_total_size_with_optimization();
 
-       /* Avoid division by zero. */
-       if ($before === 0) {
-           return 0;
-       } else {
-           return ($before - $after) / $before * 100;
-       }
-    }
+		/* Avoid division by zero. */
+		if ( $before === 0 ) {
+			return 0;
+		} else {
+			return ($before - $after) / $before * 100;
+		}
+	}
 
-    private function calculate_statistics() {
-        if ($this->statistics_calculated) return;
+	private function calculate_statistics() {
+		if ( $this->statistics_calculated ) { return; }
 
-        $settings = new Tiny_Settings();
-        $active_sizes = $settings->get_sizes();
-        $active_tinify_sizes = $settings->get_active_tinify_sizes();
+		$settings = new Tiny_Settings();
+		$active_sizes = $settings->get_sizes();
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 
-        foreach ($this->sizes as $size_name => $size) {
-            if (array_key_exists( $size_name, $active_sizes )) {
-                if (isset($size->meta['input'])) {
-                    $this->initial_total_size += intval($size->meta['input']['size']);
+		foreach ( $this->sizes as $size_name => $size ) {
+			if ( array_key_exists( $size_name, $active_sizes ) ) {
+				if ( isset( $size->meta['input'] ) ) {
+					$this->initial_total_size += intval( $size->meta['input']['size'] );
 
-                    if (isset($size->meta['output'])) {
-                        if ($size->modified()) {
-                            $this->optimized_total_size += $size->filesize();
-                            if (in_array($size_name, $active_tinify_sizes, true)) {
-                                $this->image_sizes_available_for_compression += 1;
-                            }
-                        } else {
-                            $this->optimized_total_size += intval($size->meta['output']['size']);
-                            $this->image_sizes_optimized += 1;
-                        }
-                    } else {
-                        $this->optimized_total_size += intval($size->meta['input']['size']);
-                    }
-                } elseif ( $size->exists() ) {
-                    $this->initial_total_size += $size->filesize();
-                    $this->optimized_total_size += $size->filesize();
-                    if (in_array($size_name, $active_tinify_sizes, true)) {
-                        $this->image_sizes_available_for_compression += 1;
-                    }
-                }
-            }
-        }
+					if ( isset( $size->meta['output'] ) ) {
+						if ( $size->modified() ) {
+							$this->optimized_total_size += $size->filesize();
+							if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
+								$this->image_sizes_available_for_compression += 1;
+							}
+						} else {
+							$this->optimized_total_size += intval( $size->meta['output']['size'] );
+							$this->image_sizes_optimized += 1;
+						}
+					} else {
+						$this->optimized_total_size += intval( $size->meta['input']['size'] );
+					}
+				} elseif ( $size->exists() ) {
+					$this->initial_total_size += $size->filesize();
+					$this->optimized_total_size += $size->filesize();
+					if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
+						$this->image_sizes_available_for_compression += 1;
+					}
+				}
+			}
+		}
 
-        $this->statistics_calculated = true;
-    }
+		$this->statistics_calculated = true;
+	}
 
-    public static function get_optimization_statistics( $result = null ) {
-        global $wpdb;
+	public static function get_optimization_statistics( $result = null ) {
+		global $wpdb;
 
-        if ( is_null( $result ) ) {
-            $result = $wpdb->get_results(
-                "SELECT ID, post_title FROM $wpdb->posts
+		if ( is_null( $result ) ) {
+			$result = $wpdb->get_results(
+				"SELECT ID, post_title FROM $wpdb->posts
                  WHERE post_type = 'attachment' AND ( post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png' )
                  ORDER BY ID DESC", ARRAY_A );
-        }
+		}
 
-        $stats = array();
-        $stats['uploaded-images'] = 0;
-        $stats['optimized-image-sizes'] = 0;
-        $stats['available-unoptimised-sizes'] = 0;
-        $stats['optimized-library-size'] = 0;
-        $stats['unoptimized-library-size'] = 0;
-        $stats['available-for-optimization'] = array();
+		$stats = array();
+		$stats['uploaded-images'] = 0;
+		$stats['optimized-image-sizes'] = 0;
+		$stats['available-unoptimised-sizes'] = 0;
+		$stats['optimized-library-size'] = 0;
+		$stats['unoptimized-library-size'] = 0;
+		$stats['available-for-optimization'] = array();
 
-        for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-            $tiny_image = new Tiny_Image( $result[$i]["ID"] );
-            $stats['uploaded-images']++;
-            $stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
-            $stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
-            $stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
-            $stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
-            if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
-                $stats['available-for-optimization'][] = array( "ID" => $result[$i]["ID"], "post_title" => $result[$i]["post_title"] );
-            }
-        }
-        return $stats;
-    }
+		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
+			$tiny_image = new Tiny_Image( $result[$i]['ID'] );
+			$stats['uploaded-images']++;
+			$stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
+			$stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
+			$stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
+			$stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
+			if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
+				$stats['available-for-optimization'][] = array( 'ID' => $result[$i]['ID'], 'post_title' => $result[$i]['post_title'] );
+			}
+		}
+		return $stats;
+	}
 
 }
