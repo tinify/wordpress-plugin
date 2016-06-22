@@ -11,23 +11,16 @@ class Tiny_Image_Empty_Test extends TinyTestCase {
 		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
 	}
 
-	public function testGetImageSizesCompressed() {
-		$this->assertEquals( 0, $this->subject->get_image_sizes_optimized() );
-	}
-
-	public function testGetImageSizesUnCompressed() {
-		$this->assertEquals( 4, $this->subject->get_image_sizes_available_for_compression() );
-	}
-
 	public function testGetSavings() {
-		$this->assertEquals( 0, $this->subject->get_savings() );
+		$this->assertEquals( 0, $this->subject->get_savings( $this->subject->get_statistics() ) );
 	}
 
-	public function testGetInitialTotalSize() {
-		$this->assertEquals( 328670, $this->subject->get_total_size_without_optimization() );
-	}
-
-	public function testGetCompressedTotalSize() {
-		$this->assertEquals( 328670, $this->subject->get_total_size_with_optimization() );
+	public function testGetStatistics() {
+		$this->assertEquals( array(
+			'initial_total_size' => 328670,
+			'optimized_total_size' => 328670,
+			'image_sizes_optimized' => 0,
+			'available_unoptimised_sizes' => 4,
+		), $this->subject->get_statistics() );
 	}
 }

@@ -25,11 +25,7 @@ class Tiny_Image {
 	private $id;
 	private $name;
 	private $sizes = array();
-	private $statistics_calculated = false;
-	private $image_sizes_optimized = 0;
-	private $image_sizes_available_for_compression = 0;
-	private $initial_total_size = 0;
-	private $optimized_total_size = 0;
+	private $statistics = array();
 
 	public static function is_original($size) {
 		return $size === self::ORIGINAL;
@@ -239,41 +235,28 @@ class Tiny_Image {
 		return $error_message;
 	}
 
-	public function get_image_sizes_optimized() {
-		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
-		return $this->image_sizes_optimized;
-	}
-
-	public function get_image_sizes_available_for_compression() {
-		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
-		return $this->image_sizes_available_for_compression;
-	}
-
-	public function get_total_size_without_optimization() {
-		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
-		return $this->initial_total_size;
-	}
-
-	public function get_total_size_with_optimization() {
-		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
-		return $this->optimized_total_size;
-	}
-
-	public function get_savings() {
-		if ( ! $this->statistics_calculated ) { $this->calculate_statistics(); }
-		$before = $this->get_total_size_without_optimization();
-		$after = $this->get_total_size_with_optimization();
-
-		/* Avoid division by zero. */
-		if ( 0 === $before ) {
-			return 0;
+	public function get_savings( $stats ) {
+		$before = $stats['initial_total_size'];
+		$after = $stats['optimized_total_size'];
+		if ( $before === 0 ) {
+			$savings = 0;
 		} else {
-			return ($before - $after) / $before * 100;
+			$savings = ($before - $after) / $before * 100;
 		}
+		return '' . number_format( $savings, 1 );
 	}
 
-	private function calculate_statistics() {
-		if ( $this->statistics_calculated ) { return; }
+	public function get_statistics() {
+
+		if ( $this->statistics ) {
+			error_log( "Strangely the image statistics are asked for again." );
+			return $this->statistics;
+		}
+
+		$this->statistics['initial_total_size'] = 0;
+		$this->statistics['optimized_total_size'] = 0;
+		$this->statistics['image_sizes_optimized'] = 0;
+		$this->statistics['available_unoptimised_sizes'] = 0;
 
 		$settings = new Tiny_Settings();
 		$active_sizes = $settings->get_sizes();
@@ -282,32 +265,32 @@ class Tiny_Image {
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( array_key_exists( $size_name, $active_sizes ) ) {
 				if ( isset( $size->meta['input'] ) ) {
-					$this->initial_total_size += intval( $size->meta['input']['size'] );
+					$this->statistics['initial_total_size'] += intval( $size->meta['input']['size'] );
 
 					if ( isset( $size->meta['output'] ) ) {
 						if ( $size->modified() ) {
-							$this->optimized_total_size += $size->filesize();
+							$this->statistics['optimized_total_size'] += $size->filesize();
 							if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-								$this->image_sizes_available_for_compression += 1;
+								$this->statistics['available_unoptimised_sizes'] += 1;
 							}
 						} else {
-							$this->optimized_total_size += intval( $size->meta['output']['size'] );
-							$this->image_sizes_optimized += 1;
+							$this->statistics['optimized_total_size'] += intval( $size->meta['output']['size'] );
+							$this->statistics['image_sizes_optimized'] += 1;
 						}
 					} else {
-						$this->optimized_total_size += intval( $size->meta['input']['size'] );
+						$this->statistics['optimized_total_size'] += intval( $size->meta['input']['size'] );
 					}
 				} elseif ( $size->exists() ) {
-					$this->initial_total_size += $size->filesize();
-					$this->optimized_total_size += $size->filesize();
+					$this->statistics['initial_total_size'] += $size->filesize();
+					$this->statistics['optimized_total_size'] += $size->filesize();
 					if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-						$this->image_sizes_available_for_compression += 1;
+						$this->statistics['available_unoptimised_sizes'] += 1;
 					}
 				}
 			}
 		}
 
-		$this->statistics_calculated = true;
+		return $this->statistics;
 	}
 
 	public static function get_optimization_statistics( $result = null ) {
@@ -329,14 +312,15 @@ class Tiny_Image {
 		$stats['available-for-optimization'] = array();
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-			$tiny_image = new Tiny_Image( $result[ $i ]['ID'] );
+			$tiny_image = new Tiny_Image( $result[$i]['ID'] );
+			$image_stats = $tiny_image->get_statistics();
 			$stats['uploaded-images']++;
-			$stats['available-unoptimised-sizes'] += $tiny_image->get_image_sizes_available_for_compression();
-			$stats['optimized-image-sizes'] += $tiny_image->get_image_sizes_optimized();
-			$stats['optimized-library-size'] += $tiny_image->get_total_size_with_optimization();
-			$stats['unoptimized-library-size'] += $tiny_image->get_total_size_without_optimization();
-			if ( $tiny_image->get_image_sizes_available_for_compression() > 0 ) {
-				$stats['available-for-optimization'][] = array( 'ID' => $result[ $i ]['ID'], 'post_title' => $result[ $i ]['post_title'] );
+			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimised_sizes'];
+			$stats['optimized-image-sizes'] += $image_stats['image_sizes_optimized'];
+			$stats['optimized-library-size'] += $image_stats['optimized_total_size'];
+			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
+			if ( $image_stats['available_unoptimised_sizes'] > 0 ) {
+				$stats['available-for-optimization'][] = array( 'ID' => $result[$i]['ID'], 'post_title' => $result[$i]['post_title'] );
 			}
 		}
 		return $stats;

@@ -177,21 +177,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 
 		$tiny_image_before = new Tiny_Image( $id, $metadata );
-		$size_before = $tiny_image_before->get_total_size_with_optimization();
+		$image_statistics_before = $tiny_image_before->get_statistics();
+		$size_before = $image_statistics_before['optimized_total_size'];
 
 		$tiny_image = new Tiny_Image( $id, $metadata );
 		$result = $tiny_image->compress( $this->settings );
 		wp_update_attachment_metadata( $id, $tiny_image->update_wp_metadata( $metadata ) );
-		$size_after = $tiny_image->get_total_size_with_optimization();
+		$image_statistics = $tiny_image->get_statistics();
+		$size_after = $image_statistics['optimized_total_size'];
 
 		$currentLibrarySize = intval( $_POST['current_size'] );
 		$newLibrarySize = $currentLibrarySize + $size_after - $size_before;
 
 		$result['message'] = $tiny_image->get_latest_error();
-		$result['image_sizes_optimized'] = $tiny_image->get_image_sizes_optimized();
-		$result['initial_total_size'] = size_format( $tiny_image->get_total_size_without_optimization(), 2 );
-		$result['optimized_total_size'] = size_format( $tiny_image->get_total_size_with_optimization(), 2 );
-		$result['savings'] = '' . number_format( $tiny_image->get_savings(), 1 );
+		$result['image_sizes_optimized'] = $image_statistics['image_sizes_optimized'];
+		$result['initial_total_size'] = size_format( $image_statistics['initial_total_size'], 2 );
+		$result['optimized_total_size'] = size_format( $image_statistics['optimized_total_size'], 2 );
+		$result['savings'] = $tiny_image->get_savings( $image_statistics );
 		$result['status'] = $this->settings->get_status();
 		$thumb = $tiny_image->get_image_size( 'thumbnail' );
 		if ( ! $thumb ) {
@@ -236,7 +238,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $columns;
 	}
 
-	public function render_media_column($column, $id) {
+	public function render_media_column( $column, $id ) {
 		if ( $column === self::MEDIA_COLUMN ) {
 			echo '<div class="tiny-ajax-container">';
 			$this->render_compress_details( new Tiny_Image( $id ) );
@@ -253,7 +255,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		echo '</div></div>';
 	}
 
-	private function render_compress_details($tiny_image) {
+	private function render_compress_details( $tiny_image ) {
 		$in_progress = $tiny_image->filter_image_sizes( 'in_progress' );
 		if ( count( $in_progress ) > 0 ) {
 			include( dirname( __FILE__ ) . '/views/compress-details-processing.php' );
