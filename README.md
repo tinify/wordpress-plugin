@@ -23,7 +23,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 * MySQL client and admin tools.
 
 ### Running the plugin in WordPress
-1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 41`.
+1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 45`.
 2. Use `docker ps` to check which port to use to connect to WordPress.
 
 ### Running the unit tests
