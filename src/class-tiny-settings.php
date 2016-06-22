@@ -417,14 +417,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 				));
 
 				update_option( self::get_prefixed_name( 'api_key_automated' ), true );
-				update_option( self::get_prefixed_name( 'api_key' ), $compressor->get_api_key() );
+				update_option( self::get_prefixed_name( 'api_key' ), $compressor->get_key() );
 				update_option( self::get_prefixed_name( 'status' ), 0 );
 
 				$status = (object) array(
 					'ok' => true,
 					'message' => null,
 					'code' => null,
-					'key' => $compressor->get_api_key(),
+					'key' => $compressor->get_key(),
 				);
 			} catch (Tiny_Exception $err) {
 				$status = (object) array(

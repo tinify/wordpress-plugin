@@ -38,6 +38,7 @@ abstract class Tiny_Compress {
 
 	public abstract function can_create_key();
 	public abstract function get_compression_count();
+	public abstract function get_key();
 	public abstract function is_limit_reached();
 
 	protected abstract function validate();
@@ -66,7 +67,12 @@ abstract class Tiny_Compress {
 			$resize_options = false;
 		}
 
-		list($output, $details) = $this->compress( file_get_contents( $file ), $resize_options, $preserve_options );
+		list($output, $details) = $this->compress(
+			file_get_contents( $file ),
+			$resize_options,
+			$preserve_options
+		);
+
 		file_put_contents( $file, $output );
 
 		if ( $resize_options ) {
@@ -92,7 +98,7 @@ abstract class Tiny_Compress {
 		return $width > $resize_options['width'] || $height > $resize_options['height'];
 	}
 
-	// Based on pricing April 2016.
+	/* Based on pricing April 2016. */
 	public static function estimate_cost( $compressions, $usage ) {
 		return round( self::compression_cost( $compressions + $usage ) - self::compression_cost( $usage ), 2 );
 	}

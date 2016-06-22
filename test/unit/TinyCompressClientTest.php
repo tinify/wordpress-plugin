@@ -4,6 +4,7 @@ require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 /**
  * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class Tiny_Compress_Client_Test extends TinyTestCase {
 	protected $php_mock;
@@ -25,5 +26,9 @@ class Tiny_Compress_Client_Test extends TinyTestCase {
 
 	public function testShouldAllowKeyCreation() {
 		$this->assertSame( true, $this->compressor->can_create_key() );
+	}
+
+	public function testShouldReturnKey() {
+		$this->assertSame( 'api1234', $this->compressor->get_key() );
 	}
 }

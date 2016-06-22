@@ -34,7 +34,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return null;
 	}
 
-	public function get_api_key() {
+	public function get_key() {
 		return $this->api_key;
 	}
 
@@ -94,8 +94,9 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		if ( $resize_options || $preserve_options ) {
 			$details['output'] = self::update_details( $file, $details ) + $details['output'];
 		} else {
-			// Combine the details for the output, partially read from FS but extra values come from the API.
-			// The filesize read from disk (in update_details) is not correct sometimes.
+			/* Combine the details for the output, partially read from FS but
+				extra values come from the API. The filesize read from disk
+				(in update_details) is not correct sometimes. */
 			$details['output'] = array_merge( self::update_details( $file, $details ), $details['output'] );
 		}
 
@@ -112,7 +113,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return null;
 	}
 
-	protected function shrink_options($input) {
+	private function shrink_options($input) {
 		return array(
 			'http' => array(
 				'method' => 'POST',

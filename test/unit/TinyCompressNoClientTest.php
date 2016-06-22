@@ -4,6 +4,7 @@ require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 /**
  * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class Tiny_Compress_No_Client_Test extends TinyTestCase {
 	protected $php_mock;

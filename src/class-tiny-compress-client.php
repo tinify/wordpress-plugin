@@ -50,7 +50,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		return \Tinify\getCompressionCount();
 	}
 
-	public function get_api_key() {
+	public function get_key() {
 		return \Tinify\getKey();
 	}
 
