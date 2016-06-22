@@ -10,19 +10,13 @@ class Tiny_Compress_No_Client_Test extends TinyTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->php_mock = \Mockery::mock( 'alias:Tiny_PHP' );
-		$this->php_mock->shouldReceive( 'client_library_supported' )->andReturn( false );
-	}
-
-	public function testShouldReturnFopenCompressorIfClientNotSupported() {
-		$this->php_mock->shouldReceive( 'fopen_available' )->andReturn( true );
-		$compressor = Tiny_Compress::create( 'api1234' );
-		$this->assertInstanceOf( 'Tiny_Compress_Fopen', $compressor );
+		$php_mock = \Mockery::mock( 'alias:Tiny_PHP' );
+		$php_mock->shouldReceive( 'client_library_supported' )->andReturn( false );
+		$php_mock->shouldReceive( 'fopen_available' )->andReturn( false );
 	}
 
 	public function testShouldThrowErrorWhenCurlAndFopenUnavailable() {
-		$this->php_mock->shouldReceive( 'fopen_available' )->andReturn( false );
 		$this->setExpectedException( 'Tiny_Exception' );
-		$compressor = Tiny_Compress::create( 'api1234' );
+		Tiny_Compress::create( 'api1234' );
 	}
 }

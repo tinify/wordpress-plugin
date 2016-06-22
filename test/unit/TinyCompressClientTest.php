@@ -10,8 +10,8 @@ class Tiny_Compress_Client_Test extends TinyTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->php_mock = \Mockery::mock( 'alias:Tiny_PHP' );
-		$this->php_mock->shouldReceive( 'client_library_supported' )->andReturn( true );
+		$php_mock = \Mockery::mock( 'alias:Tiny_PHP' );
+		$php_mock->shouldReceive( 'client_library_supported' )->andReturn( true );
 		$this->compressor = Tiny_Compress::create( 'api1234' );
 	}
 
