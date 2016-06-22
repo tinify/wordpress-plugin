@@ -1,7 +1,8 @@
 <?php
 
-require 'vendor/autoload.php';
-require dirname( __FILE__ ) . '/../helpers/wordpress.php';
+require_once dirname( __FILE__ ) . '/../helpers/tinify-mock-client.php';
+require_once dirname( __FILE__ ) . '/../helpers/wordpress.php';
+require_once 'vendor/autoload.php';
 
 use org\bovigo\vfs\vfsStream;
 
