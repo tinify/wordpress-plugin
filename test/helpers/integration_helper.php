@@ -1,9 +1,9 @@
 <?php
 
 function innerText($e) {
-    return $e->getText();
+	return $e->getText();
 }
 
 function elementName($e) {
-    return $e->getAttribute('name');
+	return $e->getAttribute( 'name' );
 }
