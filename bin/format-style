@@ -1,0 +1,3 @@
+#!/bin/bash
+
+vendor/bin/phpcbf --standard=phpcs.xml

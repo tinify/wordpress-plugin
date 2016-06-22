@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cfa8235ac71a488c62f6aaf0f5c92e31",
-    "content-hash": "840bb08554bbaad7abad630a8c08e8f6",
+    "hash": "954383792eff8cc1e29a6a35b94fef20",
+    "content-hash": "e5c91e1098cdee3394944be33d07ee34",
     "packages": [
         {
             "name": "composer/installers",
@@ -1549,6 +1549,46 @@
                 "validate"
             ],
             "time": "2015-08-24 13:29:44"
+        },
+        {
+            "name": "wp-coding-standards/wpcs",
+            "version": "2014-12-11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
+                "reference": "71db077c5527969b11c45dd0333bd79984c5804c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/71db077c5527969b11c45dd0333bd79984c5804c",
+                "reference": "71db077c5527969b11c45dd0333bd79984c5804c",
+                "shasum": ""
+            },
+            "require": {
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "X-Team",
+                    "homepage": "http://x-team.com/"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/graphs/contributors"
+                }
+            ],
+            "description": "PHP_CodeSniffer rules (sniffs) to enforce WordPress coding conventions",
+            "keywords": [
+                "phpcs",
+                "standards",
+                "wordpress"
+            ],
+            "time": "2014-12-11 00:25:17"
         }
     ],
     "aliases": [],
