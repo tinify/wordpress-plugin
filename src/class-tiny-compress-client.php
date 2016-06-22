@@ -126,7 +126,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			$buffer = $result->toBuffer();
 
-			return array($buffer, $meta);
+			return array( $buffer, $meta );
 
 		} catch(\Tinify\Exception $err) {
 			$this->last_status_code = $err->status;
@@ -155,19 +155,19 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		if ( TINY_DEBUG ) {
 			$file = fopen( dirname( __FILE__ ) . '/curl.log', 'w' );
 			if ( is_resource( $file ) ) {
-				$options[CURLOPT_VERBOSE] = true;
-				$options[CURLOPT_STDERR] = $file;
+				$options[ CURLOPT_VERBOSE ] = true;
+				$options[ CURLOPT_STDERR ] = $file;
 			}
 		}
 
 		if ( $this->proxy->is_enabled() && $this->proxy->send_through_proxy( $url ) ) {
-			$options[CURLOPT_PROXYTYPE] = CURLPROXY_HTTP;
-			$options[CURLOPT_PROXY] = $this->proxy->host();
-			$options[CURLOPT_PROXYPORT] = $this->proxy->port();
+			$options[ CURLOPT_PROXYTYPE ] = CURLPROXY_HTTP;
+			$options[ CURLOPT_PROXY ] = $this->proxy->host();
+			$options[ CURLOPT_PROXYPORT ] = $this->proxy->port();
 
 			if ( $this->proxy->use_authentication() ) {
-				$options[CURLOPT_PROXYAUTH] = CURLAUTH_ANY;
-				$options[CURLOPT_PROXYUSERPWD] = $this->proxy->authentication();
+				$options[ CURLOPT_PROXYAUTH ] = CURLAUTH_ANY;
+				$options[ CURLOPT_PROXYUSERPWD ] = $this->proxy->authentication();
 			}
 		}
 	}

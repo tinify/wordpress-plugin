@@ -76,7 +76,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		list($output, $headers, $status_code) = $this->output( $outputUrl, $resize_options, $preserve_options );
 		$this->last_status_code = $status_code;
 
-		if ( isset( $headers['content-type'] ) && substr( $headers['content-type'], 0, 16 ) == 'application/json' ) {
+		if ( isset( $headers['content-type'] ) && substr( 'application/json' == $headers['content-type'], 0, 16 ) ) {
 			$details = self::decode( $output );
 			if ( isset( $details['error'] ) && $details['error'] ) {
 				throw new Tiny_Exception( $details['message'], $details['error'] );
@@ -87,7 +87,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			throw new Tiny_Exception( 'Unexepected error in output', 'UnexpectedError' );
 		}
 
-		if ( strlen( $output ) == 0 ) {
+		if ( 0 == strlen( $output ) ) {
 			throw new Tiny_Exception( 'Could not download output', 'OutputError' );
 		}
 
@@ -99,7 +99,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			$details['output'] = array_merge( self::update_details( $file, $details ), $details['output'] );
 		}
 
-		return array($output, $details);
+		return array( $output, $details );
 	}
 
 	private function status_code($header) {
@@ -124,11 +124,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'content' => $input,
 				'follow_location' => 0,
 				'max_redirects' => 1, // Necessary for PHP 5.2
-				'ignore_errors' => true // Apparently, a 201 is a failure
+				'ignore_errors' => true, // Apparently, a 201 is a failure
 			),
 			'ssl' => array(
 				'cafile' => self::get_ca_file(),
-				'verify_peer' => true
+				'verify_peer' => true,
 			)
 		);
 	}
@@ -147,7 +147,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 					'message' => 'Could not compress, enable cURL for detailed error',
 				),
 				$headers,
-				$status_code
+				$status_code,
 			);
 		}
 
@@ -156,7 +156,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$headers = self::parse_headers( $meta_data['wrapper_data'] );
 		fclose( $request );
 
-		return array(self::decode( $response ), $headers, $status_code);
+		return array( self::decode( $response ), $headers, $status_code );
 	}
 
 	protected function output_options($resize_options, $preserve_options) {
@@ -169,7 +169,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			),
 			'ssl' => array(
 				'cafile' => self::get_ca_file(),
-				'verify_peer' => true
+				'verify_peer' => true,
 			)
 		);
 
@@ -205,7 +205,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			$response = '';
 			$headers = self::parse_headers( $http_response_header );
 		}
-		return array($response, $headers, $status_code);
+		return array( $response, $headers, $status_code );
 	}
 
 	protected static function get_ca_file() {
@@ -219,8 +219,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$res = array();
 		foreach ( $headers as $header ) {
 			$split = explode( ':', $header, 2 );
-			if ( count( $split ) === 2 ) {
-				$res[strtolower( $split[0] )] = trim( $split[1] );
+			if ( 2 === count( $split ) ) {
+				$res[ strtolower( $split[0] ) ] = trim( $split[1] );
 			}
 		}
 		return $res;
