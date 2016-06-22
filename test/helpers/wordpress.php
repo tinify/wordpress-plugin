@@ -121,7 +121,9 @@ class WordPressStubs {
 	public function addMethod($method) {
 		$this->calls[$method] = array();
 		$this->stubs[$method] = array();
-		eval( "function $method() { return \$GLOBALS['wp']->call('$method', func_get_args()); }" );
+		if ( ! function_exists( $method ) ) {
+			eval( "function $method() { return \$GLOBALS['wp']->call('$method', func_get_args()); }" );
+		}
 	}
 
 	public function addOption($key, $value) {

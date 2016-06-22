@@ -2,6 +2,9 @@
 
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class Tiny_Compress_No_Client_Test extends TinyTestCase {
 	protected $php_mock;
 
@@ -17,12 +20,9 @@ class Tiny_Compress_No_Client_Test extends TinyTestCase {
 		$this->assertInstanceOf( 'Tiny_Compress_Fopen', $compressor );
 	}
 
-	/**
-	 * @expectedException Tiny_Exception
-	 */
 	public function testShouldThrowErrorWhenCurlAndFopenUnavailable() {
 		$this->php_mock->shouldReceive( 'fopen_available' )->andReturn( false );
+		$this->setExpectedException( 'Tiny_Exception' );
 		$compressor = Tiny_Compress::create( 'api1234' );
-		$this->assertInstanceOf( 'Tiny_Compress', $compressor );
 	}
 }
