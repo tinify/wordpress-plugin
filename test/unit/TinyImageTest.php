@@ -100,20 +100,21 @@ class Tiny_Image_Test extends TinyTestCase {
 	}
 
 	public function testGetOptimizationStatistics() {
+		$wpdb_wp_metadata = serialize( $this->json( '_wp_attachment_metadata' ) );
+		$wpdb_tiny_metadata = serialize( $this->json( 'tiny_compress_images' ) );
 		$wpdb_results = array(
-			array( 'ID' => 1, 'post_title' => 'I am the one and only' ),
-			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg' ),
-			array( 'ID' => 4350, 'post_title' => 'IMG 3092' ),
+			array( 'ID' => 1, 'post_title' => 'I am the one and only', 'meta_value' => $wpdb_wp_metadata, 'tiny_meta_value' => $wpdb_wp_metadata ),
+			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg', 'meta_value' => "", 'tiny_meta_value' => "" ),
+			array( 'ID' => 4350, 'post_title' => 'IMG 3092', 'meta_value' => "", 'tiny_meta_value' => "" ),
 		);
-
 		$this->assertEquals(
 			array(
 				'uploaded-images' => 3,
-				'optimized-image-sizes' => 3,
-				'available-unoptimised-sizes' => 0,
-				'optimized-library-size' => 233568,
-				'unoptimized-library-size' => 265440,
-				'available-for-optimization' => array(),
+				'optimized-image-sizes' => 0,
+				'available-unoptimised-sizes' => 4,
+				'optimized-library-size' => 328670,
+				'unoptimized-library-size' => 328670,
+				'available-for-optimization' => array( array( 'ID' => 1, 'post_title' => 'I am the one and only' ) ),
 			),
 			Tiny_Image::get_optimization_statistics( $wpdb_results )
 		);

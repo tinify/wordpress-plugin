@@ -27,32 +27,16 @@ class Tiny_Image {
 	private $sizes = array();
 	private $statistics = array();
 
-	public static function is_original($size) {
-		return $size === self::ORIGINAL;
-	}
-
-	public function __construct($id, $wp_metadata = null) {
+	public function __construct( $id, $wp_metadata = null, $tiny_metadata = null ) {
 		$this->id = $id;
-
-		if ( is_null( $wp_metadata ) ) {
-			$wp_metadata = wp_get_attachment_metadata( $id );
-		}
 		$this->parse_wp_metadata( $wp_metadata );
-
-		$values = get_post_meta( $this->id, self::META_KEY, true );
-
-		if ( ! is_array( $values ) ) {
-			$values = array();
-		}
-		foreach ( $values as $size => $meta ) {
-			if ( ! isset( $this->sizes[ $size ] ) ) {
-				$this->sizes[ $size ] = new Tiny_Image_Size();
-			}
-			$this->sizes[ $size ]->meta = $meta;
-		}
+		$this->parse_tiny_metadata( $tiny_metadata );
 	}
 
-	private function parse_wp_metadata($wp_metadata) {
+	private function parse_wp_metadata( $wp_metadata ) {
+		if ( ! is_array( $wp_metadata ) ) {
+			$wp_metadata = wp_get_attachment_metadata( $this->id );
+		}
 		if ( ! is_array( $wp_metadata ) ) {
 			return;
 		}
@@ -82,6 +66,20 @@ class Tiny_Image {
 					$this->sizes[ $size ] = new Tiny_Image_Size(
 					"$path_prefix$filename", "$url_prefix$filename");
 				}
+			}
+		}
+	}
+
+	private function parse_tiny_metadata( $tiny_metadata ) {
+		if ( is_null( $tiny_metadata ) ) {
+			$tiny_metadata = get_post_meta( $this->id, self::META_KEY, true );
+		}
+		if ( $tiny_metadata ) {
+			foreach ( $tiny_metadata as $size => $meta ) {
+				if ( ! isset( $this->sizes[ $size ] ) ) {
+					$this->sizes[ $size ] = new Tiny_Image_Size();
+				}
+				$this->sizes[ $size ]->meta = $meta;
 			}
 		}
 	}
@@ -297,10 +295,26 @@ class Tiny_Image {
 		global $wpdb;
 
 		if ( is_null( $result ) ) {
-			$result = $wpdb->get_results(
-				"SELECT ID, post_title FROM $wpdb->posts
-                 WHERE post_type = 'attachment' AND ( post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png' )
-                 ORDER BY ID DESC", ARRAY_A );
+			// Select posts that have "_wp_attachment_metadata" image metadata
+			// and optionally contain "tiny_compress_images" metadata.
+			$query =
+				"SELECT
+					$wpdb->posts.ID,
+					$wpdb->posts.post_title,
+					$wpdb->postmeta.meta_value,
+					wp_postmeta_tiny.meta_value AS tiny_meta_value
+				FROM $wpdb->posts
+				LEFT JOIN $wpdb->postmeta
+					ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+				LEFT JOIN $wpdb->postmeta AS wp_postmeta_tiny
+					ON $wpdb->posts.ID = wp_postmeta_tiny.post_id
+						AND wp_postmeta_tiny.meta_key = '" . self::META_KEY . "'
+				WHERE $wpdb->posts.post_type = 'attachment'
+					AND ( $wpdb->posts.post_mime_type = 'image/jpeg' OR $wpdb->posts.post_mime_type = 'image/png' )
+					AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
+				ORDER BY ID DESC";
+
+			$result = $wpdb->get_results( $query, ARRAY_A );
 		}
 
 		$stats = array();
@@ -312,7 +326,12 @@ class Tiny_Image {
 		$stats['available-for-optimization'] = array();
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-			$tiny_image = new Tiny_Image( $result[$i]['ID'] );
+			$wp_metadata = unserialize($result[$i]['meta_value']);
+			$tiny_metadata = unserialize($result[$i]['tiny_meta_value']);
+			if ( !is_array( $tiny_metadata )) {
+				$tiny_metadata = array();
+			}
+			$tiny_image = new Tiny_Image( $result[$i]['ID'], $wp_metadata, $tiny_metadata );
 			$image_stats = $tiny_image->get_statistics();
 			$stats['uploaded-images']++;
 			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimised_sizes'];
@@ -326,4 +345,7 @@ class Tiny_Image {
 		return $stats;
 	}
 
+	public static function is_original( $size ) {
+		return $size === self::ORIGINAL;
+	}
 }
