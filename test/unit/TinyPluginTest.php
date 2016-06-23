@@ -89,7 +89,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		$meta->get_image_size()->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
 		$meta->get_image_size( 'large' )->add_request();
 		$meta->get_image_size( 'large' )->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
-		$meta->update();
+		$meta->update_tiny_meta();
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
@@ -108,7 +108,7 @@ class Tiny_Plugin_Test extends TinyTestCase {
 		$meta->get_image_size( 'large' )->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
 		$meta->get_image_size( 'post-thumbnail' )->add_request();
 		$meta->get_image_size( 'post-thumbnail' )->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) );
-		$meta->update();
+		$meta->update_tiny_meta();
 
 		$this->vfs->getChild( 'wp-content/uploads/14/01/test-large.png' )->truncate( 100000 );
 

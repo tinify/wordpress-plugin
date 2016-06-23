@@ -12,23 +12,21 @@ class Tiny_Image_Test extends TinyTestCase {
 	}
 
 	public function testUpdateWpMetadataShouldNotUpdateWithNoResizedOriginal() {
-		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata_duplicates' ) );
-		$wp_metadata = array(
-			'width' => 2000,
-			'height' => 1000,
-		);
-		$this->assertEquals( array( 'width' => 2000, 'height' => 1000), $tiny_image->update_wp_metadata( $wp_metadata ) );
+		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata' ) );
+		$tiny_image_metadata = $tiny_image->get_wp_metadata();
+		$this->assertEquals( 1256, $tiny_image_metadata['width'] );
+		$this->assertEquals( 1256, $tiny_image_metadata['height'] );
 	}
 
 	public function testUpdateWpMetadataShouldUpdateWithResizedOriginal() {
-		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata_duplicates' ) );
-		$wp_metadata = array(
-			'width' => 2000,
-			'height' => 1000,
-		);
+		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata' ) );
+		$response = array( 'output' => array( 'width' => 200, 'height' => 100 ) );
 		$tiny_image->get_image_size()->add_request();
-		$tiny_image->get_image_size()->add_response( array( 'output' => array( 'width' => 200, 'height' => 100) ) );
-		$this->assertEquals( array( 'width' => 200, 'height' => 100), $tiny_image->update_wp_metadata( $wp_metadata ) );
+		$tiny_image->get_image_size()->add_response( $response );
+		$tiny_image->update_wp_metadata( Tiny_Image::ORIGINAL, $response );
+		$tiny_image_metadata = $tiny_image->get_wp_metadata();
+		$this->assertEquals( 200, $tiny_image_metadata['width'] );
+		$this->assertEquals( 100, $tiny_image_metadata['height'] );
 	}
 
 	public function testGetImagesShouldReturnAllImages() {

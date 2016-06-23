@@ -17,7 +17,7 @@ class Client {
     }
 
     function __construct($key, $appIdentifier = NULL) {
-        $userAgent = join(" ", array_filter(array( self::userAgent(), $appIdentifier)) );
+        $userAgent = join(" ", array_filter(array(self::userAgent(), $appIdentifier)));
         $this->options = array(
             CURLOPT_BINARYTRANSFER => true,
             CURLOPT_RETURNTRANSFER => true,
@@ -29,8 +29,8 @@ class Client {
         );
     }
 
-    function request($method, $url, $body = NULL, $header = array() ) {
-        if (is_array( $body) ) {
+    function request($method, $url, $body = NULL, $header = array()) {
+        if (is_array($body)) {
             if (!empty($body)) {
                 $body = json_encode($body);
                 array_push($header, "Content-Type: application/json");
@@ -40,7 +40,7 @@ class Client {
         }
 
         $request = curl_init();
-        curl_setopt_array( $request, $this->options );
+        curl_setopt_array($request, $this->options);
 
         $url = strtolower(substr($url, 0, 6)) == "https:" ? $url : self::API_ENDPOINT . $url;
         curl_setopt($request, CURLOPT_URL, $url);
@@ -92,7 +92,7 @@ class Client {
                 throw Exception::create($body->message, $body->error, $status);
             }
 
-            return (object) array( "body" => $body, "headers" => $headers );
+            return (object) array("body" => $body, "headers" => $headers);
         } else {
             $message = sprintf("%s (#%d)", curl_error($request), curl_errno($request));
             curl_close($request);
@@ -101,7 +101,7 @@ class Client {
     }
 
     protected static function parseHeaders($headers) {
-        if (!is_array( $headers) ) {
+        if (!is_array($headers)) {
             $headers = explode("\r\n", $headers);
         }
 

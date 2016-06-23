@@ -71,20 +71,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 	}
 
-	public function add_plugin_links($current_links) {
+	public function add_plugin_links( $current_links ) {
 		$additional[] = sprintf('<a href="options-media.php#%s">%s</a>', self::NAME,
 		esc_html__( 'Settings', 'tiny-compress-images' ));
 		return array_merge( $additional, $current_links );
 	}
 
-	public function enqueue_scripts($hook) {
-		wp_enqueue_style(self::NAME .'_admin', plugins_url( '/css/admin.css', __FILE__ ),
+	public function enqueue_scripts( $hook ) {
+		wp_enqueue_style( self::NAME .'_admin', plugins_url( '/css/admin.css', __FILE__ ),
 		array(), self::plugin_version() );
-		wp_register_script(self::NAME .'_admin', plugins_url( '/js/admin.js', __FILE__ ),
+		wp_register_script( self::NAME .'_admin', plugins_url( '/js/admin.js', __FILE__ ),
 		array(), self::plugin_version(), true );
 
 		// WordPress < 3.3 does not handle multidimensional arrays
-		wp_localize_script(self::NAME .'_admin', 'tinyCompress', array(
+		wp_localize_script( self::NAME .'_admin', 'tinyCompress', array(
 			'nonce' => wp_create_nonce( 'tiny-compress' ),
 			'wpVersion' => self::wp_version(),
 			'pluginVersion' => self::plugin_version(),
@@ -104,20 +104,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_enqueue_script( self::NAME .'_admin' );
 
 		if ( 'media_page_tiny-bulk-optimization' == $hook ) {
-			wp_enqueue_style(self::NAME .'_tiny_bulk_optimization', plugins_url( '/css/bulk-optimization.css', __FILE__ ),
+			wp_enqueue_style( self::NAME .'_tiny_bulk_optimization', plugins_url( '/css/bulk-optimization.css', __FILE__ ),
 			array(), self::plugin_version() );
-			wp_register_script(self::NAME . '_tiny_bulk_optimization', plugins_url( '/js/bulk-optimization.js', __FILE__ ),
+			wp_register_script( self::NAME . '_tiny_bulk_optimization', plugins_url( '/js/bulk-optimization.js', __FILE__ ),
 			array(), self::plugin_version(), true );
 			wp_enqueue_script( self::NAME .'_tiny_bulk_optimization' );
 		}
 
 	}
 
-	public function compress_on_upload($metadata, $attachment_id) {
+	public function compress_on_upload( $metadata, $attachment_id ) {
 		if ( ! empty( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $attachment_id, $metadata );
 			$result = $tiny_image->compress( $this->settings );
-			return $tiny_image->update_wp_metadata( $metadata );
+			return $tiny_image->get_wp_metadata();
 		} else {
 			return $metadata;
 		}
@@ -147,7 +147,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $id, $metadata );
 		$result = $tiny_image->compress( $this->settings );
-		wp_update_attachment_metadata( $id, $tiny_image->update_wp_metadata( $metadata ) );
+		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
 		echo $this->render_compress_details( $tiny_image );
 
@@ -182,11 +182,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $id, $metadata );
 		$result = $tiny_image->compress( $this->settings );
-		wp_update_attachment_metadata( $id, $tiny_image->update_wp_metadata( $metadata ) );
 		$image_statistics = $tiny_image->get_statistics();
-		$size_after = $image_statistics['optimized_total_size'];
+		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
 		$currentLibrarySize = intval( $_POST['current_size'] );
+		$size_after = $image_statistics['optimized_total_size'];
 		$newLibrarySize = $currentLibrarySize + $size_after - $size_before;
 
 		$result['message'] = $tiny_image->get_latest_error();

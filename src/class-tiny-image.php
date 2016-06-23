@@ -24,23 +24,25 @@ class Tiny_Image {
 
 	private $id;
 	private $name;
+	private $wp_metadata;
 	private $sizes = array();
 	private $statistics = array();
 
 	public function __construct( $id, $wp_metadata = null, $tiny_metadata = null ) {
 		$this->id = $id;
-		$this->parse_wp_metadata( $wp_metadata );
+		$this->wp_metadata = $wp_metadata;
+		$this->parse_wp_metadata();
 		$this->parse_tiny_metadata( $tiny_metadata );
 	}
 
-	private function parse_wp_metadata( $wp_metadata ) {
-		if ( ! is_array( $wp_metadata ) ) {
-			$wp_metadata = wp_get_attachment_metadata( $this->id );
+	private function parse_wp_metadata() {
+		if ( ! is_array( $this->wp_metadata ) ) {
+			$this->wp_metadata = wp_get_attachment_metadata( $this->id );
 		}
-		if ( ! is_array( $wp_metadata ) ) {
+		if ( ! is_array( $this->wp_metadata ) ) {
 			return;
 		}
-		$path_info = pathinfo( $wp_metadata['file'] );
+		$path_info = pathinfo( $this->wp_metadata['file'] );
 		$upload_dir = wp_upload_dir();
 		$path_prefix = $upload_dir['basedir'] . '/';
 		$url_prefix = $upload_dir['baseurl'] . '/';
@@ -57,8 +59,8 @@ class Tiny_Image {
 		);
 
 		$unique_sizes = array();
-		if ( isset( $wp_metadata['sizes'] ) && is_array( $wp_metadata['sizes'] ) ) {
-			foreach ( $wp_metadata['sizes'] as $size => $info ) {
+		if ( isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] ) ) {
+			foreach ( $this->wp_metadata['sizes'] as $size => $info ) {
 				$filename = $info['file'];
 
 				if ( ! isset( $unique_sizes[ $filename ] ) ) {
@@ -84,46 +86,16 @@ class Tiny_Image {
 		}
 	}
 
-	public function get_image_size($size = self::ORIGINAL, $create = false) {
-		if ( isset( $this->sizes[ $size ] ) ) {
-			return $this->sizes[ $size ]; }
-		elseif ( $create ) {
-			return new Tiny_Image_Size(); }
-		else {
-			return null; }
-	}
-
-	public function update_wp_metadata($wp_metadata) {
-		$original = $this->get_image_size();
-		if ( is_null( $original ) || ! is_array( $original->meta ) ) {
-			return $wp_metadata;
-		}
-
-		$m = $original->meta;
-		if ( isset( $m['output'] ) && isset( $m['output']['width'] ) && isset( $m['output']['height'] ) ) {
-			$wp_metadata['width'] = $m['output']['width'];
-			$wp_metadata['height'] = $m['output']['height'];
-		}
-		return $wp_metadata;
-	}
-
-	public function update() {
-		$values = array();
-		foreach ( $this->sizes as $size_name => $size ) {
-			if ( is_array( $size->meta ) ) {
-				$values[ $size_name ] = $size->meta;
-			}
-		}
-
-		$val = update_post_meta( $this->id, self::META_KEY, $values );
-	}
-
 	public function get_id() {
 		return $this->id;
 	}
 
 	public function get_name() {
 		return $this->name;
+	}
+
+	public function get_wp_metadata() {
+		return $this->wp_metadata;
 	}
 
 	public function can_be_compressed() {
@@ -150,23 +122,42 @@ class Tiny_Image {
 		foreach ( $uncompressed_sizes as $size_name => $size ) {
 			try {
 				$size->add_request();
-				$this->update();
-
+				$this->update_tiny_meta();
 				$resize = self::is_original( $size_name ) ? $settingsObject->get_resize_options() : false;
 				$preserve = count( $settingsObject->get_preserve_options() ) > 0 ? $settingsObject->get_preserve_options() : false;
 				$response = $compressor->compress_file( $size->filename, $resize, $preserve );
-
 				$size->add_response( $response );
-				$this->update();
+				$this->update_wp_metadata( $size_name, $response );
+				$this->update_tiny_meta();
 				$success++;
 			} catch (Tiny_Exception $e) {
 				$size->add_exception( $e );
-				$this->update();
+				$this->update_tiny_meta();
 				$failed++;
 			}
 		}
-
 		return array( 'success' => $success, 'failed' => $failed );
+	}
+
+	public function update_wp_metadata( $size_name, $response ) {
+		if ( self::is_original( $size_name ) ) {
+			if ( isset( $response['output'] ) ) {
+				if ( isset( $response['output']['width'] ) && isset( $response['output']['height'] ) ) {
+					$this->wp_metadata['width'] = $response['output']['width'];
+					$this->wp_metadata['height'] = $response['output']['height'];
+				}
+			}
+		}
+	}
+
+	public function update_tiny_meta() {
+		$values = array();
+		foreach ( $this->sizes as $size_name => $size ) {
+			if ( is_array( $size->meta ) ) {
+				$values[ $size_name ] = $size->meta;
+			}
+		}
+		update_post_meta( $this->id, self::META_KEY, $values );
 	}
 
 	public function get_image_sizes() {
@@ -186,6 +177,15 @@ class Tiny_Image {
 		ksort( $compressed );
 		ksort( $uncompressed );
 		return $original + $compressed + $uncompressed;
+	}
+
+	public function get_image_size($size = self::ORIGINAL, $create = false) {
+		if ( isset( $this->sizes[ $size ] ) ) {
+			return $this->sizes[ $size ]; }
+		elseif ( $create ) {
+			return new Tiny_Image_Size(); }
+		else {
+			return null; }
 	}
 
 	public function filter_image_sizes($method, $filter_sizes = null) {
