@@ -4,7 +4,7 @@ require_once dirname( __FILE__ ) . '/TinyCompressSharedTestCase.php';
 
 class Tiny_Compress_Client_Test extends Tiny_Compress_Shared_TestCase {
 	public static function set_up_before_class() {
-		Tiny_PHP::$client_library_supported = true;
+		Tiny_PHP::$client_supported = true;
 	}
 
 	public function set_up() {

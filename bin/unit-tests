@@ -1,3 +1,3 @@
 #!/bin/sh
 
-vendor/bin/phpunit test/unit $@ && vendor/bin/phpcs --standard=phpcs.xml src
+vendor/bin/phpunit test/unit $@ && vendor/bin/phpcs --warning-severity=0 --standard=phpcs.xml src

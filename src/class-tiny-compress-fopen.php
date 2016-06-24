@@ -150,7 +150,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$response = stream_get_contents( $request );
 		fclose( $request );
 
-		if ( isset( $headers['content-type'] ) && substr( 'application/json' == $headers['content-type'], 0, 16 ) ) {
+		if ( isset( $headers['content-type'] ) &&
+			substr( 'application/json' == $headers['content-type'], 0, 16 ) ) {
 			$response = $this->decode( $response );
 		}
 

@@ -23,7 +23,7 @@ class Tiny_PHP {
 		return ini_get( 'allow_url_fopen' );
 	}
 
-	public static function client_library_supported() {
+	public static function client_supported() {
 		return version_compare( PHP_VERSION, '5.3', '>' ) && extension_loaded( 'curl' );
 	}
 }

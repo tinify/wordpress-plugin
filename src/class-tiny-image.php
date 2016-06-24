@@ -106,25 +106,31 @@ class Tiny_Image {
 		return get_post_mime_type( $this->id );
 	}
 
-	public function compress( $settingsObject ) {
+	public function compress( $settings ) {
 
-		if ( $settingsObject->get_compressor() === null || ! $this->can_be_compressed() ) {
+		if ( $settings->get_compressor() === null || ! $this->can_be_compressed() ) {
 			return;
 		}
 
 		$success = 0;
 		$failed = 0;
 
-		$compressor = $settingsObject->get_compressor();
-		$active_tinify_sizes = $settingsObject->get_active_tinify_sizes();
+		$compressor = $settings->get_compressor();
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 
 		foreach ( $uncompressed_sizes as $size_name => $size ) {
 			try {
 				$size->add_request();
 				$this->update_tiny_meta();
-				$resize = self::is_original( $size_name ) ? $settingsObject->get_resize_options() : false;
-				$preserve = count( $settingsObject->get_preserve_options() ) > 0 ? $settingsObject->get_preserve_options() : false;
+
+				if ( self::is_original( $size_name ) ) {
+					$resize = $settings->get_resize_options();
+				} else {
+					$resize = false;
+				}
+
+				$preserve = $settings->get_preserve_options();
 				$response = $compressor->compress_file( $size->filename, $resize, $preserve );
 				$size->add_response( $response );
 				$this->update_wp_metadata( $size_name, $response );
@@ -142,9 +148,10 @@ class Tiny_Image {
 	public function update_wp_metadata( $size_name, $response ) {
 		if ( self::is_original( $size_name ) ) {
 			if ( isset( $response['output'] ) ) {
-				if ( isset( $response['output']['width'] ) && isset( $response['output']['height'] ) ) {
-					$this->wp_metadata['width'] = $response['output']['width'];
-					$this->wp_metadata['height'] = $response['output']['height'];
+				$output = $response['output'];
+				if ( isset( $output['width'] ) && isset( $output['height'] ) ) {
+					$this->wp_metadata['width'] = $output['width'];
+					$this->wp_metadata['height'] = $output['height'];
 				}
 			}
 		}
@@ -263,20 +270,22 @@ class Tiny_Image {
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( array_key_exists( $size_name, $active_sizes ) ) {
 				if ( isset( $size->meta['input'] ) ) {
-					$this->statistics['initial_total_size'] += intval( $size->meta['input']['size'] );
+					$input = $size->meta['input'];
+					$this->statistics['initial_total_size'] += intval( $input['size'] );
 
 					if ( isset( $size->meta['output'] ) ) {
+						$output = $size->meta['output'];
 						if ( $size->modified() ) {
 							$this->statistics['optimized_total_size'] += $size->filesize();
 							if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 								$this->statistics['available_unoptimised_sizes'] += 1;
 							}
 						} else {
-							$this->statistics['optimized_total_size'] += intval( $size->meta['output']['size'] );
+							$this->statistics['optimized_total_size'] += intval( $output['size'] );
 							$this->statistics['image_sizes_optimized'] += 1;
 						}
 					} else {
-						$this->statistics['optimized_total_size'] += intval( $size->meta['input']['size'] );
+						$this->statistics['optimized_total_size'] += intval( $input['size'] );
 					}
 				} elseif ( $size->exists() ) {
 					$this->statistics['initial_total_size'] += $size->filesize();
@@ -310,7 +319,10 @@ class Tiny_Image {
 					ON $wpdb->posts.ID = wp_postmeta_tiny.post_id
 						AND wp_postmeta_tiny.meta_key = '" . self::META_KEY . "'
 				WHERE $wpdb->posts.post_type = 'attachment'
-					AND ( $wpdb->posts.post_mime_type = 'image/jpeg' OR $wpdb->posts.post_mime_type = 'image/png' )
+					AND (
+						$wpdb->posts.post_mime_type = 'image/jpeg' OR
+						$wpdb->posts.post_mime_type = 'image/png'
+					)
 					AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
 				ORDER BY ID DESC";
 
@@ -339,7 +351,10 @@ class Tiny_Image {
 			$stats['optimized-library-size'] += $image_stats['optimized_total_size'];
 			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
 			if ( $image_stats['available_unoptimised_sizes'] > 0 ) {
-				$stats['available-for-optimization'][] = array( 'ID' => $result[ $i ]['ID'], 'post_title' => $result[ $i ]['post_title'] );
+				$stats['available-for-optimization'][] = array(
+					'ID' => $result[ $i ]['ID'],
+					'post_title' => $result[ $i ]['post_title'],
+				);
 			}
 		}
 		return $stats;

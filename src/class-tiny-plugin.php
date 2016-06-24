@@ -40,34 +40,76 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function init() {
-		add_filter( 'jpeg_quality', $this->get_static_method( 'jpeg_quality' ) );
-		add_filter( 'wp_editor_set_quality', $this->get_static_method( 'jpeg_quality' ) );
-		add_filter( 'wp_generate_attachment_metadata', $this->get_method( 'compress_on_upload' ), 10, 2 );
-		load_plugin_textdomain( self::NAME, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		add_filter( 'jpeg_quality',
+			$this->get_static_method( 'jpeg_quality' )
+		);
+
+		add_filter( 'wp_editor_set_quality',
+			$this->get_static_method( 'jpeg_quality' )
+		);
+
+		add_filter( 'wp_generate_attachment_metadata',
+			$this->get_method( 'compress_on_upload' ),
+			10, 2
+		);
+
+		load_plugin_textdomain( self::NAME, false,
+			dirname( plugin_basename( __FILE__ ) ) . '/languages'
+		);
 	}
 
 	public function admin_init() {
-		add_action( 'admin_enqueue_scripts', $this->get_method( 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts',
+			$this->get_method( 'enqueue_scripts' )
+		);
 
-		add_action( 'admin_action_tiny_bulk_action', $this->get_method( 'media_library_bulk_action' ) );
-		add_filter( 'manage_media_columns', $this->get_method( 'add_media_columns' ) );
-		add_action( 'manage_media_custom_column', $this->get_method( 'render_media_column' ), 10, 2 );
+		add_action( 'admin_action_tiny_bulk_action',
+			$this->get_method( 'media_library_bulk_action' )
+		);
 
-		add_action( 'attachment_submitbox_misc_actions', $this->get_method( 'show_media_info' ) );
+		add_filter( 'manage_media_columns',
+			$this->get_method( 'add_media_columns' )
+		);
 
-		add_action( 'wp_ajax_tiny_compress_image_from_library', $this->get_method( 'compress_image_from_library' ) );
-		add_action( 'wp_ajax_tiny_compress_image_for_bulk', $this->get_method( 'compress_image_for_bulk' ) );
-		add_action( 'wp_ajax_tiny_get_optimization_statistics', $this->get_method( 'ajax_optimization_statistics' ) );
+		add_action( 'manage_media_custom_column',
+			$this->get_method( 'render_media_column' ),
+			10, 2
+		);
 
-		$plugin = plugin_basename( dirname( dirname( __FILE__ ) ) . '/tiny-compress-images.php' );
-		add_filter( "plugin_action_links_$plugin", $this->get_method( 'add_plugin_links' ) );
+		add_action( 'attachment_submitbox_misc_actions',
+			$this->get_method( 'show_media_info' )
+		);
+
+		add_action( 'wp_ajax_tiny_compress_image_from_library',
+			$this->get_method( 'compress_image_from_library' )
+		);
+
+		add_action( 'wp_ajax_tiny_compress_image_for_bulk',
+			$this->get_method( 'compress_image_for_bulk' )
+		);
+
+		add_action( 'wp_ajax_tiny_get_optimization_statistics',
+			$this->get_method( 'ajax_optimization_statistics' )
+		);
+
+		$plugin = plugin_basename(
+			dirname( dirname( __FILE__ ) ) . '/tiny-compress-images.php'
+		);
+
+		add_filter( "plugin_action_links_$plugin",
+			$this->get_method( 'add_plugin_links' )
+		);
+
 		add_thickbox();
 	}
 
 	public function admin_menu() {
 		add_media_page(
-			__( 'Compress JPEG & PNG Images', 'tiny-compress-images' ), __( 'Bulk Optimization', 'tiny-compress-images' ),
-			'upload_files', 'tiny-bulk-optimization', $this->get_method( 'render_bulk_optimization_page' )
+			__( 'Compress JPEG & PNG Images', 'tiny-compress-images' ),
+			__( 'Bulk Optimization', 'tiny-compress-images' ),
+			'upload_files',
+			'tiny-bulk-optimization',
+			$this->get_method( 'render_bulk_optimization_page' )
 		);
 	}
 
@@ -104,10 +146,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_enqueue_script( self::NAME .'_admin' );
 
 		if ( 'media_page_tiny-bulk-optimization' == $hook ) {
-			wp_enqueue_style( self::NAME .'_tiny_bulk_optimization', plugins_url( '/css/bulk-optimization.css', __FILE__ ),
-			array(), self::plugin_version() );
-			wp_register_script( self::NAME . '_tiny_bulk_optimization', plugins_url( '/js/bulk-optimization.js', __FILE__ ),
-			array(), self::plugin_version(), true );
+			wp_enqueue_style(
+				self::NAME . '_tiny_bulk_optimization',
+				plugins_url( '/css/bulk-optimization.css', __FILE__ ),
+				array(), self::plugin_version()
+			);
+
+			wp_register_script(
+				self::NAME . '_tiny_bulk_optimization',
+				plugins_url( '/js/bulk-optimization.js', __FILE__ ),
+				array(), self::plugin_version(), true
+			);
+
 			wp_enqueue_script( self::NAME .'_tiny_bulk_optimization' );
 		}
 
@@ -128,19 +178,28 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
-			$message = __( "You don't have permission to upload files.", 'tiny-compress-images' );
+			$message = __(
+				"You don't have permission to upload files.",
+				'tiny-compress-images'
+			);
 			echo $message;
 			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
-			$message = __( 'Not a valid media file.', 'tiny-compress-images' );
+			$message = __(
+				'Not a valid media file.',
+				'tiny-compress-images'
+			);
 			echo $message;
 			exit();
 		}
 		$id = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( ! is_array( $metadata ) ) {
-			$message = __( 'Could not find metadata of media file.', 'tiny-compress-images' );
+			$message = __(
+				'Could not find metadata of media file.',
+				'tiny-compress-images'
+			);
 			echo $message;
 			exit;
 		}
@@ -159,19 +218,28 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
-			$message = __( "You don't have permission to upload files.", 'tiny-compress-images' );
+			$message = __(
+				"You don't have permission to upload files.",
+				'tiny-compress-images'
+			);
 			echo json_encode( array( 'error' => $message ) );
 			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
-			$message = __( 'Not a valid media file.', 'tiny-compress-images' );
+			$message = __(
+				'Not a valid media file.',
+				'tiny-compress-images'
+			);
 			echo json_encode( array( 'error' => $message ) );
 			exit();
 		}
 		$id = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( ! is_array( $metadata ) ) {
-			$message = __( 'Could not find metadata of media file.', 'tiny-compress-images' );
+			$message = __(
+				'Could not find metadata of media file.',
+				'tiny-compress-images'
+			);
 			echo json_encode( array( 'error' => $message ) );
 			exit;
 		}
@@ -191,11 +259,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$result['message'] = $tiny_image->get_latest_error();
 		$result['image_sizes_optimized'] = $image_statistics['image_sizes_optimized'];
-		$result['initial_total_size'] = size_format( $image_statistics['initial_total_size'], 2 );
-		$result['optimized_total_size'] = size_format( $image_statistics['optimized_total_size'], 2 );
+
+		$result['initial_total_size'] = size_format(
+			$image_statistics['initial_total_size'], 2
+		);
+
+		$result['optimized_total_size'] = size_format(
+			$image_statistics['optimized_total_size'], 2
+		);
+
 		$result['savings'] = $tiny_image->get_savings( $image_statistics );
 		$result['status'] = $this->settings->get_status();
-		$result['thumbnail'] = wp_get_attachment_image( $id, array( '30', '30' ), true, array( 'class' => 'pinkynail', 'alt' => '' ) );
+		$result['thumbnail'] = wp_get_attachment_image(
+			$id, array( '30', '30' ), true, array(
+				'class' => 'pinkynail',
+				'alt' => '',
+			)
+		);
 		$result['size_change'] = $size_after - $size_before;
 		$result['human_readable_library_size'] = size_format( $newLibrarySize, 2 );
 
@@ -262,7 +342,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_bulk_optimization_page() {
 		$stats = Tiny_Image::get_optimization_statistics();
-		$estimated_costs = Tiny_Compress::estimate_cost( $stats['available-unoptimised-sizes'], $this->settings->get_compression_count() );
+		$estimated_costs = Tiny_Compress::estimate_cost(
+			$stats['available-unoptimised-sizes'],
+			$this->settings->get_compression_count()
+		);
 
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 

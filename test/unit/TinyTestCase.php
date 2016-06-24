@@ -21,14 +21,14 @@ spl_autoload_register( 'plugin_autoloader' );
 
 class Tiny_PHP {
 	public static $fopen_available = true;
-	public static $client_library_supported = true;
+	public static $client_supported = true;
 
 	public static function fopen_available() {
 		return self::$fopen_available;
 	}
 
-	public static function client_library_supported() {
-		return self::$client_library_supported;
+	public static function client_supported() {
+		return self::$client_supported;
 	}
 }
 
@@ -72,7 +72,7 @@ abstract class Tiny_TestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	public static function tear_down_after_class() {
-		Tiny_PHP::$client_library_supported = true;
+		Tiny_PHP::$client_supported = true;
 		Tiny_PHP::$fopen_available = true;
 	}
 

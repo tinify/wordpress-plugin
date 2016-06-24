@@ -59,12 +59,22 @@ class Tiny_Notices extends Tiny_WP_Base {
 		if ( is_array( $this->dismissals ) ) {
 			return;
 		}
-		$meta = get_user_meta( $this->get_user_id(), $this->get_user_meta_key(), true );
+
+		$meta = get_user_meta(
+			$this->get_user_id(),
+			$this->get_user_meta_key(),
+			true
+		);
+
 		$this->dismissals = is_array( $meta ) ? $meta : array();
 	}
 
 	private function save_dismissals() {
-		update_user_meta( $this->get_user_id(), $this->get_user_meta_key(), $this->dismissals );
+		update_user_meta(
+			$this->get_user_id(),
+			$this->get_user_meta_key(),
+			$this->dismissals
+		);
 	}
 
 	private function show_stored() {
@@ -114,10 +124,19 @@ class Tiny_Notices extends Tiny_WP_Base {
 			$add = '</p>';
 			$css[] = 'is-dismissible';
 		} else {
-			$add = '&nbsp;<a href="#" class="tiny-dismiss">' . esc_html__( 'Dismiss', 'tiny-compress-images' ) . '</a></p>';
+			$add = '&nbsp;<a href="#" class="tiny-dismiss">' .
+				esc_html__( 'Dismiss', 'tiny-compress-images' ) . '</a></p>';
 		}
+
 		$css = implode( ' ', $css );
-		$pluginName = __( 'Compress JPEG & PNG images', 'tiny-compress-images' );
-		add_action( 'admin_notices', create_function( '', "echo '<div class=\"$css\" data-name=\"$name\"><p>" . $pluginName . ": $message$add</div>';" ) );
+		$plugin_name = __( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+
+		add_action( 'admin_notices',
+			create_function(
+				'',
+				"echo '<div class=\"$css\" data-name=\"$name\"><p>" .
+					$plugin_name . ": $message$add</div>';"
+			)
+		);
 	}
 }

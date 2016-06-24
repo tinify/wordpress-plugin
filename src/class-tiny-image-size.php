@@ -109,7 +109,8 @@ class Tiny_Image_Size {
 	}
 
 	public function uncompressed() {
-		return $this->exists() && ! (isset( $this->meta['output'] ) && $this->same_size());
+		return $this->exists() &&
+			! (isset( $this->meta['output'] ) && $this->same_size() );
 	}
 
 	public function in_progress() {
@@ -117,11 +118,18 @@ class Tiny_Image_Size {
 	}
 
 	public function resized() {
-		return isset( $this->meta['output'] ) && isset( $this->meta['output']['resized'] ) && $this->meta['output']['resized'];
+		return (
+			isset( $this->meta['output'] ) &&
+			isset( $this->meta['output']['resized'] ) &&
+			$this->meta['output']['resized']
+		);
 	}
 
 	private function recently_started() {
 		$thirty_minutes_ago = date( 'U' ) - ( 60 * 30 );
-		return isset( $this->meta['start'] ) && ( $this->meta['start'] > $thirty_minutes_ago );
+		return (
+			isset( $this->meta['start'] ) &&
+			$this->meta['start'] > $thirty_minutes_ago
+		);
 	}
 }

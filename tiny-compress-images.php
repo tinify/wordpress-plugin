@@ -20,7 +20,7 @@ require dirname( __FILE__ ) . '/src/class-tiny-settings.php';
 require dirname( __FILE__ ) . '/src/class-tiny-plugin.php';
 require dirname( __FILE__ ) . '/src/class-tiny-notices.php';
 
-if ( Tiny_PHP::client_library_supported() ) {
+if ( Tiny_PHP::client_supported() ) {
 	require dirname( __FILE__ ) . '/src/class-tiny-compress-client.php';
 } else {
 	require dirname( __FILE__ ) . '/src/class-tiny-compress-fopen.php';
