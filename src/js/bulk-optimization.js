@@ -121,7 +121,7 @@
     var item = items[i]
     var row = jQuery("#media-items tr").eq(parseInt(i)+1)
     row.find(".status").removeClass("todo")
-    row.find(".savings").html(tinyCompress.L10nCompressing)
+    row.find(".status").html(tinyCompress.L10nCompressing)
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
