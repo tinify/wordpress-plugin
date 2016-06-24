@@ -22,12 +22,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	const MEDIA_COLUMN = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
+	private static $version;
+
 	private $settings;
 	private $twig;
 
 	public static function jpeg_quality() {
 		return 95;
 	}
+
+	public static function version() {
+		if ( is_null( self::$version ) ) {
+			$plugin_data = get_plugin_data( dirname( __FILE__ ) . '/../tiny-compress-images.php' );
+			self::$version = $plugin_data['Version'];
+		}
+		return self::$version;
+	}
+
 
 	public function __construct() {
 		parent::__construct();

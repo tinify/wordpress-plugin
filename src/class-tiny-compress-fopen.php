@@ -19,6 +19,10 @@
 */
 
 class Tiny_Compress_Fopen extends Tiny_Compress {
+	protected static function identifier() {
+		parent::identifier() . ' fopen';
+	}
+
 	protected function __construct($api_key, $after_compress_callback) {
 		parent::__construct( $after_compress_callback );
 
@@ -189,7 +193,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'header' => array(
 					'Content-type: image/png',
 					'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
-					'User-Agent: ' . Tiny_WP_Base::plugin_identification() . ' fopen',
+					'User-Agent: ' . self::identifier(),
 				 ),
 				'content' => $body,
 				'follow_location' => 0,

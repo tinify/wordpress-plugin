@@ -23,7 +23,6 @@ abstract class Tiny_WP_Base {
 	const PREFIX = 'tinypng_';
 
 	private static $wp_version;
-	private static $plugin_version;
 
 	public static function wp_version() {
 		if ( is_null( self::$wp_version ) ) {
@@ -44,18 +43,6 @@ abstract class Tiny_WP_Base {
 
 	protected function is_xmlrpc_request() {
 		return defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
-	}
-
-	public static function plugin_version() {
-		if ( is_null( self::$plugin_version ) ) {
-			$plugin_data = get_plugin_data( dirname( __FILE__ ) . '/../tiny-compress-images.php' );
-			self::$plugin_version = $plugin_data['Version'];
-		}
-		return self::$plugin_version;
-	}
-
-	public static function plugin_identification() {
-		return 'WordPress/' . self::wp_version() . ' Plugin/' . self::plugin_version();
 	}
 
 	protected static function get_prefixed_name($name) {

@@ -36,7 +36,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		$this->last_message = '';
 		$this->proxy = new WP_HTTP_Proxy();
 
-		\Tinify\setAppIdentifier( Tiny_WP_Base::plugin_identification() );
+		\Tinify\setAppIdentifier( self::identifier() );
 		\Tinify\setKey( $api_key );
 	}
 

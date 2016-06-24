@@ -39,10 +39,6 @@ abstract class Tiny_Compress {
 		return new $class($api_key, $after_compress_callback);
 	}
 
-	protected function __construct($after_compress_callback) {
-		$this->after_compress_callback = $after_compress_callback;
-	}
-
 	/* Based on pricing April 2016. */
 	public static function estimate_cost( $compressions, $usage ) {
 		return round(
@@ -50,6 +46,10 @@ abstract class Tiny_Compress {
 			self::compression_cost( $usage ),
 			2
 		);
+	}
+
+	protected function __construct($after_compress_callback) {
+		$this->after_compress_callback = $after_compress_callback;
 	}
 
 	public abstract function can_create_key();
@@ -126,6 +126,10 @@ abstract class Tiny_Compress {
 
 	protected abstract function validate();
 	protected abstract function compress($input, $resize_options, $preserve_options);
+
+	protected static function identifier() {
+		return 'WordPress/' . Tiny_Plugin::wp_version() . ' Plugin/' . Tiny_Plugin::version();
+	}
 
 	private function call_after_compress_callback() {
 		if ( $this->after_compress_callback ) {
