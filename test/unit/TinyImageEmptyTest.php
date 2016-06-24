@@ -6,7 +6,7 @@ class Tiny_Image_Empty_Test extends Tiny_TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->wp->createImagesFromJSON( $this->json( 'virtual_images' ) );
+		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
 		$this->wp->setTinyMetadata( 1, '' );
 		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
 	}

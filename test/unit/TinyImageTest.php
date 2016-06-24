@@ -6,8 +6,8 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->wp->createImagesFromJSON( $this->json( 'virtual_images' ) );
-		$this->wp->setTinyMetadata( 1, $this->json( 'tiny_compress_images' ) );
+		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
+		$this->wp->setTinyMetadata( 1, $this->json( 'image_database_metadata' ) );
 		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
 	}
 
@@ -99,7 +99,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 	public function test_get_optimization_statistics() {
 		$wpdb_wp_metadata = serialize( $this->json( '_wp_attachment_metadata' ) );
-		$wpdb_tiny_metadata = serialize( $this->json( 'tiny_compress_images' ) );
+		$wpdb_tiny_metadata = serialize( $this->json( 'image_database_metadata' ) );
 		$wpdb_results = array(
 			array( 'ID' => 1, 'post_title' => 'I am the one and only', 'meta_value' => $wpdb_wp_metadata, 'tiny_meta_value' => $wpdb_wp_metadata ),
 			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg', 'meta_value' => '', 'tiny_meta_value' => '' ),

@@ -6,8 +6,8 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->wp->createImagesFromJSON( $this->json( 'virtual_images' ) );
-		$this->wp->setTinyMetadata( 1, $this->json( 'tiny_compress_images' ) );
+		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
+		$this->wp->setTinyMetadata( 1, $this->json( 'image_database_metadata' ) );
 		$tiny_image = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
 
 		$this->original = $tiny_image->get_image_size();
