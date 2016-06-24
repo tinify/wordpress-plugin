@@ -4,12 +4,12 @@ display_usage() {
   echo -e "Usage:\n\t$0 <version> \n\nExample:\n\t$0 45"
 }
 
-if [ $# -eq 0 ]; then
-  display_usage
-  exit 1
-fi
-
 if [ -z "${VERSION}" ]; then
+  if [ $# -eq 0 ]; then
+    display_usage
+    exit 1
+  fi
+
   export VERSION="$1"
 fi
 
