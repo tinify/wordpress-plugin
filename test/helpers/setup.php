@@ -15,7 +15,7 @@ function wordpress($url = null) {
 }
 
 function wordpress_version() {
-	return intval( getenv( 'WORDPRESS_VERSION' ) );
+	return intval( getenv( 'VERSION' ) );
 }
 
 function configure_wordpress_for_testing($driver) {
@@ -38,7 +38,7 @@ function configure_wordpress_for_testing($driver) {
 
 function restore_wordpress() {
 	if ( is_wordpress_setup() ) {
-		set_siteurl( 'http://' . getenv( 'HOST_IP' ) . ':' . getenv( 'HOST_PORT' ) );
+		set_siteurl( 'http://' . getenv( 'HOST' ) . ':' . getenv( 'WORDPRESS_PORT' ) );
 	}
 }
 
@@ -47,22 +47,30 @@ function mysql_dump_file() {
 }
 
 function restore_wordpress_site() {
-	shell_exec( 'gunzip -c < ' . mysql_dump_file() . ' | mysql -h ' . getenv( 'HOST_IP' ) . ' -u root -p' . getenv( 'MYSQL_ROOT_PASSWORD' ) . ' ' . getenv( 'WORDPRESS_DATABASE' ) );
+	shell_exec( 'gunzip -c < ' . mysql_dump_file() . ' | mysql -h ' . getenv( 'HOST' ) . ' -u root ' . getenv( 'WORDPRESS_DATABASE' ) );
 }
 
 function backup_wordpress_site() {
-	shell_exec( 'mysqldump -h ' . getenv( 'HOST_IP' ) . ' -u root -p' . getenv( 'MYSQL_ROOT_PASSWORD' ) . ' ' . getenv( 'WORDPRESS_DATABASE' ) . ' | gzip -c > ' . mysql_dump_file() );
+	shell_exec( 'mysqldump -h ' . getenv( 'HOST' ) . ' -u root ' . getenv( 'WORDPRESS_DATABASE' ) . ' | gzip -c > ' . mysql_dump_file() );
 }
 
 function set_siteurl($site_url) {
-	$db = new mysqli( getenv( 'HOST_IP' ), 'root', getenv( 'MYSQL_ROOT_PASSWORD' ), getenv( 'WORDPRESS_DATABASE' ) );
+	$db = new mysqli( getenv( 'HOST' ), 'root',
+		getenv( 'MYSQL_PWD' ),
+		getenv( 'WORDPRESS_DATABASE' )
+	);
+
 	$statement = $db->prepare( "UPDATE wp_options SET option_value = ? WHERE option_name = 'home' OR option_name = 'siteurl'" );
 	$statement->bind_param( 's', $site_url );
 	$statement->execute();
 }
 
 function clear_settings() {
-	$db = new mysqli( getenv( 'HOST_IP' ), 'root', getenv( 'MYSQL_ROOT_PASSWORD' ), getenv( 'WORDPRESS_DATABASE' ) );
+	$db = new mysqli( getenv( 'HOST' ), 'root',
+		getenv( 'MYSQL_PWD' ),
+		getenv( 'WORDPRESS_DATABASE' )
+	);
+
 	$statement = $db->prepare( "DELETE FROM wp_options WHERE option_name LIKE 'tinypng_%'" );
 	$statement->execute();
 	$statement = $db->prepare( "DELETE FROM wp_usermeta WHERE meta_key LIKE 'tinypng_%'" );
@@ -70,16 +78,24 @@ function clear_settings() {
 }
 
 function clear_uploads() {
-	$db = new mysqli( getenv( 'HOST_IP' ), 'root', getenv( 'MYSQL_ROOT_PASSWORD' ), getenv( 'WORDPRESS_DATABASE' ) );
+	$db = new mysqli( getenv( 'HOST' ), 'root',
+		getenv( 'MYSQL_PWD' ),
+		getenv( 'WORDPRESS_DATABASE' )
+	);
+
 	$statement = $db->prepare( "DELETE wp_postmeta FROM wp_postmeta JOIN wp_posts ON wp_posts.ID = wp_postmeta.post_id WHERE wp_posts.post_type = 'attachment'" );
 	$statement->execute();
 	$statement = $db->prepare( "DELETE FROM wp_posts WHERE wp_posts.post_type = 'attachment'" );
 	$statement->execute();
-	shell_exec( 'docker exec -it wordpress' . getenv( 'WORDPRESS_VERSION' ) . ' rm -rf wp-content/uploads' );
+
+	shell_exec( 'docker-compose exec wordpress rm -rf wp-content/uploads' );
 }
 
 function is_wordpress_setup() {
-	$db = new mysqli( getenv( 'HOST_IP' ), 'root', getenv( 'MYSQL_ROOT_PASSWORD' ) );
+	$db = new mysqli( getenv( 'HOST' ), 'root',
+		getenv( 'MYSQL_PWD' )
+	);
+
 	if ( $result = $db->query( "SELECT * FROM information_schema.tables WHERE table_schema = '" . getenv( 'WORDPRESS_DATABASE' ) . "'" ) ) {
 		return $result->num_rows > 0;
 	} else {
@@ -125,10 +141,16 @@ function login($driver) {
 		$driver->executeScript( 'document.getElementById("user_pass").value = "admin"' );
 		$driver->findElement( WebDriverBy::id( 'loginform' ) )->submit();
 
-		$xpath = "//html/body//div[@class='wrap']/*[self::h1 or self::h2]";
-		$driver->wait( 2 )->until( WebDriverExpectedCondition::presenceOfElementLocated( WebDriverBy::xpath( $xpath ) ) );
+		$driver
+			->wait( 2 )
+			->until(
+				WebDriverExpectedCondition::presenceOfElementLocated(
+					WebDriverBy::cssSelector( 'div.wrap h1, div.wrap h2' )
+				)
+			);
 	} catch (Exception $e) {
 		var_dump( $driver->getPageSource() );
+		var_dump( $e );
 		throw new UnexpectedValueException( 'Login failed.' );
 	}
 }
@@ -157,7 +179,7 @@ function close_webdriver() {
 function reset_webservice() {
 	$request = curl_init();
 	curl_setopt_array($request, array(
-		CURLOPT_URL => 'http://' . getenv( 'HOST_IP' ) .':8080/reset',
+		CURLOPT_URL => 'http://' . getenv( 'HOST' ) .':8080/reset',
 	));
 	$response = curl_exec( $request );
 	curl_close( $request );
@@ -175,3 +197,4 @@ register_shutdown_function( 'close_webdriver' );
 register_shutdown_function( 'restore_wordpress' );
 
 configure_wordpress_for_testing( $global_driver );
+print "\n";

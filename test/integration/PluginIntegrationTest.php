@@ -15,11 +15,29 @@ class PluginIntegrationTest extends IntegrationTestCase {
 		clear_settings();
 	}
 
-	public function test_title_presence() {
-		$element = self::$driver->findElements(
-		WebDriverBy::xpath( '//*[@id="compress-jpeg-png-images"]//a[text()="Settings"]' ));
+	public function test_plugin_list_should_include_title() {
+		$element = self::$driver->findElement(
+			WebDriverBy::cssSelector(
+				'tr[data-slug=compress-jpeg-png-images] td.plugin-title strong'
+			)
+		);
 
-		$this->assertStringEndsWith('options-media.php#tiny-compress-images',
-		$element[0]->getAttribute( 'href' ));
+		$this->assertEquals(
+			'Compress JPEG & PNG images',
+			$element->getText()
+		);
+	}
+
+	public function test_plugin_list_should_include_settings_link() {
+		$element = self::$driver->findElement(
+			WebDriverBy::cssSelector(
+				'tr[data-slug=compress-jpeg-png-images] span.settings a'
+			)
+		);
+
+		$this->assertStringEndsWith(
+			'options-media.php#tiny-compress-images',
+			$element->getAttribute( 'href' )
+		);
 	}
 }

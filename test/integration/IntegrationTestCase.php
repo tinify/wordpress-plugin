@@ -158,7 +158,11 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function create_image_fixture($id, $name, $wp_meta, $tiny_meta = false) {
-		$db = new mysqli( getenv( 'HOST_IP' ), 'root', getenv( 'MYSQL_ROOT_PASSWORD' ), getenv( 'WORDPRESS_DATABASE' ) );
+		$db = new mysqli( getenv( 'HOST' ), 'root',
+			getenv( 'MYSQL_ROOT_PASSWORD' ),
+			getenv( 'WORDPRESS_DATABASE' )
+		);
+
 		$db->prepare('
             INSERT INTO wp_posts(ID, post_author, post_date, post_date_gmt, post_content, post_excerpt, post_title,
                                  post_status, comment_status, ping_status, post_name,

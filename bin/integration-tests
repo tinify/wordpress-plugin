@@ -9,4 +9,10 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-VERSION="$1" docker-compose up
+if [ -z "${VERSION}" ]; then
+  export VERSION="$1"
+fi
+
+docker-compose up -d
+bin/test-wordpress
+docker-compose down

@@ -125,8 +125,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function add_plugin_links( $current_links ) {
-		$additional[] = sprintf('<a href="options-media.php#%s">%s</a>', self::NAME,
-		esc_html__( 'Settings', 'tiny-compress-images' ));
+		$additional = array(
+			'settings' => sprintf(
+				'<a href="options-media.php#%s">%s</a>',
+				self::NAME,
+				esc_html__( 'Settings', 'tiny-compress-images' )
+			),
+		);
 		return array_merge( $additional, $current_links );
 	}
 
