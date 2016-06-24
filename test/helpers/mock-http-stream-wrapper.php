@@ -52,9 +52,9 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 
 	/* StreamWrapper */
 	public function stream_open($path, $mode, $options, &$opened_path) {
-		$context = stream_context_get_options($this->context);
+		$context = stream_context_get_options( $this->context );
 		$path = str_replace( 'https://api.tinify.com', '', $path );
-		$key = self::get_key( $context['http']['method'], $path);
+		$key = self::get_key( $context['http']['method'], $path );
 		if ( isset( self::$handlers[ $key ] ) ) {
 			$handler = self::$handlers[ $key ];
 

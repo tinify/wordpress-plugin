@@ -236,7 +236,7 @@ class Tiny_Image {
 	public function get_savings( $stats ) {
 		$before = $stats['initial_total_size'];
 		$after = $stats['optimized_total_size'];
-		if ( $before === 0 ) {
+		if ( 0 === $before ) {
 			$savings = 0;
 		} else {
 			$savings = ($before - $after) / $before * 100;
@@ -326,12 +326,12 @@ class Tiny_Image {
 		$stats['available-for-optimization'] = array();
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-			$wp_metadata = unserialize( $result[$i]['meta_value'] );
-			$tiny_metadata = unserialize( $result[$i]['tiny_meta_value'] );
+			$wp_metadata = unserialize( $result[ $i ]['meta_value'] );
+			$tiny_metadata = unserialize( $result[ $i ]['tiny_meta_value'] );
 			if ( ! is_array( $tiny_metadata ) ) {
 				$tiny_metadata = array();
 			}
-			$tiny_image = new Tiny_Image( $result[$i]['ID'], $wp_metadata, $tiny_metadata );
+			$tiny_image = new Tiny_Image( $result[ $i ]['ID'], $wp_metadata, $tiny_metadata );
 			$image_stats = $tiny_image->get_statistics();
 			$stats['uploaded-images']++;
 			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimised_sizes'];
@@ -339,7 +339,7 @@ class Tiny_Image {
 			$stats['optimized-library-size'] += $image_stats['optimized_total_size'];
 			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
 			if ( $image_stats['available_unoptimised_sizes'] > 0 ) {
-				$stats['available-for-optimization'][] = array( 'ID' => $result[$i]['ID'], 'post_title' => $result[$i]['post_title'] );
+				$stats['available-for-optimization'][] = array( 'ID' => $result[ $i ]['ID'], 'post_title' => $result[ $i ]['post_title'] );
 			}
 		}
 		return $stats;

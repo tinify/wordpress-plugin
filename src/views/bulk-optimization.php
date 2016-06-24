@@ -11,7 +11,7 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 
 			<p>
 				<?php
-				if ( $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] == 0 ) {
+				if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
 					echo __( 'This page is designed to bulk compress all your images. There don\'t seem to be any available.' );
 				} else {
 					$percentage = round( $stats['optimized-image-sizes'] / ($stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes']) * 100, 2 );
@@ -64,14 +64,14 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 							<?php } ?>
 							<p>
 								<?php
-								if ( sizeof( $active_tinify_sizes ) == 0 ) {
+								if ( 0 == sizeof( $active_tinify_sizes ) ) {
 									echo __( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
 								} else {
 									echo __( 'These sizes are currently activated for compression:' );
 									echo '<ul>';
 									for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
 										$name = $active_tinify_sizes[ $i ];
-										if ( $name == '0' ) {
+										if ( '0' == $name ) {
 											echo '<li>- ' . __( 'original' ) . '</li>';
 										} else {
 											echo '<li>- ' . $name . '</li>';

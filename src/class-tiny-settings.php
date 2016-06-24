@@ -342,7 +342,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$id = sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name );
 		$field = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
-		$value = isset( $settings[ $name] ) ? $settings[ $name ] : '2048';
+		$value = isset( $settings[ $name ] ) ? $settings[ $name ] : '2048';
 		echo '<input type="number" id="'. $id .'" name="' . $field . '" value="' . $value . '" size="5" />';
 	}
 
@@ -408,7 +408,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$compressor = $this->get_compressor();
 		if ( $compressor->can_create_key() ) {
 			try {
-				$site = str_replace( array( 'http://', 'https://'), '', get_bloginfo( 'url' ) );
+				$site = str_replace( array( 'http://', 'https://' ), '', get_bloginfo( 'url' ) );
 				$identifier = 'WordPress plugin for ' . $site;
 				$link = $this->get_absolute_url();
 

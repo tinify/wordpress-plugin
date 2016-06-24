@@ -3,8 +3,8 @@ $available_sizes = array_keys( $this->settings->get_sizes() );
 $active_sizes = $this->settings->get_sizes();;
 $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
-$total = $tiny_image->get_count( array('modified', 'missing', 'has_been_compressed', 'compressed') );
-$active = $tiny_image->get_count( array('uncompressed', 'never_compressed'), $active_tinify_sizes );
+$total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed' ) );
+$active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed' ), $active_tinify_sizes );
 $image_statistics = $tiny_image->get_statistics();
 $size_before = $image_statistics['initial_total_size'];
 $size_after = $image_statistics['optimized_total_size'];
@@ -27,7 +27,7 @@ ksort( $size_exists );
 			<?php } ?>
 			<span class="icon spinner hidden"></span>
 
-			<?php if ( $total['has_been_compressed'] > 0 || ($total['has_been_compressed'] == 0 && $active['uncompressed'] == 0) ) { ?>
+			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $active['uncompressed']) ) { ?>
 				<span class="message">
 					<strong><?php echo $total['has_been_compressed'] ?></strong>
 					<span>

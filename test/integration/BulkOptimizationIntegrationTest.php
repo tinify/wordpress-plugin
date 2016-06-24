@@ -7,28 +7,29 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 
 class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->set_api_key( 'PNG123' );
 		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium', 'large') );
-		$this->setupFixtures();
+		$this->setup_fixtures();
 		self::$driver->get( wordpress( '/wp-admin/upload.php?page=tiny-bulk-optimization' ) );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
+		parent::tear_down();
 		clear_settings();
 		clear_uploads();
 		reset_webservice();
 	}
 
-	public function setupFixtures() {
+	public function setup_fixtures() {
 		$this->create_non_compressed_image( 1001, 'non-compressed.jpg' );
 		$this->create_partially_compressed_image( 1002, 'partially-compressed.jpg' );
 		$this->create_fully_compressed_image( 1003, 'fully-compressed.jpg' );
 	}
 
 	// In one test because it is terribly slow
-	public function testAllTheValues() {
+	public function test_all_the_values() {
 		//testShouldShowUploadedImages() {
 		$this->assertEquals( '3', $this->getValue( '#uploaded-images' ) );
 
@@ -53,6 +54,6 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 	}
 
 	// SKIP TODO
-	public function testShouldShowProgressBar() {
+	public function test_should_show_progress_bar() {
 	}
 }

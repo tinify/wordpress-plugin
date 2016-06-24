@@ -6,8 +6,8 @@ use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;
 
 class Tiny_Plugin_Test extends Tiny_TestCase {
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->subject = new Tiny_Plugin();
 		$this->subject->init();
 		$this->compressor = $this->getMockBuilder( 'TestCompressor' )
@@ -24,7 +24,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->createImages();
 	}
 
-	public function successCompress($file) {
+	public function success_compress($file) {
 		if ( preg_match( '#[^-]+-([^.]+)[.](png|jpe?g)$#', basename( $file ), $match ) ) {
 			$key = $match[1];
 		} else {
@@ -62,7 +62,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		return array( 'input' => array('size' => $input), 'output' => array('size' => $output, 'width' => $width, 'height' => $height) );
 	}
 
-	public function testInitShouldAddFilters() {
+	public function test_init_should_add_filters() {
 		$this->assertEquals(array(
 			array( 'jpeg_quality', array('Tiny_Plugin', 'jpeg_quality') ),
 			array( 'wp_editor_set_quality', array('Tiny_Plugin', 'jpeg_quality') ),
@@ -70,58 +70,58 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		), $this->wp->getCalls( 'add_filter' ));
 	}
 
-	public function testCompressShouldRespectSettings() {
+	public function test_compress_should_respect_settings() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test.png' ) ),
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) ),
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
-		)->will( $this->returnCallback( array( $this, 'successCompress') ) );
+		)->will( $this->returnCallback( array( $this, 'success_compress') ) );
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
-	public function testCompressShouldNotCompressTwice() {
+	public function test_compress_should_not_compress_twice() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 
 		$testmeta = $this->wp->getTestMetadata();
 		$meta = new Tiny_Image( 1, $testmeta );
 		$meta->get_image_size()->add_request();
-		$meta->get_image_size()->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
+		$meta->get_image_size()->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
 		$meta->get_image_size( 'large' )->add_request();
-		$meta->get_image_size( 'large' )->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
+		$meta->get_image_size( 'large' )->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
 		$meta->update_tiny_meta();
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
-		)->will( $this->returnCallback( array( $this, 'successCompress') ) );
+		)->will( $this->returnCallback( array( $this, 'success_compress') ) );
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
-	public function testCompressWhenFileChanged() {
+	public function test_compress_when_file_changed() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 
 		$testmeta = $this->wp->getTestMetadata();
 		$meta = new Tiny_Image( 1, $testmeta );
 		$meta->get_image_size()->add_request();
-		$meta->get_image_size()->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
+		$meta->get_image_size()->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
 		$meta->get_image_size( 'large' )->add_request();
-		$meta->get_image_size( 'large' )->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
+		$meta->get_image_size( 'large' )->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
 		$meta->get_image_size( 'post-thumbnail' )->add_request();
-		$meta->get_image_size( 'post-thumbnail' )->add_response( self::successCompress( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) );
+		$meta->get_image_size( 'post-thumbnail' )->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) );
 		$meta->update_tiny_meta();
 
 		$this->vfs->getChild( 'wp-content/uploads/14/01/test-large.png' )->truncate( 100000 );
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) )
-		)->will( $this->returnCallback( array( $this, 'successCompress') ) );
+		)->will( $this->returnCallback( array( $this, 'success_compress') ) );
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
-	public function testCompressShouldUpdateMetadata() {
+	public function test_compress_should_update_metadata() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array( $this, 'successCompress') )
+			$this->returnCallback( array( $this, 'success_compress') )
 		);
 
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
@@ -143,7 +143,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		), $metadata);
 	}
 
-	public function testShouldHandleCompressExceptions() {
+	public function test_should_handle_compress_exceptions() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/jpeg";' ) );
 
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->will(
@@ -168,7 +168,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		), $metadata);
 	}
 
-	public function testShouldReturnIfNoCompressor() {
+	public function test_should_return_if_no_compressor() {
 		$this->subject->set_compressor( null );
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->never() )->method( 'compress_file' );
@@ -176,17 +176,17 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
-	public function testShouldReturnIfNoImage() {
+	public function test_should_return_if_no_image() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "video/webm";' ) );
 		$this->compressor->expects( $this->never() )->method( 'compress_file' );
 
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
-	public function testWrongMetadataShouldNotShowWarnings() {
+	public function test_wrong_metadata_should_not_show_warnings() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array( $this, 'successCompress') )
+			$this->returnCallback( array( $this, 'success_compress') )
 		);
 
 		$testmeta = $this->wp->getTestMetadata();
@@ -195,10 +195,10 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
-	public function testWrongMetadataShouldSaveTinyMetadata() {
+	public function test_wrong_metadata_should_save_tiny_metadata() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array( $this, 'successCompress') )
+			$this->returnCallback( array( $this, 'success_compress') )
 		);
 
 		$testmeta = $this->wp->getTestMetadata();
@@ -209,23 +209,23 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	// skip TODO
-	public function testAnalyzeMediaLibrary() {
+	public function test_analyze_media_library() {
 		// $this->assertEquals("analyze all JPEG/PNG and store file size for each image size in the tiny_compress_images metadata", "todo");
 	}
 
-	public function testCreateApiKeyNewUserShouldReturnApiKey() {
+	public function test_create_api_key_new_user_should_return_api_key() {
 		//Test if we get a api key back
 	}
 
-	public function testCreateApiKeyExistingUserShouldNotReturnApiKey() {
+	public function test_create_api_key_existing_user_should_not_return_api_key() {
 		//Test if we get a api key back. We should not
 	}
 
-	public function testSaveApiKeyShouldSetKeyIfValid() {
+	public function test_save_api_key_should_set_key_if_valid() {
 		//Set the key if it is valid
 	}
 
-	public function testSaveApiKeyShouldNotSetKeyIfInvalid() {
+	public function test_save_api_key_should_not_set_key_if_invalid() {
 		//Do not set key if invalid
 	}
 }

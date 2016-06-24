@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset>
   <config name="installed_paths" value="vendor/wp-coding-standards/wpcs"/>
-  <rule ref="WordPress"/>
+  <rule ref="WordPress-Core"/>
   <file>tiny-compress-images.php</file>
   <file>src</file>
   <file>test</file>

@@ -36,17 +36,21 @@ abstract class Tiny_TestCase extends PHPUnit_Framework_TestCase {
 	protected $wp;
 	protected $vfs;
 
+	// @codingStandardsIgnoreStart
+	public static function setUpBeforeClass() {
+		static::set_up_before_class();
+	}
+
 	public static function tearDownAfterClass() {
-		Tiny_PHP::$client_library_supported = true;
-		Tiny_PHP::$fopen_available = true;
+		static::tear_down_after_class();
 	}
 
 	protected function setUp() {
-		$this->vfs = vfsStream::setup();
-		$this->wp = new WordPressStubs( $this->vfs );
+		$this->set_up();
 	}
 
 	protected function tearDown() {
+		$this->tear_down();
 	}
 
 	protected function assertBetween($lower_bound, $upper_bound, $actual, $message = '') {
@@ -58,8 +62,25 @@ abstract class Tiny_TestCase extends PHPUnit_Framework_TestCase {
 		$this->assertGreaterThanOrEqual( $expected - $delta, $actual, $message );
 		$this->assertLessThanOrEqual( $expected + $delta, $actual, $message );
 	}
+	// @codingStandardsIgnoreEnd
 
 	protected function json($file_name) {
 		return json_decode( file_get_contents( dirname( __FILE__ ) . '/../fixtures/json/' . $file_name . '.json' ), true );
+	}
+
+	public static function set_up_before_class() {
+	}
+
+	public static function tear_down_after_class() {
+		Tiny_PHP::$client_library_supported = true;
+		Tiny_PHP::$fopen_available = true;
+	}
+
+	protected function set_up() {
+		$this->vfs = vfsStream::setup();
+		$this->wp = new WordPressStubs( $this->vfs );
+	}
+
+	protected function tear_down() {
 	}
 }

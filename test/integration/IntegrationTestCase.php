@@ -11,7 +11,7 @@ use Facebook\WebDriver\Remote\UselessFileDetector;
 abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
 	protected static $driver;
 
-	public static function setUpBeforeClass() {
+	public static function set_up_before_class() {
 		self::$driver = RemoteWebDriver::createBySessionId( $GLOBALS['global_session_id'], $GLOBALS['global_webdriver_host'] );
 	}
 

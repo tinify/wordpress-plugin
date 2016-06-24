@@ -3,12 +3,12 @@
 require_once dirname( __FILE__ ) . '/TinyCompressSharedTestCase.php';
 
 class Tiny_Compress_Client_Test extends Tiny_Compress_Shared_TestCase {
-	public static function setUpBeforeClass() {
+	public static function set_up_before_class() {
 		Tiny_PHP::$client_library_supported = true;
 	}
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->client = new MockTinifyClient();
 		Tinify\Tinify::setClient( $this->client );
 	}
@@ -17,15 +17,15 @@ class Tiny_Compress_Client_Test extends Tiny_Compress_Shared_TestCase {
 		$this->client->register( $method, $url, $details );
 	}
 
-	public function testShouldReturnClientCompressor() {
+	public function test_should_return_client_compressor() {
 		$this->assertInstanceOf( 'Tiny_Compress_Client', $this->compressor );
 	}
 
-	public function testCanCreateKeyShouldReturnTrue() {
+	public function test_can_create_key_should_return_true() {
 		$this->assertSame( true, $this->compressor->can_create_key() );
 	}
 
-	public function testCreateKeyShouldSetApiKey() {
+	public function test_create_key_should_set_api_key() {
 		$this->register( 'POST', '/keys', array(
 			'status' => 202,
 			'headers' => array(

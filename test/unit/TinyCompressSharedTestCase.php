@@ -3,8 +3,8 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->after_compress_called = false;
 		$after_compress_called = &$this->after_compress_called;
 		$callback = function($compressor) use(&$after_compress_called) {
@@ -15,15 +15,15 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 
 	protected abstract function register($method, $url, $details);
 
-	public function testShouldReturnClientCompressor() {
+	public function test_should_return_client_compressor() {
 		$this->assertInstanceOf( 'Tiny_Compress', $this->compressor );
 	}
 
-	public function testGetKeyShouldReturnKey() {
+	public function test_get_key_should_return_key() {
 		$this->assertSame( 'api1234', $this->compressor->get_key() );
 	}
 
-	public function testGetStatusShouldReturnSuccessStatus() {
+	public function test_get_status_should_return_success_status() {
 		$this->register( 'POST', '/shrink', array(
 			'status' => 400,
 			'headers' => array(
@@ -54,7 +54,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function testGetStatusShouldReturnLimitReachedStatus() {
+	public function test_get_status_should_return_limit_reached_status() {
 		$this->register( 'POST', '/shrink', array(
 			'status' => 429,
 			'headers' => array(
@@ -85,7 +85,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function testGetStatusShouldReturnUnauthorizedStatus() {
+	public function test_get_status_should_return_unauthorized_status() {
 		$this->register( 'POST', '/shrink', array(
 			'status' => 401,
 			'headers' => array(
@@ -116,7 +116,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function testCompressFileShouldSaveCompressedFile() {
+	public function test_compress_file_should_save_compressed_file() {
 		$this->register( 'POST', '/shrink', array(
 			'status' => 201,
 			'headers' => array(
@@ -137,8 +137,8 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			'body' => 'optimized',
 		);
 
-		$this->register( 'GET', '/output/compressed.png', $handler);
-		$this->register( 'POST', '/output/compressed.png', $handler);
+		$this->register( 'GET', '/output/compressed.png', $handler );
+		$this->register( 'POST', '/output/compressed.png', $handler );
 
 		file_put_contents( $this->vfs->url() . '/image.png', 'unoptimized' );
 
@@ -170,7 +170,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function testCompressFileShouldSaveResizedFile() {
+	public function test_compress_file_should_save_resized_file() {
 		$this->register( 'POST', '/shrink', array(
 			'status' => 201,
 			'headers' => array(
@@ -191,8 +191,8 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			'body' => 'small',
 		);
 
-		$this->register( 'GET', '/output/compressed.png', $handler);
-		$this->register( 'POST', '/output/compressed.png', $handler);
+		$this->register( 'GET', '/output/compressed.png', $handler );
+		$this->register( 'POST', '/output/compressed.png', $handler );
 
 		$img = file_get_contents( 'test/fixtures/input-example.png' );
 		file_put_contents( $this->vfs->url() . '/image.png', $img );
@@ -231,7 +231,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function testCompressFileShouldReturnUnauthorizedStatus() {
+	public function test_compress_file_should_return_unauthorized_status() {
 		$this->register( 'POST', '/shrink', array(
 			'status' => 401,
 			'headers' => array(
