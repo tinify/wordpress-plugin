@@ -1,192 +1,192 @@
 div.misc-pub-section.tiny-compress-images {
-    border-top: 1px solid #e1e1e1;
-    padding-bottom: 16px;
+	border-top: 1px solid #e1e1e1;
+	padding-bottom: 16px;
 }
 
 div.tiny-compress-images p.tiny-account-status + p {
-    margin-top: 8px;
+	margin-top: 8px;
 }
 
 div.tiny-account-container {
-    display: inline-block;
-    padding: 30px;
-    border: 1px solid #e1e1e1;
-    background-color: white;
+	display: inline-block;
+	padding: 30px;
+	border: 1px solid #e1e1e1;
+	background-color: white;
 }
 
 div.tiny-account-container h4 {
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 16px;
+	margin-top: 0;
+	margin-bottom: 5px;
+	font-size: 16px;
 }
 
 div.tiny-account-container p {
-    margin-bottom: 15px;
+	margin-bottom: 15px;
 }
 
 div.tiny-account-container .tiny-update-account-step1 {
-    float: left;
-    width: 280px;
-    padding-right: 30px;
-    border-right: 1px solid #e5e5e5;
+	float: left;
+	width: 280px;
+	padding-right: 30px;
+	border-right: 1px solid #e5e5e5;
 }
 
 div.tiny-account-container .tiny-update-account-step2 {
-    float: left;
-    width: 280px;
-    padding-left: 30px;
+	float: left;
+	width: 280px;
+	padding-left: 30px;
 }
 
 div.tiny-account-container input {
-    width: 100%;
-    margin-bottom: 10px;
+	width: 100%;
+	margin-bottom: 10px;
 }
 
 div.tiny-account-container button {
-    width: 100%;
-    margin-bottom: 0;
+	width: 100%;
+	margin-bottom: 0;
 }
 
 div.tiny-update-account-step1 p.tiny-create-account-message,
 div.tiny-update-account-step2 p.tiny-update-account-message {
-    margin-top: 0;
-    color: #d54e21;
+	margin-top: 0;
+	color: #d54e21;
 }
 
 .tiny-compress-images .spinner.hidden {
-    display: none;
-    visibility: hidden;
-    float: none;
-    margin-top: 0;
+	display: none;
+	visibility: hidden;
+	float: none;
+	margin-top: 0;
 }
 
 .tiny-compress-images div.spinner {
-    display: inline-block;
-    visibility: visible;
-    float: right;
-    margin-top: 4px;
+	display: inline-block;
+	visibility: visible;
+	float: right;
+	margin-top: 4px;
 }
 
 .tiny-compress-images span.spinner {
-    visibility: visible;
-    float: none;
-    margin: 0;
+	visibility: visible;
+	float: none;
+	margin: 0;
 }
 
 .tiny-compress-images span.icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    padding-right: 5px;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	padding-right: 5px;
 }
 
 .tiny-compress-images span.dashicons-before::before {
-    margin-left: -2px;
-    font-size: 23px;
+	margin-left: -2px;
+	font-size: 23px;
 }
 
 .tiny-compress-images .details-container {
-    overflow: auto;
+	overflow: auto;
 }
 
 .tiny-compress-images .details-container button {
-    display: block;
-    margin: 5px 0 10px 24px;
+	display: block;
+	margin: 5px 0 10px 24px;
 }
 
 .tiny-compress-images .details-container span.icon {
-    position: absolute;
+	position: absolute;
 }
 
 .tiny-compress-images .details-container .message {
-    display: inline-block;
-    margin-left: 24px;
+	display: inline-block;
+	margin-left: 24px;
 }
 
 .tiny-compress-images span.success {
-    color: #0ee00e;
+	color: #0ee00e;
 }
 
 .tiny-compress-images span.warning {
-    color: #f0ad4e;
+	color: #f0ad4e;
 }
 
 .tiny-compress-images span.error {
-    color: #d54e21;
+	color: #d54e21;
 }
 
 .tiny-compress-images span.alert {
-    color: gray;
+	color: gray;
 }
 
 #tiny-compress-status .spinner,
 #tiny-compress-savings .spinner {
-    visibility: visible;
-    display: inline;
-    float: left;
-    width: 20px;
-    height: 20px;
-    margin: 0;
+	visibility: visible;
+	display: inline;
+	float: left;
+	width: 20px;
+	height: 20px;
+	margin: 0;
 }
 
 .tiny-compression-details {
-    padding: 10px;
+	padding: 10px;
 }
 
 .tiny-compression-details table {
-    width: 100%;
-    border: 1px solid #e5e5e5;
-    border-collapse: collapse;
-    white-space: nowrap;
+	width: 100%;
+	border: 1px solid #e5e5e5;
+	border-collapse: collapse;
+	white-space: nowrap;
 }
 
 .tiny-compression-details table tr.even {
-    background-color: #f9f9f9;
+	background-color: #f9f9f9;
 }
 
 .tiny-compression-details table td {
-    padding: 6px 10px;
+	padding: 6px 10px;
 }
 
 .tiny-compression-details table th {
-    padding: 8px 10px;
-    border-bottom: 1px solid #e5e5e5;
-    font-size: 14px;
+	padding: 8px 10px;
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 14px;
 }
 
 .tiny-compression-details table tfoot {
-    border-top: 1px solid #e5e5e5;
+	border-top: 1px solid #e5e5e5;
 }
 
 .tiny-compression-details table tfoot td {
-    padding: 8px 10px;
+	padding: 8px 10px;
 }
 
 .tiny-compress-images .modal {
-    display: none;
+	display: none;
 }
 
 .tiny-compress-images h4 {
-    margin: 0.5em 0;
+	margin: 0.5em 0;
 }
 
 p.tiny-resize-resolution {
-    margin-left: 24px;
+	margin-left: 24px;
 }
 
 p.tiny-resize-resolution input {
-    margin-right: 6px;
+	margin-right: 6px;
 }
 
 input[type=number][name*="tinypng_resize_original"] {
-    width: 65px;
+	width: 65px;
 }
 
 #TB_ajaxWindowTitle {
-    padding-left: 15px;
-    font-size: 14px;
+	padding-left: 15px;
+	font-size: 14px;
 }
 
 #TB_ajaxContent {
-    font-size: 13px;
+	font-size: 13px;
 }
