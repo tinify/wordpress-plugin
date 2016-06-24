@@ -123,14 +123,13 @@ class Tiny_Image {
 			try {
 				$size->add_request();
 				$this->update_tiny_meta();
-
 				if ( self::is_original( $size_name ) ) {
 					$resize = $settings->get_resize_options();
+					$preserve = $settings->get_preserve_options();
 				} else {
 					$resize = false;
+					$preserve = false;
 				}
-
-				$preserve = $settings->get_preserve_options();
 				$response = $compressor->compress_file( $size->filename, $resize, $preserve );
 				$size->add_response( $response );
 				$this->update_wp_metadata( $size_name, $response );
