@@ -2,7 +2,7 @@
 
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
-class Tiny_Exception_Test extends TinyTestCase {
+class Tiny_Exception_Test extends Tiny_TestCase {
 	public function testConstructorCreatesExceptionWithMessage() {
 		$err = new Tiny_Exception( 'Message' );
 		$this->assertInstanceOf( 'Tiny_Exception', $err );

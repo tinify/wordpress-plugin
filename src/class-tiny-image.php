@@ -247,7 +247,7 @@ class Tiny_Image {
 	public function get_statistics() {
 
 		if ( $this->statistics ) {
-			error_log( "Strangely the image statistics are asked for again." );
+			error_log( 'Strangely the image statistics are asked for again.' );
 			return $this->statistics;
 		}
 
@@ -326,9 +326,9 @@ class Tiny_Image {
 		$stats['available-for-optimization'] = array();
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-			$wp_metadata = unserialize($result[$i]['meta_value']);
-			$tiny_metadata = unserialize($result[$i]['tiny_meta_value']);
-			if ( !is_array( $tiny_metadata )) {
+			$wp_metadata = unserialize( $result[$i]['meta_value'] );
+			$tiny_metadata = unserialize( $result[$i]['tiny_meta_value'] );
+			if ( ! is_array( $tiny_metadata ) ) {
 				$tiny_metadata = array();
 			}
 			$tiny_image = new Tiny_Image( $result[$i]['ID'], $wp_metadata, $tiny_metadata );

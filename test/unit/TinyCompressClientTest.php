@@ -1,19 +1,20 @@
 <?php
 
-require_once dirname( __FILE__ ) . '/TinyTestCase.php';
+require_once dirname( __FILE__ ) . '/TinyCompressSharedTestCase.php';
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
-class Tiny_Compress_Client_Test extends TinyTestCase {
-	protected $php_mock;
+class Tiny_Compress_Client_Test extends Tiny_Compress_Shared_TestCase {
+	public static function setUpBeforeClass() {
+		Tiny_PHP::$client_library_supported = true;
+	}
 
 	public function setUp() {
 		parent::setUp();
-		$php_mock = \Mockery::mock( 'alias:Tiny_PHP' );
-		$php_mock->shouldReceive( 'client_library_supported' )->andReturn( true );
-		$this->compressor = Tiny_Compress::create( 'api1234' );
+		$this->client = new MockTinifyClient();
+		Tinify\Tinify::setClient( $this->client );
+	}
+
+	protected function register($method, $url, $details) {
+		$this->client->register( $method, $url, $details );
 	}
 
 	public function testShouldReturnClientCompressor() {
@@ -24,47 +25,24 @@ class Tiny_Compress_Client_Test extends TinyTestCase {
 		$this->assertSame( true, $this->compressor->can_create_key() );
 	}
 
-	public function testGetKeyShouldReturnKey() {
-		$this->assertSame( 'api1234', $this->compressor->get_key() );
-	}
-
-	public function testGetStatusShouldReturnSuccessStatus() {
-		$client = new TinifyMockClient();
-		Tinify\Tinify::setClient( $client );
-		$client->register('POST', '/shrink', function() {
-			throw new Tinify\ClientException( 'Input missing' );
-		});
-
-		$status = $this->compressor->get_status();
-		$this->assertEquals(
-			(object) array(
-				'ok' => true,
-				'message' => null,
-				'code' => null,
+	public function testCreateKeyShouldSetApiKey() {
+		$this->register( 'POST', '/keys', array(
+			'status' => 202,
+			'headers' => array(
+				'content-type' => 'application/json',
 			),
-			$status
-		);
-	}
+			'body' => json_encode(array(
+				'key' => 'newkey123',
+			)),
+		));
 
-	public function testGetStatusShouldReturnUnauthorizedStatus() {
-		$client = new TinifyMockClient();
-		Tinify\Tinify::setClient( $client );
-		$client->register('POST', '/shrink', function() {
-			throw new Tinify\AccountException(
-				'Credentials are invalid',
-				'Unauthorized',
-				401
-			);
-		});
+		$this->compressor->create_key( 'john@example.com', array(
+			'name' => 'John Doe',
+		));
 
-		$status = $this->compressor->get_status();
 		$this->assertEquals(
-			(object) array(
-				'ok' => false,
-				'message' => 'The key that you have entered is not valid',
-				'code' => 401,
-			),
-			$status
+			'newkey123',
+			$this->compressor->get_key()
 		);
 	}
 }

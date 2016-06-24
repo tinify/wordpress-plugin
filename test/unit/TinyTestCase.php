@@ -1,7 +1,9 @@
 <?php
 
-require_once dirname( __FILE__ ) . '/../helpers/tinify-mock-client.php';
+require_once dirname( __FILE__ ) . '/../helpers/mock-http-stream-wrapper.php';
+require_once dirname( __FILE__ ) . '/../helpers/mock-tinify-client.php';
 require_once dirname( __FILE__ ) . '/../helpers/wordpress.php';
+require_once dirname( __FILE__ ) . '/../../src/config/tiny-config.php';
 require_once 'vendor/autoload.php';
 
 use org\bovigo\vfs\vfsStream;
@@ -17,9 +19,27 @@ function plugin_autoloader($class) {
 
 spl_autoload_register( 'plugin_autoloader' );
 
-abstract class TinyTestCase extends PHPUnit_Framework_TestCase {
+class Tiny_PHP {
+	public static $fopen_available = true;
+	public static $client_library_supported = true;
+
+	public static function fopen_available() {
+		return self::$fopen_available;
+	}
+
+	public static function client_library_supported() {
+		return self::$client_library_supported;
+	}
+}
+
+abstract class Tiny_TestCase extends PHPUnit_Framework_TestCase {
 	protected $wp;
 	protected $vfs;
+
+	public static function tearDownAfterClass() {
+		Tiny_PHP::$client_library_supported = true;
+		Tiny_PHP::$fopen_available = true;
+	}
 
 	protected function setUp() {
 		$this->vfs = vfsStream::setup();

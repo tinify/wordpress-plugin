@@ -27,7 +27,3 @@ if ( Tiny_PHP::client_library_supported() ) {
 }
 
 $tiny_plugin = new Tiny_Plugin();
-
-if ( ! defined( 'TINY_DEBUG' ) ) {
-	define( 'TINY_DEBUG', null );
-}

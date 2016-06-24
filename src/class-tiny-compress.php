@@ -19,6 +19,10 @@
 */
 
 abstract class Tiny_Compress {
+	const KEY_MISSING = 'Register an account or provide an API key first';
+	const FILE_MISSING = 'File does not exist';
+	const WRITE_ERROR = 'No permission to write to file';
+
 	protected $after_compress_callback;
 
 	public static function create($api_key, $after_compress_callback = null) {
@@ -36,85 +40,122 @@ abstract class Tiny_Compress {
 		$this->after_compress_callback = $after_compress_callback;
 	}
 
+	/* Based on pricing April 2016. */
+	public static function estimate_cost( $compressions, $usage ) {
+		return round(
+			self::compression_cost( $compressions + $usage ) -
+			self::compression_cost( $usage ),
+			2
+		);
+	}
+
 	public abstract function can_create_key();
 	public abstract function get_compression_count();
 	public abstract function get_key();
-	public abstract function is_limit_reached();
+	public abstract function limit_reached();
+
+	public function get_status() {
+		if ( $this->get_key() == null ) {
+			return (object) array(
+				'ok' => false,
+				'message' => self::KEY_MISSING,
+			);
+		}
+
+		try {
+			return (object) array(
+				'ok' => $this->validate(),
+				'message' => null,
+			);
+		} catch(Tiny_Exception $err) {
+			if ( $err->get_status() == 401 ) {
+				$message = 'The key that you have entered is not valid';
+			} else {
+				list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
+			}
+
+			return (object) array(
+				'ok' => false,
+				'message' => $message,
+			);
+		} finally {
+			$this->call_after_compress_callback();
+		}
+	}
+
+	public function compress_file($file, $resize_opts = array(), $preserve_opts = array()) {
+		if ( $this->get_key() == null ) {
+			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
+		}
+
+		if ( ! file_exists( $file ) ) {
+			throw new Tiny_Exception( self::FILE_MISSING, 'FileError' );
+		}
+
+		if ( ! is_writable( $file ) ) {
+			throw new Tiny_Exception( self::WRITE_ERROR, 'FileError' );
+		}
+
+		if ( ! $this->needs_resize( $file, $resize_opts ) ) {
+			$resize_opts = false;
+		}
+
+		try {
+			list($output, $details) = $this->compress(
+				file_get_contents( $file ),
+				$resize_opts,
+				$preserve_opts
+			);
+
+			file_put_contents( $file, $output );
+
+			if ( $resize_opts ) {
+				$details['output']['resized'] = true;
+			}
+
+			return $details;
+		} finally {
+			$this->call_after_compress_callback();
+		}
+	}
 
 	protected abstract function validate();
 	protected abstract function compress($input, $resize_options, $preserve_options);
 
-	public function get_status() {
-		$status = $this->validate();
-		if ( $status->code == 401 ) {
-			$status->message = 'The key that you have entered is not valid';
-		}
-
-		$this->call_after_compress_callback();
-		return $status;
-	}
-
-	public function compress_file($file, $resize_options, $preserve_options) {
-		if ( ! file_exists( $file ) ) {
-			throw new Tiny_Exception( 'File does not exist', 'FileError' );
-		}
-
-		if ( ! is_writable( $file ) ) {
-			throw new Tiny_Exception( 'No permission to write to file', 'FileError' );
-		}
-
-		if ( ! self::needs_resize( $file, $resize_options ) ) {
-			$resize_options = false;
-		}
-
-		list($output, $details) = $this->compress(
-			file_get_contents( $file ),
-			$resize_options,
-			$preserve_options
-		);
-
-		file_put_contents( $file, $output );
-
-		if ( $resize_options ) {
-			$details['output']['resized'] = true;
-		}
-
-		$this->call_after_compress_callback();
-		return $details;
-	}
-
-	protected function call_after_compress_callback() {
+	private function call_after_compress_callback() {
 		if ( $this->after_compress_callback ) {
 			call_user_func( $this->after_compress_callback, $this );
 		}
 	}
 
-	protected static function needs_resize($file, $resize_options) {
+	private static function needs_resize($file, $resize_options) {
 		if ( ! $resize_options ) {
 			return false;
 		}
 
 		list($width, $height) = getimagesize( $file );
-		return $width > $resize_options['width'] || $height > $resize_options['height'];
-	}
 
-	/* Based on pricing April 2016. */
-	public static function estimate_cost( $compressions, $usage ) {
-		return round( self::compression_cost( $compressions + $usage ) - self::compression_cost( $usage ), 2 );
+		return (
+			$width > $resize_options['width'] ||
+			$height > $resize_options['height']
+		);
 	}
 
 	private static function compression_cost( $total ) {
 		$cost = 0;
+
 		if ( $total > 10000 ) {
 			$compressions = $total - 10000;
 			$cost += $compressions * 0.002;
 			$total -= $compressions;
 		}
+
 		if ( $total > 500 ) {
 			$compressions = $total - 500;
 			$cost += $compressions * 0.009;
 			$total -= $compressions;
 		}
+
 		return $cost;
 	}
 

@@ -5,7 +5,7 @@ require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 class Tiny_Test_Base extends Tiny_WP_Base {
 }
 
-class Tiny_WP_Base_Test extends TinyTestCase {
+class Tiny_WP_Base_Test extends Tiny_TestCase {
 
 	public function setUp() {
 		parent::setUp();

@@ -55,8 +55,8 @@ class Tiny_Image_Size {
 	public function add_exception($exception) {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta = array(
-				'error'   => $exception->get_error(),
-				'message' => $exception->getMessage(),
+				'error'   => $exception->get_type(),
+				'message' => $exception->get_message(),
 				'timestamp' => time()
 			);
 		}

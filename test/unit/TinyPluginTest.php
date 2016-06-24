@@ -5,7 +5,7 @@ require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;
 
-class Tiny_Plugin_Test extends TinyTestCase {
+class Tiny_Plugin_Test extends Tiny_TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->subject = new Tiny_Plugin();

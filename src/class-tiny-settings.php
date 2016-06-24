@@ -357,7 +357,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			update_option( $field, $count );
 		}
 
-		if ( $compressor->is_limit_reached() ) {
+		if ( $compressor->limit_reached() ) {
 			$link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 			$this->notices->add('limit-reached',
 				sprintf( esc_html__( 'You have reached your limit of %s compressions this month.', 'tiny-compress-images' ), $count ) .
@@ -425,21 +425,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$status = (object) array(
 					'ok' => true,
 					'message' => null,
-					'code' => null,
 					'key' => $compressor->get_key(),
 				);
 			} catch (Tiny_Exception $err) {
 				$status = (object) array(
 					'ok' => false,
 					'message' => $err->getMessage(),
-					'code' => null,
 				);
 			}
 		} else {
 			$status = (object) array(
 				'ok' => false,
 				'message' => 'This feature is not available on your platform',
-				'code' => null,
 			);
 		}
 
@@ -455,7 +452,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$status = (object) array(
 				'ok' => true,
 				'message' => null,
-				'code' => null,
 			);
 		} else {
 			$status = Tiny_Compress::create( $key )->get_status();

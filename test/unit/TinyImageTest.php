@@ -2,7 +2,7 @@
 
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
-class Tiny_Image_Test extends TinyTestCase {
+class Tiny_Image_Test extends Tiny_TestCase {
 	public function setUp() {
 		parent::setUp();
 
@@ -94,7 +94,7 @@ class Tiny_Image_Test extends TinyTestCase {
 	}
 
 	public function testGetSavings() {
-		$this->assertEquals( 8.8, $this->subject->get_savings($this->subject->get_statistics() ) );
+		$this->assertEquals( 8.8, $this->subject->get_savings( $this->subject->get_statistics() ) );
 	}
 
 	public function testGetOptimizationStatistics() {
@@ -102,8 +102,8 @@ class Tiny_Image_Test extends TinyTestCase {
 		$wpdb_tiny_metadata = serialize( $this->json( 'tiny_compress_images' ) );
 		$wpdb_results = array(
 			array( 'ID' => 1, 'post_title' => 'I am the one and only', 'meta_value' => $wpdb_wp_metadata, 'tiny_meta_value' => $wpdb_wp_metadata ),
-			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg', 'meta_value' => "", 'tiny_meta_value' => "" ),
-			array( 'ID' => 4350, 'post_title' => 'IMG 3092', 'meta_value' => "", 'tiny_meta_value' => "" ),
+			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg', 'meta_value' => '', 'tiny_meta_value' => '' ),
+			array( 'ID' => 4350, 'post_title' => 'IMG 3092', 'meta_value' => '', 'tiny_meta_value' => '' ),
 		);
 		$this->assertEquals(
 			array(

@@ -29,12 +29,10 @@ if ( ! defined( '\Tinify\VERSION' ) ) {
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
-	const KEY_MISSING = 'Register an account or provide an API key first';
-
 	protected function __construct($api_key, $after_compress_callback) {
 		parent::__construct( $after_compress_callback );
 
-		$this->last_status_code = 0;
+		$this->last_error_code = 0;
 		$this->last_message = '';
 		$this->proxy = new WP_HTTP_Proxy();
 
@@ -54,58 +52,46 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		return \Tinify\getKey();
 	}
 
-	public function is_limit_reached() {
-		return $this->last_status_code == 429;
+	public function limit_reached() {
+		return $this->last_error_code == 429;
 	}
 
 	protected function validate() {
-		if ( \Tinify\getKey() == null ) {
-			return (object) array(
-				'ok' => false,
-				'message' => self::KEY_MISSING,
-				'code' => 0,
-			);
-		}
-
-		try {
-			$this->last_status_code = 0;
-
-			return (object) array(
-				'ok' => \Tinify\validate(),
-				'message' => null,
-				'code' => null,
-			);
-		} catch(\Tinify\Exception $err) {
-			$this->last_status_code = $err->status;
-
-			list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
-			return (object) array(
-				'ok' => false,
-				'message' => $message,
-				'code' => $err->status,
-			);
-		}
-
-		return true;
-	}
-
-	protected function compress($input, $resize_options, $preserve_options) {
-		if ( \Tinify\getKey() == null ) {
-			throw new Tiny_Exception( self::KEY_MISSING, 'NoKey' );
-		}
-
 		try {
 			$this->set_request_options( \Tinify\Tinify::getClient() );
+			$this->last_error_code = 0;
 
-			$this->last_status_code = 0;
-			$source = \Tinify\fromBuffer( $input );
+			\Tinify\Tinify::getClient()->request( 'post', '/shrink' );
+			return true;
 
-			if ( $resize_options ) {
-				$source = $source->resize( $resize_options );
+		} catch(\Tinify\Exception $err) {
+			$this->last_error_code = $err->status;
+
+			if ( $err->status == 429 || $err->status == 400 ) {
+				return true;
 			}
 
-			if ( $preserve_options ) {
-				$source = $source->preserve( $preserve_options );
+			throw new Tiny_Exception(
+				$err->getMessage(),
+				get_class( $err ),
+				$err->status
+			);
+		}
+	}
+
+	protected function compress($input, $resize_opts, $preserve_opts) {
+		try {
+			$this->set_request_options( \Tinify\Tinify::getClient() );
+			$this->last_error_code = 0;
+
+			$source = \Tinify\fromBuffer( $input );
+
+			if ( $resize_opts ) {
+				$source = $source->resize( $resize_opts );
+			}
+
+			if ( $preserve_opts ) {
+				$source = $source->preserve( $preserve_opts );
 			}
 
 			$result = $source->result();
@@ -125,23 +111,33 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			);
 
 			$buffer = $result->toBuffer();
-
 			return array( $buffer, $meta );
 
 		} catch(\Tinify\Exception $err) {
-			$this->last_status_code = $err->status;
-			throw new Tiny_Exception( $err->getMessage(), get_class( $err ) );
+			$this->last_error_code = $err->status;
+
+			throw new Tiny_Exception(
+				$err->getMessage(),
+				get_class( $err ),
+				$err->status
+			);
 		}
 	}
 
 	public function create_key($email, $options) {
 		try {
-			$this->set_request_options( \Tinify\Tinify::getAnonymousClient() );
+			$this->set_request_options( \Tinify\Tinify::getClient() );
+			$this->last_error_code = 0;
+
 			\Tinify\createKey( $email, $options );
 		} catch(\Tinify\Exception $err) {
-			$this->last_status_code = $err->status;
-			list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
-			throw new Tiny_Exception( $message, get_class( $err ) );
+			$this->last_error_code = $err->status;
+
+			throw new Tiny_Exception(
+				$err->getMessage(),
+				get_class( $err ),
+				$err->status
+			);
 		}
 	}
 
