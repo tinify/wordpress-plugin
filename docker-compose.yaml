@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  wordpress:
+    build:
+      context: config
+      dockerfile: Dockerfile-wordpress-${VERSION}
+    ports:
+    - 80${VERSION}:80
+    volumes:
+    - .:/var/www/html/wp-content/plugins/tinypng-image-compression
+    links:
+    - mysql
+    - phantomjs
+    - webservice
+    environment:
+      WORDPRESS_DB_NAME: wordpress_${VERSION}
+      WORDPRESS_DB_PASSWORD: root
+
+  mysql:
+    image: mysql
+    ports:
+    - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  phantomjs:
+    ports:
+    - 8910:8910
+    build:
+      context: config
+      dockerfile: Dockerfile-phantomjs
+
+  webservice:
+    build:
+      context: config
+      dockerfile: Dockerfile-mock-webservice

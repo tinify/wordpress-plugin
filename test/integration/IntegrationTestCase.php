@@ -1,5 +1,6 @@
 <?php
 
+require dirname( __FILE__ ) . '/../unit/TinyTestCase.php';
 require dirname( __FILE__ ) . '/../helpers/integration-helper.php';
 require dirname( __FILE__ ) . '/../helpers/setup.php';
 
@@ -8,7 +9,7 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\UselessFileDetector;
 
-abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
+abstract class IntegrationTestCase extends Tiny_TestCase {
 	protected static $driver;
 
 	public static function set_up_before_class() {

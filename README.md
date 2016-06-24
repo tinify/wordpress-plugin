@@ -24,7 +24,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 
 ### Running the plugin in WordPress
 1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 45`.
-2. Use `docker ps` to check which port to use to connect to WordPress.
+2. Connect to Wordpress on port `80<version>` (e.g. port `8045`).
 
 ### Running the unit tests
 1. Run `bin/unit-tests <optional path to file>`.
