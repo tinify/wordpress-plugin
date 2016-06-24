@@ -247,6 +247,8 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		try {
 			$this->setExpectedException( 'Tiny_Exception' );
 			$this->compressor->compress_file( $this->vfs->url() . '/image.png' );
+		} catch(Tiny_Exception $err) {
+			throw $err;
 		} finally {
 			$this->assertEquals(
 				false,
