@@ -6,8 +6,9 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->after_compress_called = false;
-		$callback = function($compressor) {
-			$this->after_compress_called = true;
+		$after_compress_called = &$this->after_compress_called;
+		$callback = function($compressor) use(&$after_compress_called) {
+			$after_compress_called = true;
 		};
 		$this->compressor = Tiny_Compress::create( 'api1234', $callback );
 	}
