@@ -171,12 +171,12 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 		<thead>
 			<tr>
 				<th class="thumbnail"></th>
-				<th><?php echo __( 'File', 'tiny-compress-images' ) ?></th>
+				<th class="column-primary" ><?php echo __( 'File', 'tiny-compress-images' ) ?></th>
 				<th><?php echo __( 'Sizes optimized', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Original total size', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Optimized total size', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Savings', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Status', 'tiny-compress-images' ) ?></th>
+				<th><?php echo __( 'Original size', 'tiny-compress-images' ) ?></th>
+				<th><?php echo __( 'Optimized size', 'tiny-compress-images' ) ?></th>
+				<th class="savings" ><?php echo __( 'Savings', 'tiny-compress-images' ) ?></th>
+				<th class="status" ><?php echo __( 'Status', 'tiny-compress-images' ) ?></th>
 			</tr>
 		</thead>
 		<tbody>

@@ -1,306 +1,343 @@
 :root {
-  --green: #7acb44;
-  --dark-green: #65ad36;
-  --light-green: #79ba4e;
-  --light-border-color: #e5e5e5;
-  --error-color: #d54e21;
-  --red: #d0021b;
-  --dark-red: #920011;
-  --blue: #0085ba;
-  --dark-blue: #006799;
-  --light-blue: #0073aa;
-  --load-bar-blue: #2185b5;
+	--green: #7acb44;
+	--dark-green: #65ad36;
+	--light-green: #79ba4e;
+	--light-border-color: #e5e5e5;
+	--error-color: #d54e21;
+	--red: #d0021b;
+	--dark-red: #920011;
+	--blue: #0085ba;
+	--dark-blue: #006799;
+	--light-blue: #0073aa;
+	--load-bar-blue: #2185b5;
 }
 
 div.tiny-bulk-optimization div.whitebox,
 div.tiny-bulk-optimization table.whitebox {
-  margin-top: 1rem;
-  box-shadow: 0 1px 1px rgba(0,0,0,.04);
-  border: 1px solid var(--light-border-color);
-  background-color: #fff;
+	margin-top: 1rem;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	border: 1px solid var(--light-border-color);
+	background-color: #fff;
 }
 
 div.tiny-bulk-optimization div.overview {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics,
 div.tiny-bulk-optimization div.overview div.savings {
-  flex: 1;
-  margin: 1rem 2rem;
+	flex: 1;
+	margin: 1rem 2rem;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: center;
-  border: 1px solid var(--light-border-color);
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: center;
+	border: 1px solid var(--light-border-color);
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item {
-  position: relative;
-  flex: 1;
-  min-width: 150px;
-  padding: 1rem 0;
-  text-align: center;
+	position: relative;
+	flex: 1;
+	min-width: 150px;
+	padding: 1rem 0;
+	text-align: center;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item h3 {
-  max-width: 90%;
-  margin: 0 auto 1rem auto;
-  text-transform: uppercase;
-  color: #bbb;
-  font-size: 0.9rem;
-  font-weight: normal;
+	max-width: 90%;
+	margin: 0 auto 1rem auto;
+	text-transform: uppercase;
+	color: #bbb;
+	font-size: 0.9rem;
+	font-weight: normal;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item span {
-  font-size: 1.5rem;
-  font-weight: bold;
-  line-height: 1rem;
+	font-size: 1.5rem;
+	font-weight: bold;
+	line-height: 1rem;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item div.tooltip {
-  position: relative;
-  display: inline-block;
-  vertical-align: super;
+	position: relative;
+	display: inline-block;
+	vertical-align: super;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item div.tooltip span.dashicons {
-  font-weight: normal;
-  color: #0085ba;
-  font-size: 1rem;
+	font-weight: normal;
+	color: #0085ba;
+	font-size: 1rem;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item div.tooltip div.tip {
-  position: absolute;
-  z-index: 10;
-  display: none;
-  top: 50%;
-  left: 130%;
-  width: 15rem;
-  padding: 0 1rem;
-  background-color: #fff;
-  box-shadow: 1px 1px 4px rgba(0,0,0,.2);
-  border: 1px solid var(--light-border-color);
-  text-align: left;
+	position: absolute;
+	z-index: 10;
+	display: none;
+	top: 50%;
+	left: 130%;
+	width: 15rem;
+	padding: 0 1rem;
+	background-color: #fff;
+	box-shadow: 1px 1px 4px rgba(0,0,0,.2);
+	border: 1px solid var(--light-border-color);
+	text-align: left;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item div.tooltip:hover div.tip {
-  display: block;
+	display: block;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item:nth-child(2):before,
 div.tiny-bulk-optimization div.overview div.statistics div.totals div.item:nth-child(3):before {
-  position: absolute;
-  top: 25%;
-  left: 0;
-  width: 1px;
-  height: 50%;
-  background-color: var(--light-border-color);
-  content: ' ';
+	position: absolute;
+	top: 25%;
+	left: 0;
+	width: 1px;
+	height: 50%;
+	background-color: var(--light-border-color);
+	content: ' ';
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.notes {
-  display: flex;
+	display: flex;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.notes p:nth-child(odd) {
-  flex-basis: 18%;
-  font-size: 0.9rem;
-  font-weight: bold;
+	flex-basis: 18%;
+	font-size: 0.9rem;
+	font-weight: bold;
 }
 
 div.tiny-bulk-optimization div.overview div.statistics div.notes p:nth-child(even) {
-  flex: 1;
-  margin-left: 1rem;
+	flex: 1;
+	margin-left: 1rem;
 }
 
 div.tiny-bulk-optimization div.overview div.savings {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 div.tiny-bulk-optimization div.overview div.savings h3 {
-  flex-basis: 100%;
+	flex-basis: 100%;
 }
 
 div.tiny-bulk-optimization div.overview div.savings div.savings-chart {
-  flex-basis: 45%;
+	flex-basis: 45%;
 }
 
 div.tiny-bulk-optimization div.overview div.savings table.savings-numbers {
-  flex-basis: 50%;
-  margin-top: 2.5rem;
+	flex-basis: 50%;
+	margin-top: 2.5rem;
 }
 
 div.tiny-bulk-optimization div.overview div.savings table.savings-numbers tr {
-  height: 2.5rem;
+	height: 2.5rem;
 }
 
 div.tiny-bulk-optimization div.overview div.savings table.savings-numbers tr td:first-child {
-  padding-right: 1rem;
-  font-size: 1.2rem;
-  text-align: right;
+	padding-right: 1rem;
+	font-size: 1.2rem;
+	text-align: right;
 }
 
 div.tiny-bulk-optimization div.overview div.savings table.savings-numbers tr td:last-child {
-  color: #bbb;
+	color: #bbb;
 }
 
 div.tiny-bulk-optimization div.overview div.savings table.savings-numbers td.green {
-  color: var(--green);
+	color: var(--green);
 }
 
 div.tiny-bulk-optimization div.overview div.optimize {
-  flex-basis: 100%;
-  margin: 1rem 2rem;
-  text-align: center;
+	flex-basis: 100%;
+	margin: 1rem 2rem;
+	text-align: center;
 }
 
 div.tiny-bulk-optimization div.overview div.optimize div.progressbar {
-  position: relative;
-  height: 1rem;
-  margin-bottom: 2rem;
-  padding: 0.5rem;
-  border-radius: 2rem;
-  font-size: 0.9rem;
-  font-weight: bold;
-  opacity: 0.99;
-  color: #fff;
-  background-color: #ebebeb;
+	position: relative;
+	height: 1rem;
+	margin-bottom: 2rem;
+	padding: 0.5rem;
+	border-radius: 2rem;
+	font-size: 0.9rem;
+	font-weight: bold;
+	opacity: 0.99;
+	color: #fff;
+	background-color: #ebebeb;
 }
 
 div.tiny-bulk-optimization div.overview div.optimize div.progressbar div.progressbar-progress {
-  background: url('stripe-blue.png');
-  position: absolute;
-  z-index: -2;
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 1rem;
-  padding: 0.5rem 0;
-  border-radius: 2rem;
-  opacity: 1;
-  transition: all 1s ease;
-  /* TODO: serious performance issue with animation in Firefox */
-  animation: progress-bar 8s linear infinite;
+	background: url('stripe-blue.png');
+	position: absolute;
+	z-index: -2;
+	top: 0;
+	left: 0;
+	width: 0%;
+	height: 1rem;
+	padding: 0.5rem 0;
+	border-radius: 2rem;
+	opacity: 1;
+	transition: all 1s ease;
+	/* TODO: serious performance issue with animation in Firefox */
+	animation: progress-bar 8s linear infinite;
 }
 
 @keyframes progress-bar{
-  to {
-    background-position: 100% 0;
-  }
+	to {
+		background-position: 100% 0;
+	}
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button {
-  min-width: 200px;
-  height: 3rem;
-  padding: 0;
-  font-size: 0.9rem;
+	min-width: 200px;
+	height: 3rem;
+	padding: 0;
+	font-size: 0.9rem;
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button span {
-  display: none;
-  width: inherit;
-  height: 30px;
-  padding: 0.5rem 1rem;
-  pointer-events: none;
-  color: #fff;
+	display: none;
+	width: inherit;
+	height: 30px;
+	padding: 0.5rem 1rem;
+	pointer-events: none;
+	color: #fff;
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button span.cancel,
 div.tiny-bulk-optimization div.overview div.optimize button span.cancelling {
-  background: var(--red);
-  border-color: var(--red) #000 var(--dark-red);
-  text-shadow: 0 -1px 1px var(--dark-red), 1px 0 1px var(--dark-red), 0 1px 1px var(--dark-red), -1px 0 1px var(--dark-red);
-  box-shadow: 0 0 3px rgba(208, 2, 27, 0.8)
+	background: var(--red);
+	border-color: var(--red) #000 var(--dark-red);
+	text-shadow: 0 -1px 1px var(--dark-red), 1px 0 1px var(--dark-red), 0 1px 1px var(--dark-red), -1px 0 1px var(--dark-red);
+	box-shadow: 0 0 3px rgba(208, 2, 27, 0.8)
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button span.optimizing {
-  background: var(--blue);
-  border-color: var(--light-blue) var(--dark-blue) var(--dark-blue);
-  box-shadow: 0 1px 0 var(--dark-blue);
-  text-shadow: 0 -1px 1px var(--dark-blue),1px 0 1px var(--dark-blue),0 1px 1px var(--dark-blue),-1px 0 1px var(--dark-blue);
+	background: var(--blue);
+	border-color: var(--light-blue) var(--dark-blue) var(--dark-blue);
+	box-shadow: 0 1px 0 var(--dark-blue);
+	text-shadow: 0 -1px 1px var(--dark-blue),1px 0 1px var(--dark-blue),0 1px 1px var(--dark-blue),-1px 0 1px var(--dark-blue);
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button span.start-optimizing {
-  background: var(--green);
-  border-color: var(--light-green) var(--dark-green) var(--dark-green);
-  text-shadow: 0 -1px 1px var(--dark-green), 1px 0 1px var(--dark-green), 0 1px 1px var(--dark-green), -1px 0 1px var(--dark-green);
-  box-shadow: 0 1px 0 var(--dark-green);
+	background: var(--green);
+	border-color: var(--light-green) var(--dark-green) var(--dark-green);
+	text-shadow: 0 -1px 1px var(--dark-green), 1px 0 1px var(--dark-green), 0 1px 1px var(--dark-green), -1px 0 1px var(--dark-green);
+	box-shadow: 0 1px 0 var(--dark-green);
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button:focus span.start-optimizing {
-  border-color: var(--green);
-  box-shadow: 0 0 3px rgba(122, 203, 68, 0.8)
+	border-color: var(--green);
+	box-shadow: 0 0 3px rgba(122, 203, 68, 0.8)
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button span.active {
-  display: block;
-  pointer-events: none;
+	display: block;
+	pointer-events: none;
 }
 
 div.tiny-bulk-optimization div.overview div.optimize button ~ div.spinner {
-  position: absolute;
-  display: none;
-  width: 30px;
-  height: 30px;
-  margin-top: 10px;
-  background-size: 30px 30px;
+	position: absolute;
+	display: none;
+	width: 30px;
+	height: 30px;
+	margin-top: 10px;
+	background-size: 30px 30px;
 }
 
 div.tiny-bulk-optimization div.savings-chart {
-  position: relative;
+	position: relative;
 }
 
 div.tiny-bulk-optimization div.savings-chart div.textual {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 200px;
-  height: 200px;
-  color: var(--green);
-  font-size: 1.2rem;
-  text-align: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+	height: 200px;
+	color: var(--green);
+	font-size: 1.2rem;
+	text-align: center;
 }
 
 div.tiny-bulk-optimization div.savings-chart div.textual div {
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.5rem;
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	line-height: 1.5rem;
 }
 
 div.tiny-bulk-optimization div.savings-chart div.textual div.percentage {
-  margin-top: 40%;
-  font-size: 2rem;
+	margin-top: 40%;
+	font-size: 2rem;
 }
 
-div.tiny-bulk-optimization #media-items tr.media-item td.failed span.error {
-  position: absolute;
-  color: var(--error-color);
+div.tiny-bulk-optimization #media-items thead th.thumbnail {
+	width: 30px;
 }
 
-div.tiny-bulk-optimization #media-items tr.media-item td.failed span.message {
-  display: inline-block;
-  margin-left: 24px;
+div.tiny-bulk-optimization #media-items thead th.savings {
+	width: 70px;
 }
 
-div.tiny-bulk-optimization #media-items tr th.thumbnail {
-  width: 30px;
-}
-div.tiny-bulk-optimization #media-items tr td.thumbnail {
-  width: 30px;
-  height: 30px;
-  padding-top: 6px;
+div.tiny-bulk-optimization #media-items thead th.status {
+	width: 200px;
 }
 
-div.tiny-bulk-optimization #media-items tr td {
-  vertical-align: middle;
+div.tiny-bulk-optimization #media-items th.thumbnail {
+	width: 30px;
+	height: 32px;
+	padding-top: 6px;
+	vertical-align: top;
 }
+
+div.tiny-bulk-optimization #media-items td {
+	padding-top: 12px;
+}
+
+div.tiny-bulk-optimization #media-items td.name,
+div.tiny-bulk-optimization #media-items td.status {
+	padding-bottom: 12px;
+}
+
+div.tiny-bulk-optimization #media-items td.column-primary button {
+	margin-top: 6px;
+}
+
+div.tiny-bulk-optimization #media-items td.failed span.error {
+	position: absolute;
+	color: var(--error-color);
+}
+
+div.tiny-bulk-optimization #media-items td.failed span.message {
+	margin-left: 24px;
+}
+
+div.tiny-bulk-optimization table#media-items tr.success button.toggle-row:before {
+	color: var(--green);
+	content: "\f147"; /* yes */
+}
+
+div.tiny-bulk-optimization table#media-items tr.failed button.toggle-row:before {
+	color: var(--error-color);
+	content: "\f348"; /* info */
+}
+
+div.tiny-bulk-optimization table#media-items tr.failed.is-expanded span.icon {
+	display: none;
+}
+
+div.tiny-bulk-optimization table#media-items tr.failed.is-expanded td.status span.message {
+	margin-left:0;
+}
+

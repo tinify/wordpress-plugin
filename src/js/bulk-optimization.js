@@ -35,11 +35,10 @@
     jQuery("div.progressbar-progress").css("animation", "none");
   }
 
-  function updateViewAfterSuccess(row, data) {
+  function updateRowAfterCompression(row, data) {
     var successFullCompressions = parseInt(data.success)
     var successFullSaved = parseInt(data.size_change)
     var newHumanReadableLibrarySize = data.human_readable_library_size
-    row.find(".status").addClass("success")
     if (successFullCompressions == 0) {
       row.find(".status").html(tinyCompress.L10nNoActionTaken)
     } else {
@@ -57,24 +56,26 @@
     var row = jQuery("#media-items tr").eq(parseInt(i)+1)
 
     if (error) {
-      row.find(".status").addClass("failed")
+      row.addClass("failed")
       row.find(".status").html(tinyCompress.L10nInternalError + "<br>" + error.toString())
       row.find(".status").attr("title", error.toString())
     } else if (data == null) {
-      row.find(".status").addClass("failed")
+      row.addClass("failed")
       row.find(".status").html(tinyCompress.L10nCancelled)
     } else if (data.error) {
-      row.find(".status").addClass("failed")
+      row.addClass("failed")
       row.find(".status").html(tinyCompress.L10nError + "<br>" + data.error)
       row.find(".status").attr("title", data.error)
     } else if (data.failed > 0) {
-      row.find(".status").addClass("failed")
+      row.addClass("failed")
       row.find(".status").html("<span class=\"icon dashicons dashicons-warning error\"></span><span class=\"message\">" + tinyCompress.L10nLatestError + ": " + data.message + "</span>");
       row.find(".status").attr("title", data.message)
     } else {
-      // This recalculates all statistics
-      updateViewAfterSuccess(row, data)
+      row.addClass("success")
+      updateRowAfterCompression(row, data)
     }
+
+    row.find(".name").html(items[i].post_title + "<button class=\"toggle-row\" type=\"button\"><span class=\"screen-reader-text\">Show more details</span></button>")
 
     if (!data.image_sizes_optimized) {
         data.image_sizes_optimized = "-";
@@ -157,7 +158,15 @@
     var list = jQuery("#media-items tbody")
     var row
     for (var drawNow = window.totalRowsDrawn; drawNow < Math.min( rowsToDraw + window.totalRowsDrawn, items.length); drawNow++) {
-      row = jQuery("<tr class=\"media-item\"><td class=\"thumbnail\" /><td class=\"name\" /><td class=\"image-sizes-optimized\" /><td class=\"initial-total-size\" /><td class=\"optimized-total-size\" /><td class=\"savings\" /><td class=\"status todo\" /></tr>")
+      row = jQuery("<tr class=\"media-item\">" +
+          "<th class=\"thumbnail\" />" +
+          "<td class=\"name column-primary\" />" +
+          "<td class=\"image-sizes-optimized\" data-colname=\"Sizes optimized\" ></>" +
+          "<td class=\"initial-total-size\" data-colname=\"Initial size\" ></>" +
+          "<td class=\"optimized-total-size\" data-colname=\"Optimized size\" ></>" +
+          "<td class=\"savings\" data-colname=\"Savings\" ></>" +
+          "<td class=\"status todo\" data-colname=\"Status\" />" +
+        "</tr>")
       row.find(".status").html(tinyCompress.L10nWaiting)
       row.find(".name").html(items[drawNow].post_title)
       list.append(row)
