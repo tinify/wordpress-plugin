@@ -48,9 +48,15 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		if ( $status_code == 429 || $status_code == 400 ) {
 			return true;
-		} else {
+		} else if ( is_array( $details ) && isset( $details['error'] ) ) {
 			throw new Tiny_Exception(
 				$details['message'],
+				'Tinify\Exception',
+				$status_code
+			);
+		} else {
+			throw new Tiny_Exception(
+				'Unexpected error during validation',
 				'Tinify\Exception',
 				$status_code
 			);
@@ -62,7 +68,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		list($details, $headers, $status_code) = $this->request( $params );
 
 		$output_url = isset( $headers['location'] ) ? $headers['location'] : null;
-		if ( isset( $details['error'] ) && $details['error'] ) {
+		if ( $status_code >= 400 && is_array( $details ) && isset( $details['error'] ) ) {
 			throw new Tiny_Exception(
 				$details['message'],
 				'Tinify\Exception',
@@ -84,7 +90,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$params = $this->output_request_options( $resize_opts, $preserve_opts );
 		list($output, $headers, $status_code) = $this->request( $params, $output_url );
 
-		if ( isset( $output['error'] ) && $output['error'] ) {
+		if ( $status_code >= 400 && is_array( $output ) && isset( $output['error'] ) ) {
 			throw new Tiny_Exception(
 				$output['message'],
 				'Tinify\Exception',
