@@ -182,10 +182,11 @@ div.tiny-bulk-optimization div.overview div.optimize div.progressbar div.progres
 	z-index: -2;
 	top: 0;
 	left: 0;
+	min-width: 32px;
 	width: 0%;
-	height: 1rem;
-	padding: 0.5rem 0;
-	border-radius: 2rem;
+	height: 16px;
+	padding: 8px 0;
+	border-radius: 16px;
 	opacity: 1;
 	transition: all 1s ease;
 	/* TODO: serious performance issue with animation in Firefox */
