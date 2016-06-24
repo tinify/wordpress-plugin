@@ -12,6 +12,8 @@ env:
     DOCKER_VERSION=1.12.0~rc2
 before_script:
 - composer install
+install:
+- bin/install-docker
 script:
 - bin/unit-tests
 - bin/integration-tests 45
