@@ -132,15 +132,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function enqueue_scripts( $hook ) {
 		wp_enqueue_style( self::NAME .'_admin', plugins_url( '/css/admin.css', __FILE__ ),
-		array(), self::plugin_version() );
+		array(), self::version() );
 		wp_register_script( self::NAME .'_admin', plugins_url( '/js/admin.js', __FILE__ ),
-		array(), self::plugin_version(), true );
+		array(), self::version(), true );
 
 		// WordPress < 3.3 does not handle multidimensional arrays
 		wp_localize_script( self::NAME .'_admin', 'tinyCompress', array(
 			'nonce' => wp_create_nonce( 'tiny-compress' ),
 			'wpVersion' => self::wp_version(),
-			'pluginVersion' => self::plugin_version(),
+			'pluginVersion' => self::version(),
 			'L10nAllDone' => __( 'All images are processed', 'tiny-compress-images' ),
 			'L10nNoActionTaken' => __( 'No action taken', 'tiny-compress-images' ),
 			'L10nBulkAction' => __( 'Compress Images', 'tiny-compress-images' ),
@@ -160,13 +160,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			wp_enqueue_style(
 				self::NAME . '_tiny_bulk_optimization',
 				plugins_url( '/css/bulk-optimization.css', __FILE__ ),
-				array(), self::plugin_version()
+				array(), self::version()
 			);
 
 			wp_register_script(
 				self::NAME . '_tiny_bulk_optimization',
 				plugins_url( '/js/bulk-optimization.js', __FILE__ ),
-				array(), self::plugin_version(), true
+				array(), self::version(), true
 			);
 
 			wp_enqueue_script( self::NAME .'_tiny_bulk_optimization' );
