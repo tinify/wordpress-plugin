@@ -244,21 +244,24 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 
 		file_put_contents( $this->vfs->url() . '/image.png', 'unoptimized' );
 
+		$exception = null;
 		try {
-			$this->setExpectedException( 'Tiny_Exception' );
 			$this->compressor->compress_file( $this->vfs->url() . '/image.png' );
-		} catch(Tiny_Exception $err) {
-			throw $err;
-		} finally {
-			$this->assertEquals(
-				false,
-				$this->compressor->limit_reached()
-			);
-
-			$this->assertEquals(
-				true,
-				$this->after_compress_called
-			);
+		} catch (Exception $err) {
+			$exception = $err;
 		}
+
+		$this->assertEquals(
+			false,
+			$this->compressor->limit_reached()
+		);
+
+		$this->assertEquals(
+			true,
+			$this->after_compress_called
+		);
+
+		$this->setExpectedException( 'Tiny_Exception' );
+		throw $exception;
 	}
 }

@@ -62,25 +62,25 @@ abstract class Tiny_Compress {
 			);
 		}
 
+		$result = false;
+		$message = null;
+
 		try {
-			return (object) array(
-				'ok' => $this->validate(),
-				'message' => null,
-			);
+			$result = $this->validate();
 		} catch(Tiny_Exception $err) {
 			if ( $err->get_status() == 401 ) {
 				$message = 'The key that you have entered is not valid';
 			} else {
 				list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
 			}
-
-			return (object) array(
-				'ok' => false,
-				'message' => $message,
-			);
-		} finally {
-			$this->call_after_compress_callback();
 		}
+
+		$this->call_after_compress_callback();
+
+		return (object) array(
+			'ok' => $result,
+			'message' => $message,
+		);
 	}
 
 	public function compress_file($file, $resize_opts = array(), $preserve_opts = array()) {
@@ -106,17 +106,19 @@ abstract class Tiny_Compress {
 				$resize_opts,
 				$preserve_opts
 			);
-
-			file_put_contents( $file, $output );
-
-			if ( $resize_opts ) {
-				$details['output']['resized'] = true;
-			}
-
-			return $details;
-		} finally {
+		} catch (Tiny_Exception $err) {
 			$this->call_after_compress_callback();
+			throw $err;
 		}
+
+		$this->call_after_compress_callback();
+		file_put_contents( $file, $output );
+
+		if ( $resize_opts ) {
+			$details['output']['resized'] = true;
+		}
+
+		return $details;
 	}
 
 	protected abstract function validate();
