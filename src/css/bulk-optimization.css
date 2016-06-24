@@ -298,6 +298,7 @@ div.tiny-bulk-optimization #media-items tr th.thumbnail {
 div.tiny-bulk-optimization #media-items tr td.thumbnail {
   width: 30px;
   height: 30px;
+  padding-top: 6px;
 }
 
 div.tiny-bulk-optimization #media-items tr td {

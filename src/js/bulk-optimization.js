@@ -56,12 +56,6 @@
 
     var row = jQuery("#media-items tr").eq(parseInt(i)+1)
 
-    if (data.thumbnail) {
-      var img = jQuery("<img class=\"pinkynail\">")
-      img.attr("src", data.thumbnail)
-      row.children("td.thumbnail").html(img)
-    }
-
     if (error) {
       row.find(".status").addClass("failed")
       row.find(".status").html(tinyCompress.L10nInternalError + "<br>" + error.toString())
@@ -97,6 +91,7 @@
       data.savings += "%";
     }
 
+    row.find(".thumbnail").html(data.thumbnail)
     row.find(".image-sizes-optimized").html(data.image_sizes_optimized);
     row.find(".initial-total-size").html(data.initial_total_size);
     row.find(".optimized-total-size").html(data.optimized_total_size);

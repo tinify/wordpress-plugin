@@ -195,11 +195,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$result['optimized_total_size'] = size_format( $image_statistics['optimized_total_size'], 2 );
 		$result['savings'] = $tiny_image->get_savings( $image_statistics );
 		$result['status'] = $this->settings->get_status();
-		$thumb = $tiny_image->get_image_size( 'thumbnail' );
-		if ( ! $thumb ) {
-			$thumb = $tiny_image->get_image_size();
-		}
-		$result['thumbnail'] = $thumb->url;
+		$result['thumbnail'] = wp_get_attachment_image( $id, array('30', '30'), true, array( "class"=> "pinkynail", "alt"=> "" ) );
 		$result['size_change'] = $size_after - $size_before;
 		$result['human_readable_library_size'] = size_format( $newLibrarySize, 2 );
 
