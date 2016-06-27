@@ -4,9 +4,9 @@ services:
   wordpress:
     build:
       context: config
-      dockerfile: Dockerfile-wordpress-${VERSION}
+      dockerfile: Dockerfile-wordpress-${WORDPRESS_VERSION}
     ports:
-    - 80${VERSION}:80
+    - 80${WORDPRESS_VERSION}:80
     volumes:
     - .:/var/www/html/wp-content/plugins/tinypng-image-compression
     links:
@@ -14,7 +14,7 @@ services:
     - phantomjs
     - webservice
     environment:
-      WORDPRESS_DB_NAME: wordpress_${VERSION}
+      WORDPRESS_DB_NAME: wordpress_${WORDPRESS_VERSION}
       WORDPRESS_DB_PASSWORD: root
 
   mysql:

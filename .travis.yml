@@ -4,20 +4,80 @@ php:
 - 5.4
 - 5.5
 - 5.6
+- 7.0
 - hhvm
 env:
   global:
-    VERSION=45
     DOCKER_VERSION=1.12.0~rc2
 matrix:
   include:
   - dist: trusty
-    sudo: required
     php: 5.6
-    install: bin/install-docker
-    script: bin/integration-tests 45
-before_script:
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=45
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=44
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=43
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=42
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=41
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=40
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=39
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=38
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=37
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=36
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=35
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=34
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=33
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=32
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=31
+    script: bin/integration-tests
+  - dist: trusty
+    php: 5.6
+    env: INTEGRATION_TESTS=true WORDPRESS_VERSION=30
+    script: bin/integration-tests
+install:
 - composer install
+- if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo bin/install-docker; fi
 script:
 - bin/unit-tests
 - bin/check-style --warning-severity=0 src
