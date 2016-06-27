@@ -41,7 +41,11 @@ function restore_config {
 }
 
 function start_services {
-  docker-compose up -d --force-recreate --build
+  if [ "${KEEP_ALIVE}" ]; then
+    docker-compose up -d --build > /dev/null
+  else
+    docker-compose up -d --build --force-recreate > /dev/null
+  fi
 }
 
 function stop_services {
@@ -60,14 +64,16 @@ function wait_for_services {
 }
 
 function setup {
+  prepare_test_config
   start_services
   wait_for_services
-  prepare_test_config
 }
 
 function teardown {
   restore_config
-  stop_services
+  if ! [ "${KEEP_ALIVE}" ]; then
+    stop_services
+  fi
 }
 
 trap teardown EXIT

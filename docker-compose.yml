@@ -29,11 +29,17 @@ services:
   phantomjs:
     ports:
     - 8910:8910
+    volumes:
+    - ./test/fixtures:/test/fixtures
     build:
       context: config
       dockerfile: Dockerfile-phantomjs
 
   webservice:
+    ports:
+    - 80:80
+    volumes:
+    - ./test/mock-tinypng-webservice:/var/www/html
     build:
       context: config
       dockerfile: Dockerfile-mock-webservice
