@@ -68,10 +68,6 @@ matrix:
     php: 7.0
     env: WORDPRESS_VERSION=31 INTEGRATION_TESTS=true
     script: bin/integration-tests
-  - dist: trusty
-    php: 7.0
-    env: WORDPRESS_VERSION=30 INTEGRATION_TESTS=true
-    script: bin/integration-tests
 install:
 - composer install
 - if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo bin/install-docker; fi

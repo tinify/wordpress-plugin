@@ -25,9 +25,7 @@ function configure_wordpress_for_testing($driver) {
 		login( $driver );
 		clear_uploads( $driver );
 	} else {
-		if ( wordpress_version() > 30 ) {
-			setup_wordpress_language( $driver );
-		}
+		setup_wordpress_language( $driver );
 		setup_wordpress_site( $driver );
 		set_siteurl( wordpress() );
 		login( $driver );
@@ -138,8 +136,9 @@ function login($driver) {
 
 	try {
 		$driver->get( wordpress( '/wp-login.php' ) );
-		$driver->executeScript( 'document.getElementById("user_login").value = "admin"' );
-		$driver->executeScript( 'document.getElementById("user_pass").value = "admin"' );
+
+		$driver->findElement( WebDriverBy::id( 'user_login' ) )->sendKeys( 'admin' );
+		$driver->findElement( WebDriverBy::id( 'user_pass' ) )->sendKeys( 'admin' );
 		$driver->findElement( WebDriverBy::id( 'loginform' ) )->submit();
 
 		$driver
@@ -151,7 +150,7 @@ function login($driver) {
 			);
 	} catch (Exception $e) {
 		var_dump( $driver->getPageSource() );
-		var_dump( $e );
+		print( $e );
 		throw new UnexpectedValueException( 'Login failed.' );
 	}
 }
