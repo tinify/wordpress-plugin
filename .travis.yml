@@ -13,11 +13,11 @@ matrix:
   include:
   - dist: trusty
     sudo: required
+    php: 5.6
+    install: bin/install-docker
     script: bin/integration-tests 45
 before_script:
 - composer install
-install:
-- bin/install-docker
 script:
 - bin/unit-tests
 - bin/check-style --warning-severity=0 src
