@@ -6,6 +6,7 @@ $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed' ) );
 $active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed' ), $active_tinify_sizes );
 $image_statistics = $tiny_image->get_statistics();
+$available_unoptimised_sizes = $image_statistics['available_unoptimised_sizes'];
 $size_before = $image_statistics['initial_total_size'];
 $size_after = $image_statistics['optimized_total_size'];
 
@@ -21,14 +22,14 @@ ksort( $size_exists );
 				<span class="icon dashicons dashicons-warning error"></span>
 			<?php } else if ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes alert"></span>
-			<?php } else if ( $total['compressed'] > 0 && $active['uncompressed'] > 0 ) { ?>
+			<?php } else if ( $total['compressed'] > 0 && $available_unoptimised_sizes > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes alert"></span>
 			<?php } else if ( $total['compressed'] > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes success"></span>
 			<?php } ?>
 			<span class="icon spinner hidden"></span>
 
-			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $active['uncompressed']) ) { ?>
+			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimised_sizes) ) { ?>
 				<span class="message">
 					<strong><?php echo $total['has_been_compressed'] ?></strong>
 					<span>
@@ -38,30 +39,17 @@ ksort( $size_exists );
 				<br/>
 			<?php } ?>
 
-			<?php if ( $active['never_compressed'] > 0 ) { ?>
-				<span class="message">
-					<?php echo htmlspecialchars( sprintf( _n( '%d size not compressed', '%d sizes not compressed', $active['never_compressed'], 'tiny-compress-images' ), $active['never_compressed'] ) ) ?>
-				</span>
-				<br />
-			<?php } ?>
-
-			<?php if ( $total['missing'] > 0 ) { ?>
-				<span class="message">
-					<?php echo htmlspecialchars( sprintf( _n( '%d file removed', '%d files removed', $total['missing'], 'tiny-compress-images' ), $total['missing'] ) ) ?>
-				</span>
-				<br />
-			<?php } ?>
-
-			<?php if ( $total['modified'] > 0 ) { ?>
-				<span class="message">
-					<?php echo htmlspecialchars( sprintf( _n( '%d file modified after compression', '%d files modified after compression', $total['modified'], 'tiny-compress-images' ), $total['modified'] ) ) ?>
+			<?php if ( $available_unoptimised_sizes > 0 ) { ?>
+				<span class="message" stlye="color: red" >
+					<?php echo htmlspecialchars( sprintf( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimised_sizes, 'tiny-compress-images' ), $available_unoptimised_sizes ) ) ?>
 				</span>
 				<br />
 			<?php } ?>
 
 			<?php if ( $size_before - $size_after ) { ?>
 				<span class="message">
-					<?php printf( esc_html__( 'Total savings %s', 'tiny-compress-images' ), str_replace( ' ', '&nbsp;', size_format( $size_before - $size_after, 1 ) ) ) ?>
+				<?php printf(esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 )
+				 ?>
 				</span>
 				<br />
 			<?php } ?>
@@ -157,9 +145,10 @@ ksort( $size_exists );
 		</table>
 		<?php if ( $size_before && $size_after ) { ?>
 			<p><strong>
-				<?php printf(esc_html__( 'Total savings %s (%.0f%%)', 'tiny-compress-images' ),
-					size_format( $size_before - $size_after, 1 ),
-				(1 - $size_after / floatval( $size_before )) * 100) ?>
+				<?php printf(esc_html__( 'Total savings %.0f%% (%s) ', 'tiny-compress-images' ),
+					(1 - $size_after / floatval( $size_before )) * 100,
+					size_format( $size_before - $size_after, 1 ))
+				 ?>
 			</strong></p>
 		<?php } ?>
 	</div>
