@@ -157,8 +157,8 @@ function login($driver) {
 
 function activate_plugin($driver) {
 	$driver->get( wordpress( '/wp-admin/plugins.php' ) );
-	$activate_links = $driver->findElements( WebDriverBy::xpath( '//a[starts-with(@href, "plugins.php?action=activate&plugin=tinypng-image-compression")]' ) );
-	$deactivate_links = $driver->findElements( WebDriverBy::xpath( '//a[starts-with(@href, "plugins.php?action=deactivate&plugin=tinypng-image-compression")]' ) );
+	$activate_links = $driver->findElements( WebDriverBy::xpath( '//a[starts-with(@href, "plugins.php?action=activate&plugin=tiny-compress-images")]' ) );
+	$deactivate_links = $driver->findElements( WebDriverBy::xpath( '//a[starts-with(@href, "plugins.php?action=deactivate&plugin=tiny-compress-images")]' ) );
 	if ( count( $activate_links ) > 0 ) {
 		$activate_links[0]->click();
 	} elseif ( count( $deactivate_links ) > 0 ) {

@@ -87,7 +87,7 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 
 	public function test_image_size_filename() {
 		$image_size = new Tiny_Image_Size( 'random_file_name.jpg' );
-		$this->assertEquals( "random_file_name.jpg", $image_size->filename );
+		$this->assertEquals( 'random_file_name.jpg', $image_size->filename );
 	}
 
 	public function test_image_does_not_still_exist_if_file_does_not_exist() {

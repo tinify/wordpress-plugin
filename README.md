@@ -30,10 +30,8 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 1. Run `bin/unit-tests <optional path to file>`.
 
 ### Running the integration tests
-1. Start PhantomJS server: `phantomjs --wd`. Tested with version 2.1.1.
-2. Run `bin/integration-tests $version [ $to_version ]` (When $to_version is
-added, all versions between $version and $to_version are tested). E.g.
-`bin/integration-tests 41` or `bin/integration-tests 40 42`.
+1. Install Docker 1.12 and docker-compose.
+2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 45`.
 
 ### Translating the plugin
 Language packs will be generated for the plugin once translations for a

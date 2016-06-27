@@ -18,7 +18,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 	public function test_plugin_list_should_include_title() {
 		$element = self::$driver->findElement(
 			WebDriverBy::cssSelector(
-				'tr[data-slug=compress-jpeg-png-images] td.plugin-title strong'
+				'tr#compress-jpeg-png-images td.plugin-title strong'
 			)
 		);
 
@@ -31,7 +31,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 	public function test_plugin_list_should_include_settings_link() {
 		$element = self::$driver->findElement(
 			WebDriverBy::cssSelector(
-				'tr[data-slug=compress-jpeg-png-images] span.settings a'
+				'tr#compress-jpeg-png-images span.settings a'
 			)
 		);
 
