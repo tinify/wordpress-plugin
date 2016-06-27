@@ -84,12 +84,12 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 
 		$testmeta = $this->wp->getTestMetadata();
-		$meta = new Tiny_Image( 1, $testmeta );
-		$meta->get_image_size()->add_request();
-		$meta->get_image_size()->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
-		$meta->get_image_size( 'large' )->add_request();
-		$meta->get_image_size( 'large' )->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
-		$meta->update_tiny_meta();
+		$tiny_image = new Tiny_Image( 1, $testmeta );
+		$tiny_image->get_image_size()->add_tiny_meta_start();
+		$tiny_image->get_image_size()->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
+		$tiny_image->get_image_size( 'large' )->add_tiny_meta_start();
+		$tiny_image->get_image_size( 'large' )->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
+		$tiny_image->update_tiny_post_meta();
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
@@ -101,14 +101,14 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 
 		$testmeta = $this->wp->getTestMetadata();
-		$meta = new Tiny_Image( 1, $testmeta );
-		$meta->get_image_size()->add_request();
-		$meta->get_image_size()->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
-		$meta->get_image_size( 'large' )->add_request();
-		$meta->get_image_size( 'large' )->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
-		$meta->get_image_size( 'post-thumbnail' )->add_request();
-		$meta->get_image_size( 'post-thumbnail' )->add_response( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) );
-		$meta->update_tiny_meta();
+		$tiny_image = new Tiny_Image( 1, $testmeta );
+		$tiny_image->get_image_size()->add_tiny_meta_start();
+		$tiny_image->get_image_size()->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
+		$tiny_image->get_image_size( 'large' )->add_tiny_meta_start();
+		$tiny_image->get_image_size( 'large' )->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) );
+		$tiny_image->get_image_size( 'post-thumbnail' )->add_tiny_meta_start();
+		$tiny_image->get_image_size( 'post-thumbnail' )->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) );
+		$tiny_image->update_tiny_post_meta();
 
 		$this->vfs->getChild( 'wp-content/uploads/14/01/test-large.png' )->truncate( 100000 );
 
@@ -126,12 +126,12 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 
-		$metadata = $this->wp->getMetadata( 1, Tiny_Image::META_KEY, true );
-		foreach ( $metadata as $key => $values ) {
+		$tiny_metadata = $this->wp->getMetadata( 1, Tiny_Image::META_KEY, true );
+		foreach ( $tiny_metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertBetween( -1, + 1, $values['end'] - time() );
-				unset( $metadata[ $key]['end' ] );
-				unset( $metadata[ $key]['start' ] );
+				unset( $tiny_metadata[ $key]['end' ] );
+				unset( $tiny_metadata[ $key]['start' ] );
 			}
 		}
 		$this->assertEquals(array(
@@ -140,7 +140,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 			'medium' => array(),
 			'large' => array( 'input' => array('size' => 10000), 'output' => array('size' => 6789, 'width' => 1024, 'height' => 1024) ),
 			'post-thumbnail' => array( 'input' => array('size' => 1234), 'output' => array('size' => 1000, 'width' => 800, 'height' => 500) ),
-		), $metadata);
+		), $tiny_metadata);
 	}
 
 	public function test_should_handle_compress_exceptions() {
@@ -152,11 +152,11 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 
-		$metadata = $this->wp->getMetadata( 1, Tiny_Image::META_KEY, true );
-		foreach ( $metadata as $key => $values ) {
+		$tiny_metadata = $this->wp->getMetadata( 1, Tiny_Image::META_KEY, true );
+		foreach ( $tiny_metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertEquals( time(), $values['timestamp'], 2 );
-				unset( $metadata[ $key]['timestamp' ] );
+				unset( $tiny_metadata[ $key]['timestamp' ] );
 			}
 		}
 		$this->assertEquals(array(
@@ -165,7 +165,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 			'medium' => array(),
 			'large' => array( 'error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file' ),
 			'post-thumbnail' => array( 'error' => 'BadSignature', 'message' => 'Does not appear to be a PNG or JPEG file' ),
-		), $metadata);
+		), $tiny_metadata);
 	}
 
 	public function test_should_return_if_no_compressor() {

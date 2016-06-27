@@ -114,37 +114,37 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 
 	public function test_should_return_resize_options_with_width_and_height() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on', 'width' => '800', 'height' => '600' ) );
-		$this->assertEquals( array( 'method' => 'fit', 'width' => 800, 'height' => 600), $this->subject->get_resize_options() );
+		$this->assertEquals( array( 'method' => 'fit', 'width' => 800, 'height' => 600), $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_return_resize_options_without_width() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on', 'width' => '', 'height' => '600' ) );
-		$this->assertEquals( array( 'method' => 'scale', 'height' => 600), $this->subject->get_resize_options() );
+		$this->assertEquals( array( 'method' => 'scale', 'height' => 600), $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_return_resize_options_without_height() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on', 'width' => '800', 'height' => '' ) );
-		$this->assertEquals( array( 'method' => 'scale', 'width' => 800), $this->subject->get_resize_options() );
+		$this->assertEquals( array( 'method' => 'scale', 'width' => 800), $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_return_resize_options_with_invaled_width() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on', 'width' => '-1', 'height' => '600' ) );
-		$this->assertEquals( array( 'method' => 'scale', 'height' => 600), $this->subject->get_resize_options() );
+		$this->assertEquals( array( 'method' => 'scale', 'height' => 600), $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_return_resize_options_with_invaled_height() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on', 'width' => '800', 'height' => '-1' ) );
-		$this->assertEquals( array( 'method' => 'scale', 'width' => 800), $this->subject->get_resize_options() );
+		$this->assertEquals( array( 'method' => 'scale', 'width' => 800), $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_not_return_resize_options_without_with_and_height() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on', 'width' => '', 'height' => '' ) );
-		$this->assertEquals( false, $this->subject->get_resize_options() );
+		$this->assertEquals( false, $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_not_return_resize_options_when_not_enabled() {
 		$this->wp->addOption( 'tinypng_resize_original', array( 'width' => '800', 'height' => '600') );
-		$this->assertEquals( false, $this->subject->get_resize_options() );
+		$this->assertEquals( false, $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_return_include_metadata_enabled() {
@@ -159,11 +159,11 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 
 	public function test_should_return_preserve_options_when_enabled() {
 		$this->wp->addOption( 'tinypng_preserve_data', array( 'copyright' => 'on') );
-		$this->assertEquals( array( '0' => 'copyright'), $this->subject->get_preserve_options() );
+		$this->assertEquals( array( '0' => 'copyright'), $this->subject->get_preserve_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_not_return_preserve_options_when_disabled() {
 		$this->wp->addOption( 'tinypng_include_metadata', array() );
-		$this->assertEquals( array(), $this->subject->get_preserve_options() );
+		$this->assertEquals( array(), $this->subject->get_preserve_options( Tiny_Image::ORIGINAL ) );
 	}
 }

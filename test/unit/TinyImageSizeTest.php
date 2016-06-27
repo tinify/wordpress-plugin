@@ -29,50 +29,50 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 		$this->assertEquals( null, $this->medium->end_time() );
 	}
 
-	public function test_add_request_should_add_start_time() {
-		$this->large->add_request();
+	public function test_add_tiny_meta_start_should_add_start_time() {
+		$this->large->add_tiny_meta_start();
 		$this->assertEqualWithinDelta( time(), $this->large->meta['start'], 2 );
 	}
 
-	public function test_add_request_should_unset_previous_response() {
-		$this->medium->add_request();
+	public function test_add_tiny_meta_start_should_unset_previous_response() {
+		$this->medium->add_tiny_meta_start();
 		$this->assertEqualWithinDelta( time(), $this->medium->meta['start'], 2 );
 	}
 
-	public function test_add_response_should_add_end_time() {
-		$this->large->add_request();
-		$this->large->add_response( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)) );
+	public function test_add_tiny_meta_should_add_end_time() {
+		$this->large->add_tiny_meta_start();
+		$this->large->add_tiny_meta( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024) ) );
 		$this->assertEqualWithinDelta( time(), $this->large->meta['end'], 2 );
 	}
 
 	public function test_add_response_should_response() {
-		$this->large->add_request();
-		$this->large->add_response( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)) );
+		$this->large->add_tiny_meta_start();
+		$this->large->add_tiny_meta( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024) ) );
 		$actual = $this->large->meta;
 		unset( $actual['end'] );
-		$this->assertEquals( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)), $actual );
+		$this->assertEquals( array( 'input' => array('size' => 1024), 'output' => array( 'size' => 1024) ), $actual );
 	}
 
 	public function test_add_response_should_not_add_if_no_request_was_made() {
-		$this->large->add_response( array( 'input' => array('size' => 1024), 'output' => array('size' => 1024)) );
+		$this->large->add_tiny_meta( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024) ) );
 		$this->assertEquals( array(), $this->large->meta );
 	}
 
 	public function test_add_exception_should_add_message_and_error() {
-		$this->large->add_request();
-		$this->large->add_exception( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
+		$this->large->add_tiny_meta_start();
+		$this->large->add_tiny_meta_error( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
 		unset( $this->large->meta['timestamp'] );
 		$this->assertEquals( array( 'error' => 'Not found', 'message' => 'Image could not be found'),  $this->large->meta );
 	}
 
 	public function test_add_exception_should_add_timestamp() {
-		$this->large->add_request();
-		$this->large->add_exception( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
+		$this->large->add_tiny_meta_start();
+		$this->large->add_tiny_meta_error( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
 		$this->assertEqualWithinDelta( time(), $this->large->meta['timestamp'], 2 );
 	}
 
 	public function test_add_exception_should_not_add_if_no_request_was_made() {
-		$this->large->add_exception( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
+		$this->large->add_tiny_meta_error( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
 		unset( $this->large->meta['timestamp'] );
 		$this->assertEquals( array(), $this->large->meta );
 	}

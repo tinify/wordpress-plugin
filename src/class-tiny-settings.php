@@ -219,9 +219,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$size = Tiny_Image::ORIGINAL;
 		$this->sizes = array(
 			$size => array(
-				'width' => null, 'height' => null,
+				'width' => null,
+				'height' => null,
 				'tinify' => ! is_array( $setting ) ||
-					(isset( $setting[ $size ] ) && $setting[ $size ] === 'on'),
+					(isset( $setting[$size] ) && $setting[$size] === 'on'),
 			)
 		);
 
@@ -238,10 +239,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 				);
 			}
 		}
+
 		return $this->sizes;
 	}
 
 	public function get_active_tinify_sizes() {
+
 		if ( is_array( $this->tinify_sizes ) ) {
 			return $this->tinify_sizes;
 		}
@@ -265,9 +268,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return isset( $setting[ $name ] ) && $setting[ $name ] === 'on';
 	}
 
-	public function get_preserve_options() {
-		$settings = get_option( self::get_prefixed_name( 'preserve_data' ) );
+	public function get_preserve_options( $size_name ) {
+		if ( ! Tiny_Image::is_original( $size_name ) ) {
+			return false;
+		}
 		$options = array();
+		$settings = get_option( self::get_prefixed_name( 'preserve_data' ) );
 		if ( $settings ) {
 			$keys = array_keys( $settings );
 			foreach ( $keys as &$key ) {
@@ -279,16 +285,17 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $options;
 	}
 
-	public function get_resize_options() {
-		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
+	public function get_resize_options( $size_name ) {
+		if ( ! Tiny_Image::is_original( $size_name ) ) {
+			return false;
+		}
 		if ( ! $this->get_resize_enabled() ) {
 			return false;
 		}
-
+		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
 		$width = intval( $setting['width'] );
 		$height = intval( $setting['height'] );
 		$method = $width > 0 && $height > 0 ? 'fit' : 'scale';
-
 		$options['method'] = $method;
 		if ( $width > 0 ) {
 			$options['width'] = $width;
@@ -296,7 +303,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $height > 0 ) {
 			$options['height'] = $height;
 		}
-
 		return sizeof( $options ) >= 2 ? $options : false;
 	}
 
@@ -310,6 +316,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_sizes() {
+
 		echo '<p>';
 		esc_html_e(
 			'Choose sizes to compress. Remember each selected size counts as a compression.',
@@ -335,7 +342,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	private function render_size_checkbox($size, $option) {
 		$id = self::get_prefixed_name( "sizes_$size" );
-		$name = self::get_prefixed_name( "sizes[ $size ]" );
+		$name = self::get_prefixed_name( 'sizes[' . $size . ']' );
 		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'original', 'tiny-compress-images' ) . ' (' .
