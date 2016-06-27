@@ -17,6 +17,6 @@ if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     sudo apt-get update
     sudo apt-get install docker-engine=${DOCKER_VERSION}-0~$(lsb_release -cs) -y --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 
-    sudo curl -L https://github.com/docker/compose/releases/download/1.8.0-rc1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    curl -L https://github.com/docker/compose/releases/download/1.8.0-rc1/docker-compose-`uname -s`-`uname -m` | sudo dd of=/usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
 fi
