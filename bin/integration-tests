@@ -4,6 +4,12 @@ display_usage() {
   echo -e "Usage:\n\t$0 <version> \n\nExample:\n\t$0 45"
 }
 
+wait_for_service() {
+  while ! nc -z localhost "$1"; do
+    sleep 0.25
+  done
+}
+
 if [ -z "${VERSION}" ]; then
   if [ $# -eq 0 ]; then
     display_usage
@@ -13,6 +19,17 @@ if [ -z "${VERSION}" ]; then
   export VERSION="$1"
 fi
 
-docker-compose up -d
+docker-compose up -d --force-recreate
+
+echo "Waiting for MySQL..."
+wait_for_service 3306
+
+echo "Waiting for PhantomJS..."
+wait_for_service 8910
+
+echo "Waiting for WordPress..."
+wait_for_service 80${VERSION}
+
 bin/test-wordpress
+
 docker-compose down
