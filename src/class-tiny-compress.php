@@ -86,7 +86,7 @@ abstract class Tiny_Compress {
 		);
 	}
 
-	public function compress_file($file, $resize_opts = array(), $preserve_opts = array()) {
+	public function compress_file( $file, $resize_opts = array(), $preserve_opts = array() ) {
 		if ( $this->get_key() == null ) {
 			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
 		}
@@ -104,7 +104,7 @@ abstract class Tiny_Compress {
 		}
 
 		try {
-			list($output, $details) = $this->compress(
+			list( $output, $details ) = $this->compress(
 				file_get_contents( $file ),
 				$resize_opts,
 				$preserve_opts
@@ -125,7 +125,7 @@ abstract class Tiny_Compress {
 	}
 
 	protected abstract function validate();
-	protected abstract function compress($input, $resize_options, $preserve_options);
+	protected abstract function compress( $input, $resize_options, $preserve_options );
 
 	protected static function identifier() {
 		return 'WordPress/' . Tiny_Plugin::wp_version() . ' Plugin/' . Tiny_Plugin::version();
@@ -137,17 +137,14 @@ abstract class Tiny_Compress {
 		}
 	}
 
-	private static function needs_resize($file, $resize_options) {
+	private static function needs_resize( $file, $resize_options ) {
 		if ( ! $resize_options ) {
 			return false;
 		}
 
 		list($width, $height) = getimagesize( $file );
 
-		return (
-			$width > $resize_options['width'] ||
-			$height > $resize_options['height']
-		);
+		return ( $width > $resize_options['width'] || $height > $resize_options['height'] );
 	}
 
 	private static function compression_cost( $total ) {

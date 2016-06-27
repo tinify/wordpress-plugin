@@ -41,18 +41,18 @@ class Tiny_Image_Size {
 			return null; }
 	}
 
-	public function add_request() {
+	public function add_tiny_meta_start() {
 		$this->meta = array( 'start' => time() );
 	}
 
-	public function add_response($response) {
+	public function add_tiny_meta( $response ) {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta = $response;
 			$this->meta['end'] = time();
 		}
 	}
 
-	public function add_exception($exception) {
+	public function add_tiny_meta_error($exception) {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta = array(
 				'error'   => $exception->get_type(),

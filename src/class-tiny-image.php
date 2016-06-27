@@ -19,7 +19,7 @@
 */
 
 class Tiny_Image {
-	const META_KEY = 'image_database_metadata';
+	const META_KEY = 'tiny_compress_images';
 	const ORIGINAL = 0;
 
 	private $id;
@@ -120,35 +120,28 @@ class Tiny_Image {
 		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 
 		foreach ( $uncompressed_sizes as $size_name => $size ) {
+			$size->add_tiny_meta_start();
+			$this->update_tiny_post_meta();
+			$resize = $settings->get_resize_options( $size_name );
+			$preserve = $settings->get_preserve_options( $size_name );
 			try {
-				$size->add_request();
-				$this->update_tiny_meta();
-
-				if ( self::is_original( $size_name ) ) {
-					$resize = $settings->get_resize_options();
-				} else {
-					$resize = false;
-				}
-
-				$preserve = $settings->get_preserve_options();
 				$response = $compressor->compress_file( $size->filename, $resize, $preserve );
-				$size->add_response( $response );
-				$this->update_wp_metadata( $size_name, $response );
-				$this->update_tiny_meta();
+				$size->add_tiny_meta( $response );
 				$success++;
 			} catch (Tiny_Exception $e) {
-				$size->add_exception( $e );
-				$this->update_tiny_meta();
+				$size->add_tiny_meta_error( $e );
 				$failed++;
 			}
+			$this->add_wp_metadata( $size_name, $size );
+			$this->update_tiny_post_meta();
 		}
 		return array( 'success' => $success, 'failed' => $failed );
 	}
 
-	public function update_wp_metadata( $size_name, $response ) {
+	public function add_wp_metadata( $size_name, $size ) {
 		if ( self::is_original( $size_name ) ) {
-			if ( isset( $response['output'] ) ) {
-				$output = $response['output'];
+			if ( isset( $size->meta['output'] ) ) {
+				$output = $size->meta['output'];
 				if ( isset( $output['width'] ) && isset( $output['height'] ) ) {
 					$this->wp_metadata['width'] = $output['width'];
 					$this->wp_metadata['height'] = $output['height'];
@@ -157,14 +150,12 @@ class Tiny_Image {
 		}
 	}
 
-	public function update_tiny_meta() {
-		$values = array();
+	public function update_tiny_post_meta() {
+		$tiny_metadata = array();
 		foreach ( $this->sizes as $size_name => $size ) {
-			if ( is_array( $size->meta ) ) {
-				$values[ $size_name ] = $size->meta;
-			}
+			$tiny_metadata[ $size_name ] = $size->meta;
 		}
-		update_post_meta( $this->id, self::META_KEY, $values );
+		update_post_meta( $this->id, self::META_KEY, $tiny_metadata );
 	}
 
 	public function get_image_sizes() {

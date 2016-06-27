@@ -13,8 +13,9 @@ $size_active = array_fill_keys( $active_tinify_sizes, true );
 $size_exists = array_fill_keys( $available_sizes, true );
 ksort( $size_exists );
 
-?><div class="details-container">
-	<div class="details" id="tiny-compress-details">
+?>
+<div class="details-container">
+	<div id="tiny-compress-details" class="details" >
 		<?php if ( $tiny_image->can_be_compressed() ) { ?>
 			<?php if ( $error ) { ?>
 				<span class="icon dashicons dashicons-warning error"></span>
@@ -97,45 +98,44 @@ ksort( $size_exists );
 			</tr>
 			<?php $i = 0 ?>
 			<?php
-				$images = $tiny_image->get_image_sizes() + $size_exists;
-			foreach ( $images as $size => $image ) {
-				if ( ! is_object( $image ) ) { $image = new Tiny_Image_Size(); }
+			$sizes = $tiny_image->get_image_sizes() + $size_exists;
+			foreach ( $sizes as $size_name => $size ) {
+				if ( ! is_object( $size ) ) { $size = new Tiny_Image_Size(); }
 				?>
 				<tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
-				<td><?php
-					echo (Tiny_Image::is_original( $size ) ? esc_html__( 'original', 'tiny-compress-images' ) : $size ) . ' ';
-				if ( ! array_key_exists( $size, $active_sizes ) ) {
-					echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
-				} else if ( $image->missing() ) {
-					echo '<em>' . esc_html__( '(file removed)', 'tiny-compress-images' ) . '</em>';
-				} else if ( $image->modified() ) {
-					echo '<em>' . esc_html__( '(modified after compression)', 'tiny-compress-images' ) . '</em>';
-				} else if ( $image->resized() ) {
-					printf( '<em>' . esc_html__( '(resized to %dx%d)', 'tiny-compress-images' ) . '</em>', $image->meta['output']['width'], $image->meta['output']['height'] );
-				}
-					?></td>
 					<td><?php
-					if ( $image->has_been_compressed() ) {
-						echo size_format( $image->meta['input']['size'], 1 );
-					} else if ( $image->exists() ) {
-						echo size_format( $image->filesize(), 1 );
+					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'original', 'tiny-compress-images' ) : $size_name ) . ' ';
+					if ( ! array_key_exists( $size_name, $active_sizes ) ) {
+						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
+					} else if ( $size->missing() ) {
+						echo '<em>' . esc_html__( '(file removed)', 'tiny-compress-images' ) . '</em>';
+					} else if ( $size->modified() ) {
+						echo '<em>' . esc_html__( '(modified after compression)', 'tiny-compress-images' ) . '</em>';
+					} else if ( $size->resized() ) {
+						printf( '<em>' . esc_html__( '(resized to %dx%d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
+					}
+					?>
+					</td>
+					<td><?php
+					if ( $size->has_been_compressed() ) {
+						echo size_format( $size->meta['input']['size'], 1 );
+					} else if ( $size->exists() ) {
+						echo size_format( $size->filesize(), 1 );
 					} else {
 						echo '-';
 					}
 					?></td>
 					<?php
-					if ( $image->has_been_compressed() ) {
-						echo '<td>';
-						echo size_format( $image->meta['output']['size'], 1 );
-						echo '</td>';
-						echo '<td>' . human_time_diff( $image->end_time( $size ) ) . ' ' . esc_html__( 'ago', 'tiny-compress-images' ) .'</td>';
-					} else if ( ! $image->exists() ) {
+					if ( $size->has_been_compressed() ) {
+						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';
+						echo '<td>' . human_time_diff( $size->end_time( $size_name ) ) . ' ' . esc_html__( 'ago', 'tiny-compress-images' ) .'</td>';
+					} else if ( ! $size->exists() ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not present or duplicate', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( isset( $size_active[ $size ] ) ) {
+					} else if ( isset( $size_active[ $size_name ] ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not compressed', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( isset( $size_exists[ $size ] ) ) {
+					} else if ( isset( $size_exists[ $size_name ] ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not configured to be compressed', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( ! array_key_exists( $size, $active_sizes ) ) {
+					} else if ( ! array_key_exists( $size_name, $active_sizes ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Size is not in use', 'tiny-compress-images' ) . '</em></td>';
 					} else {
 						echo '<td>-</td>';

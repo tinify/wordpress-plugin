@@ -11,6 +11,10 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
 	}
 
+	public function test_tiny_post_meta_key_may_never_change() {
+		$this->assertEquals( "61b16225f107e6f0a836bf19d47aa0fd912f8925", sha1( Tiny_Image::META_KEY ) );
+	}
+
 	public function test_update_wp_metadata_should_not_update_with_no_resized_original() {
 		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata' ) );
 		$tiny_image_metadata = $tiny_image->get_wp_metadata();
@@ -21,9 +25,9 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	public function test_update_wp_metadata_should_update_with_resized_original() {
 		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata' ) );
 		$response = array( 'output' => array( 'width' => 200, 'height' => 100 ) );
-		$tiny_image->get_image_size()->add_request();
-		$tiny_image->get_image_size()->add_response( $response );
-		$tiny_image->update_wp_metadata( Tiny_Image::ORIGINAL, $response );
+		$tiny_image->get_image_size()->add_tiny_meta_start();
+		$tiny_image->get_image_size()->add_tiny_meta( $response );
+		$tiny_image->add_wp_metadata( Tiny_Image::ORIGINAL, $tiny_image->get_image_size() );
 		$tiny_image_metadata = $tiny_image->get_wp_metadata();
 		$this->assertEquals( 200, $tiny_image_metadata['width'] );
 		$this->assertEquals( 100, $tiny_image_metadata['height'] );
@@ -73,8 +77,8 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_get_latest_error_should_return_message() {
-		$this->subject->get_image_size()->add_request( 'large' );
-		$this->subject->get_image_size()->add_exception( new Tiny_Exception( 'Could not download output', 'OutputError' ), 'large' );
+		$this->subject->get_image_size()->add_tiny_meta_start( 'large' );
+		$this->subject->get_image_size()->add_tiny_meta_error( new Tiny_Exception( 'Could not download output', 'OutputError' ), 'large' );
 		$this->assertEquals( 'Could not download output', $this->subject->get_latest_error() );
 	}
 
