@@ -15,7 +15,7 @@ function wordpress($url = null) {
 }
 
 function wordpress_version() {
-	return intval( getenv( 'VERSION' ) );
+	return intval( getenv( 'WORDPRESS_VERSION' ) );
 }
 
 function configure_wordpress_for_testing($driver) {
