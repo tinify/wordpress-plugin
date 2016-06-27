@@ -5,7 +5,7 @@ display_usage() {
 }
 
 wait_for_service() {
-  while ! nc -z localhost "$1"; do
+  while ! nc -z -v localhost "$1"; do
     sleep 0.25
   done
 }
