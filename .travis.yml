@@ -1,6 +1,4 @@
 language: php
-dist: trusty
-sudo: required
 php:
 - 5.3
 - 5.4
@@ -11,13 +9,17 @@ env:
   global:
     VERSION=45
     DOCKER_VERSION=1.12.0~rc2
+matrix:
+  include:
+  - dist: trusty
+    sudo: required
+    script: bin/integration-tests 45
 before_script:
 - composer install
 install:
 - bin/install-docker
 script:
 - bin/unit-tests
-- bin/integration-tests 45
 - bin/check-style --warning-severity=0 src
 notifications:
   email: false
