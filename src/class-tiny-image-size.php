@@ -20,16 +20,14 @@
 
 class Tiny_Image_Size {
 	public $filename;
-	public $url;
 	public $meta = array();
 
 	/* Used more than once and not trivial, so we are memoizing these */
 	private $_exists;
 	private $_file_size;
 
-	public function __construct($filename = null, $url = null) {
+	public function __construct( $filename = null ) {
 		$this->filename = $filename;
-		$this->url = $url;
 	}
 
 	public function end_time() {

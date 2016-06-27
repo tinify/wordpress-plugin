@@ -43,30 +43,24 @@ class Tiny_Image {
 			return;
 		}
 		$path_info = pathinfo( $this->wp_metadata['file'] );
-		$upload_dir = wp_upload_dir();
-		$path_prefix = $upload_dir['basedir'] . '/';
-		$url_prefix = $upload_dir['baseurl'] . '/';
-		if ( isset( $path_info['dirname'] ) ) {
-			$path_prefix .= $path_info['dirname'] .'/';
-			$url_prefix .= $path_info['dirname'] .'/';
-		}
-
 		$this->name = $path_info['basename'];
 
-		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size(
-			"$path_prefix${path_info['basename']}",
-			"$url_prefix${path_info['basename']}"
-		);
+		$upload_dir = wp_upload_dir();
+		$path_prefix = $upload_dir['basedir'] . '/';
+		if ( isset( $path_info['dirname'] ) ) {
+			$path_prefix .= $path_info['dirname'] .'/';
+		}
+
+		$filename = $path_prefix . $this->name;
+		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
 
 		$unique_sizes = array();
 		if ( isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] ) ) {
 			foreach ( $this->wp_metadata['sizes'] as $size => $info ) {
-				$filename = $info['file'];
-
+				$filename = $path_prefix . $info['file'];
 				if ( ! isset( $unique_sizes[ $filename ] ) ) {
 					$unique_sizes[ $filename ] = true;
-					$this->sizes[ $size ] = new Tiny_Image_Size(
-					"$path_prefix$filename", "$url_prefix$filename");
+					$this->sizes[ $size ] = new Tiny_Image_Size( $filename );
 				}
 			}
 		}
