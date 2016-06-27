@@ -4,11 +4,9 @@ display_usage() {
   echo -e "Usage:\n\t$0 <version> \n\nExample:\n\t$0 45"
 }
 
-wait_for_service() {
-  while ! nc -z -v localhost "$1"; do
-    sleep 0.25
-  done
-}
+if [ -z "${HOST}" ]; then
+  export HOST=127.0.0.1
+fi
 
 if [ -z "${VERSION}" ]; then
   if [ $# -eq 0 ]; then
@@ -19,20 +17,52 @@ if [ -z "${VERSION}" ]; then
   export VERSION="$1"
 fi
 
-docker-compose up -d --force-recreate --build
+export MYSQL_PWD=root
+export WORDPRESS_DATABASE=wordpress_${VERSION}
+export WORDPRESS_PORT=80${VERSION}
+export WORDPRESS_URL=http://wordpress
 
-which nc
+function wait_for_service_port {
+  while ! curl -s localhost:$1 > /dev/null; do
+    sleep 0.25
+  done
+}
 
-echo "Waiting for MySQL..."
-wait_for_service 3306
+function prepare_test_config {
+  mv src/config/tiny-config.php src/config/tiny-config.php.bak
+  mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
+  cp test/fixtures/tiny-config.php src/config/tiny-config.php
+  cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
+}
 
-echo "Waiting for PhantomJS..."
-wait_for_service 8910
+function restore_config {
+  mv src/config/tiny-config.php.bak src/config/tiny-config.php
+  mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
+}
 
-echo "Waiting for WordPress..."
-wait_for_service 80${VERSION}
+function start_services {
+  docker-compose up -d --force-recreate --build
+}
 
-sleep 2
-bin/test-wordpress
+function stop_services {
+  docker-compose down
+}
 
-docker-compose down
+function wait_for_services {
+  echo "Waiting for PhantomJS..."
+  wait_for_service_port 8910
+
+  echo "Waiting for WordPress..."
+  wait_for_service_port 80${VERSION}
+
+  echo "Waiting for MySQL..."
+  wait_for_service_port 3306
+}
+
+trap 'restore_config' EXIT
+trap 'stop_services' EXIT
+
+start_services
+wait_for_services
+prepare_test_config
+vendor/bin/phpunit test/integration
