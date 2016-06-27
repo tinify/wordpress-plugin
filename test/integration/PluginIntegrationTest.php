@@ -18,6 +18,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 	public function test_plugin_list_should_include_title() {
 		$element = self::$driver->findElement(
 			WebDriverBy::cssSelector(
+				'tr[data-slug=tiny-compress-images] td.plugin-title strong, ' . /* WP4.5+ */
 				'tr#compress-jpeg-png-images td.plugin-title strong'
 			)
 		);
@@ -31,6 +32,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 	public function test_plugin_list_should_include_settings_link() {
 		$element = self::$driver->findElement(
 			WebDriverBy::cssSelector(
+				'tr[data-slug=tiny-compress-images] span.settings a, ' . /* WP4.5+ */
 				'tr#compress-jpeg-png-images span.settings a'
 			)
 		);
