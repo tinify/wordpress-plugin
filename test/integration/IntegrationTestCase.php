@@ -177,7 +177,7 @@ abstract class IntegrationTestCase extends PHPUnit_Framework_TestCase {
 		if ( $tiny_meta ) {
 			$db->prepare('
                 INSERT INTO wp_postmeta(post_id, meta_key, meta_value)
-                VALUES(' . $id . ", 'image_database_metadata', '" . $tiny_meta . "');
+                VALUES(' . $id . ", 'tiny_compress_images', '" . $tiny_meta . "');
             ")->execute();
 		}
 	}

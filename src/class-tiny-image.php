@@ -19,7 +19,7 @@
 */
 
 class Tiny_Image {
-	const META_KEY = 'image_database_metadata';
+	const META_KEY = 'tiny_compress_images';
 	const ORIGINAL = 0;
 
 	private $id;
