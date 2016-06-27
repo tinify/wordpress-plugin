@@ -8,6 +8,7 @@ if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     sudo stop docker || true
     sudo rm -rf /var/lib/docker
     sudo rm -f `which docker`
+    sudo rm -f `which docker-compose`
 
     set -e
     sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -15,10 +16,7 @@ if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     echo "deb https://apt.dockerproject.org/repo ubuntu-trusty testing" | sudo tee -a /etc/apt/sources.list.d/docker.list
     sudo apt-get update
     sudo apt-get install docker-engine=${DOCKER_VERSION}-0~$(lsb_release -cs) -y --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
-    docker --version
-    docker-compose --version
-    which docker-compose
 
-    curl -L https://github.com/docker/compose/releases/download/1.8.0-rc1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
+    sudo curl -L https://github.com/docker/compose/releases/download/1.8.0-rc1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
 fi
