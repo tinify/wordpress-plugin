@@ -85,8 +85,13 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 		$this->assertFalse( $this->large->has_been_compressed() );
 	}
 
+	public function test_image_size_filename() {
+		$image_size = new Tiny_Image_Size( 'random_file_name.jpg' );
+		$this->assertEquals( "random_file_name.jpg", $image_size->filename );
+	}
+
 	public function test_image_does_not_still_exist_if_file_does_not_exist() {
-		$image = new Tiny_Image_Size( 'does_not_exist' );
+		$image = new Tiny_Image_Size( 'file_that_does_not_exist.jpg' );
 		$this->assertFalse( $image->still_exists() );
 	}
 
@@ -122,17 +127,17 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 	}
 
 	public function test_in_progress_should_return_false_if_meta_start_is_long_ago() {
-		$image = new Tiny_Image_Size( 'test.jpg', '' );
+		$image_size = new Tiny_Image_Size( 'test.jpg' );
 		$one_hour_ago = date( 'U' ) - (60 * 60);
-		$image->meta['start'] = $one_hour_ago;
-		$this->assertFalse( $image->in_progress() );
+		$image_size->meta['start'] = $one_hour_ago;
+		$this->assertFalse( $image_size->in_progress() );
 	}
 
 	public function test_in_progress_should_return_truef_meta_start_is_recent() {
-		$image = new Tiny_Image_Size( 'test.jpg', '' );
+		$image_size = new Tiny_Image_Size( 'test.jpg' );
 		$two_minutes_ago = date( 'U' ) - (60 * 2);
-		$image->meta['start'] = $two_minutes_ago;
-		$this->assertTrue( $image->in_progress() );
+		$image_size->meta['start'] = $two_minutes_ago;
+		$this->assertTrue( $image_size->in_progress() );
 	}
 
 	public function test_in_progress_should_return_false_if_meta_contains_start_and_output() {
