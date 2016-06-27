@@ -19,7 +19,9 @@ if [ -z "${VERSION}" ]; then
   export VERSION="$1"
 fi
 
-docker-compose up -d --force-recreate
+docker-compose up -d --force-recreate --build
+
+which nc
 
 echo "Waiting for MySQL..."
 wait_for_service 3306
