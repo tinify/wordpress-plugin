@@ -17,7 +17,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ## Information for plugin contributors
 
 ### Prerequisites
-* A working Docker installation (https://docs.docker.com/installation/).
+* A working Docker 1.12+ and Docker Compose installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
 * PhantomJS 2.1 or greater (http://phantomjs.org).
 * MySQL client and admin tools.
