@@ -68,7 +68,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 
 		$links = $this->find_all( 'p.upload-flash-bypass a' );
 		if ( count( $links ) > 0 && $links[0]->isDisplayed() ) {
-			$link->click();
+			$links[0]->click();
 		}
 
 		$this->find( 'input[name=async-upload]' )->sendKeys( $path );
