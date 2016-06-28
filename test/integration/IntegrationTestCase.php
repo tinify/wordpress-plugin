@@ -57,7 +57,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->find( 'input[name=async-upload]' )->sendKeys( $path );
 		$this->find( 'input[type=submit]' )->click();
 
-		$this->wait_for_text( 'h1, h2', 'Media Library' );
+		$this->wait_for_text( 'div.wrap h1, div.wrap h2', 'Media Library' );
 	}
 
 	protected function set_api_key($api_key, $wait = true) {
