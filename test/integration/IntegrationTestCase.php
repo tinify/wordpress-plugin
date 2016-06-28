@@ -29,6 +29,12 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
+	protected function find_with_text($selector, $text) {
+		return self::$driver->findElement(
+			WebDriverBy::cssSelector( $selector )
+		);
+	}
+
 	protected function wait_for_text($selector, $text) {
 		self::$driver->wait( 2 )->until(
 			WebDriverExpectedCondition::textToBePresentInElement(
@@ -53,6 +59,11 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 
 	protected function upload_media($path) {
 		$this->visit( '/wp-admin/media-new.php?browser-uploader&flash=0' );
+
+		$link = $this->find( 'p.upload-flash-bypass a' );
+		if ( $link && $link->isDisplayed() ) {
+			$link->click();
+		}
 
 		$this->find( 'input[name=async-upload]' )->sendKeys( $path );
 		$this->find( 'input[type=submit]' )->click();
