@@ -2,7 +2,7 @@
 
 function render_percentage_chart($optimized_library_size, $unoptimized_library_size) {
 
-	$width = 200; // same as width of ' .savings-chart > .textual'
+	$width = 180; // same as width of ' .chart .textual'
 	$radius = 80;
 
 	if ( 0 != $unoptimized_library_size ) {
@@ -21,7 +21,7 @@ function render_percentage_chart($optimized_library_size, $unoptimized_library_s
 
 	?>
 		<style>
-			div.savings-chart svg circle.main {
+			div.chart svg circle.main {
 				fill: #ebebeb;
 				stroke: #7acb44;
 				stroke-width: <?php echo $stroke_width; ?>;
@@ -37,10 +37,10 @@ function render_percentage_chart($optimized_library_size, $unoptimized_library_s
 					stroke-dasharray: <?php echo $dash_array_1 . ' ' . $full_circle; ?>
 				}
 			}
-			.savings-chart svg circle.inner {
+			.chart svg circle.inner {
 				fill: #fff;
 			}
-			.savings-chart svg circle.outer {
+			.chart svg circle.outer {
 				fill: #fff;
 				fill: none;
 				stroke-width: <?php echo $stroke_width; ?>;
@@ -48,15 +48,15 @@ function render_percentage_chart($optimized_library_size, $unoptimized_library_s
 			}
 		</style>
 
-	<div class="savings-chart" data-full-circle-size="<?php echo $full_circle; ?>" data-percentage-factor="<?php echo $radius; ?>" >
+	<div class="chart" data-full-circle-size="<?php echo $full_circle; ?>" data-percentage-factor="<?php echo $radius; ?>" >
 		<svg width="<?php echo $width; ?>" height="<?php echo $height; ?>">
 		  <circle class="main" transform="rotate(-90, <?php echo $offset; ?>, <?php echo $offset; ?>)" r="<?php echo $radius; ?>" cx="<?php echo $offset; ?>" cy="<?php echo $offset; ?>"/>
 		  <circle class="inner" r="<?php echo $inner_radius; ?>" cx="<?php echo $offset; ?>" cy="<?php echo $offset; ?>" />
 		  <circle class="outer" r="<?php echo $outer_radius; ?>" cx="<?php echo $offset; ?>" cy="<?php echo $offset; ?>" />
 		</svg>
-		<div class="textual">
+		<div class="value">
 			<div class="percentage" id="savings-percentage"><?php echo $percentage; ?>%</div>
-			<div>savings</div>
+			<div class="label" >savings</div>
 		</div>
 	</div>
 

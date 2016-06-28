@@ -277,11 +277,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$result['image_sizes_optimized'] = $image_statistics['image_sizes_optimized'];
 
 		$result['initial_total_size'] = size_format(
-			$image_statistics['initial_total_size'], 2
+			$image_statistics['initial_total_size'], 1
 		);
 
 		$result['optimized_total_size'] = size_format(
-			$image_statistics['optimized_total_size'], 2
+			$image_statistics['optimized_total_size'], 1
 		);
 
 		$result['savings'] = $tiny_image->get_savings( $image_statistics );

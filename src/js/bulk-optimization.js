@@ -20,13 +20,13 @@
     var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text()) + successFullCompressions;
     var initialLibraryBytes = parseInt(jQuery("#unoptimized-library-size").data("bytes"));
     var percentage = (1 - window.currentLibraryBytes / initialLibraryBytes)
-    var chartSize = jQuery("div.savings-chart").data("full-circle-size")
+    var chartSize = jQuery("div.chart").data("full-circle-size")
 
     jQuery("#optimized-image-sizes").html(imagesSizedOptimized);
     jQuery("#optimized-library-size").attr("data-bytes", window.currentLibraryBytes);
     jQuery("#optimized-library-size").html(newHumanReadableLibrarySize);
     jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%");
-    jQuery(".savings-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
+    jQuery(".chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
 
   }
 
