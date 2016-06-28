@@ -31,26 +31,26 @@
 // 	// In one test because it is terribly slow
 // 	public function test_all_the_values() {
 // 		//testShouldShowUploadedImages() {
-// 		$this->assertEquals( '3', $this->getValue( '#uploaded-images' ) );
+// 		$this->assertEquals( '3', $this->find( '#uploaded-images' )->getText() );
 //
 // 		// testShouldShowUncompressedImageSizes() {
-// 		$this->assertEquals( '6', $this->getValue( '#optimizable-image-sizes' ) );
+// 		$this->assertEquals( '6', $this->find( '#optimizable-image-sizes' )->getText() );
 //
 // 		// TODO mock number of compressions done and better test cost estimation for large numbers.
 // 		// testShouldShowEstimatedCost() {
-// 		$this->assertEquals( '$ 0.00', $this->getValue( '#estimated-cost' ) );
+// 		$this->assertEquals( '$ 0.00', $this->find( '#estimated-cost' )->getText() );
 //
 // 		// testShouldShowSavingsPercentage() {
-// 		$this->assertEquals( '35.18%', $this->getValue( '#savings-percentage' ) );
+// 		$this->assertEquals( '35.18%', $this->find( '#savings-percentage' )->getText() );
 //
 // 		// testShouldShowImageSizesCompressed() {
-// 		$this->assertEquals( '4', $this->getValue( '#optimized-image-sizes' ) );
+// 		$this->assertEquals( '4', $this->find( '#optimized-image-sizes' )->getText() );
 //
 // 		// testShouldShowTotalUnoptimizedSize() {
-// 		$this->assertEquals( '305.29 kB', $this->getValue( '#unoptimized-library-size' ) );
+// 		$this->assertEquals( '305.29 kB', $this->find( '#unoptimized-library-size' )->getText() );
 //
 // 		// testShouldShowTotalOptimizedSize() {
-// 		$this->assertEquals( '197.88 kB', $this->getValue( '#optimized-library-size' ) );
+// 		$this->assertEquals( '197.88 kB', $this->find( '#optimized-library-size' )->getText() );
 // 	}
 //
 // 	// SKIP TODO

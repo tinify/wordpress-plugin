@@ -29,6 +29,12 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
+	protected function find_all($selector) {
+		return self::$driver->findElements(
+			WebDriverBy::cssSelector( $selector )
+		);
+	}
+
 	protected function find_with_text($selector, $text) {
 		return self::$driver->findElement(
 			WebDriverBy::cssSelector( $selector )
@@ -60,8 +66,8 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	protected function upload_media($path) {
 		$this->visit( '/wp-admin/media-new.php?browser-uploader&flash=0' );
 
-		$link = $this->find( 'p.upload-flash-bypass a' );
-		if ( $link && $link->isDisplayed() ) {
+		$links = $this->find_all( 'p.upload-flash-bypass a' );
+		if ( count( $links ) > 0 && $links[0]->isDisplayed() ) {
 			$link->click();
 		}
 
@@ -162,10 +168,6 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	// 		$selector = "//a[contains(text(),'" . $image_title . "')]";
 	// 	}
 	// 	self::$driver->findElement( WebDriverBy::xpath( $selector ) )->click();
-	// }
-	//
-	// protected function getValue($selector) {
-	// 	return self::$driver->findElement( WebDriverBy::cssSelector( $selector ) )->getText();
 	// }
 	//
 	// protected function create_image_fixture($id, $name, $wp_meta, $tiny_meta = false) {
