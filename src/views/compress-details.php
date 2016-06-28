@@ -48,8 +48,9 @@ ksort( $size_exists );
 
 			<?php if ( $size_before - $size_after ) { ?>
 				<span class="message">
-				<?php printf(esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 )
-				 ?>
+					<?php
+					printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 )
+					?>
 				</span>
 				<br />
 			<?php } ?>
@@ -144,12 +145,16 @@ ksort( $size_exists );
 			<?php } ?>
 		</table>
 		<?php if ( $size_before && $size_after ) { ?>
-			<p><strong>
-				<?php printf(esc_html__( 'Total savings %.0f%% (%s) ', 'tiny-compress-images' ),
-					(1 - $size_after / floatval( $size_before )) * 100,
-					size_format( $size_before - $size_after, 1 ))
-				 ?>
-			</strong></p>
+			<p>
+				<strong>
+					<?php
+					printf( esc_html__( 'Total savings %.0f%% (%s)', 'tiny-compress-images' ),
+						( 1 - $size_after / floatval( $size_before ) ) * 100,
+						size_format( $size_before - $size_after, 1 )
+					)
+					?>
+				</strong>
+			</p>
 		<?php } ?>
 	</div>
 </div>
