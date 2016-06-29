@@ -357,12 +357,28 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$stats['available-unoptimised-sizes'],
 			$this->settings->get_compression_count()
 		);
+		$admin_colors = self::retrieve_admin_colors();
 
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
 		$auto_start_bulk = isset( $_REQUEST['ids'] );
 
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
+	}
+
+	private static function retrieve_admin_colors() {
+		global $_wp_admin_css_colors;
+		$admin_colour_scheme = get_user_option( 'admin_color', get_current_user_id() );
+		$admin_colors = array( '#222', '#333', '#0073aa', '00a0d2' ); // default
+		if ( is_object( $_wp_admin_css_colors[ $admin_colour_scheme ] ) ) {
+			if ( isset( $_wp_admin_css_colors[ $admin_colour_scheme ]->colors ) ) {
+				$admin_colors = $_wp_admin_css_colors[ $admin_colour_scheme ]->colors;
+			}
+		}
+		if ( 'fresh' == $admin_colour_scheme ) {
+			$admin_colors = array( '#0074aa', '#1685b5', '#78ca44', '#0086ba' ); // modified
+		};
+		return $admin_colors;
 	}
 
 	private function get_ids_to_compress() {

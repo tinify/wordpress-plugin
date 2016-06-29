@@ -1,13 +1,13 @@
 (function() {
   function updateProgressBar(successFullCompressions) {
-    var totalToOptimize = parseInt(jQuery("div.progressbar").data("amount-to-optimize"));
+    var totalToOptimize = parseInt(jQuery("div#compression-progress-bar").data("number-to-optimize"))
 
-    var optimizedSoFar = parseInt(jQuery("#optimized-so-far").text());
-    jQuery("#optimized-so-far").html(successFullCompressions + optimizedSoFar);
+    var optimizedSoFar = parseInt(jQuery("#optimized-so-far").text())
+    jQuery("#optimized-so-far").html(successFullCompressions + optimizedSoFar)
 
-    var percentage = Math.round((successFullCompressions + optimizedSoFar) / totalToOptimize * 100, 1) + "%";
-    jQuery("div.progressbar-progress").css("width", percentage);
-    jQuery("div.progressbar span#percentage").html("(" + percentage + ")");
+    var percentage = Math.round((successFullCompressions + optimizedSoFar) / totalToOptimize * 100, 1) + "%"
+    jQuery("div#compression-progress-bar #progress-size").css("width", percentage)
+    jQuery("div#compression-progress-bar #percentage").html("(" + percentage + ")")
 
     var numberToOptimize = parseInt(jQuery("#optimizable-image-sizes").html())
     jQuery("#optimizable-image-sizes").html(numberToOptimize - successFullCompressions)
@@ -15,24 +15,24 @@
 
   function updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize) {
 
-    window.currentLibraryBytes = window.currentLibraryBytes + successFullSaved;
+    window.currentLibraryBytes = window.currentLibraryBytes + successFullSaved
 
-    var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text()) + successFullCompressions;
-    var initialLibraryBytes = parseInt(jQuery("#unoptimized-library-size").data("bytes"));
+    var imagesSizedOptimized = parseInt(jQuery("#optimized-image-sizes").text()) + successFullCompressions
+    var initialLibraryBytes = parseInt(jQuery("#unoptimized-library-size").data("bytes"))
     var percentage = (1 - window.currentLibraryBytes / initialLibraryBytes)
-    var chartSize = jQuery("div.chart").data("full-circle-size")
+    var chartSize = jQuery("div#optimization-chart").data("full-circle-size")
 
-    jQuery("#optimized-image-sizes").html(imagesSizedOptimized);
-    jQuery("#optimized-library-size").attr("data-bytes", window.currentLibraryBytes);
-    jQuery("#optimized-library-size").html(newHumanReadableLibrarySize);
-    jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%");
-    jQuery(".chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
+    jQuery("#optimized-image-sizes").html(imagesSizedOptimized)
+    jQuery("#optimized-library-size").attr("data-bytes", window.currentLibraryBytes)
+    jQuery("#optimized-library-size").html(newHumanReadableLibrarySize)
+    jQuery("#savings-percentage").html(Math.round(percentage * 1000) / 10 + "%")
+    jQuery("div#optimization-chart svg circle.main").css("stroke-dasharray", "" + (chartSize * percentage) + " " + chartSize)
 
   }
 
   function handleCancellation() {
-    jQuery("button.tiny-bulk-optimization-actions").hide()
-    jQuery("div.progressbar-progress").css("animation", "none");
+    jQuery("div#bulk-optimization-actions").hide()
+    jQuery("div.progress").css("animation", "none")
   }
 
   function updateRowAfterCompression(row, data) {
@@ -44,7 +44,7 @@
     } else {
       row.find(".status").html(successFullCompressions + " " + tinyCompress.L10nCompressed)
       updateProgressBar(successFullCompressions);
-      updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize);
+      updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize)
     }
   }
 
@@ -93,10 +93,10 @@
     }
 
     row.find(".thumbnail").html(data.thumbnail)
-    row.find(".image-sizes-optimized").html(data.image_sizes_optimized);
-    row.find(".initial-total-size").html(data.initial_total_size);
-    row.find(".optimized-total-size").html(data.optimized_total_size);
-    row.find(".savings").html(data.savings);
+    row.find(".image-sizes-optimized").html(data.image_sizes_optimized)
+    row.find(".initial-total-size").html(data.initial_total_size)
+    row.find(".optimized-total-size").html(data.optimized_total_size)
+    row.find(".savings").html(data.savings)
 
     if (items[++i]) {
       if (!window.optimizationCancelled) {
@@ -104,13 +104,13 @@
       }
       bulkOptimizeItem(items, i)
     } else {
-      var message = jQuery("<div class=\"updated\"><p></p></div>");
+      var message = jQuery("<div class=\"updated\"><p></p></div>")
       message.find("p").html(tinyCompress.L10nAllDone)
       message.insertAfter(jQuery("#tiny-bulk-optimization h1"))
-      jQuery("#tiny-bulk-optimization div.spinner").css("display", "none");
-      jQuery("div.progressbar-progress").css("width", "100%");
-      jQuery("button.tiny-bulk-optimization-actions").hide()
-      jQuery("div.progressbar-progress").css("animation", "none");
+      jQuery("div#optimization-spinner").css("display", "none")
+      jQuery("div.progress").css("width", "100%")
+      jQuery("div#bulk-optimization-actions").hide()
+      jQuery("div.progress").css("animation", "none")
     }
   }
 
@@ -140,17 +140,18 @@
   }
 
   function prepareBulkOptimization(items) {
-      window.allBulkOptimizationItems = items;
+      window.allBulkOptimizationItems = items
   }
 
   function startBulkOptimization(items) {
-    window.optimizationCancelled = false;
-    window.totalRowsDrawn = 0;
+    window.optimizationCancelled = false
+    window.totalRowsDrawn = 0
     window.currentLibraryBytes = parseInt(jQuery("#optimized-library-size").data("bytes"))
 
-    jQuery("#tiny-bulk-optimization div.spinner").css("display", "inline-block");
-    updateProgressBar(0);
-    drawSomeRows(items, 10);
+    jQuery("div.progress").css("animation", "progress-bar 80s linear infinite")
+    jQuery("div#optimization-spinner").css("display", "inline-block")
+    updateProgressBar(0)
+    drawSomeRows(items, 10)
     bulkOptimizeItem(items, 0)
   }
 
@@ -176,33 +177,33 @@
 
   function cancelOptimization() {
     window.optimizationCancelled = true;
-    jQuery("#tiny-bulk-optimization div.optimize div.spinner").css("display", "none");
+    jQuery("div#optimization-spinner").css("display", "none");
     jQuery(jQuery("#media-items tr td.status.todo")).html(tinyCompress.L10nCancelled)
-    jQuery("button.tiny-bulk-optimization-actions span").removeClass("active")
-    jQuery("button.tiny-bulk-optimization-actions span.cancelling").addClass("active")
+    jQuery("div#bulk-optimization-actions input").removeClass("visible")
+    jQuery("div#bulk-optimization-actions input#id-cancelling").addClass("visible")
   }
 
-  jQuery("button.tiny-bulk-optimization-actions").click(function(event) {
-    if (jQuery(jQuery(event.target).find("span.start-optimizing")).hasClass("active")) {
-      jQuery("button.tiny-bulk-optimization-actions span.start-optimizing").removeClass("active")
-      jQuery("button.tiny-bulk-optimization-actions span.optimizing").addClass("active")
+  jQuery("div#bulk-optimization-actions input").click(function() {
+    if ((jQuery(this).attr("id") == "id-start") && jQuery(this).hasClass("visible")) {
+      jQuery("div#bulk-optimization-actions input#id-start").removeClass("visible")
+      jQuery("div#bulk-optimization-actions input#id-optimizing").addClass("visible")
       startBulkOptimization(window.allBulkOptimizationItems);
     }
-    if (jQuery(jQuery(event.target).find("span.cancel")).hasClass("active")) {
+    if ((jQuery(this).attr("id") == "id-cancel") && jQuery(this).hasClass("visible")) {
       cancelOptimization();
     }
   });
 
-  jQuery("button").hover(function(event) {
-    if (jQuery(jQuery(event.target).find("span.optimizing")).hasClass("active")) {
-      window.lastActiveButton = jQuery("button.tiny-bulk-optimization-actions span.active")
-      lastActiveButton.removeClass("active")
-      jQuery("button.tiny-bulk-optimization-actions span.cancel").addClass("active")
+  jQuery("div#bulk-optimization-actions input").hover(function() {
+    if ((jQuery(this).attr("id") == "id-optimizing") && jQuery(this).hasClass("visible")) {
+      window.lastActiveButton = jQuery("div#bulk-optimization-actions input.visible")
+      lastActiveButton.removeClass("visible")
+      jQuery("div#bulk-optimization-actions input#id-cancel").addClass("visible")
     }
-  }, function(event) {
-    if (jQuery(jQuery(event.target).find("span.cancel")).hasClass("active")) {
-      window.lastActiveButton.addClass("active")
-      jQuery("button.tiny-bulk-optimization-actions span.cancel").removeClass("active")
+  }, function() {
+    if ((jQuery(this).attr("id") == "id-cancel") && jQuery(this).hasClass("visible")) {
+      window.lastActiveButton.addClass("visible")
+      jQuery("div#bulk-optimization-actions input#id-cancel").removeClass("visible")
     }
   });
 
