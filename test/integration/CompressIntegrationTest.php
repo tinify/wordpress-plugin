@@ -73,17 +73,17 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
-	// public function test_limit_reached_dismisses() {
-	// 	$this->set_api_key( 'LIMIT123' );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( '.tiny-notice button, .tiny-notice a.tiny-dismiss' ) )->click();
-	// 	self::$driver->wait( 2 )->until(WebDriverExpectedCondition::invisibilityOfElementWithText(
-	// 	WebDriverBy::cssSelector( '.tiny-dismiss' ), 'Dismiss'));
-	//
-	// 	self::$driver->get( wordpress( '/wp-admin/options-media.php' ) );
-	// 	$this->assertEquals( 0, count( self::$driver->findElements( WebDriverBy::cssSelector( 'div.error p' ) ) ) );
-	// }
-	//
+	public function test_limit_reached_dismiss_button_should_remove_error	() {
+		$this->set_api_key( 'LIMIT123' );
+		$this->upload_media( 'test/fixtures/input-example.png' );
+
+		$this->find( '.tiny-notice button, .tiny-notice a.tiny-dismiss' )->click();
+		$this->wait_for_text_disappearance( 'a.tiny-dismiss', 'Dismiss' );
+
+		$this->visit( '/wp-admin/options-media.php' );
+		$this->assertEquals( 0, count( $this->find_all( 'div.error p' ) ) );
+	}
+
 	// public function test_incorrect_json_button() {
 	// 	$this->enable_compression_sizes( array() );
 	// 	$this->upload_media( 'test/fixtures/input-example.png' );

@@ -42,8 +42,16 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function wait_for_text($selector, $text) {
-		self::$driver->wait( 3 )->until(
+		self::$driver->wait( 2 )->until(
 			WebDriverExpectedCondition::textToBePresentInElement(
+				WebDriverBy::cssSelector( $selector ), $text
+			)
+		);
+	}
+
+	protected function wait_for_text_disappearance($selector, $text) {
+		self::$driver->wait( 2 )->until(
+			WebDriverExpectedCondition::invisibilityOfElementWithText(
 				WebDriverBy::cssSelector( $selector ), $text
 			)
 		);
