@@ -7,7 +7,6 @@ require dirname( __FILE__ ) . '/../helpers/setup.php';
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\Remote\UselessFileDetector;
 
 abstract class IntegrationTestCase extends Tiny_TestCase {
 	protected static $driver;
@@ -97,6 +96,14 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->set_option( 'tinypng_sizes', serialize( $value ) );
 	}
 
+	protected function enable_preserve($keys) {
+		$value = array();
+		foreach ( $keys as $key ) {
+			$value[ $key ] = 'on';
+		}
+		$this->set_option( 'tinypng_preserve_data', serialize( $value ) );
+	}
+
 	protected function set_option($name, $value) {
 		$db = new mysqli( getenv( 'HOST' ), 'root',
 			getenv( 'MYSQL_PWD' ),
@@ -138,27 +145,6 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	// 	$element = self::$driver->findElement( WebDriverBy::id( 'tinypng_resize_original_enabled' ) );
 	// 	if ( $element->getAttribute( 'checked' ) ) {
 	// 		$element->click();
-	// 	}
-	// 	self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
-	// }
-	//
-	// protected function enable_preserve($keys) {
-	// 	$url = wordpress( '/wp-admin/options-media.php' );
-	// 	if ( self::$driver->getCurrentUrl() != $url ) {
-	// 		self::$driver->get( $url );
-	// 	}
-	// 	$elements = self::$driver->findElements( WebDriverBy::xpath( '//input[starts-with(@id, "tinypng_preserve_data")]' ) );
-	// 	foreach ( $elements as $element ) {
-	// 		$key = str_replace( 'tinypng_preserve_data_', '', $element->getAttribute( 'id' ) );
-	// 		if ( in_array( $key, $keys ) ) {
-	// 			if ( ! $element->getAttribute( 'checked' ) ) {
-	// 				$element->click();
-	// 			}
-	// 		} else {
-	// 			if ( $element->getAttribute( 'checked' ) ) {
-	// 				$element->click();
-	// 			}
-	// 		}
 	// 	}
 	// 	self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
 	// }

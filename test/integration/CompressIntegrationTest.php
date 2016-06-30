@@ -2,9 +2,6 @@
 
 require_once dirname( __FILE__ ) . '/IntegrationTestCase.php';
 
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverExpectedCondition;
-
 class CompressIntegrationTest extends IntegrationTestCase {
 	public function tear_down() {
 		parent::tear_down();
@@ -47,6 +44,27 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
+	public function test_upload_with_gateway_timeout_should_show_error() {
+		$this->set_api_key( 'GATEWAYTIMEOUT' );
+		$this->enable_compression_sizes( array( 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->assertContains(
+			'Error while parsing response',
+			$this->find( 'td.tiny-compress-images' )->getText()
+		);
+	}
+
+	public function test_upload_with_incorrect_metadata_should_show_error() {
+		$this->set_api_key( 'PNG123 INVALID' );
+		$this->enable_compression_sizes( array( '0', 'medium' ) );
+		$this->enable_preserve( array( 'copyright' ) );
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->assertContains(
+			"Metadata key 'author' not supported",
+			$this->find( 'td.tiny-compress-images' )->getText()
+		);
+	}
+
 	public function test_compress_button_should_compress_uncompressed_sizes() {
 		$this->set_api_key( 'PNG123' );
 
@@ -73,7 +91,22 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
-	public function test_limit_reached_dismiss_button_should_remove_error	() {
+	public function test_compress_button_should_show_error_for_incorrect_json() {
+		$this->enable_compression_sizes( array() );
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
+
+		$this->set_api_key( 'JSON1234' );
+		$this->visit( '/wp-admin/upload.php' );
+
+		$this->find( 'td.tiny-compress-images button' )->click();
+		$this->wait_for_text(
+			'td.tiny-compress-images',
+			'Error while parsing response'
+		);
+	}
+
+	public function test_limit_reached_dismiss_button_should_remove_error() {
 		$this->set_api_key( 'LIMIT123' );
 		$this->upload_media( 'test/fixtures/input-example.png' );
 
@@ -84,19 +117,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals( 0, count( $this->find_all( 'div.error p' ) ) );
 	}
 
-	// public function test_incorrect_json_button() {
-	// 	$this->enable_compression_sizes( array() );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->enable_compression_sizes( array( 'medium', 'large') );
-	//
-	// 	$this->set_api_key( 'JSON1234' );
-	// 	self::$driver->get( wordpress( '/wp-admin/upload.php' ) );
-	//
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images button' ) )->click();
-	// 	self::$driver->wait( 2 )->until(WebDriverExpectedCondition::textToBePresentInElement(
-	// 	WebDriverBy::cssSelector( 'td.tiny-compress-images' ), 'JSON: Syntax error [4]'));
-	// }
-	//
 	// public function test_resize_fit_should_display_resized_text_in_media_library() {
 	// 	$this->set_api_key( 'PNG123' );
 	// 	$this->enable_resize( 300, 200 );
@@ -247,51 +267,14 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	// 		$texts
 	// 	);
 	// }
-	//
-	// public function test_different_image_format_file_should_not_show_compress_info_in_media_library() {
-	// 	$this->upload_media( 'test/fixtures/input-example.gif' );
-	// 	$this->assertEquals('',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div#tiny-compress-details' ) )->getText());
-	// }
-	//
-	// public function test_non_image_file_should_not_show_compress_info_in_media_library() {
-	// 	$this->upload_media( 'test/fixtures/input-example.pdf' );
-	// 	$this->assertEquals('',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div#tiny-compress-details' ) )->getText());
-	// }
-	//
-	// public function test_gateway_timeout_should_be_detected_in_shrink() {
-	// 	/* We can't set invalid credentials via integration test now? */
-	// 	$this->markTestIncomplete();
-	//
-	// 	$this->enable_compression_sizes( array( 'medium') );
-	// 	$this->set_api_key( 'GATEWAYTIMEOUT' );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->assertContains('JSON: Syntax error [4]',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images' ) )->getText());
-	// }
-	//
-	// public function test_gateway_timeout_should_be_detected_in_output() {
-	// 	/* We can't set invalid credentials via integration test now? */
-	// 	$this->markTestIncomplete();
-	//
-	// 	$this->enable_compression_sizes( array( '0', 'medium') );
-	// 	$this->enable_preserve( array( 'copyright') );
-	// 	$this->set_api_key( 'GATEWAYTIMEOUT' );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->assertContains('Error while parsing response',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images' ) )->getText());
-	// }
-	//
-	// public function test_error_should_be_detected_in_output() {
-	// 	/* We can't set invalid credentials via integration test now? */
-	// 	$this->markTestIncomplete();
-	//
-	// 	$this->enable_compression_sizes( array( '0', 'medium') );
-	// 	$this->enable_preserve( array( 'copyright') );
-	// 	$this->set_api_key( 'INVALID' );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->assertContains("Metadata key 'author' not supported",
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images' ) )->getText());
-	// }
+
+	public function test_unsupported_format_should_not_show_compress_info_in_library() {
+		$this->upload_media( 'test/fixtures/input-example.gif' );
+		$this->assertEquals( '', $this->find( 'div#tiny-compress-details' )->getText() );
+	}
+
+	public function test_non_image_file_should_not_show_compress_info_in_library() {
+		$this->upload_media( 'test/fixtures/input-example.pdf' );
+		$this->assertEquals( '', $this->find( 'div#tiny-compress-details' )->getText() );
+	}
 }
