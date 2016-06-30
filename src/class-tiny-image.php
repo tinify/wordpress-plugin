@@ -246,7 +246,7 @@ class Tiny_Image {
 		$this->statistics['initial_total_size'] = 0;
 		$this->statistics['optimized_total_size'] = 0;
 		$this->statistics['image_sizes_optimized'] = 0;
-		$this->statistics['available_unoptimised_sizes'] = 0;
+		$this->statistics['available_unoptimized_sizes'] = 0;
 
 		$settings = new Tiny_Settings();
 		$active_sizes = $settings->get_sizes();
@@ -263,7 +263,7 @@ class Tiny_Image {
 						if ( $size->modified() ) {
 							$this->statistics['optimized_total_size'] += $size->filesize();
 							if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-								$this->statistics['available_unoptimised_sizes'] += 1;
+								$this->statistics['available_unoptimized_sizes'] += 1;
 							}
 						} else {
 							$this->statistics['optimized_total_size'] += intval( $output['size'] );
@@ -276,7 +276,7 @@ class Tiny_Image {
 					$this->statistics['initial_total_size'] += $size->filesize();
 					$this->statistics['optimized_total_size'] += $size->filesize();
 					if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-						$this->statistics['available_unoptimised_sizes'] += 1;
+						$this->statistics['available_unoptimized_sizes'] += 1;
 					}
 				}
 			}
@@ -331,11 +331,11 @@ class Tiny_Image {
 			$tiny_image = new Tiny_Image( $result[ $i ]['ID'], $wp_metadata, $tiny_metadata );
 			$image_stats = $tiny_image->get_statistics();
 			$stats['uploaded-images']++;
-			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimised_sizes'];
+			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimized_sizes'];
 			$stats['optimized-image-sizes'] += $image_stats['image_sizes_optimized'];
 			$stats['optimized-library-size'] += $image_stats['optimized_total_size'];
 			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
-			if ( $image_stats['available_unoptimised_sizes'] > 0 ) {
+			if ( $image_stats['available_unoptimized_sizes'] > 0 ) {
 				$stats['available-for-optimization'][] = array(
 					'ID' => $result[ $i ]['ID'],
 					'post_title' => $result[ $i ]['post_title'],

@@ -35,8 +35,12 @@ if (strpos($api_key, 'GATEWAYTIMEOUT') !== false) {
     );
     echo json_encode($response);
 } else if ($file && file_exists($file)) {
+    list($width, $height) = getimagesize($file);
     header("Content-Type: $mime");
     header('Content-Disposition: attachment');
+    header('Image-Width: ' . $width);
+    header('Image-Height: ' . $height);
+    header('Content-Length: ' . filesize($file));
     foreach ($headers as $name => $value) {
         header("$name: $value");
     }

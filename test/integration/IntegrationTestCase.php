@@ -42,7 +42,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function wait_for_text($selector, $text) {
-		self::$driver->wait( 2 )->until(
+		self::$driver->wait( 3 )->until(
 			WebDriverExpectedCondition::textToBePresentInElement(
 				WebDriverBy::cssSelector( $selector ), $text
 			)
@@ -78,38 +78,36 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function set_api_key($api_key, $wait = true) {
+		$this->set_option( 'tinypng_api_key', $api_key) ;
+	}
+
+	protected function enable_compression_sizes($sizes) {
+		$value = array( "_tiny_dummy" => "on" );
+		foreach ( $sizes as $size ) {
+			$value[ $size ] = 'on';
+		}
+		$this->set_option( 'tinypng_sizes', serialize( $value ) );
+	}
+
+	protected function set_option($name, $value) {
 		$db = new mysqli( getenv( 'HOST' ), 'root',
 			getenv( 'MYSQL_PWD' ),
 			getenv( 'WORDPRESS_DATABASE' )
 		);
 
-		$db->prepare(
-			"INSERT INTO wp_options (option_name, option_value) " .
-			"VALUES ('tinypng_api_key', '{$api_key}')"
-		)->execute();
+		$query = $db->prepare(
+			"DELETE FROM wp_options WHERE option_name = ?"
+		);
+		$query->bind_param( 's', $name );
+		$query->execute();
+
+		$query = $db->prepare(
+			"INSERT INTO wp_options (option_name, option_value) VALUES (?, ?)"
+		);
+		$query->bind_param( 'ss', $name, $value );
+		$query->execute();
 	}
 
-	// protected function enable_compression_sizes($sizes) {
-	// 	$url = wordpress( '/wp-admin/options-media.php' );
-	// 	if ( self::$driver->getCurrentUrl() != $url ) {
-	// 		self::$driver->get( $url );
-	// 	}
-	// 	$elements = self::$driver->findElements( WebDriverBy::xpath( '//input[starts-with(@id, "tinypng_sizes_")]' ) );
-	// 	foreach ( $elements as $element ) {
-	// 		$size = str_replace( 'tinypng_sizes_', '', $element->getAttribute( 'id' ) );
-	// 		if ( in_array( $size, $sizes ) ) {
-	// 			if ( ! $element->getAttribute( 'checked' ) ) {
-	// 				$element->click();
-	// 			}
-	// 		} else {
-	// 			if ( $element->getAttribute( 'checked' ) ) {
-	// 				$element->click();
-	// 			}
-	// 		}
-	// 	}
-	// 	self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
-	// }
-	//
 	// protected function enable_resize($width, $height) {
 	// 	$url = wordpress( '/wp-admin/options-media.php' );
 	// 	if ( self::$driver->getCurrentUrl() != $url ) {

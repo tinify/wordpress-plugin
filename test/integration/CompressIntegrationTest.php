@@ -47,22 +47,32 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
-	// public function test_compress_button() {
-	// 	$this->enable_compression_sizes( array( 'medium') );
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->enable_compression_sizes( array( 'medium', 'large') );
-	//
-	// 	self::$driver->get( wordpress( '/wp-admin/upload.php' ) );
-	// 	$this->assertContains('1 size compressed',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images' ) )->getText());
-	// 	$this->assertContains('1 size not compressed',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images' ) )->getText());
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images button' ) )->click();
-	// 	self::$driver->wait( 2 )->until(WebDriverExpectedCondition::textToBePresentInElement(
-	// 	WebDriverBy::cssSelector( 'td.tiny-compress-images' ), '2 sizes compressed'));
-	// }
-	//
+	public function test_compress_button_should_compress_uncompressed_sizes() {
+		$this->set_api_key( 'PNG123' );
+
+		$this->enable_compression_sizes( array( 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->enable_compression_sizes( array( 'medium', 'thumbnail' ) );
+
+		$this->visit( '/wp-admin/upload.php' );
+		$this->assertContains(
+			'1 size compressed',
+			$this->find( 'td.tiny-compress-images' )->getText()
+		);
+
+		$this->assertContains(
+			'1 size to be compressed',
+			$this->find( 'td.tiny-compress-images' )->getText()
+		);
+
+		$this->find( 'td.tiny-compress-images button' )->click();
+
+		$this->wait_for_text(
+			'td.tiny-compress-images',
+			'2 sizes compressed'
+		);
+	}
+
 	// public function test_limit_reached_dismisses() {
 	// 	$this->set_api_key( 'LIMIT123' );
 	// 	$this->upload_media( 'test/fixtures/input-example.png' );

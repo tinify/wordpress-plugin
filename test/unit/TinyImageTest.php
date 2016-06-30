@@ -87,14 +87,14 @@ class Tiny_Image_Test extends Tiny_TestCase {
 			'initial_total_size' => 360542,
 			'optimized_total_size' => 328670,
 			'image_sizes_optimized' => 3,
-			'available_unoptimised_sizes' => 1,
+			'available_unoptimized_sizes' => 1,
 		), $this->subject->get_statistics() );
 	}
 
 	public function test_get_image_sizes_available_for_compression_when_file_modified() {
 		$this->wp->createImage( 37857, '2015/09', 'tinypng_gravatar-150x150.png' );
 		$statistics = $this->subject->get_statistics();
-		$this->assertEquals( 2, $statistics['available_unoptimised_sizes'] );
+		$this->assertEquals( 2, $statistics['available_unoptimized_sizes'] );
 	}
 
 	public function test_get_savings() {

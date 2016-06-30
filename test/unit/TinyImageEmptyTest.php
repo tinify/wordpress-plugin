@@ -20,7 +20,7 @@ class Tiny_Image_Empty_Test extends Tiny_TestCase {
 			'initial_total_size' => 328670,
 			'optimized_total_size' => 328670,
 			'image_sizes_optimized' => 0,
-			'available_unoptimised_sizes' => 4,
+			'available_unoptimized_sizes' => 4,
 		), $this->subject->get_statistics() );
 	}
 }

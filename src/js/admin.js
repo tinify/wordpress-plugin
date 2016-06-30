@@ -2,7 +2,6 @@
   function compressImage(event) {
     var element = jQuery(event.target)
     var container = element.closest('.tiny-ajax-container')
-
     element.attr('disabled', 'disabled')
     container.find('.spinner').removeClass('hidden')
     container.find('span.dashicons').addClass('hidden')

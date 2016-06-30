@@ -137,6 +137,8 @@ function login($driver) {
 	try {
 		$driver->get( wordpress( '/wp-login.php' ) );
 
+		usleep( 250000 );
+
 		$driver->findElement( WebDriverBy::id( 'user_login' ) )->sendKeys( 'admin' );
 		$driver->findElement( WebDriverBy::id( 'user_pass' ) )->sendKeys( 'admin' );
 		$driver->findElement( WebDriverBy::id( 'loginform' ) )->submit();

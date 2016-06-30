@@ -6,7 +6,7 @@ $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed' ) );
 $active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed' ), $active_tinify_sizes );
 $image_statistics = $tiny_image->get_statistics();
-$available_unoptimised_sizes = $image_statistics['available_unoptimised_sizes'];
+$available_unoptimized_sizes = $image_statistics['available_unoptimized_sizes'];
 $size_before = $image_statistics['initial_total_size'];
 $size_after = $image_statistics['optimized_total_size'];
 
@@ -22,14 +22,14 @@ ksort( $size_exists );
 				<span class="icon dashicons dashicons-warning error"></span>
 			<?php } else if ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes alert"></span>
-			<?php } else if ( $total['compressed'] > 0 && $available_unoptimised_sizes > 0 ) { ?>
+			<?php } else if ( $total['compressed'] > 0 && $available_unoptimized_sizes > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes alert"></span>
 			<?php } else if ( $total['compressed'] > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes success"></span>
 			<?php } ?>
 			<span class="icon spinner hidden"></span>
 
-			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimised_sizes) ) { ?>
+			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimized_sizes) ) { ?>
 				<span class="message">
 					<strong><?php echo $total['has_been_compressed'] ?></strong>
 					<span>
@@ -39,9 +39,9 @@ ksort( $size_exists );
 				<br/>
 			<?php } ?>
 
-			<?php if ( $available_unoptimised_sizes > 0 ) { ?>
+			<?php if ( $available_unoptimized_sizes > 0 ) { ?>
 				<span class="message" stlye="color: red" >
-					<?php echo htmlspecialchars( sprintf( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimised_sizes, 'tiny-compress-images' ), $available_unoptimised_sizes ) ) ?>
+					<?php echo htmlspecialchars( sprintf( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ), $available_unoptimized_sizes ) ) ?>
 				</span>
 				<br />
 			<?php } ?>
