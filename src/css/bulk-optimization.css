@@ -1,57 +1,34 @@
-:root {
-	--green: #7acb44;
-	--dark-green: #65ad36;
-	--light-green: #79ba4e;
-	--light-border-color: #e5e5e5;
-	--error-color: #d54e21;
-	--red: #d0021b;
-	--dark-red: #920011;
-	--blue: #0085ba;
-	--dark-blue: #006799;
-	--light-blue: #0073aa;
-	--load-bar-blue: #2185b5;
-}
-
 div.tiny-bulk-optimization div.dashboard {
+	min-width: 750px;
 	margin-top: 10px;
 	border: 1px solid #e5e5e5;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 	background-color: #fff;
 }
 
-div.tiny-bulk-optimization div.statistics {
+@media only screen and (max-width: 799px) {
+	div.tiny-bulk-optimization div.dashboard {
+		min-width: 250px;
+	}
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression {
+div.tiny-bulk-optimization div.available {
 	float: left;
 	width: 50%;
 }
 
 @media only screen and (max-width: 799px) {
-	div.tiny-bulk-optimization div.dashboard div.available-for-compression {
+	div.tiny-bulk-optimization div.available {
 		width: 100%;
 	}
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression div.inner {
+div.tiny-bulk-optimization div.available div.inner {
+	max-width: 600px;
 	padding: 4px 23px 23px;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings {
-	margin-left: 50%;
-}
-
-@media only screen and (max-width: 799px) {
-	div.tiny-bulk-optimization div.dashboard div.savings {
-		margin-left: 0;
-	}
-}
-
-div.tiny-bulk-optimization div.dashboard div.savings div.inner {
-	padding: 4px 23px 23px;
-}
-
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals {
+div.tiny-bulk-optimization div.available table.totals {
 	max-width: 500px;
 	width: 100%;
 	margin: 18px 0;
@@ -61,24 +38,30 @@ div.tiny-bulk-optimization div.dashboard div.available-for-compression table.tot
 	background-color: #e5e5e5;
 }
 
-/*ie7*/ * + html div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals {
-	border-collapse: collapse;
-	border-spacing: 0;
+/*ie6-8*/ div.tiny-bulk-optimization div.available table.totals {
+	border-collapse: collapse \9;
+	border-spacing: 0 \9;
 }
 
-/*ie7*/ * + html div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td {
-	border: 1px solid #e5e5e5;
+/*ie6-8*/ div.tiny-bulk-optimization div.available table.totals td {
+	border: 1px solid #e5e5e5 \9;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item {
+div.tiny-bulk-optimization div.available table.totals td.item {
 	width: 33%;
-	padding: 1em 0;
+	padding: 1em 8px;
 	vertical-align: top;
 	text-align: center;
 	background-color: #fff;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item h3 {
+@media only screen and (max-width: 400px) {
+	div.tiny-bulk-optimization div.available table.totals td.item.costs {
+		display: none;
+	}
+}
+
+div.tiny-bulk-optimization div.available table.totals td.item h3 {
 	margin-top: 0;
 	text-transform: uppercase;
 	color: #bbb;
@@ -86,29 +69,29 @@ div.tiny-bulk-optimization div.dashboard div.available-for-compression table.tot
 	font-weight: normal;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item span {
+div.tiny-bulk-optimization div.available table.totals td.item span {
 	font-size: 1.8em;
 	font-weight: bold;
 	line-height: 1em;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item div.tooltip {
+div.tiny-bulk-optimization div.available table.totals td.item div.tooltip {
 	position: relative;
 	display: inline-block;
 	vertical-align: super;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item div.tooltip span.dashicons {
+div.tiny-bulk-optimization div.available table.totals td.item div.tooltip span.dashicons {
 	font-weight: normal;
-	color: #0085ba;
 	font-size: 1.3em;
+	/* WordPress color embedded in webpage */
 }
 
-* + html div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item div.tooltip span.dashicons {
+* + html div.tiny-bulk-optimization div.available table.totals td.item div.tooltip span.dashicons {
 	display: none;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item div.tooltip div.tip {
+div.tiny-bulk-optimization div.available table.totals td.item div.tooltip div.tip {
 	position: absolute;
 	z-index: 10;
 	display: none;
@@ -122,56 +105,79 @@ div.tiny-bulk-optimization div.dashboard div.available-for-compression table.tot
 	text-align: left;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression table.totals td.item div.tooltip:hover div.tip {
+div.tiny-bulk-optimization div.available table.totals td.item div.tooltip:hover div.tip {
 	display: block;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression div.notes {
+div.tiny-bulk-optimization div.available div.notes {
 	display: table;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression div.notes h4 {
+div.tiny-bulk-optimization div.available div.notes h4 {
 	display: table-cell;
 	font-size: 1.1em;
 	padding-right: 1.2em;
 }
 
-div.tiny-bulk-optimization div.dashboard div.available-for-compression div.notes p {
+div.tiny-bulk-optimization div.available div.notes p {
 	display: table-cell;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings {
+div.tiny-bulk-optimization div.savings {
+	margin-left: 50%;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings h3 {
+@media only screen and (max-width: 799px) {
+	div.tiny-bulk-optimization div.savings {
+		margin-left: 0;
+	}
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings div.chart {
+div.tiny-bulk-optimization div.savings div.inner {
+	max-width: 600px;
+	padding: 4px 23px 23px;
+}
+
+div.tiny-bulk-optimization div.savings div.legend {
+	margin-left: 50%;
+}
+
+div.tiny-bulk-optimization div.savings div.chart {
 	float: left;
-	width: 180px;
 	position: relative;
+	width: 50%;
+	text-align: center;
 }
 
-div.tiny-bulk-optimization div.chart div.value {
+div.tiny-bulk-optimization div.savings div.chart svg circle.main {
+	fill: #ebebeb;
+	animation: shwoosh 2s ease;
+	transition: stroke-dasharray 1s ease;
+}
+
+div.tiny-bulk-optimization div.savings div.chart svg circle.inner {
+	fill: #fff;
+}
+
+div.tiny-bulk-optimization div.savings div.chart div.value {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 180px;
-	height: 180px;
+	width: 100%;
 	color: #7acb44;
 	text-align: center;
 }
 
-div.tiny-bulk-optimization div.chart div.value div.percentage {
+div.tiny-bulk-optimization div.savings div.chart div.value div.percentage {
 	width: 50%;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 37%;
+	margin-top: 65px;
 	font-size: 2.4em;
 	line-height: 1em;
 }
 
-div.tiny-bulk-optimization div.chart div.value div.label {
+div.tiny-bulk-optimization div.savings div.chart div.value div.label {
 	width: 50%;
 	margin-left: auto;
 	margin-right: auto;
@@ -179,20 +185,16 @@ div.tiny-bulk-optimization div.chart div.value div.label {
 	line-height: 1.2em;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings div.legend {
-	margin-left: 180px;
+div.tiny-bulk-optimization div.savings div.legend {
+	/* margin-left defined inline */
 	padding: 30px 0;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings table {
+div.tiny-bulk-optimization div.savings table {
 	margin: 0 auto;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings table td.green {
-	color: #7acb44;
-}
-
-div.tiny-bulk-optimization div.dashboard div.savings table td.value {
+div.tiny-bulk-optimization div.savings table td.value {
 	font-size: 1.4em;
 	vertical-align: top;
 	text-align: right;
@@ -200,7 +202,7 @@ div.tiny-bulk-optimization div.dashboard div.savings table td.value {
 	white-space: nowrap;
 }
 
-div.tiny-bulk-optimization div.dashboard div.savings table td.description {
+div.tiny-bulk-optimization div.savings table td.description {
 	padding: 19px 0 0;
 	line-height: 14px;
 	vertical-align: top;
@@ -208,111 +210,118 @@ div.tiny-bulk-optimization div.dashboard div.savings table td.description {
 	color: #bbb;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize {
-	padding: 4px 23px;
+@media only screen and (max-width: 400px) {
+	div.tiny-bulk-optimization div.savings div.chart {
+		float: none;
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 400px) {
+	div.tiny-bulk-optimization div.savings div.legend {
+		margin-left: 0 !important;
+		padding: 10px 0;
+	}
+}
+
+div.tiny-bulk-optimization div.optimize {
+	margin: 4px 23px 32px;
 	text-align: center;
 	clear: both;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar {
+div.tiny-bulk-optimization div.optimize div.progressbar {
 	position: relative;
-	height: 16px;
+	height: 32px;
 	margin-bottom: 32px;
-	padding: 8px;
+	line-height: 32px;
 	border-radius: 32px;
 	font-size: 1.2em;
-	line-height: 16px;
 	font-weight: bold;
-	opacity: 0.99;
 	color: #fff;
 	background-color: #ebebeb;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progressbar-progress {
-	background-image: url(stripe-blue.png);
+div.tiny-bulk-optimization div.optimize div.progressbar div.progress {
 	position: absolute;
-	z-index: -2;
-	top: 0;
 	left: 0;
 	min-width: 32px;
-	width: 0%;
-	height: 16px;
-	padding: 8px 0;
+	width: 0;
+	height: 32px;
+	z-index: 2;
 	border-radius: 16px;
-	opacity: 1;
-	transition: all 1s ease;
-	/* TODO: serious performance issue with animation in Firefox */
-	animation: progress-bar 8s linear infinite;
+	transition: width 1s ease;
+	background-size: 40px 80px;
+	-webkit-backface-visibility: hidden;
+	-webkit-perspective: 1000;
+	backface-visibility: hidden;
+	perspective: 1000;
 }
 
-@keyframes progress-bar{
+@keyframes progress-bar {
 	to {
-		background-position: 100% 0;
+		background-position: 3200px 0;
 	}
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button {
-	min-width: 200px;
-	height: 48px;
-	padding: 0;
-	font-size: 1em;
+div.tiny-bulk-optimization div.optimize div.progressbar div.numbers {
+	position: relative;
+	z-index: 3;
+	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button span {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button {
 	display: none;
-	width: inherit;
-	height: 30px;
-	padding: 0.5rem 1rem;
-	pointer-events: none;
-	color: #fff;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button span.cancel,
-div.tiny-bulk-optimization div.dashboard div.optimize button span.cancelling {
-	background: var(--red);
-	border-color: var(--red) #000 var(--dark-red);
-	text-shadow: 0 -1px 1px var(--dark-red), 1px 0 1px var(--dark-red), 0 1px 1px var(--dark-red), -1px 0 1px var(--dark-red);
-	box-shadow: 0 0 3px rgba(208, 2, 27, 0.8)
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.visible {
+	display: inline;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button span.optimizing {
-	background: var(--blue);
-	border-color: var(--light-blue) var(--dark-blue) var(--dark-blue);
-	box-shadow: 0 1px 0 var(--dark-blue);
-	text-shadow: 0 -1px 1px var(--dark-blue),1px 0 1px var(--dark-blue),0 1px 1px var(--dark-blue),-1px 0 1px var(--dark-blue);
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.huge {
+	min-width: 210px;
+	height: 46px;
+	/* setting line-height looks strange small screens */
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button span.start-optimizing {
-	background: #7acb44;
-	border-color: var(--light-green) var(--dark-green) var(--dark-green);
-	text-shadow: 0 -1px 1px var(--dark-green), 1px 0 1px var(--dark-green), 0 1px 1px var(--dark-green), -1px 0 1px var(--dark-green);
-	box-shadow: 0 1px 0 var(--dark-green);
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red {
+	border-color: #920011;
+	background-color: #d0021b;
+	box-shadow: 0 1px 0 #920011;
+	text-shadow: 0 -1px 1px #920011, 1px 0 1px #920011, 0 1px 1px #920011, -1px 0 1px #920011;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button:focus span.start-optimizing {
-	border-color: #7acb44;
-	box-shadow: 0 0 3px rgba(122, 203, 68, 0.8)
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red:focus,
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red:hover {
+	background-color: #e00016;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button span.active {
-	display: block;
-	pointer-events: none;
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red:active {
+	background-color: #d0021b;
 }
 
-div.tiny-bulk-optimization div.dashboard div.optimize button ~ div.spinner {
+div.tiny-bulk-optimization div.optimize div#optimization-spinner {
 	position: absolute;
 	display: none;
-	width: 30px;
-	height: 30px;
-	margin-top: 10px;
-	background-size: 30px 30px;
+	width: 20px;
+	height: 20px;
+	margin-top: 15px;
+	background-size: 20px 20px;
 }
 
 div.tiny-bulk-optimization #media-items {
+	min-width: 750px;
 	margin-top: 16px;
 	border: 1px solid #e5e5e5;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 	background-color: #fff;
+}
+
+
+@media only screen and (max-width: 799px) {
+	div.tiny-bulk-optimization #media-items {
+		min-width: 250px;
+	}
 }
 
 div.tiny-bulk-optimization #media-items thead th.thumbnail {
@@ -324,7 +333,6 @@ div.tiny-bulk-optimization #media-items thead th.savings {
 }
 
 div.tiny-bulk-optimization #media-items thead th.status {
-	width: 200px;
 }
 
 div.tiny-bulk-optimization #media-items th.thumbnail {
@@ -347,30 +355,17 @@ div.tiny-bulk-optimization #media-items td.column-primary button {
 	margin-top: 6px;
 }
 
-div.tiny-bulk-optimization #media-items td.failed span.error {
-	position: absolute;
-	color: var(--error-color);
-}
-
-div.tiny-bulk-optimization #media-items td.failed span.message {
-	margin-left: 24px;
-}
-
 div.tiny-bulk-optimization table#media-items tr.success button.toggle-row:before {
 	color: #7acb44;
 	content: "\f147"; /* yes */
 }
 
 div.tiny-bulk-optimization table#media-items tr.failed button.toggle-row:before {
-	color: var(--error-color);
+	color: #d54e21;
 	content: "\f348"; /* info */
 }
 
 div.tiny-bulk-optimization table#media-items tr.failed.is-expanded span.icon {
 	display: none;
-}
-
-div.tiny-bulk-optimization table#media-items tr.failed.is-expanded td.status span.message {
-	margin-left:0;
 }
 

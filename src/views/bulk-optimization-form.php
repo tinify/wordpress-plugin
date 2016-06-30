@@ -1,22 +1,16 @@
-    <button class="button button-large tiny-bulk-optimization-actions">
-        <?php
-		if ( $auto_start_bulk ) { ?>
-			<span class="start-optimizing">
-		<?php } else { ?>
-			<span class="start-optimizing active">
-		<?php } ?>
-			<?php echo esc_html_e( 'Start Bulk Optimization', 'tiny-compress-images' ) ?>
-		</span>
-
-		<?php
-		if ( $auto_start_bulk ) { ?>
-			<span class="optimizing active">
-		<?php } else { ?>
-			<span class="optimizing">
-		<?php } ?>
-			<?php echo esc_html_e( 'Optimizing', 'tiny-compress-images' ) ?>...
-		</span>
-		<span class="cancel"><?php echo esc_html_e( 'Cancel', 'tiny-compress-images' ) ?></span>
-		<span class="cancelling"><?php echo esc_html_e( 'Cancelling', 'tiny-compress-images' ) ?>...</span>
-	</button>
-	<div class="spinner"></div>
+<div id="bulk-optimization-actions" class="optimization-buttons">
+	<?php
+	if ( $auto_start_bulk ) {
+		$button_start_visibility = '';
+		$button_optimizing_visibility = ' visible';
+	} else {
+		$button_start_visibility = ' visible';
+		$button_optimizing_visibility = '';
+	}
+	submit_button( esc_attr( 'Start Bulk Optimization', 'tiny-compress-images' ), 'primary button-large huge' . $button_start_visibility, 'id-start', false );
+	submit_button( esc_attr( 'Optimizing', 'tiny-compress-images' ) . '...', 'primary button-large huge' . $button_optimizing_visibility, 'id-optimizing', false );
+	submit_button( esc_attr( 'Cancel', 'tiny-compress-images' ), 'primary button-large huge red', 'id-cancel', false );
+	submit_button( esc_attr( 'Cancelling', 'tiny-compress-images' ) . '...', 'primary button-large huge red', 'id-cancelling', false );
+	?>
+	<div id="optimization-spinner" class="spinner"></div>
+</div>

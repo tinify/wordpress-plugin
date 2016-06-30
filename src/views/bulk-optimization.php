@@ -1,6 +1,35 @@
-<?php
-require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
-?>
+<style>
+
+/* Admin color scheme colors */
+
+div.tiny-bulk-optimization div.available div.tooltip span.dashicons {
+	color: <?php echo $admin_colors[3] ?>;
+}
+div.tiny-bulk-optimization div.savings div.chart div.value {
+	color: <?php echo $admin_colors[2] ?>;
+}
+div.tiny-bulk-optimization div.savings div.chart svg circle.main {
+	stroke: <?php echo $admin_colors[2] ?>;
+}
+div.tiny-bulk-optimization div.savings table td.emphasize {
+	color: <?php echo $admin_colors[2] ?>;
+}
+div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progress {
+	background-color: <?php echo $admin_colors[0] ?>;
+	background-image: linear-gradient(
+		-63deg,
+		<?php echo $admin_colors[0] ?> 0%,
+		<?php echo $admin_colors[0] ?> 25%,
+		<?php echo $admin_colors[1] ?> 25%,
+		<?php echo $admin_colors[1] ?> 50%,
+		<?php echo $admin_colors[0] ?> 50%,
+		<?php echo $admin_colors[0] ?> 75%,
+		<?php echo $admin_colors[1] ?> 75%,
+		<?php echo $admin_colors[1] ?> 100%
+	);
+}
+
+</style>
 
 <div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization">
 <?php echo '<h1>' . __( 'Bulk Optimization', 'tiny-compress-images' ) . '</h2>' ?>
@@ -8,7 +37,7 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 	<div class="dashboard">
 		<div class="statistics">
 
-			<div class="available-for-compression">
+			<div class="available">
 				<div class="inner">
 					<h3><?php echo __( 'Available images for optimization', 'tiny-compress-images' ) ?></h3>
 
@@ -88,7 +117,7 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 									</div>
 								</div>
 							</td>
-							<td class="item">
+							<td class="item costs">
 								<h3>
 									<?php echo __( 'Estimated', 'tiny-compress-images' ) ?>
 									<br>
@@ -115,12 +144,12 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 						<?php echo __( 'Statistics based on all available JPEG and PNG images in your media library.' ); ?>
 					</p>
 					<?php
-						render_percentage_chart( $stats['optimized-library-size'], $stats['unoptimized-library-size'] );
+						require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 					?>
 					<div class="legend">
 						<table>
 							<tr>
-								<td id="optimized-image-sizes" class="value green">
+								<td id="optimized-image-sizes" class="value emphasize">
 									<?php echo $stats['optimized-image-sizes']; ?>
 								</td>
 								<td class="description">
@@ -136,7 +165,7 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 								</td>
 							</tr>
 							<tr>
-								<td id="optimized-library-size" class="value green" data-bytes="<?php echo $stats['optimized-library-size'] ?>" class="green">
+								<td id="optimized-library-size" class="value emphasize" data-bytes="<?php echo $stats['optimized-library-size'] ?>" class="green">
 									<?php echo ($stats['optimized-library-size'] ? size_format( $stats['optimized-library-size'], 2 ) : '-') ?>
 								</td>
 								<td class="description">
@@ -150,13 +179,15 @@ require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
 		</div>
 		<div class="optimize">
 			<?php if ( true ) { ?>
-				<div class="progressbar" id="compression-progress" data-amount-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
-					<div class="progressbar-progress"></div>
-					<span id="optimized-so-far">
-						<?php echo $stats['optimized-image-sizes'] ?>
-					</span> /
-					<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>
-					<span id="percentage"></span>
+				<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
+					<div id="progress-size" class="progress">
+					</div>
+					<div class="numbers" >
+						<span id="optimized-so-far"><?php echo $stats['optimized-image-sizes'] ?></span>
+						/
+						<span><?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?></span>
+						<span id="percentage"></span>
+					</div>
 				</div>
 			<?php } ?>
 			<?php
