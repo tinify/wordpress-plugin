@@ -28,8 +28,12 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		self::$driver->get( wordpress( $path ) );
 	}
 
-	protected function find($selector) {
-		return self::$driver->findElement(
+	protected function find($selector, $base = null) {
+		if ( ! $base ) {
+			$base = self::$driver;
+		}
+
+		return $base->findElement(
 			WebDriverBy::cssSelector( $selector )
 		);
 	}
