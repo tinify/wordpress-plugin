@@ -244,7 +244,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_active_tinify_sizes() {
-
 		if ( is_array( $this->tinify_sizes ) ) {
 			return $this->tinify_sizes;
 		}
@@ -316,7 +315,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_sizes() {
-
 		echo '<p>';
 		esc_html_e(
 			'Choose sizes to compress. Remember each selected size counts as a compression.',

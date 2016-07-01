@@ -117,85 +117,137 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals( 0, count( $this->find_all( 'div.error p' ) ) );
 	}
 
-	// public function test_resize_fit_should_display_resized_text_in_media_library() {
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 300, 200 );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images a.thickbox' ) )->click();
-	// 	$this->assertContains('resized to 300x200',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compression-details' ) )->getText());
-	// }
-	//
-	// public function test_resize_fit_should_display_resized_text_in_edit_screen() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 300, 200 );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->view_edit_image();
-	// 	$this->assertContains('Dimensions: 300 × 200',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( $this->postbox_dimension_selector() ) )->getText());
-	// }
-	//
-	// public function test_resize_scale_should_display_resized_text_in_media_library() {
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 0, 200 );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images a.thickbox' ) )->click();
-	// 	$this->assertContains('resized to 300x200', self::$driver->findElement(
-	// 	WebDriverBy::cssSelector( 'div.tiny-compression-details' ))->getText());
-	// }
-	//
-	// public function test_resize_scale_should_display_resized_text_in_edit_screen() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 0, 200 );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->view_edit_image();
-	// 	$this->assertContains('Dimensions: 300 × 200',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( $this->postbox_dimension_selector() ) )->getText());
-	// }
-	//
-	// public function test_resize_not_needed_should_not_display_resized_text_in_media_library() {
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 30000, 20000 );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images a.thickbox' ) )->click();
-	// 	$this->assertNotContains('resized',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compression-details' ) )->getText());
-	// }
-	//
-	// public function test_resize_not_needed_should_display_original_dimensions_in_edit_screen() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 30000, 20000 );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->view_edit_image();
-	// 	$this->assertContains('Dimensions: 1080 × 720',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( $this->postbox_dimension_selector() ) )->getText());
-	// }
-	//
-	// public function test_resize_disabled_should_not_display_resized_text_in_media_library() {
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 300, 200 );
-	// 	$this->disable_resize();
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'td.tiny-compress-images a.thickbox' ) )->click();
-	// 	$this->assertNotContains('resized',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compression-details' ) )->getText());
-	// }
-	//
-	// public function test_resize_disabled_should_display_original_dimensions_in_edit_screen() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_resize( 300, 200 );
-	// 	$this->disable_resize();
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->view_edit_image();
-	// 	$this->assertContains('Dimensions: 1080 × 720',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( $this->postbox_dimension_selector() ) )->getText());
-	// }
-	//
-	// public function test_preserve_copyright_should_display_correct_image_size_in_media_library() {
+	public function test_resize_fit_should_display_resized_text_in_library() {
+		$this->set_api_key( 'PNG123' );
+		$this->enable_resize(array(
+			'method' => 'fit',
+			'width' => 300,
+			'height' => 200,
+		));
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
+
+		$this->assertContains(
+			'resized to 300x200',
+			$this->find( 'div.tiny-compression-details' )->getText()
+		);
+	}
+
+	public function test_resize_fit_should_display_resized_text_in_edit_screen() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'PNG123' );
+		$this->enable_resize(array(
+			'method' => 'fit',
+			'width' => 300,
+			'height' => 200,
+		));
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find_link( 'input-example' )->click();
+
+		$this->assertContains(
+			'Dimensions: 300 × 200',
+			$this->find( $this->postbox_dimension_selector() )->getText()
+		);
+	}
+
+	public function test_resize_scale_should_display_resized_text_in_library() {
+		$this->set_api_key( 'PNG123' );
+		$this->enable_resize(array(
+			'method' => 'scale',
+			'height' => 200,
+		));
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
+
+		$this->assertContains(
+			'resized to 300x200',
+			$this->find( 'div.tiny-compression-details' )->getText()
+		);
+	}
+
+	public function test_resize_scale_should_display_resized_text_in_edit_screen() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'PNG123' );
+		$this->enable_resize(array(
+			'method' => 'scale',
+			'height' => 200,
+		));
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find_link( 'input-example' )->click();
+
+		$this->assertContains(
+			'Dimensions: 300 × 200',
+			$this->find( $this->postbox_dimension_selector() )->getText()
+		);
+	}
+
+	public function test_superfluous_resize_should_not_display_resized_text_in_library() {
+		$this->set_api_key( 'PNG123' );
+		$this->enable_resize(array(
+			'method' => 'fit',
+			'width' => 15000,
+			'height' => 15000,
+		));
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
+
+		$this->assertNotContains(
+			'resized',
+			$this->find( 'div.tiny-compression-details' )->getText()
+		);
+	}
+
+	public function test_superfluous_resize_should_display_original_dimensions_in_edit_screen() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'PNG123' );
+		$this->enable_resize(array(
+			'method' => 'fit',
+			'width' => 15000,
+			'height' => 15000,
+		));
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find_link( 'input-example' )->click();
+
+		$this->assertContains(
+			'Dimensions: 1080 × 720',
+			$this->find( $this->postbox_dimension_selector() )->getText()
+		);
+	}
+
+	public function test_resize_disabled_should_not_display_resized_text_in_library() {
+		$this->set_api_key( 'PNG123' );
+		$this->disable_resize();
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
+
+		$this->assertNotContains(
+			'resized',
+			$this->find( 'div.tiny-compression-details' )->getText()
+		);
+	}
+
+	public function test_resize_disabled_should_display_original_dimensions_in_edit_screen() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'PNG123' );
+		$this->disable_resize();
+
+		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->find_link( 'input-example' )->click();
+
+		$this->assertContains(
+			'Dimensions: 1080 × 720',
+			$this->find( $this->postbox_dimension_selector() )->getText()
+		);
+	}
+
+	// public function test_preserve_copyright_should_display_correct_image_size_in_library() {
 	// 	$this->set_api_key( 'PRESERVEJPG123' );
 	// 	$this->enable_preserve( array( 'copyright') );
 	// 	$this->upload_media( 'test/fixtures/input-copyright.jpg' );

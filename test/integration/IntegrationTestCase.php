@@ -10,11 +10,17 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 
 abstract class IntegrationTestCase extends Tiny_TestCase {
 	protected static $driver;
+	protected static $db;
 
 	public static function set_up_before_class() {
 		self::$driver = RemoteWebDriver::createBySessionId(
 			$GLOBALS['global_session_id'],
 			$GLOBALS['global_webdriver_host']
+		);
+
+		self::$db = new mysqli( getenv( 'HOST' ), 'root',
+			getenv( 'MYSQL_PWD' ),
+			getenv( 'WORDPRESS_DATABASE' )
 		);
 	}
 
@@ -34,9 +40,9 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	protected function find_with_text($selector, $text) {
+	protected function find_link($text) {
 		return self::$driver->findElement(
-			WebDriverBy::cssSelector( $selector )
+			WebDriverBy::partialLinkText( $text )
 		);
 	}
 
@@ -56,19 +62,19 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	// protected function has_postbox_container() {
-	// 	return wordpress_version() >= 35;
-	// }
-	//
-	// protected function postbox_dimension_selector() {
-	// 	$version = wordpress_version();
-	// 	if ( $version < 37 ) {
-	// 		return 'div.misc-pub-section:nth-child(5)'; }
-	// 	elseif ( $version == 37 ) {
-	// 		return 'div.misc-pub-section:nth-child(6)'; }
-	// 	else {
-	// 		return 'div.misc-pub-dimensions'; }
-	// }
+	protected function has_postbox_container() {
+		return wordpress_version() >= 35;
+	}
+
+	protected function postbox_dimension_selector() {
+		$version = wordpress_version();
+		if ( $version < 37 ) {
+			return 'div.misc-pub-section:nth-child(5)'; }
+		elseif ( $version == 37 ) {
+			return 'div.misc-pub-section:nth-child(6)'; }
+		else {
+			return 'div.misc-pub-dimensions'; }
+	}
 
 	protected function upload_media($path) {
 		$this->visit( '/wp-admin/media-new.php?browser-uploader&flash=0' );
@@ -85,11 +91,11 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function set_api_key($api_key, $wait = true) {
-		$this->set_option( 'tinypng_api_key', $api_key) ;
+		$this->set_option( 'tinypng_api_key', $api_key );
 	}
 
 	protected function enable_compression_sizes($sizes) {
-		$value = array( "_tiny_dummy" => "on" );
+		$value = array( '_tiny_dummy' => 'on' );
 		foreach ( $sizes as $size ) {
 			$value[ $size ] = 'on';
 		}
@@ -104,39 +110,43 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->set_option( 'tinypng_preserve_data', serialize( $value ) );
 	}
 
+	protected function disable_preserve() {
+		$this->unset_option( 'tinypng_preserve_data' );
+	}
+
+	protected function enable_resize($options) {
+		$value = array( 'enabled' => 'on' );
+		foreach ( $options as $option => $val ) {
+			$value[ $option ] = $val;
+		}
+		$this->set_option( 'tinypng_resize_original', serialize( $value ) );
+	}
+
+	protected function disable_resize() {
+		$this->unset_option( 'tinypng_resize_original' );
+	}
+
 	protected function set_option($name, $value) {
-		$db = new mysqli( getenv( 'HOST' ), 'root',
-			getenv( 'MYSQL_PWD' ),
-			getenv( 'WORDPRESS_DATABASE' )
+		$this->unset_option( $name );
+
+		$query = self::$db->prepare(
+			'INSERT INTO wp_options (option_name, option_value) VALUES (?, ?)'
 		);
 
-		$query = $db->prepare(
-			"DELETE FROM wp_options WHERE option_name = ?"
-		);
-		$query->bind_param( 's', $name );
-		$query->execute();
-
-		$query = $db->prepare(
-			"INSERT INTO wp_options (option_name, option_value) VALUES (?, ?)"
-		);
 		$query->bind_param( 'ss', $name, $value );
 		$query->execute();
 	}
 
-	// protected function enable_resize($width, $height) {
-	// 	$url = wordpress( '/wp-admin/options-media.php' );
-	// 	if ( self::$driver->getCurrentUrl() != $url ) {
-	// 		self::$driver->get( $url );
-	// 	}
-	// 	$element = self::$driver->findElement( WebDriverBy::id( 'tinypng_resize_original_enabled' ) );
-	// 	if ( ! $element->getAttribute( 'checked' ) ) {
-	// 		$element->click();
-	// 	}
-	// 	self::$driver->findElement( WebDriverBy::id( 'tinypng_resize_original_width' ) )->clear()->sendKeys( $width );
-	// 	self::$driver->findElement( WebDriverBy::id( 'tinypng_resize_original_height' ) )->clear()->sendKeys( $height );
-	// 	self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
-	// }
-	//
+	protected function unset_option($name) {
+		$query = self::$db->prepare(
+			'DELETE FROM wp_options WHERE option_name = ?'
+		);
+
+		$query->bind_param( 's', $name );
+		$query->execute();
+	}
+
+
 	// protected function disable_resize() {
 	// 	$url = wordpress( '/wp-admin/options-media.php' );
 	// 	if ( self::$driver->getCurrentUrl() != $url ) {
@@ -148,20 +158,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	// 	}
 	// 	self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
 	// }
-	//
-	// protected function view_edit_image($image_title = 'input-example') {
-	// 	$url = wordpress( '/wp-admin/upload.php' );
-	// 	if ( self::$driver->getCurrentUrl() != $url ) {
-	// 		self::$driver->get( $url );
-	// 	}
-	// 	if ( wordpress_version() >= 43 ) {
-	// 		$selector = "//span[text()='" . $image_title . "']";
-	// 	} else {
-	// 		$selector = "//a[contains(text(),'" . $image_title . "')]";
-	// 	}
-	// 	self::$driver->findElement( WebDriverBy::xpath( $selector ) )->click();
-	// }
-	//
+
 	// protected function create_image_fixture($id, $name, $wp_meta, $tiny_meta = false) {
 	// 	$db = new mysqli( getenv( 'HOST' ), 'root',
 	// 		getenv( 'MYSQL_ROOT_PASSWORD' ),

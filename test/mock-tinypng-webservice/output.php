@@ -18,8 +18,6 @@ if (!is_null($api_key)) {
     $resize = $data->resize;
     if ($resize->method) {
         $file = "output-resized.$ext";
-        $headers["Image-Width"] = $resize->width;
-        $headers["Image-Height"] = $resize->height;
     }
 }
 
