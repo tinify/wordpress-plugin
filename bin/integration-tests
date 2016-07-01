@@ -42,9 +42,9 @@ function restore_config {
 
 function start_services {
   if [ "${KEEP_ALIVE}" ]; then
-    docker-compose up -d --build > /dev/null
+    docker-compose up -d --build > /dev/null || { trap - EXIT; exit 1; }
   else
-    docker-compose up -d --build --force-recreate > /dev/null
+    docker-compose up -d --build --force-recreate > /dev/null || { trap - EXIT; exit 1; }
   fi
 }
 
