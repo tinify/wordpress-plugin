@@ -194,7 +194,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		$this->register( 'GET', '/output/compressed.png', $handler );
 		$this->register( 'POST', '/output/compressed.png', $handler );
 
-		$img = file_get_contents( 'test/fixtures/input-example.png' );
+		$img = file_get_contents( 'test/fixtures/input-example.jpg' );
 		file_put_contents( $this->vfs->url() . '/image.png', $img );
 
 		$resize = array(

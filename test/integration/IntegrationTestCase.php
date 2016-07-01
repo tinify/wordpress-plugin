@@ -34,8 +34,12 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	protected function find_all($selector) {
-		return self::$driver->findElements(
+	protected function find_all($selector, $base = null) {
+		if ( ! $base ) {
+			$base = self::$driver;
+		}
+
+		return $base->findElements(
 			WebDriverBy::cssSelector( $selector )
 		);
 	}

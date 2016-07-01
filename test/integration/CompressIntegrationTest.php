@@ -10,7 +10,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_upload_without_key_should_show_error() {
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
 		$this->assertContains(
 			'Latest error: Register an account or provide an API key first',
 			$this->find( 'td.tiny-compress-images' )->getText()
@@ -19,7 +20,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_invalid_key_should_show_error() {
 		$this->set_api_key( '1234' );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
 		$this->assertContains(
 			'Latest error: Credentials are invalid',
 			$this->find( 'td.tiny-compress-images' )->getText()
@@ -28,7 +30,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_limited_key_should_show_error() {
 		$this->set_api_key( 'LIMIT123' );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
 		$this->assertContains(
 			'Latest error: Your monthly limit has been exceeded',
 			$this->find( 'td.tiny-compress-images' )->getText()
@@ -37,7 +40,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_valid_key_should_show_sizes_compressed() {
 		$this->set_api_key( 'PNG123' );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
 		$this->assertContains(
 			'sizes compressed',
 			$this->find( 'td.tiny-compress-images' )->getText()
@@ -47,7 +51,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_upload_with_gateway_timeout_should_show_error() {
 		$this->set_api_key( 'GATEWAYTIMEOUT' );
 		$this->enable_compression_sizes( array( 'medium' ) );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
 		$this->assertContains(
 			'Error while parsing response',
 			$this->find( 'td.tiny-compress-images' )->getText()
@@ -58,10 +63,92 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->set_api_key( 'PNG123 INVALID' );
 		$this->enable_compression_sizes( array( '0', 'medium' ) );
 		$this->enable_preserve( array( 'copyright' ) );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
 		$this->assertContains(
 			"Metadata key 'author' not supported",
 			$this->find( 'td.tiny-compress-images' )->getText()
+		);
+	}
+
+	public function test_upload_should_show_details_in_edit_screen() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'PNG123' );
+		$this->enable_compression_sizes( array() );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+		$this->enable_compression_sizes( array( 'medium', 'large' ) );
+		$this->find_link( 'input-example' )->click();
+
+		$this->assertContains(
+			"Compress JPEG & PNG Images\n2 sizes to be compressed\nDetails\nCompress",
+			$this->find( 'div.postbox-container div.tiny-compress-images' )->getText()
+		);
+	}
+
+	public function test_upload_should_show_details_in_edit_screen_popup() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'JPG123' );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
+		$this->upload_media( 'test/fixtures/input-example.png' );
+
+		$this->find_link( 'input-example' )->click();
+		$this->find( 'div.tiny-compress-images a.thickbox' )->click();
+
+		$this->assertContains(
+			'Compression details for input-example.png',
+			$this->find( 'div.tiny-compression-details' )->getText()
+		);
+	}
+
+	public function test_upload_should_show_compression_details_in_edit_screen_popup() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_api_key( 'PNG123' );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->find_link( 'input-example' )->click();
+		$this->find( 'div.tiny-compress-images a.thickbox' )->click();
+
+		$rows = $this->find_all( 'div.tiny-compression-details tr' );
+		$rows = array_map( function($row) {
+			return array_map( 'innerText', $this->find_all( 'td', $row ) );
+		}, $rows );
+
+		$rows = array_filter( $rows, function($row) {
+			return count( $row ) > 0 && in_array( $row[0], array(
+				'original',
+				'thumbnail',
+				'medium',
+				'large',
+				'Combined',
+			) );
+		});
+
+		$this->assertEquals(
+			array(
+				array( 'original',  '158.1 kB', 'Not configured to be compressed' ),
+				array( 'large',     '277.6 kB', '147.5 kB', '1 min ago' ),
+				array( 'medium',    '31.5 kB', '147.5 kB', '1 min ago' ),
+				array( 'thumbnail', '11.8 kB',  'Not configured to be compressed' ),
+				array( 'Combined',  '479.1 kB', '464.9 kB', '' ),
+			),
+			array_values( $rows )
+		);
+	}
+
+	public function test_compress_button_in_edit_screen_should_compress_images() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->set_api_key( 'PNG123' );
+		$this->enable_compression_sizes( array( 'medium', 'large') );
+
+		$this->find_link( 'input-example' )->click();
+		$this->find( 'div.tiny-compress-images button.tiny-compress' )->click();
+
+		$this->wait_for_text(
+			'div.tiny-compress-images',
+			'2 sizes compressed'
 		);
 	}
 
@@ -69,7 +156,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->set_api_key( 'PNG123' );
 
 		$this->enable_compression_sizes( array( 'medium' ) );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->enable_compression_sizes( array( 'medium', 'thumbnail' ) );
 
 		$this->visit( '/wp-admin/upload.php' );
@@ -93,7 +180,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_compress_button_should_show_error_for_incorrect_json() {
 		$this->enable_compression_sizes( array() );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->enable_compression_sizes( array( 'medium', 'large') );
 
 		$this->set_api_key( 'JSON1234' );
@@ -108,7 +195,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_limit_reached_dismiss_button_should_remove_error() {
 		$this->set_api_key( 'LIMIT123' );
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->find( '.tiny-notice button, .tiny-notice a.tiny-dismiss' )->click();
 		$this->wait_for_text_disappearance( 'a.tiny-dismiss', 'Dismiss' );
@@ -125,7 +212,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'height' => 200,
 		));
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
 
 		$this->assertContains(
@@ -143,7 +230,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'height' => 200,
 		));
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
 
 		$this->assertContains(
@@ -159,7 +246,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'height' => 200,
 		));
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
 
 		$this->assertContains(
@@ -176,7 +263,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'height' => 200,
 		));
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
 
 		$this->assertContains(
@@ -193,7 +280,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'height' => 15000,
 		));
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
 
 		$this->assertNotContains(
@@ -211,7 +298,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'height' => 15000,
 		));
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
 
 		$this->assertContains(
@@ -224,7 +311,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->set_api_key( 'PNG123' );
 		$this->disable_resize();
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find( 'td.tiny-compress-images a.thickbox' )->click();
 
 		$this->assertNotContains(
@@ -238,7 +325,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->set_api_key( 'PNG123' );
 		$this->disable_resize();
 
-		$this->upload_media( 'test/fixtures/input-example.png' );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
 
 		$this->assertContains(
@@ -247,78 +334,16 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
-	// public function test_preserve_copyright_should_display_correct_image_size_in_library() {
-	// 	$this->set_api_key( 'PRESERVEJPG123' );
-	// 	$this->enable_preserve( array( 'copyright') );
-	// 	$this->upload_media( 'test/fixtures/input-copyright.jpg' );
-	// 	$this->assertNotContains('files modified after compression',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div#tiny-compress-details' ) )->getText());
-	// }
-	//
-	// public function test_should_show_details_in_edit_screen() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_compression_sizes( array() );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->enable_compression_sizes( array( 'medium', 'large') );
-	// 	$this->view_edit_image();
-	// 	$this->assertContains("Compress JPEG & PNG Images\n2 sizes not compressed\nDetails\nCompress",
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.postbox-container div.tiny-compress-images' ) )->getText());
-	// }
-	//
-	// public function test_button_in_edit_screen_should_compress_images() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_compression_sizes( array( 'medium', 'large') );
-	// 	$this->view_edit_image();
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compress-images button.tiny-compress' ) )->click();
-	// 	self::$driver->wait( 2 )->until(WebDriverExpectedCondition::textToBePresentInElement(
-	// 	WebDriverBy::cssSelector( 'div.tiny-compress-images' ), '2 sizes compressed'));
-	// }
-	//
-	// public function test_edit_screen_should_show_details_popup() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_compression_sizes( array( 'medium', 'large') );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->view_edit_image();
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compress-images a.thickbox' ) )->click();
-	// 	$this->assertContains('Compression details for input-example.jpg',
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compression-details' ) )->getText());
-	// }
-	//
-	// public function test_edit_screen_should_show_correct_details_in_popup() {
-	// 	if ( ! $this->has_postbox_container() ) { return; }
-	// 	$this->set_api_key( 'PNG123' );
-	// 	$this->enable_compression_sizes( array( 'medium', 'large') );
-	// 	$this->upload_media( 'test/fixtures/input-example.png' );
-	// 	$this->view_edit_image();
-	//
-	// 	self::$driver->findElement( WebDriverBy::cssSelector( 'div.tiny-compress-images a.thickbox' ) )->click();
-	// 	$cells = self::$driver->findElements( WebDriverBy::cssSelector( 'div.tiny-compression-details td' ) );
-	// 	$texts = array_map( 'innerText', $cells );
-	// 	// Remove sizes that are version specific
-	// 	for ( $i = 0; $i < count( $texts ); ) {
-	// 		$row_size = (substr( $texts[ $i + 2 ], 0, 3 ) == 'Not') ? 3 : 4;
-	// 		if ( in_array( $texts[ $i ], array( 'original', 'thumbnail', 'medium', 'large', 'Combined') )  ) {
-	// 			$i += $row_size;
-	// 		} else {
-	// 			$texts = array_merge( array_slice( $texts, 0, $i ), array_slice( $texts, $i + $row_size ) );
-	// 		}
-	// 	}
-	//
-	// 	$this->assertEquals(
-	// 		array(
-	// 			'original',  '158.1 kB', 'Not configured to be compressed',
-	// 			'large',     '158.1 kB', '147.5 kB', '1 min ago',
-	// 			'medium',    '158.1 kB', '147.5 kB', '1 min ago',
-	// 			'thumbnail', '11.8 kB',  'Not configured to be compressed',
-	// 			'Combined',  '316.2 kB', '295.0 kB', '',
-	// 		),
-	// 		$texts
-	// 	);
-	// }
+	public function test_preserve_copyright_should_not_display_modification_in_library() {
+		$this->set_api_key( 'PRESERVEJPG123' );
+		$this->enable_preserve( array( 'copyright') );
+		$this->upload_media( 'test/fixtures/input-copyright.jpg' );
+
+		$this->assertNotContains(
+			'files modified after compression',
+			$this->find( 'div.tiny-compression-details' )->getText()
+		);
+	}
 
 	public function test_unsupported_format_should_not_show_compress_info_in_library() {
 		$this->upload_media( 'test/fixtures/input-example.gif' );
