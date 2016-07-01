@@ -120,7 +120,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
 				'thumbnail',
 				'medium',
 				'large',
-				'Combined',
 			) );
 		});
 
@@ -130,7 +129,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
 				array( 'large',     '277.6 kB', '147.5 kB', '1 min ago' ),
 				array( 'medium',    '31.5 kB', '147.5 kB', '1 min ago' ),
 				array( 'thumbnail', '11.8 kB',  'Not configured to be compressed' ),
-				array( 'Combined',  '479.1 kB', '464.9 kB', '' ),
 			),
 			array_values( $rows )
 		);
