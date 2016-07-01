@@ -111,7 +111,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 		$rows = $this->find_all( 'div.tiny-compression-details tr' );
 		$rows = array_map( function($row) {
-			return $this->find( 'td', $row )->getText();
+			$cells = $this->find_all( 'td', $row );
+			return $cells && $cells[0]->getText();
 		}, $rows );
 
 		$rows = array_filter( $rows, function($row) {
