@@ -33,43 +33,36 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 
 <div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization">
 <?php echo '<h1>' . __( 'Bulk Optimization', 'tiny-compress-images' ) . '</h2>' ?>
-
 	<div class="dashboard">
 		<div class="statistics">
-
 			<div class="available">
 				<div class="inner">
 					<h3><?php echo __( 'Available images for optimization', 'tiny-compress-images' ) ?></h3>
-
 					<p>
 						<?php
+						$percentage_of_files = round( $stats['optimized-image-sizes'] / ($stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes']) * 100, 2 );
 						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
 							echo __( 'This page is designed to bulk compress all your images. There don\'t seem to be any available.' );
+						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
+							echo __( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
+						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
+							echo __( 'Great! Your entire library is optimimized!' );
+						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
+							echo ( $percentage_of_files > 75 ) ? esc_html__( 'You are doing great!', 'tiny-compress-images' ) : esc_html__( 'You are doing good.', 'tiny-compress-images'  );
+							echo ' ';
+							printf( esc_html__( '%d%% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
+							echo ' ';
+							printf( esc_html__( 'Start the bulk optimization to optimize the remainder of your library.', 'tiny-compress-images' ) );
 						} else {
-							$percentage = round( $stats['optimized-image-sizes'] / ($stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes']) * 100, 2 );
-							if ( $percentage == 100 ) {
-								echo __( 'Great! Your entire library is optimimized!' );
-								// TODO: If we have 0 active sizes, show a different message.
-							} else if ( $stats['optimized-image-sizes'] > 0 ) {
-								echo __( 'You are doing great!' );
-								echo ' ';
-								printf( esc_html__( '%d%% of your image library is optimized.', 'tiny-compress-images' ), $percentage );
-								echo ' ';
-								printf( esc_html__( 'Start the bulk optimization to optimize the remainder of your library.', 'tiny-compress-images' ) );
-							} else {
-								echo __( 'Here you can start optimizing your entire library. Press the green button to start improving your website speed instantly!' );
-							}
+							echo esc_html__( 'Here you can start optimizing your entire library. Press the big button to start improving your website speed instantly!', 'tiny-compress-images' );
 						}
 						?>
 					</p>
-
 					<table class="totals">
 						<tr>
 							<td class="item">
 								<h3>
-									<?php echo __( 'Uploaded', 'tiny-compress-images' ) ?>
-									<br>
-									<?php echo __( 'images', 'tiny-compress-images' ) ?>
+									<?php echo __( 'Uploaded <br> images', 'tiny-compress-images' ) ?>
 								</h3>
 								<span id="uploaded-images">
 									<?php echo $stats['uploaded-images']; ?>
@@ -77,9 +70,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item">
 								<h3>
-									<?php echo __( 'Uncompressed', 'tiny-compress-images' ) ?>
-									<br>
-									<?php echo __( 'image sizes', 'tiny-compress-images' ) ?>
+									<?php echo esc_html__( 'Uncompressed image sizes', 'tiny-compress-images' ) ?>
 								</h3>
 								<span id="optimizable-image-sizes">
 									<?php echo $stats['available-unoptimised-sizes'] ?>
@@ -90,22 +81,22 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimised-sizes'] > 0 ) { ?>
 											<p>
 												<?php
-												printf(esc_html__('With your current settings you can still optimize %d images sizes from your %d uploaded JPEG and PNG images.',
-												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images']);
+												printf( esc_html__( 'With your current settings you can still optimize %d images sizes from your %d uploaded JPEG and PNG images.',
+												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images'] );
 												?>
 											</p>
 										<?php } ?>
 										<p>
 											<?php
 											if ( 0 == sizeof( $active_tinify_sizes ) ) {
-												echo __( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
+												echo esc_html__( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 											} else {
-												echo __( 'These sizes are currently activated for compression:' );
+												echo esc_html__( 'These sizes are currently activated for compression:', 'tiny-compress-images' );
 												echo '<ul>';
 												for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
 													$name = $active_tinify_sizes[ $i ];
 													if ( '0' == $name ) {
-														echo '<li>- ' . __( 'original' ) . '</li>';
+														echo '<li>- ' . esc_html__( 'original', 'tiny-compress-images' ) . '</li>';
 													} else {
 														echo '<li>- ' . $name . '</li>';
 													}
@@ -119,9 +110,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item costs">
 								<h3>
-									<?php echo __( 'Estimated', 'tiny-compress-images' ) ?>
-									<br>
-									<?php echo __( 'cost', 'tiny-compress-images' ) ?>
+									<?php echo __( 'Estimated <br> cost', 'tiny-compress-images' ) ?>
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
 								USD
@@ -129,19 +118,18 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						</tr>
 					</table>
 					<div class="notes">
-						<h4><?php echo __( 'Remember' ) ?></h4>
+						<h4><?php echo esc_html__( 'Remember', 'tiny-compress-images' ) ?></h4>
 						<p>
-							<?php echo __( 'For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!' ); ?>
+							<?php echo esc_html__( 'For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!', 'tiny-compress-images' ); ?>
 						</p>
 					</div>
 				</div>
 			</div>
-
 			<div class="savings">
 				<div class="inner">
-					<h3><?php echo __( 'Total Savings' ) ?></h3>
+					<h3><?php echo esc_html__( 'Total Savings', 'tiny-compress-images' ) ?></h3>
 					<p>
-						<?php echo __( 'Statistics based on all available JPEG and PNG images in your media library.' ); ?>
+						<?php echo esc_html__( 'Statistics based on all available JPEG and PNG images in your media library.', 'tiny-compress-images' ); ?>
 					</p>
 					<?php
 						require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
@@ -161,7 +149,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									<?php echo ($stats['unoptimized-library-size'] ? size_format( $stats['unoptimized-library-size'], 2 ) : '-'); ?>
 								</td>
 								<td class="description">
-									<?php echo __( 'initial size', 'tiny-compress-images' ) ?>
+									<?php echo esc_html__( 'initial size', 'tiny-compress-images' ) ?>
 								</td>
 							</tr>
 							<tr>
@@ -169,7 +157,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									<?php echo ($stats['optimized-library-size'] ? size_format( $stats['optimized-library-size'], 2 ) : '-') ?>
 								</td>
 								<td class="description">
-									<?php echo __( 'current size', 'tiny-compress-images' ) ?>
+									<?php echo esc_html__( 'current size', 'tiny-compress-images' ) ?>
 								</td>
 							</tr>
 						</table>
@@ -197,7 +185,6 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 			?>
 		</div>
 	</div>
-
 	<script type="text/javascript">
 	<?php
 	if ( $auto_start_bulk ) {
@@ -207,17 +194,16 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 	}
 	?>
 	</script>
-
 	<table class="wp-list-table widefat fixed striped media whitebox" id="media-items" >
 		<thead>
 			<tr>
 				<th class="thumbnail"></th>
-				<th class="column-primary" ><?php echo __( 'File', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Sizes optimized', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Original size', 'tiny-compress-images' ) ?></th>
-				<th><?php echo __( 'Optimized size', 'tiny-compress-images' ) ?></th>
-				<th class="savings" ><?php echo __( 'Savings', 'tiny-compress-images' ) ?></th>
-				<th class="status" ><?php echo __( 'Status', 'tiny-compress-images' ) ?></th>
+				<th class="column-primary" ><?php echo esc_html__( 'File', 'tiny-compress-images' ) ?></th>
+				<th><?php echo esc_html__( 'Sizes optimized', 'tiny-compress-images' ) ?></th>
+				<th><?php echo esc_html__( 'Initial size', 'tiny-compress-images' ) ?></th>
+				<th><?php echo esc_html__( 'Current size', 'tiny-compress-images' ) ?></th>
+				<th class="savings" ><?php echo esc_html__( 'Savings', 'tiny-compress-images' ) ?></th>
+				<th class="status" ><?php echo esc_html__( 'Status', 'tiny-compress-images' ) ?></th>
 			</tr>
 		</thead>
 		<tbody>

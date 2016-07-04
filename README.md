@@ -39,6 +39,14 @@ language are 100% filled in and approved.
 
 See https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images.
 
+For development you may create .po and .mo files for a each language. The .mo
+files can be created with [gettext](https://www.gnu.org/software/gettext/).
+Install gettext and generate the .mo language file do the following:
+
+1. Install gettext for example run `brew install gettext`.
+2. Add a link msgfmt `ln -s /usr/local/Cellar/gettext/0.19.7/bin/msgfmt ~/.bin`.
+3. Generate the .mo files `bin/format-language-files`.
+
 ## License
 
 Copyright (C) 2015-2016 Voormedia B.V.

@@ -98,7 +98,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = self::get_prefixed_name( 'api_key' );
 		register_setting( 'media', $field );
 		add_settings_field( $field,
-			__( 'TinyPNG account', 'tiny-compress-images' ),
+			__( 'Connection status', 'tiny-compress-images' ),
 			$this->get_method( 'render_pending_status' ),
 			'media',
 			$section
@@ -423,17 +423,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$this->render_preserve_input(
 			'creation',
-			'Preserve creation date and time in the original image (JPEG only)'
+			esc_html__( 'Preserve creation date and time in the original image', 'tiny-compress-images' )
+			. ' ' . esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
 
 		$this->render_preserve_input(
 			'copyright',
-			'Preserve copyright information in the original image'
+			esc_html__( 'Preserve copyright information in the original image', 'tiny-compress-images' )
 		);
 
 		$this->render_preserve_input(
 			'location',
-			'Preserve GPS location in the original image (JPEG only)'
+			esc_html__( 'Preserve GPS location in the original image', 'tiny-compress-images' )
+			. ' ' . esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
 	}
 

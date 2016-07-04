@@ -28,7 +28,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 
 	public function test_admin_init_should_add_settings_field() {
 		$this->assertEquals(array(
-			array( 'tinypng_api_key', 'TinyPNG account', array( $this->subject, 'render_pending_status' ), 'media', 'tinypng_settings' ),
+			array( 'tinypng_api_key', 'Connection status', array( $this->subject, 'render_pending_status' ), 'media', 'tinypng_settings' ),
 			array( 'tinypng_sizes', 'File compression', array( $this->subject, 'render_sizes' ), 'media', 'tinypng_settings' ),
 			array( 'tinypng_resize_original', 'Original image', array( $this->subject, 'render_resize' ), 'media', 'tinypng_settings' ),
 		), $this->wp->getCalls( 'add_settings_field' ));

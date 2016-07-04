@@ -117,6 +117,7 @@ div.tiny-bulk-optimization div.available div.notes h4 {
 	display: table-cell;
 	font-size: 1.1em;
 	padding-right: 1.2em;
+	white-space: nowrap;
 }
 
 div.tiny-bulk-optimization div.available div.notes p {

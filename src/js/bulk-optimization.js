@@ -75,7 +75,7 @@
       updateRowAfterCompression(row, data)
     }
 
-    row.find(".name").html(items[i].post_title + "<button class=\"toggle-row\" type=\"button\"><span class=\"screen-reader-text\">Show more details</span></button>")
+    row.find(".name").html(items[i].post_title + "<button class=\"toggle-row\" type=\"button\"><span class=\"screen-reader-text\">" + tinyCompress.L10nShowMoreDetails + "</span></button>")
 
     if (!data.image_sizes_optimized) {
         data.image_sizes_optimized = "-";
@@ -162,11 +162,11 @@
       row = jQuery("<tr class=\"media-item\">" +
           "<th class=\"thumbnail\" />" +
           "<td class=\"name column-primary\" />" +
-          "<td class=\"image-sizes-optimized\" data-colname=\"Sizes optimized\" ></>" +
-          "<td class=\"initial-total-size\" data-colname=\"Initial size\" ></>" +
-          "<td class=\"optimized-total-size\" data-colname=\"Optimized size\" ></>" +
-          "<td class=\"savings\" data-colname=\"Savings\" ></>" +
-          "<td class=\"status todo\" data-colname=\"Status\" />" +
+          "<td class=\"image-sizes-optimized\" data-colname=\"" + tinyCompress.L10nSizesOptimized + "\" ></>" +
+          "<td class=\"initial-total-size\" data-colname=\"" + tinyCompress.L10nInitialSize + "\" ></>" +
+          "<td class=\"optimized-total-size\" data-colname=\"" + tinyCompress.L10nCurrentSize + "\" ></>" +
+          "<td class=\"savings\" data-colname=\"" + tinyCompress.L10nSavings + "\" ></>" +
+          "<td class=\"status todo\" data-colname=\"" + tinyCompress.L10nStatus + "\" />" +
         "</tr>")
       row.find(".status").html(tinyCompress.L10nWaiting)
       row.find(".name").html(items[drawNow].post_title)
