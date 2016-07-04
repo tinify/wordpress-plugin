@@ -18,7 +18,7 @@ if ( $status->ok ) {
 echo ' ';
 
 if ( defined( 'TINY_API_KEY' ) ) {
-	echo sprintf( __( 'The API key has been configured in %s', 'tiny-compress-images' ), 'wp-config.php' );
+	echo sprintf( esc_html__( 'The API key has been configured in %s', 'tiny-compress-images' ), 'wp-config.php' );
 } else {
 	add_thickbox();
 	echo '<a href="#TB_inline?width=390&amp;height=150&amp;inlineId=tiny-update-account" title="Change API key" class="thickbox">';

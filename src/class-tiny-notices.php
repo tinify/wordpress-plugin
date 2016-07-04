@@ -116,7 +116,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		exit();
 	}
 
-	public function show($name, $message, $klass = 'error', $dismissible = true) {
+	public function show( $name, $message, $klass = 'error', $dismissible = true ) {
 		$css = array( $klass, 'notice', 'tiny-notice' );
 		if ( ! $dismissible ) {
 			$add = '</p>';
@@ -129,7 +129,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		}
 
 		$css = implode( ' ', $css );
-		$plugin_name = __( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		$plugin_name = esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
 
 		add_action( 'admin_notices',
 			create_function(

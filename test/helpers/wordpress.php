@@ -234,3 +234,7 @@ class WP_HTTP_Proxy {
 function __($text, $domain = 'default') {
 	return translate( $text, $domain );
 }
+
+function esc_html__($text, $domain = 'default') {
+	return translate( $text, $domain );
+}

@@ -22,7 +22,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 
 	public function test_admin_init_should_add_settings_section() {
 		$this->assertEquals(array(
-			array( 'tinypng_settings', 'PNG and JPEG optimization', array($this->subject, 'render_section'), 'media' ),
+			array( 'tinypng_settings', 'JPEG and PNG optimization', array($this->subject, 'render_section'), 'media' ),
 		array( 'section_end', '', array($this->subject, 'render_section_end'), 'media'),), $this->wp->getCalls( 'add_settings_section' ) );
 	}
 

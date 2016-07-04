@@ -116,8 +116,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function admin_menu() {
 		add_media_page(
-			__( 'Compress JPEG & PNG Images', 'tiny-compress-images' ),
 			__( 'Bulk Optimization', 'tiny-compress-images' ),
+			esc_html__( 'Bulk Optimization', 'tiny-compress-images' ),
 			'upload_files',
 			'tiny-bulk-optimization',
 			$this->get_method( 'render_bulk_optimization_page' )
@@ -201,7 +201,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
-			$message = __(
+			$message = esc_html__(
 				"You don't have permission to upload files.",
 				'tiny-compress-images'
 			);
@@ -209,7 +209,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
-			$message = __(
+			$message = esc_html__(
 				'Not a valid media file.',
 				'tiny-compress-images'
 			);
@@ -219,7 +219,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$id = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( ! is_array( $metadata ) ) {
-			$message = __(
+			$message = esc_html__(
 				'Could not find metadata of media file.',
 				'tiny-compress-images'
 			);
@@ -241,7 +241,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
-			$message = __(
+			$message = esc_html__(
 				"You don't have permission to upload files.",
 				'tiny-compress-images'
 			);
@@ -249,7 +249,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
-			$message = __(
+			$message = esc_html__(
 				'Not a valid media file.',
 				'tiny-compress-images'
 			);
@@ -259,7 +259,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$id = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( ! is_array( $metadata ) ) {
-			$message = __(
+			$message = esc_html__(
 				'Could not find metadata of media file.',
 				'tiny-compress-images'
 			);
@@ -333,7 +333,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function add_media_columns($columns) {
-		$columns[ self::MEDIA_COLUMN ] = __( 'Compression', 'tiny-compress-images' );
+		$columns[ self::MEDIA_COLUMN ] = esc_html__( 'Compression', 'tiny-compress-images' );
 		return $columns;
 	}
 
@@ -348,7 +348,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function show_media_info() {
 		global $post;
 		echo '<div class="misc-pub-section tiny-compress-images">';
-		echo '<h4>' . __( 'Compress JPEG & PNG Images', 'tiny-compress-images' ) . '</h4>';
+		echo '<h4>' . esc_html__( 'JPEG and PNG optimization', 'tiny-compress-images' ) . '</h4>';
 		echo '<div class="tiny-ajax-container">';
 		$this->render_compress_details( new Tiny_Image( $post->ID ) );
 		echo '</div></div>';

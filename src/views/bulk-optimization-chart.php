@@ -48,6 +48,6 @@ div.tiny-bulk-optimization div.savings div.chart div.value {
 	</svg>
 	<div class="value">
 		<div class="percentage" id="savings-percentage"><?php echo $chart['percentage'] ?>%</div>
-		<div class="label" >savings</div>
+		<div class="label" ><?php echo esc_html__( 'savings', 'tiny-compress-images' ); ?></div>
 	</div>
 </div>

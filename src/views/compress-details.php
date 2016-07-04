@@ -31,26 +31,21 @@ ksort( $size_exists );
 
 			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimized_sizes) ) { ?>
 				<span class="message">
-					<strong><?php echo $total['has_been_compressed'] ?></strong>
-					<span>
-						<?php echo htmlspecialchars( _n( 'size compressed', 'sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ) ) ?>
-					</span>
+					<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array( "strong" => array() ) ), $total['has_been_compressed'] ) ?>
 				</span>
 				<br/>
 			<?php } ?>
 
 			<?php if ( $available_unoptimized_sizes > 0 ) { ?>
-				<span class="message" stlye="color: red" >
-					<?php echo htmlspecialchars( sprintf( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ), $available_unoptimized_sizes ) ) ?>
+				<span class="message">
+					<?php printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes ) ?>
 				</span>
 				<br />
 			<?php } ?>
 
 			<?php if ( $size_before - $size_after ) { ?>
 				<span class="message">
-					<?php
-					printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 )
-					?>
+					<?php printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 ) ?>
 				</span>
 				<br />
 			<?php } ?>
@@ -68,7 +63,7 @@ ksort( $size_exists );
 
 	<?php if ( $tiny_image->can_be_compressed() && $active['uncompressed'] > 0 ) { ?>
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
-			<?php echo esc_html__( 'Compress', 'tiny-compress-images' ) ?>
+			<?php esc_html_e( 'Compress', 'tiny-compress-images' ) ?>
 		</button>
 	<?php } ?>
 </div>
@@ -144,17 +139,19 @@ ksort( $size_exists );
 			</tfoot>
 			<?php } ?>
 		</table>
-		<?php if ( $size_before && $size_after ) { ?>
-			<p>
-				<strong>
-					<?php
+		<p>
+			<strong>
+				<?php
+				if ( $size_before - $size_after ) {
 					printf( esc_html__( 'Total savings %.0f%% (%s)', 'tiny-compress-images' ),
 						( 1 - $size_after / floatval( $size_before ) ) * 100,
 						size_format( $size_before - $size_after, 1 )
-					)
-					?>
-				</strong>
-			</p>
-		<?php } ?>
+					);
+				} else {
+					printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), 0 );
+				}
+				?>
+			</strong>
+		</p>
 	</div>
 </div>
