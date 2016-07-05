@@ -32,7 +32,8 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 </style>
 
 <div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization">
-<?php echo '<h1>' . esc_html__( 'Bulk Optimization', 'tiny-compress-images' ) . '</h2>' ?>
+	<div class="icon32" id="icon-upload"><br></div>
+	<h2><?php esc_html_e( 'Bulk Optimization', 'tiny-compress-images' ) ?></h2>
 	<div class="dashboard">
 		<div class="statistics">
 			<div class="available">
@@ -194,7 +195,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 	}
 	?>
 	</script>
-	<table class="wp-list-table widefat fixed striped media whitebox" id="media-items" >
+	<table class="wp-list-table widefat fixed striped media whitebox" id="optimization-items" >
 		<thead>
 			<tr>
 				<th class="thumbnail"></th>

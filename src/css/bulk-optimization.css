@@ -310,7 +310,7 @@ div.tiny-bulk-optimization div.optimize div#optimization-spinner {
 	background-size: 20px 20px;
 }
 
-div.tiny-bulk-optimization #media-items {
+div.tiny-bulk-optimization table.whitebox {
 	min-width: 750px;
 	margin-top: 16px;
 	border: 1px solid #e5e5e5;
@@ -320,53 +320,53 @@ div.tiny-bulk-optimization #media-items {
 
 
 @media only screen and (max-width: 799px) {
-	div.tiny-bulk-optimization #media-items {
+	div.tiny-bulk-optimization table.whitebox {
 		min-width: 250px;
 	}
 }
 
-div.tiny-bulk-optimization #media-items thead th.thumbnail {
+div.tiny-bulk-optimization table.whitebox thead th.thumbnail {
 	width: 30px;
 }
 
-div.tiny-bulk-optimization #media-items thead th.savings {
+div.tiny-bulk-optimization table.whitebox thead th.savings {
 	width: 70px;
 }
 
-div.tiny-bulk-optimization #media-items thead th.status {
+div.tiny-bulk-optimization table.whitebox thead th.status {
 }
 
-div.tiny-bulk-optimization #media-items th.thumbnail {
+div.tiny-bulk-optimization table.whitebox th.thumbnail {
 	width: 30px;
 	height: 32px;
 	padding-top: 6px;
 	vertical-align: top;
 }
 
-div.tiny-bulk-optimization #media-items td {
+div.tiny-bulk-optimization table.whitebox td {
 	padding-top: 12px;
 }
 
-div.tiny-bulk-optimization #media-items td.name,
-div.tiny-bulk-optimization #media-items td.status {
+div.tiny-bulk-optimization table.whitebox td.name,
+div.tiny-bulk-optimization table.whitebox td.status {
 	padding-bottom: 12px;
 }
 
-div.tiny-bulk-optimization #media-items td.column-primary button {
+div.tiny-bulk-optimization table.whitebox td.column-primary button {
 	margin-top: 6px;
 }
 
-div.tiny-bulk-optimization table#media-items tr.success button.toggle-row:before {
+div.tiny-bulk-optimization table.whitebox tr.success button.toggle-row:before {
 	color: #7acb44;
 	content: "\f147"; /* yes */
 }
 
-div.tiny-bulk-optimization table#media-items tr.failed button.toggle-row:before {
+div.tiny-bulk-optimization table.whitebox tr.failed button.toggle-row:before {
 	color: #d54e21;
 	content: "\f348"; /* info */
 }
 
-div.tiny-bulk-optimization table#media-items tr.failed.is-expanded span.icon {
+div.tiny-bulk-optimization table.whitebox tr.failed.is-expanded span.icon {
 	display: none;
 }
 

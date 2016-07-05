@@ -53,7 +53,7 @@
       handleCancellation();
     }
 
-    var row = jQuery("#media-items tr").eq(parseInt(i)+1)
+    var row = jQuery("#optimization-items tr").eq(parseInt(i)+1)
 
     if (error) {
       row.addClass("failed")
@@ -120,7 +120,7 @@
     }
 
     var item = items[i]
-    var row = jQuery("#media-items tr").eq(parseInt(i)+1)
+    var row = jQuery("#optimization-items tr").eq(parseInt(i)+1)
     row.find(".status").removeClass("todo")
     row.find(".status").html(tinyCompress.L10nCompressing)
     jQuery.ajax({
@@ -156,7 +156,7 @@
   }
 
   function drawSomeRows(items, rowsToDraw) {
-    var list = jQuery("#media-items tbody")
+    var list = jQuery("#optimization-items tbody")
     var row
     for (var drawNow = window.totalRowsDrawn; drawNow < Math.min( rowsToDraw + window.totalRowsDrawn, items.length); drawNow++) {
       row = jQuery("<tr class=\"media-item\">" +
@@ -178,7 +178,7 @@
   function cancelOptimization() {
     window.optimizationCancelled = true;
     jQuery("div#optimization-spinner").css("display", "none");
-    jQuery(jQuery("#media-items tr td.status.todo")).html(tinyCompress.L10nCancelled)
+    jQuery(jQuery("#optimization-items tr td.status.todo")).html(tinyCompress.L10nCancelled)
     jQuery("div#bulk-optimization-actions input").removeClass("visible")
     jQuery("div#bulk-optimization-actions input#id-cancelling").addClass("visible")
   }
