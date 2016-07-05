@@ -112,7 +112,7 @@ ksort( $size_exists );
 					<?php
 					if ( $size->has_been_compressed() ) {
 						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';
-						echo '<td>' . sprintf( esc_html_x( '%s ago', '%s = human-readable time difference', 'tiny-compress-images' ), human_time_diff( $image->end_time( $size_name ) ) ) .'</td>';
+						echo '<td>' . sprintf( esc_html_x( '%s ago', '%s = human-readable time difference', 'tiny-compress-images' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
 					} else if ( ! $size->exists() ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not present or duplicate', 'tiny-compress-images' ) . '</em></td>';
 					} else if ( isset( $size_active[ $size_name ] ) ) {
