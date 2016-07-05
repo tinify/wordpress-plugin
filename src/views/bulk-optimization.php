@@ -41,9 +41,13 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 					<h3><?php esc_html_e( 'Available images', 'tiny-compress-images' ) ?></h3>
 					<p>
 						<?php
-						$percentage_of_files = round( $stats['optimized-image-sizes'] / ($stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes']) * 100, 2 );
 						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
-							esc_html_e( 'This page is designed to bulk compress all your images. There don\'t seem to be any available.' );
+							$percentage = 0;
+						} else {
+							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) * 100, 2 );
+						}
+						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
+							esc_html_e( 'This page is designed to bulk optimize all your images. You don\'t seem to have uploaded any JPEG or PNG images yet.' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
