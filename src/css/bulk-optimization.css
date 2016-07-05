@@ -271,33 +271,34 @@ div.tiny-bulk-optimization div.optimize div.progressbar div.numbers {
 	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large {
 	display: none;
 }
 
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.visible {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.visible {
 	display: inline;
 }
 
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.huge {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.huge {
 	min-width: 210px;
 	height: 46px;
 	/* setting line-height looks strange small screens */
+	/* WP 3.2 */ background-image: none;
 }
 
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.red {
 	border-color: #920011;
 	background-color: #d0021b;
 	box-shadow: 0 1px 0 #920011;
 	text-shadow: 0 -1px 1px #920011, 1px 0 1px #920011, 0 1px 1px #920011, -1px 0 1px #920011;
 }
 
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red:focus,
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red:hover {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.red:focus,
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.red:hover {
 	background-color: #e00016;
 }
 
-div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button.button-large.red:active {
+div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.red:active {
 	background-color: #d0021b;
 }
 
