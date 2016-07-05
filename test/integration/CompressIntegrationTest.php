@@ -80,7 +80,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->find_link( 'input-example' )->click();
 
 		$this->assertContains(
-			"Compress JPEG & PNG Images\n2 sizes to be compressed\nDetails\nCompress",
+			"JPEG and PNG optimization\n2 sizes to be compressed\nDetails\nCompress",
 			$this->find( 'div.postbox-container div.tiny-compress-images' )->getText()
 		);
 	}

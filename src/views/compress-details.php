@@ -31,7 +31,7 @@ ksort( $size_exists );
 
 			<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimized_sizes) ) { ?>
 				<span class="message">
-					<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array( "strong" => array() ) ), $total['has_been_compressed'] ) ?>
+					<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array( 'strong' => array() ) ), $total['has_been_compressed'] ) ?>
 				</span>
 				<br/>
 			<?php } ?>

@@ -48,7 +48,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
 							echo esc_html__( 'Great! Your entire library is optimimized!' );
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
-							echo ( $percentage_of_files > 75 ) ? esc_html__( 'You are doing great!', 'tiny-compress-images' ) : esc_html__( 'You are doing good.', 'tiny-compress-images'  );
+							echo ( $percentage_of_files > 75 ) ? esc_html__( 'You are doing great!', 'tiny-compress-images' ) : esc_html__( 'You are doing good.', 'tiny-compress-images' );
 							echo ' ';
 							printf( esc_html__( '%d%% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
 							echo ' ';
@@ -62,7 +62,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						<tr>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uploaded <br> images', 'tiny-compress-images' ), array( "br" => array() ) ) ?>
+									<?php echo wp_kses( __( 'Uploaded <br> images', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
 								</h3>
 								<span id="uploaded-images">
 									<?php echo $stats['uploaded-images']; ?>
@@ -70,7 +70,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array( "br" => array() ) ) ?>
+									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
 								</h3>
 								<span id="optimizable-image-sizes">
 									<?php echo $stats['available-unoptimised-sizes'] ?>
@@ -110,7 +110,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item costs">
 								<h3>
-									<?php echo wp_kses( __( 'Estimated <br> cost', 'tiny-compress-images' ), array( "br" => array() ) ) ?>
+									<?php echo wp_kses( __( 'Estimated <br> cost', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
 								USD

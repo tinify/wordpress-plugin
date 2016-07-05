@@ -370,7 +370,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'With these settings you can compress ' .
 					'<strong> at least %s images </strong> for free each month.',
 				'tiny-compress-images'
-			), array( "strong" => array() ) ), $free_images_per_month );
+			), array( 'strong' => array() ) ), $free_images_per_month );
 		}
 		echo '</p>';
 	}
@@ -419,19 +419,28 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$this->render_preserve_input(
 			'creation',
-			esc_html__( 'Preserve creation date and time in the original image', 'tiny-compress-images' )
-			. ' ' . esc_html__( '(JPEG only)', 'tiny-compress-images' )
+			esc_html__(
+				'Preserve creation date and time in the original image',
+				'tiny-compress-images'
+			) . ' ' .
+			esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
 
 		$this->render_preserve_input(
 			'copyright',
-			esc_html__( 'Preserve copyright information in the original image', 'tiny-compress-images' )
+			esc_html__(
+				'Preserve copyright information in the original image',
+				'tiny-compress-images'
+			)
 		);
 
 		$this->render_preserve_input(
 			'location',
-			esc_html__( 'Preserve GPS location in the original image', 'tiny-compress-images' )
-			. ' ' . esc_html__( '(JPEG only)', 'tiny-compress-images' )
+			esc_html__(
+				'Preserve GPS location in the original image',
+				'tiny-compress-images'
+			) . ' ' .
+			esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
 	}
 
