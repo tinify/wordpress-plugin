@@ -46,7 +46,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						} else {
 							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) * 100, 2 );
 						}
-						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
+						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimised-sizes'] ) {
 							esc_html_e( 'This page is designed to bulk optimize all your images. You don\'t seem to have uploaded any JPEG or PNG images yet.' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
