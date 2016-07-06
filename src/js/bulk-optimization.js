@@ -140,7 +140,8 @@
   }
 
   function prepareBulkOptimization(items) {
-      window.allBulkOptimizationItems = items
+    window.allBulkOptimizationItems = items
+    updateProgressBar(0)
   }
 
   function startBulkOptimization(items) {
