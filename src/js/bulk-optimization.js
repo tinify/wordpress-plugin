@@ -93,9 +93,9 @@
     }
 
     row.find(".thumbnail").html(data.thumbnail)
-    row.find(".image-sizes-optimized").html(data.image_sizes_optimized)
-    row.find(".initial-total-size").html(data.initial_total_size)
-    row.find(".optimized-total-size").html(data.optimized_total_size)
+    row.find(".sizes-optimized").html(data.image_sizes_optimized)
+    row.find(".initial-size").html(data.initial_total_size)
+    row.find(".optimized-size").html(data.optimized_total_size)
     row.find(".savings").html(data.savings)
 
     if (items[++i]) {
@@ -161,11 +161,11 @@
     for (var drawNow = window.totalRowsDrawn; drawNow < Math.min( rowsToDraw + window.totalRowsDrawn, items.length); drawNow++) {
       row = jQuery("<tr class=\"media-item\">" +
           "<th class=\"thumbnail\" />" +
-          "<td class=\"name column-primary\" />" +
-          "<td class=\"image-sizes-optimized\" data-colname=\"" + tinyCompress.L10nSizesOptimized + "\" ></>" +
-          "<td class=\"initial-total-size\" data-colname=\"" + tinyCompress.L10nInitialSize + "\" ></>" +
-          "<td class=\"optimized-total-size\" data-colname=\"" + tinyCompress.L10nCurrentSize + "\" ></>" +
-          "<td class=\"savings\" data-colname=\"" + tinyCompress.L10nSavings + "\" ></>" +
+          "<td class=\"column-primary name\" />" +
+          "<td class=\"column-author sizes-optimized\" data-colname=\"" + tinyCompress.L10nSizesOptimized + "\" ></>" +
+          "<td class=\"column-author initial-size\" data-colname=\"" + tinyCompress.L10nInitialSize + "\" ></>" +
+          "<td class=\"column-author optimized-size\" data-colname=\"" + tinyCompress.L10nCurrentSize + "\" ></>" +
+          "<td class=\"column-author savings\" data-colname=\"" + tinyCompress.L10nSavings + "\" ></>" +
           "<td class=\"status todo\" data-colname=\"" + tinyCompress.L10nStatus + "\" />" +
         "</tr>")
       row.find(".status").html(tinyCompress.L10nWaiting)

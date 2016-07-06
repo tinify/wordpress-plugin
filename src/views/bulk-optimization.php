@@ -202,12 +202,13 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 	<table class="wp-list-table widefat fixed striped media whitebox" id="optimization-items" >
 		<thead>
 			<tr>
+				<?php // column-author WP 3.8-4.2 mobile view ?>
 				<th class="thumbnail"></th>
 				<th class="column-primary" ><?php esc_html_e( 'File', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Sizes optimized', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Initial size', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Current size', 'tiny-compress-images' ) ?></th>
-				<th class="savings" ><?php esc_html_e( 'Savings', 'tiny-compress-images' ) ?></th>
+				<th class="column-author"><?php esc_html_e( 'Sizes optimized', 'tiny-compress-images' ) ?></th>
+				<th class="column-author"><?php esc_html_e( 'Initial size', 'tiny-compress-images' ) ?></th>
+				<th class="column-author"><?php esc_html_e( 'Current size', 'tiny-compress-images' ) ?></th>
+				<th class="column-author savings" ><?php esc_html_e( 'Savings', 'tiny-compress-images' ) ?></th>
 				<th class="status" ><?php esc_html_e( 'Status', 'tiny-compress-images' ) ?></th>
 			</tr>
 		</thead>

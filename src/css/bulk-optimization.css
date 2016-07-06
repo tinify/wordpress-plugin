@@ -326,6 +326,10 @@ div.tiny-bulk-optimization table.whitebox {
 	}
 }
 
+div.tiny-bulk-optimization table.whitebox th.column-author {
+	/* WP 3.1-4.2 */ width: auto;
+}
+
 div.tiny-bulk-optimization table.whitebox thead th.thumbnail {
 	width: 30px;
 }
