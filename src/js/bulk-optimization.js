@@ -68,7 +68,7 @@
       row.find(".status").attr("title", data.error)
     } else if (data.failed > 0) {
       row.addClass("failed")
-      row.find(".status").html("<span class=\"icon dashicons dashicons-warning error\"></span><span class=\"message\">" + tinyCompress.L10nLatestError + ": " + data.message + "</span>");
+      row.find(".status").html("<span class=\"icon dashicons dashicons-no error\"></span><span class=\"message\">" + tinyCompress.L10nLatestError + ": " + data.message + "</span>");
       row.find(".status").attr("title", data.message)
     } else {
       row.addClass("success")

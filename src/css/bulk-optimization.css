@@ -283,7 +283,7 @@ div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-la
 	min-width: 210px;
 	height: 46px;
 	/* setting line-height looks strange small screens */
-	/* WP 3.2 */ background-image: none;
+	/* WP < 3.9 */ background-image: none;
 }
 
 div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-large.red {
@@ -357,6 +357,10 @@ div.tiny-bulk-optimization table.whitebox td.column-primary button {
 	margin-top: 6px;
 }
 
+div.tiny-bulk-optimization button.toggle-row {
+	/* WP < 4.3 */ display: none;
+}
+
 div.tiny-bulk-optimization table.whitebox tr.success button.toggle-row:before {
 	color: #7acb44;
 	content: "\f147"; /* yes */
@@ -364,7 +368,7 @@ div.tiny-bulk-optimization table.whitebox tr.success button.toggle-row:before {
 
 div.tiny-bulk-optimization table.whitebox tr.failed button.toggle-row:before {
 	color: #d54e21;
-	content: "\f348"; /* info */
+	content: "\f158"; /* more compatibility*/
 }
 
 div.tiny-bulk-optimization table.whitebox tr.failed.is-expanded span.icon {

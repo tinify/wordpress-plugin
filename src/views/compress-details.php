@@ -18,8 +18,9 @@ ksort( $size_exists );
 <div class="details-container">
 	<div id="tiny-compress-details" class="details" >
 		<?php if ( $tiny_image->can_be_compressed() ) { ?>
-			<?php if ( $error ) { ?>
-				<span class="icon dashicons dashicons-warning error"></span>
+			<?php if ( $error ) {
+				// dashicons-warning available for WP 4.3+ ?>
+				<span class="icon dashicons dashicons-no error"></span>
 			<?php } else if ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
 				<span class="icon dashicons dashicons-yes alert"></span>
 			<?php } else if ( $total['compressed'] > 0 && $available_unoptimized_sizes > 0 ) { ?>

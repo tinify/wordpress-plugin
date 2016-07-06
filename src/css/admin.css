@@ -75,9 +75,8 @@ div.tiny-update-account-step2 p.tiny-update-account-message {
 
 .tiny-compress-images span.icon {
 	display: inline-block;
-	width: 20px;
-	height: 20px;
-	padding-right: 5px;
+	margin-left: -4px;
+	padding-right: 4px;
 }
 
 .tiny-compress-images span.dashicons-before::before {
@@ -91,7 +90,8 @@ div.tiny-update-account-step2 p.tiny-update-account-message {
 
 .tiny-compress-images .details-container button {
 	display: block;
-	margin: 5px 0 10px 24px;
+	margin-left: 20px;
+	margin-bottom: 5px;
 }
 
 .tiny-compress-images .details-container span.icon {
@@ -100,7 +100,11 @@ div.tiny-update-account-step2 p.tiny-update-account-message {
 
 .tiny-compress-images .details-container .message {
 	display: inline-block;
-	margin-left: 24px;
+	margin-left: 20px;
+}
+
+.tiny-compress-images .details-container a.message {
+	margin-bottom: 5px;
 }
 
 .tiny-compress-images span.success {
