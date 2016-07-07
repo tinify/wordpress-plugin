@@ -219,7 +219,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'width' => null,
 				'height' => null,
 				'tinify' => ! is_array( $setting ) ||
-					(isset( $setting[$size] ) && $setting[$size] === 'on'),
+					(isset( $setting[ $size ] ) && $setting[ $size ] === 'on'),
 			)
 		);
 

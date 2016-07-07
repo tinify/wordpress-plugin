@@ -67,7 +67,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						<tr>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uploaded <br> images', 'tiny-compress-images' ), array( "br" => array() ) ) ?>
+									<?php echo wp_kses( __( 'Uploaded <br> images', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
 								</h3>
 								<span id="uploaded-images">
 									<?php echo $stats['uploaded-images']; ?>
@@ -75,7 +75,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array( "br" => array() ) ) ?>
+									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
 								</h3>
 								<span id="optimizable-image-sizes">
 									<?php echo $stats['available-unoptimised-sizes'] ?>
@@ -115,7 +115,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item costs">
 								<h3>
-									<?php echo wp_kses( __( 'Estimated <br> cost', 'tiny-compress-images' ), array( "br" => array() ) ) ?>
+									<?php echo wp_kses( __( 'Estimated <br> cost', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
 								USD
