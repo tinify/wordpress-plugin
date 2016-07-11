@@ -102,7 +102,7 @@ class Tiny_Image {
 
 	public function compress( $settings ) {
 
-		if ( $settings->get_compressor() === null || ! $this->can_be_compressed() ) {
+		if ( ! $settings->running() || $settings->get_compressor() === null || ! $this->can_be_compressed() ) {
 			return;
 		}
 

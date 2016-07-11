@@ -24,6 +24,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	private $tinify_sizes;
 	private $compressor;
 	private $notices;
+	private $_running = true;
 
 	public function __construct() {
 		parent::__construct();
@@ -35,6 +36,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$this->get_api_key(),
 			$this->get_method( 'after_compress_callback' )
 		);
+	}
+
+	public function pause () {
+		$this->_running = FALSE;
+	}
+
+	public function start () {
+		$this->_running = TRUE;
+	}
+
+	public function running () {
+		return $this->_running;
 	}
 
 	public function get_absolute_url() {

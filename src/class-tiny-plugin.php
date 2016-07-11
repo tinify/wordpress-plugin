@@ -50,6 +50,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$this->settings->set_compressor( $compressor );
 	}
 
+	public function start () {
+		$this->settings->start();
+	}
+
+	public function pause () {
+		$this->settings->pause();
+	}
+
 	public function init() {
 		add_filter( 'jpeg_quality',
 			$this->get_static_method( 'jpeg_quality' )
