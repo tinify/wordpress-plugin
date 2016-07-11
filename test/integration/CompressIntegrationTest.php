@@ -348,11 +348,11 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_unsupported_format_should_not_show_compress_info_in_library() {
 		$this->upload_media( 'test/fixtures/input-example.gif' );
-		$this->assertEquals( '', $this->find( 'div#tiny-compress-details' )->getText() );
+		$this->assertEquals( '', $this->find( 'td.column-tiny-compress-images' )->getText() );
 	}
 
 	public function test_non_image_file_should_not_show_compress_info_in_library() {
 		$this->upload_media( 'test/fixtures/input-example.pdf' );
-		$this->assertEquals( '', $this->find( 'div#tiny-compress-details' )->getText() );
+		$this->assertEquals( '', $this->find( 'td.column-tiny-compress-images' )->getText() );
 	}
 }
