@@ -339,19 +339,28 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_media_column( $column, $id ) {
 		if ( $column === self::MEDIA_COLUMN ) {
-			echo '<div class="tiny-ajax-container">';
-			$this->render_compress_details( new Tiny_Image( $id ) );
-			echo '</div>';
+			$tiny_image = new Tiny_Image( $id );
+			if ( $tiny_image->file_type_allowed() ) {
+				echo '<div class="tiny-ajax-container">';
+				$this->render_compress_details( $tiny_image );
+				echo '</div>';
+			}
 		}
 	}
 
 	public function show_media_info() {
 		global $post;
-		echo '<div class="misc-pub-section tiny-compress-images">';
-		echo '<h4>' . esc_html__( 'JPEG and PNG optimization', 'tiny-compress-images' ) . '</h4>';
-		echo '<div class="tiny-ajax-container">';
-		$this->render_compress_details( new Tiny_Image( $post->ID ) );
-		echo '</div></div>';
+		$tiny_image = new Tiny_Image( $post->ID );
+		if ( $tiny_image->file_type_allowed() ) {
+			echo '<div class="misc-pub-section tiny-compress-images">';
+			echo '<h4>';
+			esc_html_e( 'JPEG and PNG optimization', 'tiny-compress-images' );
+			echo '</h4>';
+			echo '<div class="tiny-ajax-container">';
+			$this->render_compress_details( $tiny_image );
+			echo '</div>';
+			echo '</div>';
+		}
 	}
 
 	private function render_compress_details( $tiny_image ) {

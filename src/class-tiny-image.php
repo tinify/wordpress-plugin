@@ -132,7 +132,7 @@ class Tiny_Image {
 		return $this->wp_metadata;
 	}
 
-	public function can_be_compressed() {
+	public function file_type_allowed() {
 		return in_array( $this->get_mime_type(), array( 'image/jpeg', 'image/png' ) );
 	}
 
@@ -142,7 +142,7 @@ class Tiny_Image {
 
 	public function compress( $settings ) {
 
-		if ( $settings->get_compressor() === null || ! $this->can_be_compressed() ) {
+		if ( $settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
 		}
 
@@ -309,7 +309,8 @@ class Tiny_Image {
 									$this->statistics['available_unoptimized_sizes'] += 1;
 								}
 							} else {
-								$this->statistics['optimized_total_size'] += intval( $output['size'] );
+								$this->statistics['optimized_total_size']
+									+= intval( $output['size'] );
 								$this->statistics['image_sizes_optimized'] += 1;
 							}
 						} else {
