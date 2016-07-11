@@ -33,6 +33,7 @@ class Tiny_Image {
 		$this->wp_metadata = $wp_metadata;
 		$this->parse_wp_metadata();
 		$this->parse_tiny_metadata( $tiny_metadata );
+		$this->detect_duplicates();
 	}
 
 	private function parse_wp_metadata() {
@@ -54,16 +55,55 @@ class Tiny_Image {
 		$filename = $path_prefix . $this->name;
 		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
 
-		$unique_sizes = array();
 		if ( isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] ) ) {
-			foreach ( $this->wp_metadata['sizes'] as $size => $info ) {
-				$filename = $path_prefix . $info['file'];
-				if ( ! isset( $unique_sizes[ $filename ] ) ) {
-					$unique_sizes[ $filename ] = true;
-					$this->sizes[ $size ] = new Tiny_Image_Size( $filename );
-				}
+			foreach ( $this->wp_metadata['sizes'] as $size_name => $info ) {
+				$this->sizes[ $size_name ] = new Tiny_Image_Size( $path_prefix . $info['file'] );
 			}
 		}
+	}
+
+	private function detect_duplicates() {
+		$filenames = array();
+
+		if ( is_array( $this->wp_metadata )
+			&& isset( $this->wp_metadata['sizes'] )
+			&& is_array( $this->wp_metadata['sizes'] ) ) {
+
+			$settings = new Tiny_Settings();
+			$active_sizes = $settings->get_sizes();
+			$active_tinify_sizes = $settings->get_active_tinify_sizes();
+
+			foreach ( $this->wp_metadata['sizes'] as $size_name => $size ) {
+				if ( $this->sizes[ $size_name ]->has_been_compressed()
+					&& array_key_exists( $size_name, $active_sizes ) ) {
+					$filenames = $this->duplicate_check( $filenames, $size['file'], $size_name );
+				}
+			}
+			foreach ( $this->wp_metadata['sizes'] as $size_name => $size ) {
+				if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
+					$filenames = $this->duplicate_check( $filenames, $size['file'], $size_name );
+				}
+			}
+			foreach ( $this->wp_metadata['sizes'] as $size_name => $size ) {
+				if ( array_key_exists( $size_name, $active_sizes ) ) {
+					$filenames = $this->duplicate_check( $filenames, $size['file'], $size_name );
+				}
+			}
+			foreach ( $this->wp_metadata['sizes'] as $size_name => $size ) {
+				$filenames = $this->duplicate_check( $filenames, $size['file'], $size_name );
+			}
+		}
+	}
+
+	private function duplicate_check( $filenames, $file, $size_name ) {
+		if ( isset( $filenames[ $file ] ) ) {
+			if ( $filenames[ $file ] != $size_name ) {
+				$this->sizes[ $size_name ]->mark_duplicate( $filenames[ $file ] );
+			}
+		} else {
+			$filenames[ $file ] = $size_name;
+		}
+		return $filenames;
 	}
 
 	private function parse_tiny_metadata( $tiny_metadata ) {
@@ -114,20 +154,22 @@ class Tiny_Image {
 		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 
 		foreach ( $uncompressed_sizes as $size_name => $size ) {
-			$size->add_tiny_meta_start();
-			$this->update_tiny_post_meta();
-			$resize = $settings->get_resize_options( $size_name );
-			$preserve = $settings->get_preserve_options( $size_name );
-			try {
-				$response = $compressor->compress_file( $size->filename, $resize, $preserve );
-				$size->add_tiny_meta( $response );
-				$success++;
-			} catch (Tiny_Exception $e) {
-				$size->add_tiny_meta_error( $e );
-				$failed++;
+			if ( ! $size->is_duplicate() ) {
+				$size->add_tiny_meta_start();
+				$this->update_tiny_post_meta();
+				$resize = $settings->get_resize_options( $size_name );
+				$preserve = $settings->get_preserve_options( $size_name );
+				try {
+					$response = $compressor->compress_file( $size->filename, $resize, $preserve );
+					$size->add_tiny_meta( $response );
+					$success++;
+				} catch (Tiny_Exception $e) {
+					$size->add_tiny_meta_error( $e );
+					$failed++;
+				}
+				$this->add_wp_metadata( $size_name, $size );
+				$this->update_tiny_post_meta();
 			}
-			$this->add_wp_metadata( $size_name, $size );
-			$this->update_tiny_post_meta();
 		}
 		return array( 'success' => $success, 'failed' => $failed );
 	}
@@ -253,30 +295,32 @@ class Tiny_Image {
 		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 
 		foreach ( $this->sizes as $size_name => $size ) {
-			if ( array_key_exists( $size_name, $active_sizes ) ) {
-				if ( isset( $size->meta['input'] ) ) {
-					$input = $size->meta['input'];
-					$this->statistics['initial_total_size'] += intval( $input['size'] );
+			if ( ! $size->is_duplicate() ) {
+				if ( array_key_exists( $size_name, $active_sizes ) ) {
+					if ( isset( $size->meta['input'] ) ) {
+						$input = $size->meta['input'];
+						$this->statistics['initial_total_size'] += intval( $input['size'] );
 
-					if ( isset( $size->meta['output'] ) ) {
-						$output = $size->meta['output'];
-						if ( $size->modified() ) {
-							$this->statistics['optimized_total_size'] += $size->filesize();
-							if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-								$this->statistics['available_unoptimized_sizes'] += 1;
+						if ( isset( $size->meta['output'] ) ) {
+							$output = $size->meta['output'];
+							if ( $size->modified() ) {
+								$this->statistics['optimized_total_size'] += $size->filesize();
+								if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
+									$this->statistics['available_unoptimized_sizes'] += 1;
+								}
+							} else {
+								$this->statistics['optimized_total_size'] += intval( $output['size'] );
+								$this->statistics['image_sizes_optimized'] += 1;
 							}
 						} else {
-							$this->statistics['optimized_total_size'] += intval( $output['size'] );
-							$this->statistics['image_sizes_optimized'] += 1;
+							$this->statistics['optimized_total_size'] += intval( $input['size'] );
 						}
-					} else {
-						$this->statistics['optimized_total_size'] += intval( $input['size'] );
-					}
-				} elseif ( $size->exists() ) {
-					$this->statistics['initial_total_size'] += $size->filesize();
-					$this->statistics['optimized_total_size'] += $size->filesize();
-					if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-						$this->statistics['available_unoptimized_sizes'] += 1;
+					} elseif ( $size->exists() ) {
+						$this->statistics['initial_total_size'] += $size->filesize();
+						$this->statistics['optimized_total_size'] += $size->filesize();
+						if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
+							$this->statistics['available_unoptimized_sizes'] += 1;
+						}
 					}
 				}
 			}

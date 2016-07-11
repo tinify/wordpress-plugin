@@ -102,7 +102,9 @@ ksort( $size_exists );
 					?>
 					</td>
 					<td><?php
-					if ( $size->has_been_compressed() ) {
+					if ( $size->is_duplicate() ) {
+						echo '-';
+					} else if ( $size->has_been_compressed() ) {
 						echo size_format( $size->meta['input']['size'], 1 );
 					} else if ( $size->exists() ) {
 						echo size_format( $size->filesize(), 1 );
@@ -111,11 +113,13 @@ ksort( $size_exists );
 					}
 					?></td>
 					<?php
-					if ( $size->has_been_compressed() ) {
+					if ( $size->is_duplicate() ) {
+						printf( '<td colspan=2><em>' . esc_html__( 'Same file as %s', 'tiny-compress-images' ) . '</em></td>', $size->duplicate_of_size() );
+					} else if ( $size->has_been_compressed() ) {
 						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';
 						echo '<td>' . sprintf( esc_html_x( '%s ago', '%s = human-readable time difference', 'tiny-compress-images' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
 					} else if ( ! $size->exists() ) {
-						echo '<td colspan=2><em>' . esc_html__( 'Not present or duplicate', 'tiny-compress-images' ) . '</em></td>';
+						echo '<td colspan=2><em>' . esc_html__( 'Not present', 'tiny-compress-images' ) . '</em></td>';
 					} else if ( isset( $size_active[ $size_name ] ) ) {
 						echo '<td colspan=2><em>' . esc_html__( 'Not compressed', 'tiny-compress-images' ) . '</em></td>';
 					} else if ( isset( $size_exists[ $size_name ] ) ) {

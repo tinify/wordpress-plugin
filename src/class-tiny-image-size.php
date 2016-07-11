@@ -25,6 +25,8 @@ class Tiny_Image_Size {
 	/* Used more than once and not trivial, so we are memoizing these */
 	private $_exists;
 	private $_file_size;
+	private $_duplicate = false;
+	private $_duplicate_of_size = '';
 
 	public function __construct( $filename = null ) {
 		$this->filename = $filename;
@@ -108,6 +110,7 @@ class Tiny_Image_Size {
 
 	public function uncompressed() {
 		return $this->exists() &&
+			! $this->is_duplicate() &&
 			! (isset( $this->meta['output'] ) && $this->same_size() );
 	}
 
@@ -121,6 +124,19 @@ class Tiny_Image_Size {
 			isset( $this->meta['output']['resized'] ) &&
 			$this->meta['output']['resized']
 		);
+	}
+
+	public function mark_duplicate( $duplicate_size_name ) {
+		$this->_duplicate = true;
+		$this->_duplicate_of_size = $duplicate_size_name;
+	}
+
+	public function is_duplicate() {
+		return $this->_duplicate;
+	}
+
+	public function duplicate_of_size() {
+		return $this->_duplicate_of_size;
 	}
 
 	private function recently_started() {
