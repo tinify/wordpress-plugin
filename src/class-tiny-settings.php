@@ -340,10 +340,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$name = self::get_prefixed_name( 'sizes[' . $size . ']' );
 		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
 		if ( Tiny_Image::is_original( $size ) ) {
-			$label = esc_html__( 'original', 'tiny-compress-images' ) . ' (' .
+			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
 				esc_html__( 'overwritten by compressed image', 'tiny-compress-images' ) . ')';
 		} else {
-			$label = $size . ' - ' . $option['width'] . 'x' . $option['height'];
+			$label = esc_html__( ucfirst( $size ) )
+				. ' - ' . $option['width'] . 'x' . $option['height'];
 		}
 		echo '<p>';
 		echo '<input type="checkbox" id="' . $id . '" name="' . $name .
@@ -400,9 +401,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 
 		echo '<p class="tiny-resize-available tiny-resize-resolution">';
-		printf( '%s: ', esc_html__( 'Max Width', 'tiny-compress-images' ) );
+		printf( '%s ', esc_html__( 'Max Width' ) );
 		$this->render_resize_input( 'width' );
-		printf( '%s: ', esc_html__( 'Max Height', 'tiny-compress-images' ) );
+		printf( '%s ', esc_html__( 'Max Height' ) );
 		$this->render_resize_input( 'height' );
 		echo '</p>';
 

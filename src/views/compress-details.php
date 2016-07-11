@@ -17,7 +17,7 @@ ksort( $size_exists );
 
 ?>
 <div class="details-container">
-	<div id="tiny-compress-details" class="details" >
+	<div class="details" >
 		<?php if ( $error ) {
 			// dashicons-warning available for WP 4.3+ ?>
 			<span class="icon dashicons dashicons-no error"></span>
@@ -71,10 +71,10 @@ ksort( $size_exists );
 		</h3>
 		<table>
 			<tr>
-				<th><?php esc_html_e( 'Size', 'tiny-compress-images' ) ?></th>
+				<th><?php esc_html_e( 'Size' ) ?></th>
 				<th><?php esc_html_e( 'Original', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Compressed', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Date', 'tiny-compress-images' ) ?></th>
+				<th><?php esc_html_e( 'Date' ) ?></th>
 			</tr>
 			<?php
 			$i = 0;
@@ -87,7 +87,7 @@ ksort( $size_exists );
 				<tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
 					<?php
 					echo '<td>';
-					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'original', 'tiny-compress-images' ) : $size_name );
+					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html__( ucfirst( $size_name ) ) );
 					echo ' ';
 					if ( ! array_key_exists( $size_name, $active_sizes ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
@@ -102,11 +102,11 @@ ksort( $size_exists );
 
 					if ( $size->is_duplicate() ) {
 						echo '<td>-</td>';
-						printf( '<td colspan=2><em>' . esc_html__( 'Same file as %s', 'tiny-compress-images' ) . '</em></td>', $size->duplicate_of_size() );
+						printf( '<td colspan=2><em>' . esc_html__( 'Same file as "%s"', 'tiny-compress-images' ) . '</em></td>', esc_html__( ucfirst( $size->duplicate_of_size() ) ) );
 					} else if ( $size->has_been_compressed() ) {
 						echo '<td>' . size_format( $size->meta['input']['size'], 1 ) . '</td>';
 						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';
-						echo '<td>' . sprintf( esc_html_x( '%s ago', '%s = human-readable time difference', 'tiny-compress-images' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
+						echo '<td>' . sprintf( esc_html__( '%s ago' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
 					} else if ( ! $size->exists() ) {
 						echo '<td>-</td>';
 						echo '<td colspan=2><em>' . esc_html__( 'Not present', 'tiny-compress-images' ) . '</em></td>';
