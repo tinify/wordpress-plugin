@@ -119,19 +119,19 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 		$rows = array_filter( $rows, function($row) {
 			return $row && in_array( $row, array(
-				'original',
-				'thumbnail',
-				'medium',
-				'large',
+				'Original',
+				'Thumbnail',
+				'Medium',
+				'Large',
 			) );
 		});
 
 		$this->assertEquals(
 			array(
-				'original',
-				'large',
-				'medium',
-				'thumbnail',
+				'Original',
+				'Large',
+				'Medium',
+				'Thumbnail',
 			),
 			array_values( $rows )
 		);
