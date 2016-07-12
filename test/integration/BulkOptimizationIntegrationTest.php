@@ -26,10 +26,11 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals( '3', $this->find( '#uploaded-images' )->getText() );
 		$this->assertEquals( '5', $this->find( '#optimizable-image-sizes' )->getText() );
 		$this->assertEquals( '$ 0.00', $this->find( '#estimated-cost' )->getText() );
-		$this->assertEquals( '24.4%', $this->find( '#savings-percentage' )->getText() );
 		$this->assertEquals( '4', $this->find( '#optimized-image-sizes' )->getText() );
-		$this->assertEquals( '2.82 MB', $this->find( '#unoptimized-library-size' )->getText() );
-		$this->assertEquals( '2.13 MB', $this->find( '#optimized-library-size' )->getText() );
+
+		$this->assertRegExp( '/[23](\.\d+)? MB/', $this->find( '#unoptimized-library-size' )->getText() );
+		$this->assertRegExp( '/[12](\.\d+)? MB/', $this->find( '#optimized-library-size' )->getText() );
+		$this->assertRegExp( '/2\d(\.\d+)?%/', $this->find( '#savings-percentage' )->getText() );
 	}
 
 	public function test_start_bulk_optimization_should_optimize_remaining_images() {
