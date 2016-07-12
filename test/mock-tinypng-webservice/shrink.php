@@ -15,7 +15,7 @@ function mock_png_response() {
     header("Image-Height: 1080");
 
     $response = array(
-        "input" => array( "size" => 161885, "type" => "image/png" ),
+        "input" => array( "size" => 641206, "type" => "image/png" ),
         "output" => array( "size" => 151021, "type" => "image/png", "ratio" => 0.933 )
     );
     return json_encode($response);

@@ -16,14 +16,14 @@ $chart['stroke'] = $chart['radius'] / 2;
 $chart['dash-stroke'] = $chart['radius'] / 4;
 $chart['inner-radius'] = $chart['radius'] - $chart['stroke'] / 2;
 $chart['circle-size'] = 2 * pi() * $chart['radius'];
-$chart['dash_array_size'] = $chart['percentage'] / 100 * $chart['circle-size'];
+$chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 
 ?>
 <style>
 
 div.savings div.chart svg circle.main {
 	stroke-width: <?php echo $chart['dash-stroke'] ?>;
-	stroke-dasharray: <?php echo $chart['dash_array_size'] . ' ' . $chart['circle-size'] ?>;
+	stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>;
 }
 
 div.tiny-bulk-optimization div.savings div.chart div.value {
@@ -35,7 +35,7 @@ div.tiny-bulk-optimization div.savings div.chart div.value {
 		stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size'] ?>
 	}
 	to {
-		stroke-dasharray: <?php echo $chart['dash_array_size'] . ' ' . $chart['circle-size'] ?>
+		stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>
 	}
 }
 
@@ -43,8 +43,8 @@ div.tiny-bulk-optimization div.savings div.chart div.value {
 
 <div id="optimization-chart" class="chart" data-full-circle-size="<?php echo $chart['circle-size'] ?>" data-percentage-factor="<?php echo $chart['radius'] ?>" >
 	<svg width="<?php echo $chart['size'] ?>" height="<?php echo $chart['size'] ?>">
-	  <circle class="main" transform="rotate(-90, <?php echo $chart['center'] ?>, <?php echo $chart['center'] ?>)" r="<?php echo $chart['main-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>"/>
-	  <circle class="inner" r="<?php echo $chart['inner-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>" />
+		<circle class="main" transform="rotate(-90, <?php echo $chart['center'] ?>, <?php echo $chart['center'] ?>)" r="<?php echo $chart['main-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>"/>
+		<circle class="inner" r="<?php echo $chart['inner-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>" />
 	</svg>
 	<div class="value">
 		<div class="percentage" id="savings-percentage"><?php echo $chart['percentage'] ?>%</div>

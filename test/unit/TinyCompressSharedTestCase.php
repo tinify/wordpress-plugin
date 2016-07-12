@@ -205,7 +205,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		$this->assertEquals(
 			array(
 				'input' => array(
-					'size' => 161885,
+					'size' => 641206,
 					'type' => 'image/png',
 				),
 				'output' => array(
@@ -213,7 +213,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 					'type' => 'image/png',
 					'width' => 6,
 					'height' => 9,
-					'ratio' => round( 5 / 161885, 4 ),
+					'ratio' => round( 5 / 641206, 4 ),
 					'resized' => true,
 				),
 			),
