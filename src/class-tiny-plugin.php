@@ -28,7 +28,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	private $twig;
 
 	public static function jpeg_quality() {
-		return 95;
+		return 85;
 	}
 
 	public static function version() {
