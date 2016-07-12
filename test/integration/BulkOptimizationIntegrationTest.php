@@ -9,7 +9,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		clear_uploads();
 	}
 
-	public function test_presence_of_summary_values() {
+	public function test_summary_should_display_accurate_values() {
 		$this->set_api_key( 'JPG123' );
 
 		$this->enable_compression_sizes( array() );
@@ -30,5 +30,29 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals( '4', $this->find( '#optimized-image-sizes' )->getText() );
 		$this->assertEquals( '2.82 MB', $this->find( '#unoptimized-library-size' )->getText() );
 		$this->assertEquals( '2.13 MB', $this->find( '#optimized-library-size' )->getText() );
+	}
+
+	public function test_start_bulk_optimization_should_optimize_remaining_images() {
+		$this->set_api_key( 'JPG123' );
+
+		$this->enable_compression_sizes( array() );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->enable_compression_sizes( array( '0' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( '5', $this->find( '#optimizable-image-sizes' )->getText() );
+
+		$this->find_button( 'Start Bulk Optimization' )->click();
+
+		$this->wait_for_text(
+			'#optimizable-image-sizes',
+			'0'
+		);
 	}
 }

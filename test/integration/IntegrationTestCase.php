@@ -54,6 +54,12 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
+	protected function find_button($text) {
+		return self::$driver->findElement(
+			WebDriverBy::cssSelector( "input[value='{$text}']" )
+		);
+	}
+
 	protected function wait_for_text($selector, $text) {
 		self::$driver->wait( 2 )->until(
 			WebDriverExpectedCondition::textToBePresentInElement(
