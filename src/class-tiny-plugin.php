@@ -78,6 +78,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'media_library_bulk_action' )
 		);
 
+		add_action( 'admin_action_-1',
+			$this->get_method( 'media_library_bulk_action' )
+		);
+
 		add_filter( 'manage_media_columns',
 			$this->get_method( 'add_media_columns' )
 		);
@@ -319,7 +323,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function media_library_bulk_action() {
 		check_admin_referer( 'bulk-media' );
 
-		if ( empty( $_REQUEST['media'] ) || ! is_array( $_REQUEST['media'] ) ) {
+		if ( empty( $_REQUEST['action'] ) || (
+				$_REQUEST['action'] != 'tiny_bulk_action' &&
+				$_REQUEST['action2'] != 'tiny_bulk_action' ) ) {
+			return;
+		}
+
+		if ( empty( $_REQUEST['media'] ) || ( ! $_REQUEST['media'] ) ) {
 			return;
 		}
 
