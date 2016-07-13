@@ -345,10 +345,14 @@ class Tiny_Image {
 					$wpdb->posts.ID,
 					$wpdb->posts.post_title,
 					$wpdb->postmeta.meta_value,
+					wp_postmeta_file.meta_value AS unique_attachment_name,
 					wp_postmeta_tiny.meta_value AS tiny_meta_value
 				FROM $wpdb->posts
 				LEFT JOIN $wpdb->postmeta
 					ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+				LEFT JOIN $wpdb->postmeta AS wp_postmeta_file
+					ON $wpdb->posts.ID = wp_postmeta_file.post_id
+						AND wp_postmeta_file.meta_key = '_wp_attached_file'
 				LEFT JOIN $wpdb->postmeta AS wp_postmeta_tiny
 					ON $wpdb->posts.ID = wp_postmeta_tiny.post_id
 						AND wp_postmeta_tiny.meta_key = '" . self::META_KEY . "'
@@ -358,6 +362,7 @@ class Tiny_Image {
 						$wpdb->posts.post_mime_type = 'image/png'
 					)
 					AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
+				GROUP BY unique_attachment_name
 				ORDER BY ID DESC";
 
 			$result = $wpdb->get_results( $query, ARRAY_A );
