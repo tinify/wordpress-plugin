@@ -254,13 +254,17 @@ class Tiny_Image {
 	}
 
 	public function get_latest_error() {
+		$settings = new Tiny_Settings();
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 		$error_message = null;
 		$last_timestamp = null;
-		foreach ( $this->sizes as $size ) {
-			if ( isset( $size->meta['error'] ) && isset( $size->meta['message'] ) ) {
-				if ( $last_timestamp === null || $last_timestamp < $size->meta['timestamp'] ) {
-					$last_timestamp = $size->meta['timestamp'];
-					$error_message = $size->meta['message'];
+		foreach ( $this->sizes as $size_name => $size ) {
+			if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
+				if ( isset( $size->meta['error'] ) && isset( $size->meta['message'] ) ) {
+					if ( $last_timestamp === null || $last_timestamp < $size->meta['timestamp'] ) {
+						$last_timestamp = $size->meta['timestamp'];
+						$error_message = $size->meta['message'];
+					}
 				}
 			}
 		}
