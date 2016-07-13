@@ -38,7 +38,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 		<div class="statistics">
 			<div class="available">
 				<div class="inner">
-					<h3><?php esc_html_e( 'Available images', 'tiny-compress-images' ) ?></h3>
+					<h3><?php esc_html_e( 'Available Images', 'tiny-compress-images' ) ?></h3>
 					<p>
 						<?php
 						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
@@ -205,9 +205,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 				<?php // column-author WP 3.8-4.2 mobile view ?>
 				<th class="thumbnail"></th>
 				<th class="column-primary" ><?php esc_html_e( 'File', 'tiny-compress-images' ) ?></th>
-				<th class="column-author"><?php esc_html_e( 'Sizes optimized', 'tiny-compress-images' ) ?></th>
-				<th class="column-author"><?php esc_html_e( 'Initial size', 'tiny-compress-images' ) ?></th>
-				<th class="column-author"><?php esc_html_e( 'Current size', 'tiny-compress-images' ) ?></th>
+				<th class="column-author"><?php esc_html_e( 'Sizes Optimized', 'tiny-compress-images' ) ?></th>
+				<th class="column-author"><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
+				<th class="column-author"><?php esc_html_e( 'Current Size', 'tiny-compress-images' ) ?></th>
 				<th class="column-author savings" ><?php esc_html_e( 'Savings', 'tiny-compress-images' ) ?></th>
 				<th class="status" ><?php esc_html_e( 'Status', 'tiny-compress-images' ) ?></th>
 			</tr>

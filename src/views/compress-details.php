@@ -72,7 +72,7 @@ ksort( $size_exists );
 		<table>
 			<tr>
 				<th><?php esc_html_e( 'Size' ) ?></th>
-				<th><?php esc_html_e( 'Original', 'tiny-compress-images' ) ?></th>
+				<th><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Compressed', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Date' ) ?></th>
 			</tr>
