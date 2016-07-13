@@ -1,7 +1,6 @@
 <?php
 
 require dirname( __FILE__ ) . '/../unit/TinyTestCase.php';
-require dirname( __FILE__ ) . '/../helpers/integration-helper.php';
 require dirname( __FILE__ ) . '/../helpers/setup.php';
 
 use Facebook\WebDriver\WebDriverBy;

@@ -122,7 +122,10 @@ function setup_wordpress_site($driver) {
 	$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
 
 	$h1s = $driver->findElements( WebDriverBy::tagName( 'h1' ) );
-	$texts = array_map( 'innerText', $h1s );
+	$texts = array_map( function($h1) {
+		return $h1->getText();
+	}, $h1s );
+
 	if ( array_search( 'Success', $texts ) >= 0 ) {
 		print "Setting up WordPress is successful.\n";
 	} else {
