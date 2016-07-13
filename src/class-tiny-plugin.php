@@ -233,6 +233,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $id, $metadata );
 		$result = $tiny_image->compress( $this->settings );
+
+		// The wp_update_attachment_metadata call is thrown because the
+		// dimensions of the original image can change. This will then
+		// trigger other plugins and can result in unexpected behaviour and
+		// further changes to the image. This may require another approach.
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
 		echo $this->render_compress_details( $tiny_image );
@@ -324,8 +329,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		check_admin_referer( 'bulk-media' );
 
 		if ( empty( $_REQUEST['action'] ) || (
-				$_REQUEST['action'] != 'tiny_bulk_action' &&
-				$_REQUEST['action2'] != 'tiny_bulk_action' ) ) {
+				'tiny_bulk_action' != $_REQUEST['action'] &&
+				'tiny_bulk_action' != $_REQUEST['action2'] ) ) {
 			return;
 		}
 
