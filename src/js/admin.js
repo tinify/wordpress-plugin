@@ -1,10 +1,10 @@
 (function() {
   function compressImage(event) {
     var element = jQuery(event.target)
-    var container = element.closest('.tiny-ajax-container')
+    var container = element.closest('div.tiny-ajax-container')
     element.attr('disabled', 'disabled')
-    container.find('.spinner').removeClass('hidden')
-    container.find('span.dashicons').addClass('hidden')
+    container.find('span.spinner').removeClass('hidden')
+    container.find('span.dashicons').remove()
     jQuery.ajax({
       url: ajaxurl,
       type: "POST",
@@ -18,7 +18,7 @@
       },
       error: function() {
         element.removeAttr('disabled')
-        container.find('.spinner').addClass('hidden')
+        container.find('span.spinner').addClass('hidden')
       }
     })
   }
