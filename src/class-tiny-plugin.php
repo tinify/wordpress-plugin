@@ -135,6 +135,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				self::NAME,
 				esc_html__( 'Settings', 'tiny-compress-images' )
 			),
+			'bulk' => sprintf(
+				'<a href="upload.php?page=tiny-bulk-optimization">%s</a>',
+				esc_html__( 'Bulk Optimization', 'tiny-compress-images' )
+			),
 		);
 		return array_merge( $additional, $current_links );
 	}
