@@ -1,89 +1,88 @@
 <?php
 
-// require_once dirname( __FILE__ ) . '/IntegrationTestCase.php';
-//
-// use Facebook\WebDriver\WebDriverBy;
-// use Facebook\WebDriver\WebDriverExpectedCondition;
-//
-// class SettingsIntegrationTest extends IntegrationTestCase {
-// 	public function set_up() {
-// 		parent::set_up();
-// 		self::$driver->get( wordpress( '/wp-admin/options-media.php' ) );
-// 	}
-//
-// 	public function tear_down() {
-// 		parent::tear_down();
-// 		clear_settings();
-// 	}
-//
-// 	public function test_title_presence()
-// 	{
-// 		$headings = self::$driver->findElements( WebDriverBy::cssSelector( 'h1, h2, h3, h4' ) );
-// 		$texts = array_map( 'innerText', $headings );
-// 		$this->assertContains( 'PNG and JPEG optimization', $texts );
-// 	}
-//
+require_once dirname( __FILE__ ) . '/IntegrationTestCase.php';
+
+class SettingsIntegrationTest extends IntegrationTestCase {
+	public function tear_down() {
+		parent::tear_down();
+		clear_settings();
+		clear_uploads();
+	}
+
+	protected function get_enabled_sizes() {
+		return array_map( function($checkbox) {
+			return $checkbox->getAttribute( 'name' );
+		}, $this->find_all( 'input[type=checkbox][checked][name^=tinypng_sizes]' ) );
+	}
+
+	public function test_settings_should_contain_title() {
+		$this->visit( '/wp-admin/options-media.php' );
+
+		$headings = array_map( function($heading) {
+			return $heading->getText();
+		}, $this->find_all( 'h2, h3' ) );
+
+		$this->assertContains( 'JPEG and PNG optimization', $headings );
+	}
+
+	public function test_settings_should_show_notice_if_key_is_missing() {
+		$this->visit( '/wp-admin/options-media.php' );
+
+		$this->assertStringEndsWith(
+			'options-media.php#tiny-compress-images',
+			$this->find( '.error a' )->getAttribute( 'href' )
+		);
+	}
+
+	public function test_settings_should_not_show_notice_if_key_is_set() {
+		$this->set_api_key( 'PNG123' );
+		$this->visit( '/wp-admin/options-media.php' );
+
+		$this->assertEquals( 0, count( $this->find_all( '.error a' ) ) );
+	}
+
+	public function test_settings_should_enable_all_sizes_by_default() {
+		$enabled_sizes = $this->get_enabled_sizes();
+
+		$this->assertContains( 'tinypng_sizes[0]', $enabled_sizes );
+		$this->assertContains( 'tinypng_sizes[thumbnail]', $enabled_sizes );
+		$this->assertContains( 'tinypng_sizes[medium]', $enabled_sizes );
+		$this->assertContains( 'tinypng_sizes[large]', $enabled_sizes );
+	}
+
+	public function test_settings_should_persist_enabled_sizes() {
+		$this->find( '#tinypng_sizes_medium' )->click();
+		$this->find( '#tinypng_sizes_0' )->click();
+		$this->find( 'form' )->submit();
+
+		$enabled_sizes = $this->get_enabled_sizes();
+
+		$this->assertNotContains( 'tinypng_sizes[0]', $enabled_sizes );
+		$this->assertContains( 'tinypng_sizes[thumbnail]', $enabled_sizes );
+		$this->assertNotContains( 'tinypng_sizes[medium]', $enabled_sizes );
+		$this->assertContains( 'tinypng_sizes[large]', $enabled_sizes );
+	}
+
+	public function test_settings_should_persist_all_disabled_sizes() {
+		$checkboxes = $this->find_all(
+			'input[type=checkbox][checked][name^=tinypng_sizes]'
+		);
+
+		foreach ( $checkboxes as $checkbox ) {
+			$checkbox->click();
+		}
+
+		$this->find( 'form' )->submit();
+
+		$enabled_sizes = $this->get_enabled_sizes();
+		$this->assertEquals( 0, count( $enabled_sizes ) );
+	}
+
 // 	public function test_api_key_input_presence() {
 // 		$elements = self::$driver->findElements( WebDriverBy::name( 'tinypng_api_key' ) );
 // 		$this->assertEquals( 1, count( $elements ) );
 // 	}
-//
-// 	public function test_should_show_notice_if_no_api_key_is_set() {
-// 		$element = self::$driver->findElement( WebDriverBy::cssSelector( '.error a' ) );
-// 		$this->assertStringEndsWith( 'options-media.php#tiny-compress-images', $element->getAttribute( 'href' ) );
-// 	}
-//
-// 	public function test_should_show_no_notice_if_api_key_is_set() {
-// 		$this->set_api_key( 'PNG123' );
-// 		self::$driver->navigate()->refresh(); /* Reload first. */
-// 		$elements = self::$driver->findElements( WebDriverBy::cssSelector( '.error a' ) );
-// 		$this->assertEquals( 0, count( $elements ) );
-// 	}
-//
-// 	public function test_no_api_key_notice_should_link_to_settings() {
-// 		self::$driver->findElement( WebDriverBy::cssSelector( '.error a' ) )->click();
-// 		$this->assertStringEndsWith( 'options-media.php#tiny-compress-images', self::$driver->getCurrentURL() );
-// 	}
-//
-// 	public function test_default_sizes_being_compressed() {
-// 		$elements = self::$driver->findElements(
-// 		WebDriverBy::xpath( '//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]' ));
-// 		$size_ids = array_map( 'elementName', $elements );
-// 		$this->assertContains( 'tinypng_sizes[0]', $size_ids );
-// 		$this->assertContains( 'tinypng_sizes[thumbnail]', $size_ids );
-// 		$this->assertContains( 'tinypng_sizes[medium]', $size_ids );
-// 		$this->assertContains( 'tinypng_sizes[large]', $size_ids );
-// 	}
-//
-// 	public function test_should_persist_sizes() {
-// 		$element = self::$driver->findElement( WebDriverBy::id( 'tinypng_sizes_medium' ) );
-// 		$element->click();
-// 		$element = self::$driver->findElement( WebDriverBy::id( 'tinypng_sizes_0' ) );
-// 		$element->click();
-// 		self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
-//
-// 		$elements = self::$driver->findElements(
-// 		WebDriverBy::xpath( '//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]' ));
-// 		$size_ids = array_map( 'elementName', $elements );
-// 		$this->assertNotContains( 'tinypng_sizes[0]', $size_ids );
-// 		$this->assertContains( 'tinypng_sizes[thumbnail]', $size_ids );
-// 		$this->assertNotContains( 'tinypng_sizes[medium]', $size_ids );
-// 		$this->assertContains( 'tinypng_sizes[large]', $size_ids );
-// 	}
-//
-// 	public function test_should_persist_no_sizes() {
-// 		$elements = self::$driver->findElements(
-// 		WebDriverBy::xpath( '//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]' ));
-// 		foreach ( $elements as $element ) {
-// 			$element->click();
-// 		}
-// 		self::$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
-//
-// 		$elements = self::$driver->findElements(
-// 		WebDriverBy::xpath( '//input[@type="checkbox" and starts-with(@name, "tinypng_sizes") and @checked="checked"]' ));
-// 		$this->assertEquals( 0, count( array_map( 'elementName', $elements ) ) );
-// 	}
-//
+
 // 	public function test_should_show_total_images_info() {
 // 		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium', 'large') );
 // 		$element = self::$driver->findElement( WebDriverBy::id( 'tiny-image-sizes-notice' ) );
@@ -166,4 +165,4 @@
 // 			WebDriverBy::cssSelector( '#tiny-compress-status p.tiny-update-account-message' ),
 // 		'The key that you have entered is not valid'));
 // 	}
-// }
+}
