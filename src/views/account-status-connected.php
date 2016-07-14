@@ -1,56 +1,91 @@
-<?php
+<div class="tiny-account-status" id="tiny-account-status" data-state="complete">
+	<div class="status <?php echo $status->ok ? ( $status->pending ? 'status-pending' : 'status-success' ) : 'status-failure'; ?>">
+		<p class="status"><?php
+			if ( $status->ok ) {
+				if ( isset( $status->message ) ) {
+					echo esc_html__( $status->message, 'tiny-compress-images' );
+				} else {
+					echo esc_html__( 'Your account is connected', 'tiny-compress-images' );
+				}
+			} else {
+				echo esc_html__( 'Connection unsuccessful', 'tiny-compress-images' );
+			}
+		?></p>
+		<p><?php
+			if ( $status->ok ) {
+				$compressions = self::get_compression_count();
+				/* It is not possible to check if a subscription is free or flexible. */
+				if ( $compressions == Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
+					$link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
+					printf( esc_html__(
+						'You have reached your limit of %s compressions this month.',
+						'tiny-compress-images'
+					), $compressions );
+					echo '<br>';
+					printf( esc_html__(
+						'If you need to compress more images you can change your %s.',
+						'tiny-compress-images'
+					), $link );
+				} else {
+					printf( esc_html__(
+						'You have made %s compressions this month.',
+						'tiny-compress-images'
+					), $compressions );
+				}
+			} else {
+				if ( isset( $status->message ) ) {
+					echo esc_html__( 'Error', 'tiny-compress-images' ) . ': ';
+					echo esc_html__( $status->message, 'tiny-compress-images' );
+				} else {
+					esc_html__(
+						'API status could not be checked, enable cURL for more information',
+						'tiny-compress-images'
+					);
+				}
+			}
+		?></p>
+		<p><?php
+			if ( defined( 'TINY_API_KEY' ) ) {
+				echo sprintf( esc_html__(
+					'The API key has been configured in %s',
+					'tiny-compress-images'
+				), 'wp-config.php' );
+			} else {
+				echo '<a href="#" onclick="jQuery(\'div.tiny-account-status div.update\').toggle(); jQuery(\'div.tiny-account-status div.status\').toggle(); return false">';
+				echo esc_html__( 'Change API key', 'tiny-compress-images' );
+				echo '</a>';
+			}
+		?></p>
+	</div>
 
-if ( $status->ok ) {
-	echo '<p class="tiny-account-status">';
-	if ( isset( $status->message ) ) {
-		echo '<span class="icon warning dashicons-before dashicons-email-alt"></span>';
-		echo esc_html__( $status->message, 'tiny-compress-images' );
-	} else {
-		echo '<span class="icon success dashicons-before dashicons-yes"></span>';
-		echo esc_html__( 'Your account is connected.', 'tiny-compress-images' );
-	}
-} else {
-	echo '<p class="tiny-account-status tiny-account-status-error">';
-	echo '<span class="icon error dashicons-before dashicons-no"></span>';
-	echo esc_html__( 'Connection unsuccessful.', 'tiny-compress-images' );
-}
+	<div class="update" style="display: none">
+		<h4><?php echo esc_html__( 'Change your API key', 'tiny-compress-images' ); ?></h4>
+		<p class="introduction"><?php
+			$link = sprintf( '<a href="https://tinypng.com/developers" target="_blank">%s</a>',
+				esc_html__( 'TinyPNG developer section', 'tiny-compress-images' )
+			);
 
-echo ' ';
+			echo esc_html__( 'Enter your API key.', 'tiny-compress-images' );
+			echo ' ';
 
-if ( defined( 'TINY_API_KEY' ) ) {
-	echo sprintf( esc_html__( 'The API key has been configured in %s', 'tiny-compress-images' ), 'wp-config.php' );
-} else {
-	add_thickbox();
-	echo '<a href="#TB_inline?width=390&amp;height=150&amp;inlineId=tiny-update-account" title="Change API key" class="thickbox">';
-	echo esc_html__( 'Change API key', 'tiny-compress-images' );
-	echo '</a>';
-}
+			printf( esc_html__(
+				'If you have lost your key, go to the %s to retrieve it.',
+				'tiny-compress-images'
+			), $link );
+		?></p>
 
-echo '</p>';
+		<input class="tiny-update-account-input" type="text" id="tinypng_api_key"
+			name="tinypng_api_key" size="35" spellcheck="false"
+			value="<?php echo esc_attr( $key ); ?>">
 
-if ( $status->ok ) {
-	$compressions = self::get_compression_count();
-	echo '<p>';
-	/* It is not possible to check if a subscription is free or flexible. */
-	if ( $compressions == Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
-		$link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
-		printf( esc_html__( 'You have reached your limit of %s compressions this month.', 'tiny-compress-images' ), $compressions );
-		echo '<br>';
-		printf( esc_html__( 'If you need to compress more images you can change your %s.', 'tiny-compress-images' ), $link );
-	} else {
-		printf( esc_html__( 'You have made %s compressions this month.', 'tiny-compress-images' ), $compressions );
-	}
-	echo '</p>';
-} else {
-	echo '<p>';
+		<button class="button button-primary" data-tiny-action="update-key"><?php
+			echo esc_html__( 'Save', 'tiny-compress-images' );
+		?></button>
 
-	if ( isset( $status->message ) ) {
-		echo esc_html__( 'Error', 'tiny-compress-images' ) . ': ' . esc_html__( $status->message, 'tiny-compress-images' );
-	} else {
-		esc_html__( 'API status could not be checked, enable cURL for more information', 'tiny-compress-images' );
-	}
+		<p class="message"></p>
 
-	echo '</p>';
-}
-
-?>
+		<p><a href="#"  onclick="jQuery('div.tiny-account-status div.update').toggle(); jQuery('div.tiny-account-status div.status').toggle(); return false"><?php
+			echo esc_html__( 'Cancel', 'tiny-compress-images' );
+		?></a></p>
+	</div>
+</div>

@@ -7,7 +7,7 @@
     container.find('span.dashicons').remove()
     jQuery.ajax({
       url: ajaxurl,
-      type: "POST",
+      type: 'POST',
       data: {
         _nonce: tinyCompress.nonce,
         action: 'tiny_compress_image_from_library',
@@ -23,90 +23,70 @@
     })
   }
 
-  function updateApiKey(event) {
+  function submitKey(event) {
     event.preventDefault()
-    jQuery(event.target).attr({disabled: true})
-    var parent = jQuery(event.target).closest("div")
+    jQuery(event.target).attr({disabled: true}).addClass('loading')
 
-    var key = parent.find("#tinypng_api_key, #tinypng_api_key_modal").val()
-    jQuery("#tinypng_api_key, #tinypng_api_key_modal").val(key) /* Replace all key input fields. */
+    var action
+    var parent = jQuery(event.target).closest('div')
+
+    if (jQuery(event.target).data('tiny-action') == 'update-key') {
+      action = 'update'
+      var key = parent.find('#tinypng_api_key').val()
+    } else if (jQuery(event.target).data('tiny-action') == 'create-key') {
+      action = 'create'
+      var name = parent.find('#tinypng_api_key_name').val()
+      var email = parent.find('#tinypng_api_key_email').val()
+    } else {
+      return false
+    }
 
     jQuery.ajax({
       url: ajaxurl,
-      type: "POST",
+      type: 'POST',
       data: {
         _nonce: tinyCompress.nonce,
-        action: 'tiny_settings_update_api_key',
+        action: 'tiny_settings_' + action + '_api_key',
         key: key,
-      },
-
-      success: function(json) {
-        jQuery(event.target).attr({disabled: false})
-        var status = JSON.parse(json)
-        if (status.ok) {
-          tb_remove()
-          parent.find('.tiny-update-account-message').text("").hide()
-          jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
-        } else {
-          parent.find('.tiny-update-account-message').text(status.message).show()
-        }
-      },
-
-      error: function() {
-        jQuery(event.target).attr({disabled: false})
-        parent.find('.tiny-update-account-message').text("Something went wrong, try again soon").show()
-      }
-    })
-
-    return false
-  }
-
-  function createApiKey(event) {
-    event.preventDefault()
-    jQuery(event.target).attr({disabled: true})
-    var parent = jQuery(event.target).closest("div")
-
-    var name = jQuery("#tinypng_api_key_name").val()
-    var email = jQuery("#tinypng_api_key_email").val()
-
-    jQuery.ajax({
-      url: ajaxurl,
-      type: "POST",
-      data: {
-        _nonce: tinyCompress.nonce,
-        action: 'tiny_settings_create_api_key',
         name: name,
         email: email,
       },
 
       success: function(json) {
-        jQuery(event.target).attr({disabled: false})
         var status = JSON.parse(json)
         if (status.ok) {
-          parent.find('.tiny-create-account-message').text("").hide()
-          jQuery('#tiny-compress-status').load(ajaxurl + '?action=tiny_compress_status')
-          jQuery("#tinypng_api_key").val(status.key)
+          var target = jQuery('#tiny-account-status')
+          if (target.length) {
+            jQuery.get(ajaxurl + '?action=tiny_account_status', function(data) {
+              jQuery(event.target).attr({disabled: false}).removeClass('loading')
+              target.replaceWith(data)
+            })
+          }
         } else {
-          parent.find('.tiny-create-account-message').text(status.message).show()
+          jQuery(event.target).attr({disabled: false}).removeClass('loading')
+          parent.addClass('failure')
+          parent.find('p.message').text(status.message).show()
         }
       },
 
       error: function() {
-        jQuery(event.target).attr({disabled: false})
-        parent.find('.tiny-create-account-message').text("Something went wrong, try again soon").show()
+        jQuery(event.target).attr({disabled: false}).removeClass('loading')
+        parent.addClass('failure')
+        parent.find('p.message').text('Something went wrong, try again soon').show()
       }
     })
+
     return false
   }
 
   function dismissNotice(event) {
     var element = jQuery(event.target)
-    var notice = element.closest(".tiny-notice")
+    var notice = element.closest('.tiny-notice')
     element.attr('disabled', 'disabled')
     jQuery.ajax({
       url: ajaxurl,
-      type: "POST",
-      dataType: "json",
+      type: 'POST',
+      dataType: 'json',
       data: {
         _nonce: tinyCompress.nonce,
         action: 'tiny_dismiss_notice',
@@ -155,13 +135,13 @@
     updatePreserveSettings()
   }
 
-  var adminpage = ""
-  if (typeof window.adminpage !== "undefined") {
+  var adminpage = ''
+  if (typeof window.adminpage !== 'undefined') {
     adminpage = window.adminpage
   }
 
   function eventOn(event, eventSelector, callback) {
-    if (typeof jQuery.fn.on === "function") {
+    if (typeof jQuery.fn.on === 'function') {
       jQuery(document).on(event, eventSelector, callback)
     } else {
       jQuery(eventSelector).live(event, callback)
@@ -178,37 +158,41 @@
     })
   }
 
-  if (adminpage === "upload-php") {
+  if (adminpage === 'upload-php') {
 
     eventOn('click', 'button.tiny-compress', compressImage)
 
-    if (typeof jQuery.fn.prop === "function") {
+    if (typeof jQuery.fn.prop === 'function') {
       jQuery('button.tiny-compress').prop('disabled', null)
     } else {
       jQuery('button.tiny-compress').attr('disabled', null)
     }
 
-    jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name="action"]')
-    jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name="action2"]')
+    jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]')
+    jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action2]')
 
-  } else if (adminpage === "post-php") {
+  } else if (adminpage === 'post-php') {
 
     eventOn('click', 'button.tiny-compress', compressImage)
 
-  } else if (adminpage === "options-media-php") {
+  } else if (adminpage === 'options-media-php') {
 
-    changeEnterKeyTarget('.tiny-update-account-step1', '.tiny-account-create-key')
-    changeEnterKeyTarget('.tiny-update-account-step2', '.tiny-account-update-key')
+    changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]')
+    changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]')
 
-    eventOn('click', 'button.tiny-account-create-key', createApiKey)
-    eventOn('click', 'button.tiny-account-update-key', updateApiKey)
+    eventOn('click', '[data-tiny-action=create-key]', submitKey)
+    eventOn('click', '[data-tiny-action=update-key]', submitKey)
 
-    jQuery('#tiny-compress-status[data-state=pending]').load(ajaxurl + '?action=tiny_compress_status')
-    jQuery('#tiny-compress-savings').load(ajaxurl + '?action=tiny_compress_savings')
+    var target = jQuery('#tiny-account-status[data-state=pending]')
+    if (target.length) {
+      jQuery.get(ajaxurl + '?action=tiny_account_status', function(data) {
+        target.replaceWith(data)
+      })
+    }
 
-    jQuery('input[name*="tinypng_sizes"], input#tinypng_resize_original_enabled').on("click", function() {
+    jQuery('input[name*=tinypng_sizes], input#tinypng_resize_original_enabled').on('click', function() {
       // Unfortunately, we need some additional information to display the correct notice.
-      totalSelectedSizes = jQuery('input[name*="tinypng_sizes"]:checked').length
+      totalSelectedSizes = jQuery('input[name*=tinypng_sizes]:checked').length
       var image_count_url = ajaxurl + '?action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes
       if (jQuery('input#tinypng_resize_original_enabled').prop('checked') && jQuery('input#tinypng_sizes_0').prop('checked')) {
         image_count_url += '&resize_original=true'

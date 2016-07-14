@@ -141,7 +141,6 @@ class Tiny_Image {
 	}
 
 	public function compress( $settings ) {
-
 		if ( $settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
 		}
@@ -283,7 +282,6 @@ class Tiny_Image {
 	}
 
 	public function get_statistics() {
-
 		if ( $this->statistics ) {
 			error_log( 'Strangely the image statistics are asked for again.' );
 			return $this->statistics;

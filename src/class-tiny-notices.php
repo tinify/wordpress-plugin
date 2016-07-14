@@ -19,7 +19,6 @@
 */
 
 class Tiny_Notices extends Tiny_WP_Base {
-
 	private $notices;
 	private $dismissals;
 

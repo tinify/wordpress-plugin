@@ -3,7 +3,6 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 class Tiny_Settings_Test extends Tiny_TestCase {
-
 	public function set_up() {
 		parent::set_up();
 		$this->subject = new Tiny_Settings();
@@ -13,7 +12,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 	public function test_admin_init_should_register_keys() {
 		$this->assertEquals(array(
 			array( 'media', 'tinypng_api_key' ),
-			array( 'media', 'tinypng_api_key_automated' ),
+			array( 'media', 'tinypng_api_key_pending' ),
 			array( 'media', 'tinypng_sizes' ),
 			array( 'media', 'tinypng_resize_original' ),
 			array( 'media', 'tinypng_preserve_data' ),
@@ -28,7 +27,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 
 	public function test_admin_init_should_add_settings_field() {
 		$this->assertEquals(array(
-			array( 'tinypng_api_key', 'Connection status', array( $this->subject, 'render_pending_status' ), 'media', 'tinypng_settings' ),
+			array( 'tinypng_api_key', 'TinyPNG account', array( $this->subject, 'render_pending_status' ), 'media', 'tinypng_settings' ),
 			array( 'tinypng_sizes', 'File compression', array( $this->subject, 'render_sizes' ), 'media', 'tinypng_settings' ),
 			array( 'tinypng_resize_original', 'Original image', array( $this->subject, 'render_resize' ), 'media', 'tinypng_settings' ),
 		), $this->wp->getCalls( 'add_settings_field' ));

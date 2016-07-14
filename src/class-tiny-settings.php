@@ -49,30 +49,43 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function admin_init() {
-		if ( current_user_can( 'manage_options' ) && ! $this->get_api_key() ) {
-			$link = sprintf(
-				'<a href="options-media.php#%s">%s</a>', self::NAME,
-				esc_html__(
+		if ( current_user_can( 'manage_options' ) ) {
+			if ( ! $this->get_api_key() ) {
+				$notice_class = 'error';
+				$notice = esc_html__(
 					'Please register or provide an API key to start compressing images',
 					'tiny-compress-images'
-				)
-			);
-			$this->notices->show( 'setting', $link, 'error', false );
-		}
-
-		if ( current_user_can( 'manage_options' ) && ! Tiny_PHP::client_supported() ) {
-			$details = 'PHP ' . PHP_VERSION;
-			if ( extension_loaded( 'curl' ) ) {
-				$curlinfo = curl_version();
-				$details .= ' with curl ' . $curlinfo['version'];
-			} else {
-				$details .= ' without curl';
+				);
+			} else if ( $this->get_api_key_pending() ) {
+				$notice_class = 'notice-warning';
+				$notice = esc_html__(
+					'Please activate your account to start compressing images',
+					'tiny-compress-images'
+				);
 			}
-			$message = esc_html__(
-				'You are using an outdated platform (' . $details .
-				') – some features are disabled', 'tiny-compress-images'
-			);
-			$this->notices->show( 'setting', $message, 'notice-warning', false );
+
+			if ( $notice ) {
+				$link = sprintf(
+					'<a href="options-media.php#%s">%s</a>', self::NAME, $notice
+				);
+
+				$this->notices->show( 'setting', $link, $notice_class, false );
+			}
+
+			if ( ! Tiny_PHP::client_supported() ) {
+				$details = 'PHP ' . PHP_VERSION;
+				if ( extension_loaded( 'curl' ) ) {
+					$curlinfo = curl_version();
+					$details .= ' with curl ' . $curlinfo['version'];
+				} else {
+					$details .= ' without curl';
+				}
+				$message = esc_html__(
+					'You are using an outdated platform (' . $details .
+					') – some features are disabled', 'tiny-compress-images'
+				);
+				$this->notices->show( 'deprecated', $message, 'notice-warning', false );
+			}
 		}
 
 		try {
@@ -95,13 +108,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = self::get_prefixed_name( 'api_key' );
 		register_setting( 'media', $field );
 		add_settings_field( $field,
-			esc_html__( 'Connection status', 'tiny-compress-images' ),
+			esc_html__( 'TinyPNG account', 'tiny-compress-images' ),
 			$this->get_method( 'render_pending_status' ),
 			'media',
 			$section
 		);
 
-		$field = self::get_prefixed_name( 'api_key_automated' );
+		$field = self::get_prefixed_name( 'api_key_pending' );
 		register_setting( 'media', $field );
 
 		$field = self::get_prefixed_name( 'sizes' );
@@ -136,8 +149,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 
 		add_action(
-			'wp_ajax_tiny_compress_status',
-			$this->get_method( 'connection_status' )
+			'wp_ajax_tiny_account_status',
+			$this->get_method( 'account_status' )
 		);
 
 		add_action(
@@ -160,8 +173,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		exit();
 	}
 
-	public function connection_status() {
-		$this->render_status();
+	public function account_status() {
+		$this->render_account_status();
 		exit();
 	}
 
@@ -182,6 +195,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 			return TINY_API_KEY;
 		} else {
 			return get_option( self::get_prefixed_name( 'api_key' ) );
+		}
+	}
+
+	protected function get_api_key_pending() {
+		if ( defined( 'TINY_API_KEY' ) ) {
+			return false;
+		} else {
+			return get_option( self::get_prefixed_name( 'api_key_pending' ) );
 		}
 	}
 
@@ -480,6 +501,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $compressor->limit_reached() ) {
 			$link = '<a href="https://tinypng.com/developers" target="_blank">' .
 				esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
+
 			$this->notices->add('limit-reached',
 				sprintf(
 					esc_html__(
@@ -501,41 +523,42 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
-	public function render_status() {
+	public function render_account_status() {
 		$key = $this->get_api_key();
 		if ( empty( $key ) ) {
 			include( dirname( __FILE__ ) . '/views/account-status-missing.php' );
 		} else {
 			$status = $this->compressor->get_status();
-			if ( ! $status->ok && $status->code == 401 ) {
-				$field = self::get_prefixed_name( 'api_key_automated' );
-				if ( get_option( $field ) ) {
+			$status->pending = false;
+
+			if ( $status->ok ) {
+				if ( $this->get_api_key_pending() ) {
+					delete_option( $pending_option );
+				}
+			} else {
+				if ( $this->get_api_key_pending() ) {
 					$status->ok = true;
+					$status->pending = true;
 					$status->message = (
 						'An email has been sent with a link to activate your account'
 					);
 				}
 			}
+
+			$name = trim( $current_user->user_firstname . ' ' . $current_user->user_lastname );
+			$email = trim( $current_user->user_email );
+
 			include( dirname( __FILE__ ) . '/views/account-status-connected.php' );
 		}
 	}
 
 	public function render_pending_status() {
-		include( dirname( __FILE__ ) . '/views/account-update-modal.php' );
 		$key = $this->get_api_key();
 		if ( empty( $key ) ) {
-			echo '<div id="tiny-compress-status" data-state="missing">';
 			include( dirname( __FILE__ ) . '/views/account-status-missing.php' );
-			echo '</div>';
 		} else {
-			echo '<div id="tiny-compress-status" data-state="pending">';
-			include( dirname( __FILE__ ) . '/views/account-status-pending.php' );
-			echo '</div>';
+			include( dirname( __FILE__ ) . '/views/account-status-loading.php' );
 		}
-	}
-
-	public function render_pending_savings() {
-		echo '<div id="tiny-compress-savings"><div class="spinner"></div></div>';
 	}
 
 	public function create_api_key() {
@@ -545,23 +568,26 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$site = str_replace( array( 'http://', 'https://' ), '', get_bloginfo( 'url' ) );
 				$identifier = 'WordPress plugin for ' . $site;
 				$link = $this->get_absolute_url();
-				$compressor->create_key($_POST['email'], array(
+				$compressor->create_key( $_POST['email'], array(
 					'name' => $_POST['name'],
 					'identifier' => $identifier,
 					'link' => $link,
-				));
-				update_option( self::get_prefixed_name( 'api_key_automated' ), true );
+				) );
+
+				update_option( self::get_prefixed_name( 'api_key_pending' ), true );
 				update_option( self::get_prefixed_name( 'api_key' ), $compressor->get_key() );
 				update_option( self::get_prefixed_name( 'status' ), 0 );
+
 				$status = (object) array(
 					'ok' => true,
 					'message' => null,
 					'key' => $compressor->get_key(),
 				);
 			} catch (Tiny_Exception $err) {
+				list( $message ) = explode( ' (HTTP', $err->getMessage(), 2 );
 				$status = (object) array(
 					'ok' => false,
-					'message' => $err->getMessage(),
+					'message' => $message,
 				);
 			}
 		} else {
@@ -587,7 +613,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$status = Tiny_Compress::create( $key )->get_status();
 		}
 		if ( $status->ok ) {
-			update_option( self::get_prefixed_name( 'api_key_automated' ), false );
+			update_option( self::get_prefixed_name( 'api_key_pending' ), false );
 			update_option( self::get_prefixed_name( 'api_key' ), $key );
 		}
 		$status->message = esc_html__( $status->message, 'tiny-compress-images' );

@@ -74,7 +74,7 @@ abstract class Tiny_Compress {
 			if ( $err->get_status() == 401 ) {
 				$message = 'The key that you have entered is not valid';
 			} else {
-				list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
+				list( $message ) = explode( ' (HTTP', $err->getMessage(), 2 );
 			}
 		}
 

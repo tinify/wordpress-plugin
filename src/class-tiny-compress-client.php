@@ -58,8 +58,8 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	protected function validate() {
 		try {
-			$this->set_request_options( \Tinify\Tinify::getClient() );
 			$this->last_error_code = 0;
+			$this->set_request_options( \Tinify\Tinify::getClient() );
 
 			\Tinify\Tinify::getClient()->request( 'post', '/shrink' );
 			return true;
@@ -81,8 +81,8 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	protected function compress($input, $resize_opts, $preserve_opts) {
 		try {
-			$this->set_request_options( \Tinify\Tinify::getClient() );
 			$this->last_error_code = 0;
+			$this->set_request_options( \Tinify\Tinify::getClient() );
 
 			$source = \Tinify\fromBuffer( $input );
 
@@ -126,8 +126,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	public function create_key($email, $options) {
 		try {
-			$this->set_request_options( \Tinify\Tinify::getClient() );
 			$this->last_error_code = 0;
+			$this->set_request_options(
+				\Tinify\Tinify::getClient(\Tinify\Tinify::ANONYMOUS)
+			);
 
 			\Tinify\createKey( $email, $options );
 		} catch(\Tinify\Exception $err) {
