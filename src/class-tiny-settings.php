@@ -64,11 +64,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 				);
 			}
 
-			if ( $notice ) {
+			if ( isset( $notice ) && $notice ) {
 				$link = sprintf(
 					'<a href="options-media.php#%s">%s</a>', self::NAME, $notice
 				);
-
 				$this->notices->show( 'setting', $link, $notice_class, false );
 			}
 
