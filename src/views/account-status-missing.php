@@ -20,7 +20,7 @@
 		<p class="message"></p>
 
 		<button class="button button-primary" data-tiny-action="create-key">
-			<?php echo esc_html__( 'Register account', 'tiny-compress-images' ) ?>
+			<?php echo esc_html__( 'Register Account', 'tiny-compress-images' ) ?>
 		</button>
 	</div>
 
@@ -33,12 +33,8 @@
 			$link = sprintf( '<a href="https://tinypng.com/developers" target="_blank">%s</a>',
 				esc_html__( 'TinyPNG developer section', 'tiny-compress-images' )
 			);
-
-			echo esc_html__( 'Enter your API key.', 'tiny-compress-images' );
-			echo ' ';
-
 			printf( esc_html__(
-				'Go to the %s to retrieve it.',
+				'Enter your API key. Go to the %s to retrieve it.',
 				'tiny-compress-images'
 			), $link );
 		?></p>
@@ -49,7 +45,7 @@
 		<p class="message"></p>
 
 		<button class="button button-primary" data-tiny-action="update-key">
-			<?php echo esc_html__( 'Save', 'tiny-compress-images' ); ?>
+			<?php echo esc_html__( 'Save' ); ?>
 		</button>
 	</div>
 </div>

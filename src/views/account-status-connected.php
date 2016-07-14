@@ -64,12 +64,8 @@
 			$link = sprintf( '<a href="https://tinypng.com/developers" target="_blank">%s</a>',
 				esc_html__( 'TinyPNG developer section', 'tiny-compress-images' )
 			);
-
-			echo esc_html__( 'Enter your API key.', 'tiny-compress-images' );
-			echo ' ';
-
 			printf( esc_html__(
-				'If you have lost your key, go to the %s to retrieve it.',
+				'Enter your API key. If you have lost your key, go to the %s to retrieve it.',
 				'tiny-compress-images'
 			), $link );
 		?></p>
@@ -79,13 +75,13 @@
 			value="<?php echo esc_attr( $key ); ?>">
 
 		<button class="button button-primary" data-tiny-action="update-key"><?php
-			echo esc_html__( 'Save', 'tiny-compress-images' );
+			echo esc_html__( 'Save' );
 		?></button>
 
 		<p class="message"></p>
 
 		<p><a href="#"  onclick="jQuery('div.tiny-account-status div.update').toggle(); jQuery('div.tiny-account-status div.status').toggle(); return false"><?php
-			echo esc_html__( 'Cancel', 'tiny-compress-images' );
+			echo esc_html__( 'Cancel' );
 		?></a></p>
 	</div>
 </div>
