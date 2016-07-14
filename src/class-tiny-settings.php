@@ -205,6 +205,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
+	protected function clear_api_key_pending() {
+		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
+	}
+
 	protected static function get_intermediate_size($size) {
 		/* Inspired by
 		http://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes */
@@ -434,9 +438,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		echo '</p>';
-
-		echo '<br>';
+		echo '</p><br>';
 
 		$this->render_preserve_input(
 			'creation',
@@ -525,14 +527,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_account_status() {
 		$key = $this->get_api_key();
 		if ( empty( $key ) ) {
-			include( dirname( __FILE__ ) . '/views/account-status-missing.php' );
+			$compressor = $this->get_compressor();
+			if ( $compressor->can_create_key() ) {
+				include( dirname( __FILE__ ) . '/views/account-status-create-advanced.php' );
+			} else {
+				include( dirname( __FILE__ ) . '/views/account-status-create-simple.php' );
+			}
 		} else {
 			$status = $this->compressor->get_status();
 			$status->pending = false;
 
 			if ( $status->ok ) {
 				if ( $this->get_api_key_pending() ) {
-					delete_option( $pending_option );
+					$this->clear_api_key_pending();
 				}
 			} else {
 				if ( $this->get_api_key_pending() ) {
@@ -544,9 +551,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 				}
 			}
 
-			$name = trim( $current_user->user_firstname . ' ' . $current_user->user_lastname );
-			$email = trim( $current_user->user_email );
-
 			include( dirname( __FILE__ ) . '/views/account-status-connected.php' );
 		}
 	}
@@ -554,7 +558,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_pending_status() {
 		$key = $this->get_api_key();
 		if ( empty( $key ) ) {
-			include( dirname( __FILE__ ) . '/views/account-status-missing.php' );
+			$compressor = $this->get_compressor();
+			if ( $compressor->can_create_key() ) {
+				include( dirname( __FILE__ ) . '/views/account-status-create-advanced.php' );
+			} else {
+				include( dirname( __FILE__ ) . '/views/account-status-create-simple.php' );
+			}
 		} else {
 			include( dirname( __FILE__ ) . '/views/account-status-loading.php' );
 		}
@@ -563,6 +572,28 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function create_api_key() {
 		$compressor = $this->get_compressor();
 		if ( $compressor->can_create_key() ) {
+			if ( ! isset( $_POST['name'] ) || ! $_POST['name'] ) {
+				$status = (object) array(
+					'ok' => false,
+					'message' => __(
+						'Please enter your name', 'tiny-compress-images'
+					),
+				);
+				echo json_encode( $status );
+				exit();
+			}
+
+			if ( ! isset( $_POST['email'] ) || ! $_POST['email'] ) {
+				$status = (object) array(
+					'ok' => false,
+					'message' => __(
+						'Please enter your email address', 'tiny-compress-images'
+					),
+				);
+				echo json_encode( $status );
+				exit();
+			}
+
 			try {
 				$site = str_replace( array( 'http://', 'https://' ), '', get_bloginfo( 'url' ) );
 				$identifier = 'WordPress plugin for ' . $site;
@@ -580,7 +611,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$status = (object) array(
 					'ok' => true,
 					'message' => null,
-					'key' => $compressor->get_key(),
 				);
 			} catch (Tiny_Exception $err) {
 				list( $message ) = explode( ' (HTTP', $err->getMessage(), 2 );
@@ -595,7 +625,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'message' => 'This feature is not available on your platform',
 			);
 		}
-		$status->message = esc_html__( $status->message, 'tiny-compress-images' );
+
+		$status->message = __( $status->message, 'tiny-compress-images' );
 		echo json_encode( $status );
 		exit();
 	}
@@ -615,7 +646,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			update_option( self::get_prefixed_name( 'api_key_pending' ), false );
 			update_option( self::get_prefixed_name( 'api_key' ), $key );
 		}
-		$status->message = esc_html__( $status->message, 'tiny-compress-images' );
+		$status->message = __( $status->message, 'tiny-compress-images' );
 		echo json_encode( $status );
 		exit();
 	}

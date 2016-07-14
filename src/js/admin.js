@@ -158,8 +158,8 @@
     })
   }
 
-  if (adminpage === 'upload-php') {
-
+  switch (adminpage) {
+  case 'upload-php':
     eventOn('click', 'button.tiny-compress', compressImage)
 
     if (typeof jQuery.fn.prop === 'function') {
@@ -170,13 +170,11 @@
 
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]')
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action2]')
-
-  } else if (adminpage === 'post-php') {
-
+    break
+  case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage)
-
-  } else if (adminpage === 'options-media-php') {
-
+    break
+  case 'options-media-php':
     changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]')
     changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]')
 
@@ -191,7 +189,8 @@
     }
 
     jQuery('input[name*=tinypng_sizes], input#tinypng_resize_original_enabled').on('click', function() {
-      // Unfortunately, we need some additional information to display the correct notice.
+      /* Unfortunately, we need some additional information to display
+         the correct notice. */
       totalSelectedSizes = jQuery('input[name*=tinypng_sizes]:checked').length
       var image_count_url = ajaxurl + '?action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes
       if (jQuery('input#tinypng_resize_original_enabled').prop('checked') && jQuery('input#tinypng_sizes_0').prop('checked')) {
@@ -209,5 +208,4 @@
   jQuery(function() {
     jQuery('.tiny-notice.is-dismissible button').unbind('click').click(dismissNotice)
   })
-
 }).call()

@@ -27,6 +27,10 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		self::$driver->get( wordpress( $path ) );
 	}
 
+	protected function refresh() {
+		self::$driver->navigate()->refresh();
+	}
+
 	protected function find($selector, $base = null) {
 		if ( ! $base ) {
 			$base = self::$driver;

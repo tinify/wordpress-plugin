@@ -6,7 +6,7 @@ div.misc-pub-section.tiny-compress-images {
 /* Settings */
 div.tiny-account-status {
 	box-sizing: border-box;
-	display: inline-block;
+	display: table-cell;
 	width: 500px;
 	padding: 22px 28px;
 	border: 1px solid #e1e1e1;
@@ -94,6 +94,7 @@ div.tiny-account-status p.status {
 
 div.tiny-account-status.wide {
 	width: auto;
+	max-width: 700px;
 }
 
 div.tiny-account-status div.failure input {
@@ -109,16 +110,36 @@ div.tiny-account-status div.update {
 }
 
 div.tiny-account-status.wide div.create {
-	float: left;
-	width: 280px;
+	box-sizing: border-box;
+	display: table-cell;
+	width: 50%;
 	padding-right: 30px;
 	border-right: 1px solid #e5e5e5;
 }
 
 div.tiny-account-status.wide div.update {
-	float: left;
-	width: 280px;
-	padding-left: 30px;
+	box-sizing: border-box;
+	display: table-cell;
+	width: 50%;
+	padding-left: 29px;
+}
+
+@media screen and (max-width: 600px) {
+	div.tiny-account-status.wide div.create {
+		display: block;
+		width: auto;
+		padding-right: 0;
+		padding-bottom: 20px;
+		border-right: 0;
+		border-bottom: 1px solid #e5e5e5;
+	}
+
+	div.tiny-account-status.wide div.update {
+		display: block;
+		width: auto;
+		padding-top: 29px;
+		padding-left: 0;
+	}
 }
 
 div.tiny-account-status.wide div.create input, div.tiny-account-status.wide div.update input {

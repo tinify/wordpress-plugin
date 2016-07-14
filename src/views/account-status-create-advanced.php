@@ -1,4 +1,10 @@
-<div class="tiny-account-status wide" id="tiny-account-status" data-state="missing">
+<?php
+
+$user = wp_get_current_user();
+$name = trim( $user->user_firstname . ' ' . $user->user_lastname );
+$email = trim( $user->user_email );
+
+?><div class="tiny-account-status wide" id="tiny-account-status" data-state="missing">
 	<div class="create">
 		<h4><?php
 			echo esc_html_e( 'Register new account', 'tiny-compress-images' );

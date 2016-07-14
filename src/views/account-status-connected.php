@@ -70,7 +70,7 @@
 			), $link );
 		?></p>
 
-		<input class="tiny-update-account-input" type="text" id="tinypng_api_key"
+		<input type="text" id="tinypng_api_key"
 			name="tinypng_api_key" size="35" spellcheck="false"
 			value="<?php echo esc_attr( $key ); ?>">
 
@@ -80,7 +80,7 @@
 
 		<p class="message"></p>
 
-		<p><a href="#"  onclick="jQuery('div.tiny-account-status div.update').toggle(); jQuery('div.tiny-account-status div.status').toggle(); return false"><?php
+		<p><a href="#" onclick="jQuery('div.tiny-account-status div.update').toggle(); jQuery('div.tiny-account-status div.status').toggle(); return false"><?php
 			echo esc_html__( 'Cancel' );
 		?></a></p>
 	</div>
