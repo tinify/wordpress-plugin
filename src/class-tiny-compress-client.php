@@ -128,7 +128,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options(
-				\Tinify\Tinify::getClient(\Tinify\Tinify::ANONYMOUS)
+				\Tinify\Tinify::getClient( \Tinify\Tinify::ANONYMOUS )
 			);
 
 			\Tinify\createKey( $email, $options );
