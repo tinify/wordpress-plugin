@@ -415,9 +415,21 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				$admin_colors = $_wp_admin_css_colors[ $admin_colour_scheme ]->colors;
 			}
 		}
-		if ( 'fresh' == $admin_colour_scheme ) {
-			$admin_colors = array( '#0074aa', '#1685b5', '#78ca44', '#0086ba' ); // modified
-		};
+		if ( $admin_colors[0] == '#e5e5e5' && $admin_colors[1] == '#999' ) {
+			$admin_colors[0] = '#bbb';
+		}
+		if ( $admin_colors[0] == '#5589aa' && $admin_colors[1] == '#cfdfe9' ) {
+			$admin_colors[1] = '#85aec5';
+		}
+		if ( $admin_colors[0] == '#7c7976' && $admin_colors[1] == '#c6c6c6' ) {
+			$admin_colors[1] = '#adaba9';
+			$admin_colors[2] = '#adaba9';
+		}
+		if ( self::wp_version() > 3.7 ) {
+			if ( 'fresh' == $admin_colour_scheme ) {
+				$admin_colors = array( '#0074aa', '#1685b5', '#78ca44', '#0086ba' ); // better
+			}
+		}
 		return $admin_colors;
 	}
 
