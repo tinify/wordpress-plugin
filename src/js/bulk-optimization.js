@@ -5,7 +5,10 @@
     var optimizedSoFar = parseInt(jQuery("#optimized-so-far").text())
     jQuery("#optimized-so-far").html(successFullCompressions + optimizedSoFar)
 
-    var percentage = Math.round((successFullCompressions + optimizedSoFar) / totalToOptimize * 100, 1) + "%"
+    var percentage = "100%"
+    if (totalToOptimize > 0) {
+      percentage = Math.round((successFullCompressions + optimizedSoFar) / totalToOptimize * 100, 1) + "%"
+    }
     jQuery("div#compression-progress-bar #progress-size").css("width", percentage)
     jQuery("div#compression-progress-bar #percentage").html("(" + percentage + ")")
 
