@@ -25,7 +25,7 @@ abstract class Tiny_Compress {
 
 	protected $after_compress_callback;
 
-	public static function create($api_key, $after_compress_callback = null) {
+	public static function create( $api_key, $after_compress_callback = null ) {
 		if ( Tiny_PHP::client_supported() ) {
 			$class = 'Tiny_Compress_Client';
 		} elseif ( Tiny_PHP::fopen_available() ) {
@@ -48,7 +48,7 @@ abstract class Tiny_Compress {
 		);
 	}
 
-	protected function __construct($after_compress_callback) {
+	protected function __construct( $after_compress_callback ) {
 		$this->after_compress_callback = $after_compress_callback;
 	}
 
@@ -70,7 +70,7 @@ abstract class Tiny_Compress {
 
 		try {
 			$result = $this->validate();
-		} catch(Tiny_Exception $err) {
+		} catch (Tiny_Exception $err) {
 			if ( $err->get_status() == 401 ) {
 				$message = 'The key that you have entered is not valid';
 			} else {
@@ -164,5 +164,4 @@ abstract class Tiny_Compress {
 
 		return $cost;
 	}
-
 }

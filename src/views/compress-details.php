@@ -84,7 +84,7 @@ ksort( $size_exists );
 					$size = new Tiny_Image_Size();
 				}
 				?>
-				<tr class="<?php echo ($i % 2 == 0) ? 'even' : 'odd' ?>">
+				<tr class="<?php echo ( 0 == $i % 2 ) ? 'even' : 'odd' ?>">
 					<?php
 					echo '<td>';
 					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html__( ucfirst( $size_name ) ) );

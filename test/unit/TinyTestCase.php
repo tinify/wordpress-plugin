@@ -8,7 +8,7 @@ require_once 'vendor/autoload.php';
 
 use org\bovigo\vfs\vfsStream;
 
-function plugin_autoloader($class) {
+function plugin_autoloader( $class ) {
 	$file = dirname( __FILE__ ) . '/../../src/class-' .
 		str_replace( '_', '-', strtolower( $class ) ) . '.php';
 
@@ -66,7 +66,7 @@ abstract class Tiny_TestCase extends PHPUnit_Framework_TestCase {
 	}
 	// @codingStandardsIgnoreEnd
 
-	protected function json($file_name) {
+	protected function json( $file_name ) {
 		return json_decode(
 			file_get_contents(
 				dirname( __FILE__ ) . '/../fixtures/json/' . $file_name . '.json'

@@ -37,7 +37,7 @@ abstract class Tiny_WP_Base {
 		return self::$wp_version;
 	}
 
-	public static function check_wp_version($version) {
+	public static function check_wp_version( $version ) {
 		return floatval( self::wp_version() ) >= $version;
 	}
 
@@ -45,7 +45,7 @@ abstract class Tiny_WP_Base {
 		return defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
 	}
 
-	protected static function get_prefixed_name($name) {
+	protected static function get_prefixed_name( $name ) {
 		return self::PREFIX . $name;
 	}
 
@@ -59,11 +59,11 @@ abstract class Tiny_WP_Base {
 		}
 	}
 
-	protected function get_method($name) {
+	protected function get_method( $name ) {
 		return array( $this, $name );
 	}
 
-	protected function get_static_method($name) {
+	protected function get_static_method( $name ) {
 		return array( get_class( $this ), $name );
 	}
 

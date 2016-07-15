@@ -11,7 +11,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->subject = new Tiny_Plugin();
 		$this->subject->init();
 		$this->compressor = $this->getMockBuilder( 'TestCompressor' )
-								 ->setMethods( array( 'compress_file') )
+								 ->setMethods( array( 'compress_file' ) )
 								 ->getMock();
 		$this->subject->set_compressor( $this->compressor );
 
@@ -24,7 +24,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->createImages();
 	}
 
-	public function success_compress($file) {
+	public function success_compress( $file ) {
 		if ( preg_match( '#[^-]+-([^.]+)[.](png|jpe?g)$#', basename( $file ), $match ) ) {
 			$key = $match[1];
 		} else {
@@ -59,14 +59,14 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 				$height = '3000';
 		}
 		$this->vfs->getChild( vfsStream::path( $file ) )->truncate( $output );
-		return array( 'input' => array('size' => $input), 'output' => array('size' => $output, 'width' => $width, 'height' => $height) );
+		return array( 'input' => array( 'size' => $input ), 'output' => array( 'size' => $output, 'width' => $width, 'height' => $height ) );
 	}
 
 	public function test_init_should_add_filters() {
 		$this->assertEquals(array(
-			array( 'jpeg_quality', array('Tiny_Plugin', 'jpeg_quality') ),
-			array( 'wp_editor_set_quality', array('Tiny_Plugin', 'jpeg_quality') ),
-			array( 'wp_generate_attachment_metadata', array($this->subject, 'compress_on_upload'), 10, 2 ),
+			array( 'jpeg_quality', array( 'Tiny_Plugin', 'jpeg_quality' ) ),
+			array( 'wp_editor_set_quality', array( 'Tiny_Plugin', 'jpeg_quality' ) ),
+			array( 'wp_generate_attachment_metadata', array( $this->subject, 'compress_on_upload' ), 10, 2 ),
 		), $this->wp->getCalls( 'add_filter' ));
 	}
 
@@ -76,7 +76,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test.png' ) ),
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) ),
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
-		)->will( $this->returnCallback( array( $this, 'success_compress') ) );
+		)->will( $this->returnCallback( array( $this, 'success_compress' ) ) );
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
@@ -93,7 +93,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
-		)->will( $this->returnCallback( array( $this, 'success_compress') ) );
+		)->will( $this->returnCallback( array( $this, 'success_compress' ) ) );
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
@@ -114,14 +114,14 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->compressor->expects( $this->once() )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) )
-		)->will( $this->returnCallback( array( $this, 'success_compress') ) );
+		)->will( $this->returnCallback( array( $this, 'success_compress' ) ) );
 		$this->subject->compress_on_upload( $testmeta, 1 );
 	}
 
 	public function test_compress_should_update_metadata() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array( $this, 'success_compress') )
+			$this->returnCallback( array( $this, 'success_compress' ) )
 		);
 
 		$this->subject->compress_on_upload( $this->wp->getTestMetadata(), 1 );
@@ -130,16 +130,16 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		foreach ( $tiny_metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertBetween( -1, + 1, $values['end'] - time() );
-				unset( $tiny_metadata[ $key]['end' ] );
-				unset( $tiny_metadata[ $key]['start' ] );
+				unset( $tiny_metadata[ $key ]['end'] );
+				unset( $tiny_metadata[ $key ]['start'] );
 			}
 		}
 		$this->assertEquals(array(
-			0 => array( 'input' => array('size' => 12345), 'output' => array('size' => 10000, 'width' => 4000, 'height' => 3000) ),
+			0 => array( 'input' => array( 'size' => 12345 ), 'output' => array( 'size' => 10000, 'width' => 4000, 'height' => 3000 ) ),
 			'thumbnail' => array(),
 			'medium' => array(),
-			'large' => array( 'input' => array('size' => 10000), 'output' => array('size' => 6789, 'width' => 1024, 'height' => 1024) ),
-			'post-thumbnail' => array( 'input' => array('size' => 1234), 'output' => array('size' => 1000, 'width' => 800, 'height' => 500) ),
+			'large' => array( 'input' => array( 'size' => 10000 ), 'output' => array( 'size' => 6789, 'width' => 1024, 'height' => 1024 ) ),
+			'post-thumbnail' => array( 'input' => array( 'size' => 1234 ), 'output' => array( 'size' => 1000, 'width' => 800, 'height' => 500 ) ),
 		), $tiny_metadata);
 	}
 
@@ -156,7 +156,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		foreach ( $tiny_metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertEquals( time(), $values['timestamp'], 2 );
-				unset( $tiny_metadata[ $key]['timestamp' ] );
+				unset( $tiny_metadata[ $key ]['timestamp'] );
 			}
 		}
 		$this->assertEquals(array(
@@ -186,7 +186,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	public function test_wrong_metadata_should_not_show_warnings() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array( $this, 'success_compress') )
+			$this->returnCallback( array( $this, 'success_compress' ) )
 		);
 
 		$testmeta = $this->wp->getTestMetadata();
@@ -198,7 +198,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	public function test_wrong_metadata_should_save_tiny_metadata() {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
-			$this->returnCallback( array( $this, 'success_compress') )
+			$this->returnCallback( array( $this, 'success_compress' ) )
 		);
 
 		$testmeta = $this->wp->getTestMetadata();

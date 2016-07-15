@@ -22,7 +22,7 @@ class Tiny_Exception extends Exception {
 	protected $type;
 	protected $status;
 
-	public function __construct($message, $type = null, $status = null) {
+	public function __construct( $message, $type = null, $status = null ) {
 		if ( ! is_string( $message ) || ($type && ! is_string( $type )) ) {
 			throw new InvalidArgumentException(
 				'First two arguments must be strings'

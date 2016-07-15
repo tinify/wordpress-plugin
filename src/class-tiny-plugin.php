@@ -46,7 +46,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$this->settings = new Tiny_Settings();
 	}
 
-	public function set_compressor($compressor) {
+	public function set_compressor( $compressor ) {
 		$this->settings->set_compressor( $compressor );
 	}
 
@@ -289,9 +289,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$image_statistics = $tiny_image->get_statistics();
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
-		$currentLibrarySize = intval( $_POST['current_size'] );
+		$current_library_size = intval( $_POST['current_size'] );
 		$size_after = $image_statistics['optimized_total_size'];
-		$newLibrarySize = $currentLibrarySize + $size_after - $size_before;
+		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message'] = $tiny_image->get_latest_error();
 		$result['image_sizes_optimized'] = $image_statistics['image_sizes_optimized'];
@@ -313,7 +313,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			)
 		);
 		$result['size_change'] = $size_after - $size_before;
-		$result['human_readable_library_size'] = size_format( $newLibrarySize, 2 );
+		$result['human_readable_library_size'] = size_format( $new_library_size, 2 );
 
 		echo json_encode( $result );
 
@@ -351,13 +351,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
-	public function add_media_columns($columns) {
+	public function add_media_columns( $columns ) {
 		$columns[ self::MEDIA_COLUMN ] = esc_html__( 'Compression', 'tiny-compress-images' );
 		return $columns;
 	}
 
 	public function render_media_column( $column, $id ) {
-		if ( $column === self::MEDIA_COLUMN ) {
+		if ( self::MEDIA_COLUMN === $column ) {
 			$tiny_image = new Tiny_Image( $id );
 			if ( $tiny_image->file_type_allowed() ) {
 				echo '<div class="tiny-ajax-container">';
@@ -415,13 +415,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				$admin_colors = $_wp_admin_css_colors[ $admin_colour_scheme ]->colors;
 			}
 		}
-		if ( $admin_colors[0] == '#e5e5e5' && $admin_colors[1] == '#999' ) {
+		if ( '#e5e5e5' == $admin_colors[0] && '#999' == $admin_colors[1] ) {
 			$admin_colors[0] = '#bbb';
 		}
-		if ( $admin_colors[0] == '#5589aa' && $admin_colors[1] == '#cfdfe9' ) {
+		if ( '#5589aa' == $admin_colors[0] && '#cfdfe9' == $admin_colors[1] ) {
 			$admin_colors[1] = '#85aec5';
 		}
-		if ( $admin_colors[0] == '#7c7976' && $admin_colors[1] == '#c6c6c6' ) {
+		if ( '#7c7976' == $admin_colors[0] && '#c6c6c6' == $admin_colors[1] ) {
 			$admin_colors[1] = '#adaba9';
 			$admin_colors[2] = '#adaba9';
 		}

@@ -23,7 +23,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	protected function visit($path) {
+	protected function visit( $path ) {
 		self::$driver->get( wordpress( $path ) );
 	}
 
@@ -31,7 +31,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		self::$driver->navigate()->refresh();
 	}
 
-	protected function find($selector, $base = null) {
+	protected function find( $selector, $base = null ) {
 		if ( ! $base ) {
 			$base = self::$driver;
 		}
@@ -41,7 +41,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	protected function find_all($selector, $base = null) {
+	protected function find_all( $selector, $base = null ) {
 		if ( ! $base ) {
 			$base = self::$driver;
 		}
@@ -51,19 +51,19 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	protected function find_link($text) {
+	protected function find_link( $text ) {
 		return self::$driver->findElement(
 			WebDriverBy::partialLinkText( $text )
 		);
 	}
 
-	protected function find_button($text) {
+	protected function find_button( $text ) {
 		return self::$driver->findElement(
 			WebDriverBy::cssSelector( "input[value='{$text}']" )
 		);
 	}
 
-	protected function wait_for_text($selector, $text) {
+	protected function wait_for_text( $selector, $text ) {
 		self::$driver->wait( 2 )->until(
 			WebDriverExpectedCondition::textToBePresentInElement(
 				WebDriverBy::cssSelector( $selector ), $text
@@ -71,7 +71,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		);
 	}
 
-	protected function wait_for_text_disappearance($selector, $text) {
+	protected function wait_for_text_disappearance( $selector, $text ) {
 		self::$driver->wait( 2 )->until(
 			WebDriverExpectedCondition::invisibilityOfElementWithText(
 				WebDriverBy::cssSelector( $selector ), $text
@@ -86,14 +86,15 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	protected function postbox_dimension_selector() {
 		$version = wordpress_version();
 		if ( $version < 37 ) {
-			return 'div.misc-pub-section:nth-child(5)'; }
-		elseif ( $version == 37 ) {
-			return 'div.misc-pub-section:nth-child(6)'; }
-		else {
-			return 'div.misc-pub-dimensions'; }
+			return 'div.misc-pub-section:nth-child(5)';
+		} elseif ( $version == 37 ) {
+			return 'div.misc-pub-section:nth-child(6)';
+		} else {
+			return 'div.misc-pub-dimensions';
+		}
 	}
 
-	protected function upload_media($path) {
+	protected function upload_media( $path ) {
 		$this->visit( '/wp-admin/media-new.php?browser-uploader&flash=0' );
 
 		$links = $this->find_all( 'p.upload-flash-bypass a' );
@@ -107,11 +108,11 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->wait_for_text( 'div.wrap h1, div.wrap h2', 'Media Library' );
 	}
 
-	protected function set_api_key($api_key, $wait = true) {
+	protected function set_api_key( $api_key, $wait = true ) {
 		$this->set_option( 'tinypng_api_key', $api_key );
 	}
 
-	protected function enable_compression_sizes($sizes) {
+	protected function enable_compression_sizes( $sizes ) {
 		$value = array( '_tiny_dummy' => 'on' );
 		foreach ( $sizes as $size ) {
 			$value[ $size ] = 'on';
@@ -119,7 +120,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->set_option( 'tinypng_sizes', serialize( $value ) );
 	}
 
-	protected function enable_preserve($keys) {
+	protected function enable_preserve( $keys ) {
 		$value = array();
 		foreach ( $keys as $key ) {
 			$value[ $key ] = 'on';
@@ -131,7 +132,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->unset_option( 'tinypng_preserve_data' );
 	}
 
-	protected function enable_resize($options) {
+	protected function enable_resize( $options ) {
 		$value = array( 'enabled' => 'on' );
 		foreach ( $options as $option => $val ) {
 			$value[ $option ] = $val;
@@ -143,7 +144,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->unset_option( 'tinypng_resize_original' );
 	}
 
-	protected function set_option($name, $value) {
+	protected function set_option( $name, $value ) {
 		$this->unset_option( $name );
 
 		$query = self::$db->prepare(
@@ -154,7 +155,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$query->execute();
 	}
 
-	protected function unset_option($name) {
+	protected function unset_option( $name ) {
 		$query = self::$db->prepare(
 			'DELETE FROM wp_options WHERE option_name = ?'
 		);

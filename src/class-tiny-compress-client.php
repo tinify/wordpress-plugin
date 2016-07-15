@@ -33,7 +33,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	private $last_message = '';
 	private $proxy;
 
-	protected function __construct($api_key, $after_compress_callback) {
+	protected function __construct( $api_key, $after_compress_callback ) {
 		parent::__construct( $after_compress_callback );
 
 		$this->proxy = new WP_HTTP_Proxy();
@@ -55,7 +55,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	}
 
 	public function limit_reached() {
-		return $this->last_error_code == 429;
+		return 429 == $this->last_error_code;
 	}
 
 	protected function validate() {
@@ -66,10 +66,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			\Tinify\Tinify::getClient()->request( 'post', '/shrink' );
 			return true;
 
-		} catch(\Tinify\Exception $err) {
+		} catch (\Tinify\Exception $err) {
 			$this->last_error_code = $err->status;
 
-			if ( $err->status == 429 || $err->status == 400 ) {
+			if ( 429 == $err->status || 400 == $err->status ) {
 				return true;
 			}
 
@@ -81,7 +81,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function compress($input, $resize_opts, $preserve_opts) {
+	protected function compress( $input, $resize_opts, $preserve_opts ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
@@ -109,13 +109,13 @@ class Tiny_Compress_Client extends Tiny_Compress {
 					'width' => $result->width(),
 					'height' => $result->height(),
 					'ratio' => round( $result->size() / strlen( $input ), 4 ),
-				)
+				),
 			);
 
 			$buffer = $result->toBuffer();
 			return array( $buffer, $meta );
 
-		} catch(\Tinify\Exception $err) {
+		} catch (\Tinify\Exception $err) {
 			$this->last_error_code = $err->status;
 
 			throw new Tiny_Exception(
@@ -126,7 +126,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	public function create_key($email, $options) {
+	public function create_key( $email, $options ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options(
@@ -134,7 +134,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			);
 
 			\Tinify\createKey( $email, $options );
-		} catch(\Tinify\Exception $err) {
+		} catch (\Tinify\Exception $err) {
 			$this->last_error_code = $err->status;
 
 			throw new Tiny_Exception(
@@ -145,7 +145,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	private function set_request_options($client) {
+	private function set_request_options( $client ) {
 		/* The client does not let us override cURL properties yet, so we have
            to use a reflection property. */
 		$property = new ReflectionProperty( $client, 'options' );

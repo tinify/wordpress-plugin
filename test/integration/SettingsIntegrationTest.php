@@ -15,13 +15,13 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	}
 
 	protected function get_enabled_sizes() {
-		return array_map( function($checkbox) {
+		return array_map( function( $checkbox ) {
 			return $checkbox->getAttribute( 'name' );
 		}, $this->find_all( 'input[type=checkbox][checked][name^=tinypng_sizes]' ) );
 	}
 
 	public function test_settings_should_contain_title() {
-		$headings = array_map( function($heading) {
+		$headings = array_map( function( $heading ) {
 			return $heading->getText();
 		}, $this->find_all( 'h2, h3' ) );
 
@@ -201,7 +201,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 	public function test_settings_should_show_free_compressions() {
 		$this->enable_compression_sizes(
-			array( '0', 'thumbnail', 'medium', 'large')
+			array( '0', 'thumbnail', 'medium', 'large' )
 		);
 
 		$this->refresh();
@@ -214,7 +214,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 	public function test_settings_should_update_free_compressions() {
 		$this->enable_compression_sizes(
-			array( '0', 'thumbnail', 'medium', 'large')
+			array( '0', 'thumbnail', 'medium', 'large' )
 		);
 
 		$this->refresh();

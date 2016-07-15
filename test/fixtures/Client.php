@@ -105,7 +105,10 @@ class Client {
 
 		$result = array();
 		foreach ( $headers as $header ) {
-			if ( empty( $header ) ) { continue; }
+			if ( empty( $header ) ) {
+				continue;
+			}
+
 			$split = explode( ':', $header, 2 );
 			if ( count( $split ) === 2 ) {
 				$result[strtolower( $split[0] )] = trim( $split[1] );

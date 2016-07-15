@@ -20,19 +20,19 @@ class WordPressOptions {
 		 );
 	}
 
-	public function set($key, $value) {
+	public function set( $key, $value ) {
 		if ( preg_match( '#^(.+)\[(.+)\]$#', $key, $match ) ) {
 			if ( ! isset( $this->values[ $match[1] ] ) ) {
 				$this->values[ $match[1] ] = array();
 			}
-			$this->values[ $match[1]][ $match[2] ] = $value;
+			$this->values[ $match[1] ][ $match[2] ] = $value;
 		} else {
 			$this->values[ $key ] = $value;
 		}
 	}
 
-	public function get($key, $default = null) {
-		return isset( $this->values[ $key] ) ? $this->values[ $key ] : $default;
+	public function get( $key, $default = null ) {
+		return isset( $this->values[ $key ] ) ? $this->values[ $key ] : $default;
 	}
 }
 
@@ -47,7 +47,7 @@ class WordPressStubs {
 	private $calls;
 	private $stubs;
 
-	public function __construct($vfs) {
+	public function __construct( $vfs ) {
 		$GLOBALS['wp'] = $this;
 		$this->vfs = $vfs;
 		$this->addMethod( 'add_action' );
@@ -89,8 +89,8 @@ class WordPressStubs {
 		$GLOBALS['_wp_additional_image_sizes'] = array();
 	}
 
-	public function call($method, $args) {
-		$this->calls[ $method][ ] = $args;
+	public function call( $method, $args ) {
+		$this->calls[ $method ][] = $args;
 		if ( 'add_action' === $method ) {
 			if ( 'init' === $args[0] ) {
 				$this->initFunctions[] = $args[1];
@@ -107,9 +107,9 @@ class WordPressStubs {
 		} elseif ( 'add_image_size' === $method ) {
 			return call_user_func_array( array( $this, 'addImageSize' ), $args );
 		} elseif ( 'update_post_meta' === $method ) {
-			return call_user_func_array( array( $this, 'updateMetadata'), $args );
+			return call_user_func_array( array( $this, 'updateMetadata' ), $args );
 		} elseif ( 'get_intermediate_image_sizes' === $method ) {
-			return array_merge( array( 'thumbnail', 'medium', 'large'), array_keys( $GLOBALS['_wp_additional_image_sizes'] ) );
+			return array_merge( array( 'thumbnail', 'medium', 'large' ), array_keys( $GLOBALS['_wp_additional_image_sizes'] ) );
 		} elseif ( 'get_plugin_data' === $method ) {
 			return array( 'Version' => '1.7.2' );
 		} elseif ( 'wp_upload_dir' === $method ) {
@@ -121,7 +121,7 @@ class WordPressStubs {
 		}
 	}
 
-	public function addMethod($method) {
+	public function addMethod( $method ) {
 		$this->calls[ $method ] = array();
 		$this->stubs[ $method ] = array();
 		if ( ! function_exists( $method ) ) {
@@ -129,29 +129,29 @@ class WordPressStubs {
 		}
 	}
 
-	public function addOption($key, $value) {
+	public function addOption( $key, $value ) {
 		$this->options->set( $key, $value );
 	}
 
-	public function addImageSize($size, $values) {
+	public function addImageSize( $size, $values ) {
 		$GLOBALS['_wp_additional_image_sizes'][ $size ] = $values;
 	}
 
-	public function getMetadata($id, $key, $single = false) {
-		$values = isset( $this->metadata[ $id] ) ? $this->metadata[ $id ] : array();
-		$value = isset( $values[ $key] ) ? $values[ $key ] : '';
+	public function getMetadata( $id, $key, $single = false ) {
+		$values = isset( $this->metadata[ $id ] ) ? $this->metadata[ $id ] : array();
+		$value = isset( $values[ $key ] ) ? $values[ $key ] : '';
 		return $single ? $value : array( $value );
 	}
 
-	public function updateMetadata($id, $key, $values) {
-		$this->metadata[ $id][ $key ] = $values;
+	public function updateMetadata( $id, $key, $values ) {
+		$this->metadata[ $id ][ $key ] = $values;
 	}
 
-	public function setTinyMetadata($id, $values) {
+	public function setTinyMetadata( $id, $values ) {
 		$this->metadata[ $id ] = array( Tiny_Image::META_KEY => $values );
 	}
 
-	public function getCalls($method) {
+	public function getCalls( $method ) {
 		return $this->calls[ $method ];
 	}
 
@@ -167,11 +167,11 @@ class WordPressStubs {
 		}
 	}
 
-	public function stub($method, $func) {
+	public function stub( $method, $func ) {
 		$this->stubs[ $method ] = $func;
 	}
 
-	public function createImage($file_size, $path, $name) {
+	public function createImage( $file_size, $path, $name ) {
 		if ( ! $this->vfs->hasChild( self::UPLOAD_DIR . "/$path" ) ) {
 			vfsStream::newDirectory( self::UPLOAD_DIR . "/$path" )->at( $this->vfs );
 		}
@@ -182,7 +182,7 @@ class WordPressStubs {
 			->at( $dir );
 	}
 
-	public function createImages($sizes = null, $original_size = 12345, $path = '14/01', $name = 'test') {
+	public function createImages( $sizes = null, $original_size = 12345, $path = '14/01', $name = 'test' ) {
 		vfsStream::newDirectory( self::UPLOAD_DIR . "/$path" )->at( $this->vfs );
 		$dir = $this->vfs->getChild( self::UPLOAD_DIR . '/' . $path );
 
@@ -201,18 +201,18 @@ class WordPressStubs {
 		}
 	}
 
-	public function createImagesFromJSON($virtual_images) {
+	public function createImagesFromJSON( $virtual_images ) {
 		foreach ( $virtual_images['images'] as $image ) {
 			self::createImage( $image['size'], $virtual_images['path'], $image['file'] );
 		}
 	}
 
-	public function getTestMetadata($path = '14/01', $name = 'test') {
+	public function getTestMetadata( $path = '14/01', $name = 'test' ) {
 		$metadata = array(
 			'file' => "$path/$name.png",
 			'width' => 4000,
 			'height' => 3000,
-			'sizes' => array()
+			'sizes' => array(),
 		);
 
 		$regex = '#^' . preg_quote( $name ) .'-([^.]+)[.](png|jpe?g)$#';
@@ -234,10 +234,10 @@ class WP_HTTP_Proxy {
 	}
 }
 
-function __($text, $domain = 'default') {
+function __( $text, $domain = 'default' ) {
 	return translate( $text, $domain );
 }
 
-function esc_html__($text, $domain = 'default') {
+function esc_html__( $text, $domain = 'default' ) {
 	return translate( $text, $domain );
 }

@@ -12,12 +12,12 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 		self::$handlers = array();
 	}
 
-	public static function register($method, $url, $handler) {
+	public static function register( $method, $url, $handler ) {
 		$key = self::get_key( $method, $url );
 		self::$handlers[ $key ] = $handler;
 	}
 
-	private static function get_key($method, $url) {
+	private static function get_key( $method, $url ) {
 		return strtoupper( $method ) . ' ' . $url;
 	}
 
@@ -29,19 +29,19 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 
 	/* ArrayAccess */
 
-	public function offsetExists($offset) {
+	public function offsetExists( $offset ) {
 		return array_key_exists( $offset, $this->data );
 	}
 
-	public function offsetGet($offset) {
+	public function offsetGet( $offset ) {
 		return $this->data[ $offset ];
 	}
 
-	public function offsetSet($offset, $value) {
+	public function offsetSet( $offset, $value ) {
 		$this->data[ $offset ] = $value;
 	}
 
-	public function offsetUnset($offset) {
+	public function offsetUnset( $offset ) {
 		unset( $this->data[ $offset ] );
 	}
 
@@ -51,7 +51,7 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 	}
 
 	/* StreamWrapper */
-	public function stream_open($path, $mode, $options, &$opened_path) {
+	public function stream_open( $path, $mode, $options, &$opened_path ) {
 		$context = stream_context_get_options( $this->context );
 		$path = str_replace( 'https://api.tinify.com', '', $path );
 		$key = self::get_key( $context['http']['method'], $path );
@@ -75,7 +75,7 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 		return true;
 	}
 
-	public function stream_read($count) {
+	public function stream_read( $count ) {
 		if ( $this->position > strlen( $this->mocked_body ) ) {
 			return false;
 		}
@@ -89,7 +89,7 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 	}
 
 	public function stream_stat() {
-		return array('wrapper_data' => array('test'));
+		return array( 'wrapper_data' => array( 'test' ) );
 	}
 
 	public function stream_tell() {

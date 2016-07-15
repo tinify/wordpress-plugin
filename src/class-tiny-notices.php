@@ -85,13 +85,13 @@ class Tiny_Notices extends Tiny_WP_Base {
 		}
 	}
 
-	public function add($name, $message) {
+	public function add( $name, $message ) {
 		$this->load_notices();
 		$this->notices[ $name ] = $message;
 		$this->save_notices();
 	}
 
-	public function remove($name) {
+	public function remove( $name ) {
 		$this->load();
 		if ( isset( $this->notices[ $name ] ) ) {
 			unset( $this->notices[ $name ] );

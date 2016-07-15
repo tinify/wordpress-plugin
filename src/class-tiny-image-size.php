@@ -34,11 +34,12 @@ class Tiny_Image_Size {
 
 	public function end_time() {
 		if ( isset( $this->meta['end'] ) ) {
-			return $this->meta['end']; }
-		elseif ( isset( $this->meta['timestamp'] ) ) {
-			return $this->meta['timestamp']; }
-		else {
-			return null; }
+			return $this->meta['end'];
+		} elseif ( isset( $this->meta['timestamp'] ) ) {
+			return $this->meta['timestamp'];
+		} else {
+			return null;
+		}
 	}
 
 	public function add_tiny_meta_start() {
@@ -52,12 +53,12 @@ class Tiny_Image_Size {
 		}
 	}
 
-	public function add_tiny_meta_error($exception) {
+	public function add_tiny_meta_error( $exception ) {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta = array(
 				'error'   => $exception->get_type(),
 				'message' => $exception->get_message(),
-				'timestamp' => time()
+				'timestamp' => time(),
 			);
 		}
 	}

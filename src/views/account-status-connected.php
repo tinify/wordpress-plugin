@@ -15,7 +15,7 @@
 		if ( $status->ok ) {
 			$compressions = self::get_compression_count();
 			/* It is not possible to check if a subscription is free or flexible. */
-			if ( $compressions == Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
+			if ( Tiny_Config::MONTHLY_FREE_COMPRESSIONS == $compressions ) {
 				$link = '<a href="https://tinypng.com/developers" target="_blank">' . esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 				printf( esc_html__(
 					'You have reached your limit of %s compressions this month.',

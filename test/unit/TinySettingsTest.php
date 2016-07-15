@@ -47,7 +47,8 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 			),
 			array(
 				'tinypng_sizes',
-				'File compression', array( $this->subject, 'render_sizes' ),
+				'File compression',
+			array( $this->subject, 'render_sizes' ),
 				'media',
 				'tinypng_settings',
 			),
@@ -73,7 +74,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 			'thumbnail' => array( 'width' => 150, 'height' => 150, 'tinify' => false ),
 			'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => true ),
 			'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => false ),
-			'post-thumbnail' => array( 'width' => 825, 'height' => 510, 'tinify' => true )
+			'post-thumbnail' => array( 'width' => 825, 'height' => 510, 'tinify' => true ),
 		), $this->subject->get_sizes());
 	}
 
@@ -152,7 +153,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 
 		$this->assertEquals(
-			array( 'method' => 'fit', 'width' => 800, 'height' => 600),
+			array( 'method' => 'fit', 'width' => 800, 'height' => 600 ),
 			$this->subject->get_resize_options( Tiny_Image::ORIGINAL )
 		);
 	}
@@ -164,7 +165,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 
 		$this->assertEquals(
-			array( 'method' => 'scale', 'height' => 600),
+			array( 'method' => 'scale', 'height' => 600 ),
 			$this->subject->get_resize_options( Tiny_Image::ORIGINAL )
 		);
 	}
@@ -176,7 +177,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 
 		$this->assertEquals(
-			array( 'method' => 'scale', 'width' => 800),
+			array( 'method' => 'scale', 'width' => 800 ),
 			$this->subject->get_resize_options( Tiny_Image::ORIGINAL )
 		);
 	}
@@ -188,7 +189,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 
 		$this->assertEquals(
-			array( 'method' => 'scale', 'height' => 600),
+			array( 'method' => 'scale', 'height' => 600 ),
 			$this->subject->get_resize_options( Tiny_Image::ORIGINAL )
 		);
 	}
@@ -200,7 +201,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 
 		$this->assertEquals(
-			array( 'method' => 'scale', 'width' => 800),
+			array( 'method' => 'scale', 'width' => 800 ),
 			$this->subject->get_resize_options( Tiny_Image::ORIGINAL )
 		);
 	}
@@ -217,14 +218,14 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 	public function test_should_not_return_resize_options_when_not_enabled() {
 		$this->wp->addOption(
 			'tinypng_resize_original',
-			array( 'width' => '800', 'height' => '600')
+			array( 'width' => '800', 'height' => '600' )
 		);
 
 		$this->assertEquals( false, $this->subject->get_resize_options( Tiny_Image::ORIGINAL ) );
 	}
 
 	public function test_should_return_include_metadata_enabled() {
-		$this->wp->addOption( 'tinypng_preserve_data', array( 'copyright' => 'on') );
+		$this->wp->addOption( 'tinypng_preserve_data', array( 'copyright' => 'on' ) );
 		$this->assertEquals( true, $this->subject->get_preserve_enabled( 'copyright' ) );
 	}
 
@@ -234,10 +235,10 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 	}
 
 	public function test_should_return_preserve_options_when_enabled() {
-		$this->wp->addOption( 'tinypng_preserve_data', array( 'copyright' => 'on') );
+		$this->wp->addOption( 'tinypng_preserve_data', array( 'copyright' => 'on' ) );
 
 		$this->assertEquals(
-			array( '0' => 'copyright'),
+			array( '0' => 'copyright' ),
 			$this->subject->get_preserve_options( Tiny_Image::ORIGINAL )
 		);
 	}

@@ -200,7 +200,10 @@ class Tiny_Image {
 		$compressed = array();
 		$uncompressed = array();
 		foreach ( $this->sizes as $size_name => $size ) {
-			if ( self::is_original( $size_name ) ) { continue; }
+			if ( self::is_original( $size_name ) ) {
+				continue;
+			}
+
 			if ( $size->has_been_compressed() ) {
 				$compressed[ $size_name ] = $size;
 			} else {
@@ -212,22 +215,26 @@ class Tiny_Image {
 		return $original + $compressed + $uncompressed;
 	}
 
-	public function get_image_size($size = self::ORIGINAL, $create = false) {
+	public function get_image_size( $size = self::ORIGINAL, $create = false ) {
 		if ( isset( $this->sizes[ $size ] ) ) {
-			return $this->sizes[ $size ]; }
-		elseif ( $create ) {
-			return new Tiny_Image_Size(); }
-		else {
-			return null; }
+			return $this->sizes[ $size ];
+		} elseif ( $create ) {
+			return new Tiny_Image_Size();
+		} else {
+			return null;
+		}
 	}
 
-	public function filter_image_sizes($method, $filter_sizes = null) {
+	public function filter_image_sizes( $method, $filter_sizes = null ) {
 		$selection = array();
 		if ( is_null( $filter_sizes ) ) {
 			$filter_sizes = array_keys( $this->sizes );
 		}
 		foreach ( $filter_sizes as $size_name ) {
-			if ( ! isset( $this->sizes[ $size_name ] ) ) { continue; }
+			if ( ! isset( $this->sizes[ $size_name ] ) ) {
+				continue;
+			}
+
 			$tiny_image_size = $this->sizes[ $size_name ];
 			if ( $tiny_image_size->$method() ) {
 				$selection[ $size_name ] = $tiny_image_size;
@@ -236,13 +243,16 @@ class Tiny_Image {
 		return $selection;
 	}
 
-	public function get_count($methods, $count_sizes = null) {
+	public function get_count( $methods, $count_sizes = null ) {
 		$stats = array_fill_keys( $methods, 0 );
 		if ( is_null( $count_sizes ) ) {
 			$count_sizes = array_keys( $this->sizes );
 		}
 		foreach ( $count_sizes as $size ) {
-			if ( ! isset( $this->sizes[ $size ] ) ) { continue; }
+			if ( ! isset( $this->sizes[ $size ] ) ) {
+				continue;
+			}
+
 			foreach ( $methods as $method ) {
 				if ( $this->sizes[ $size ]->$method() ) {
 					$stats[ $method ]++;
@@ -260,7 +270,7 @@ class Tiny_Image {
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 				if ( isset( $size->meta['error'] ) && isset( $size->meta['message'] ) ) {
-					if ( $last_timestamp === null || $last_timestamp < $size->meta['timestamp'] ) {
+					if ( null === $last_timestamp || $last_timestamp < $size->meta['timestamp'] ) {
 						$last_timestamp = $size->meta['timestamp'];
 						$error_message = $size->meta['message'];
 					}
@@ -398,6 +408,6 @@ class Tiny_Image {
 	}
 
 	public static function is_original( $size ) {
-		return $size === self::ORIGINAL;
+		return self::ORIGINAL === $size;
 	}
 }

@@ -13,7 +13,7 @@ class Tiny_Compress_Client_Test extends Tiny_Compress_Shared_TestCase {
 		Tinify\Tinify::setClient( $this->client );
 	}
 
-	protected function register($method, $url, $details) {
+	protected function register( $method, $url, $details ) {
 		$this->client->register( $method, $url, $details );
 	}
 

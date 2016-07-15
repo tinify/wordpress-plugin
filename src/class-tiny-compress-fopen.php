@@ -27,7 +27,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		parent::identifier() . ' fopen';
 	}
 
-	protected function __construct($api_key, $after_compress_callback) {
+	protected function __construct( $api_key, $after_compress_callback ) {
 		parent::__construct( $after_compress_callback );
 
 		$this->api_key = $api_key;
@@ -46,14 +46,14 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	}
 
 	public function limit_reached() {
-		return $this->last_error_code == 429;
+		return 429 == $this->last_error_code;
 	}
 
 	protected function validate() {
 		$params = $this->request_options( 'POST' );
 		list($details, $headers, $status_code) = $this->request( $params );
 
-		if ( $status_code == 429 || $status_code == 400 ) {
+		if ( 429 == $status_code || 400 == $status_code ) {
 			return true;
 		} else if ( is_array( $details ) && isset( $details['error'] ) ) {
 			throw new Tiny_Exception(
@@ -70,7 +70,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function compress($input, $resize_opts, $preserve_opts) {
+	protected function compress( $input, $resize_opts, $preserve_opts ) {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
@@ -87,7 +87,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'Tinify\Exception',
 				$status_code
 			);
-		} else if ( $output_url === null ) {
+		} else if ( null === $output_url ) {
 			throw new Tiny_Exception(
 				'Could not find output location',
 				'Tinify\Exception'
@@ -129,13 +129,13 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'width' => intval( $headers['image-width'] ),
 				'height' => intval( $headers['image-height'] ),
 				'ratio' => round( strlen( $output ) / strlen( $input ), 4 ),
-			)
+			),
 		);
 
 		return array( $output, $meta );
 	}
 
-	private function request($params, $url = Tiny_Config::URL) {
+	private function request( $params, $url = Tiny_Config::URL ) {
 		$context = stream_context_create( $params );
 		$request = fopen( $url, 'rb', false, $context );
 
@@ -172,7 +172,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return array( $response, $headers, $status_code );
 	}
 
-	private function parse_status_code($headers) {
+	private function parse_status_code( $headers ) {
 		if ( $headers && count( $headers ) > 0 ) {
 			$http_code_values = explode( ' ', $headers[0] );
 			if ( count( $http_code_values ) > 1 ) {
@@ -182,7 +182,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return null;
 	}
 
-	private function parse_headers($headers) {
+	private function parse_headers( $headers ) {
 		$res = array();
 		foreach ( $headers as $header ) {
 			$split = explode( ':', $header, 2 );
@@ -193,7 +193,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return $res;
 	}
 
-	private function request_options($method, $body = null) {
+	private function request_options( $method, $body = null ) {
 		return array(
 			'http' => array(
 				'method' => $method,
@@ -210,11 +210,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			'ssl' => array(
 				'cafile' => $this->get_ca_file(),
 				'verify_peer' => true,
-			)
+			),
 		);
 	}
 
-	private function output_request_options($resize_opts, $preserve_opts) {
+	private function output_request_options( $resize_opts, $preserve_opts ) {
 		$body = array();
 
 		if ( $preserve_opts ) {
@@ -237,9 +237,9 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return dirname( __FILE__ ) . '/data/cacert.pem';
 	}
 
-	private static function decode($text) {
+	private static function decode( $text ) {
 		$result = json_decode( $text, true );
-		if ( $result === null ) {
+		if ( null === $result ) {
 			$message = sprintf(
 				'JSON: %s [%d]',
 				(PHP_VERSION_ID >= 50500 ? json_last_error_msg() : 'Unknown error'),

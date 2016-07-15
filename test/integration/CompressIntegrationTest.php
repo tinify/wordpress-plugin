@@ -88,7 +88,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_upload_should_show_details_in_edit_screen_popup() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'PNG123' );
-		$this->enable_compression_sizes( array( 'medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 		$this->upload_media( 'test/fixtures/input-example.png' );
 
 		$this->find_link( 'input-example' )->click();
@@ -103,21 +103,21 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_upload_should_show_compression_details_in_edit_screen_popup() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
-		$this->enable_compression_sizes( array( 'medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->find_link( 'input-example' )->click();
 		$this->find( 'div.tiny-compress-images a.thickbox' )->click();
 
 		$rows = $this->find_all( 'div.tiny-compression-details tr' );
-		$rows = array_map( function($row) {
+		$rows = array_map( function( $row ) {
 			$cells = $this->find_all( 'td', $row );
 			if ( count( $cells ) > 0 ) {
 				return $cells[0]->getText();
 			}
 		}, $rows );
 
-		$rows = array_filter( $rows, function($row) {
+		$rows = array_filter( $rows, function( $row ) {
 			return $row && in_array( $row, array(
 				'Original',
 				'Thumbnail',
@@ -142,7 +142,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->set_api_key( 'JPG123' );
-		$this->enable_compression_sizes( array( 'medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 
 		$this->find_link( 'input-example' )->click();
 		$this->find( 'div.tiny-compress-images button.tiny-compress' )->click();
@@ -182,7 +182,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_compress_button_should_show_error_for_incorrect_json() {
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
-		$this->enable_compression_sizes( array( 'medium', 'large') );
+		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 
 		$this->set_api_key( 'JSON1234' );
 		$this->visit( '/wp-admin/upload.php' );
@@ -337,7 +337,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_preserve_copyright_should_not_display_modification_in_library() {
 		$this->set_api_key( 'PRESERVEJPG123' );
-		$this->enable_preserve( array( 'copyright') );
+		$this->enable_preserve( array( 'copyright' ) );
 		$this->upload_media( 'test/fixtures/input-copyright.jpg' );
 
 		$this->assertNotContains(

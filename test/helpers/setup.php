@@ -10,7 +10,7 @@ use Facebook\WebDriver\Remote;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 
-function wordpress($url = null) {
+function wordpress( $url = null ) {
 	return getenv( 'WORDPRESS_URL' ) . $url;
 }
 
@@ -18,7 +18,7 @@ function wordpress_version() {
 	return intval( getenv( 'WORDPRESS_VERSION' ) );
 }
 
-function configure_wordpress_for_testing($driver) {
+function configure_wordpress_for_testing( $driver ) {
 	if ( is_wordpress_setup() ) {
 		restore_wordpress_site();
 		set_siteurl( wordpress() );
@@ -52,7 +52,7 @@ function backup_wordpress_site() {
 	shell_exec( 'mysqldump -h ' . getenv( 'HOST' ) . ' -u root ' . getenv( 'WORDPRESS_DATABASE' ) . ' | gzip -c > ' . mysql_dump_file() );
 }
 
-function set_siteurl($site_url) {
+function set_siteurl( $site_url ) {
 	$db = new mysqli( getenv( 'HOST' ), 'root',
 		getenv( 'MYSQL_PWD' ),
 		getenv( 'WORDPRESS_DATABASE' )
@@ -101,12 +101,12 @@ function is_wordpress_setup() {
 	}
 }
 
-function setup_wordpress_language($driver) {
+function setup_wordpress_language( $driver ) {
 	$driver->get( wordpress( '/wp-admin/install.php' ) );
 	$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
 }
 
-function setup_wordpress_site($driver) {
+function setup_wordpress_site( $driver ) {
 	if ( $driver->getCurrentURL() != wordpress( '/wp-admin/install.php?step=1' ) ) {
 		$driver->get( wordpress( '/wp-admin/install.php' ) );
 	}
@@ -122,7 +122,7 @@ function setup_wordpress_site($driver) {
 	$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
 
 	$h1s = $driver->findElements( WebDriverBy::tagName( 'h1' ) );
-	$texts = array_map( function($h1) {
+	$texts = array_map( function( $h1 ) {
 		return $h1->getText();
 	}, $h1s );
 
@@ -134,7 +134,7 @@ function setup_wordpress_site($driver) {
 	}
 }
 
-function login($driver) {
+function login( $driver ) {
 	print 'Logging in to WordPress... ';
 
 	try {
@@ -160,7 +160,7 @@ function login($driver) {
 	}
 }
 
-function activate_plugin($driver) {
+function activate_plugin( $driver ) {
 	$driver->get( wordpress( '/wp-admin/plugins.php' ) );
 	$activate_links = $driver->findElements( WebDriverBy::xpath( '//a[starts-with(@href, "plugins.php?action=activate&plugin=tiny-compress-images")]' ) );
 	$deactivate_links = $driver->findElements( WebDriverBy::xpath( '//a[starts-with(@href, "plugins.php?action=deactivate&plugin=tiny-compress-images")]' ) );

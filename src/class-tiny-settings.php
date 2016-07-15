@@ -181,7 +181,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->compressor;
 	}
 
-	public function set_compressor($compressor) {
+	public function set_compressor( $compressor ) {
 		$this->compressor = $compressor;
 	}
 
@@ -209,7 +209,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
 	}
 
-	protected static function get_intermediate_size($size) {
+	protected static function get_intermediate_size( $size ) {
 		/* Inspired by
 		http://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes */
 		global $_wp_additional_image_sizes;
@@ -243,20 +243,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'width' => null,
 				'height' => null,
 				'tinify' => ! is_array( $setting ) ||
-					(isset( $setting[ $size ] ) && $setting[ $size ] === 'on'),
-			)
+					( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] ),
+			),
 		);
 
 		foreach ( get_intermediate_image_sizes() as $size ) {
-			if ( $size === self::DUMMY_SIZE ) {
+			if ( self::DUMMY_SIZE === $size ) {
 				continue;
 			}
+
 			list($width, $height) = self::get_intermediate_size( $size );
 			if ( $width || $height ) {
 				$this->sizes[ $size ] = array(
-					'width' => $width, 'height' => $height,
+					'width' => $width,
+				'height' => $height,
 					'tinify' => ! is_array( $setting ) ||
-						(isset( $setting[ $size ] ) && $setting[ $size ] === 'on'),
+						( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] ),
 				);
 			}
 		}
@@ -286,12 +288,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 
 		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
-		return isset( $setting['enabled'] ) && $setting['enabled'] === 'on';
+		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
 	}
 
-	public function get_preserve_enabled($name) {
+	public function get_preserve_enabled( $name ) {
 		$setting = get_option( self::get_prefixed_name( 'preserve_data' ) );
-		return isset( $setting[ $name ] ) && $setting[ $name ] === 'on';
+		return isset( $setting[ $name ] ) && 'on' === $setting[ $name ];
 	}
 
 	public function get_preserve_options( $size_name ) {
@@ -365,7 +367,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</div>';
 	}
 
-	private function render_size_checkbox($size, $option) {
+	private function render_size_checkbox( $size, $option ) {
 		$id = self::get_prefixed_name( "sizes_$size" );
 		$name = self::get_prefixed_name( 'sizes[' . $size . ']' );
 		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
@@ -383,19 +385,20 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 	}
 
-	public function render_image_sizes_notice($active_image_sizes_count, $resize_original_enabled) {
+	public function render_image_sizes_notice( $active_sizes_count, $resize_original_enabled ) {
 		echo '<p>';
 		if ( $resize_original_enabled ) {
-			$active_image_sizes_count++;
+			$active_sizes_count++;
 		}
-		if ( $active_image_sizes_count < 1 ) {
+
+		if ( $active_sizes_count < 1 ) {
 			esc_html_e(
 				'With these settings no images will be compressed.',
 				'tiny-compress-images'
 			);
 		} else {
 			$free_images_per_month = floor(
-				Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_image_sizes_count
+				Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_sizes_count
 			);
 			printf( wp_kses( __(
 				'With these settings you can compress ' .
@@ -473,7 +476,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 	}
 
-	public function render_preserve_input($name, $description) {
+	public function render_preserve_input( $name, $description ) {
 		echo '<p class="tiny-preserve">';
 		$id = sprintf( self::get_prefixed_name( 'preserve_data_%s' ), $name );
 		$field = sprintf( self::get_prefixed_name( 'preserve_data[%s]' ), $name );
@@ -486,7 +489,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 	}
 
-	public function render_resize_input($name) {
+	public function render_resize_input( $name ) {
 		$id = sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name );
 		$field = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
@@ -500,7 +503,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return get_option( $field );
 	}
 
-	public function after_compress_callback($compressor) {
+	public function after_compress_callback( $compressor ) {
 		if ( ! is_null( $count = $compressor->get_compression_count() ) ) {
 			$field = self::get_prefixed_name( 'status' );
 			update_option( $field, $count );

@@ -56,7 +56,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	public function test_filter_images_should_filter_correctly_when_sizes_are_given() {
 		$this->assertEquals( array(
 			Tiny_Image::ORIGINAL
-			), array_keys( $this->subject->filter_image_sizes( 'compressed', array( Tiny_Image::ORIGINAL, 'invalid') ) )
+			), array_keys( $this->subject->filter_image_sizes( 'compressed', array( Tiny_Image::ORIGINAL, 'invalid' ) ) )
 		);
 	}
 
@@ -64,7 +64,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->assertEquals(array(
 			'compressed' => 3,
 			'resized' => 1,
-			), $this->subject->get_count( array( 'compressed', 'resized') )
+			), $this->subject->get_count( array( 'compressed', 'resized' ) )
 		);
 	}
 
@@ -72,7 +72,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->assertEquals(array(
 			'compressed' => 1,
 			'resized' => 1,
-			), $this->subject->get_count( array( 'compressed', 'resized'), array(Tiny_Image::ORIGINAL, 'invalid') )
+			), $this->subject->get_count( array( 'compressed', 'resized' ), array( Tiny_Image::ORIGINAL, 'invalid' ) )
 		);
 	}
 
