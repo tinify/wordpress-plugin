@@ -144,7 +144,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 
 		$meta_data = stream_get_meta_data( $request );
-		$headers = iterator_to_array( $meta_data['wrapper_data'] );
+		$headers = $meta_data['wrapper_data'];
+		if ( ! is_array( $headers ) ) {
+			$headers = iterator_to_array( $headers );
+		}
 
 		$status_code = $this->parse_status_code( $headers );
 		$headers = $this->parse_headers( $headers );
@@ -162,9 +165,9 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return array( $response, $headers, $status_code );
 	}
 
-	private function parse_status_code($header) {
-		if ( $header && count( $header ) > 0 ) {
-			$http_code_values = explode( ' ', $header[0] );
+	private function parse_status_code($headers) {
+		if ( $headers && count( $headers ) > 0 ) {
+			$http_code_values = explode( ' ', $headers[0] );
 			if ( count( $http_code_values ) > 1 ) {
 				return intval( $http_code_values[1] );
 			}
@@ -173,9 +176,6 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	}
 
 	private function parse_headers($headers) {
-		if ( ! is_array( $headers ) ) {
-			$headers = explode( "\r\n", $headers );
-		}
 		$res = array();
 		foreach ( $headers as $header ) {
 			$split = explode( ':', $header, 2 );
