@@ -61,6 +61,7 @@ class WordPressStubs {
 		$this->addMethod( 'get_post_meta' );
 		$this->addMethod( 'update_post_meta' );
 		$this->addMethod( 'get_intermediate_image_sizes' );
+		$this->addMethod( 'add_image_size' );
 		$this->addMethod( 'translate' );
 		$this->addMethod( 'load_plugin_textdomain' );
 		$this->addMethod( 'get_post_mime_type' );
@@ -100,9 +101,11 @@ class WordPressStubs {
 		if ( 'translate' === $method ) {
 			return $args[0];
 		} elseif ( 'get_option' === $method ) {
-			return call_user_func_array( array( $this->options, 'get'), $args );
+			return call_user_func_array( array( $this->options, 'get' ), $args );
 		} elseif ( 'get_post_meta' === $method ) {
-			return call_user_func_array( array( $this, 'getMetadata'), $args );
+			return call_user_func_array( array( $this, 'getMetadata' ), $args );
+		} elseif ( 'add_image_size' === $method ) {
+			return call_user_func_array( array( $this, 'addImageSize' ), $args );
 		} elseif ( 'update_post_meta' === $method ) {
 			return call_user_func_array( array( $this, 'updateMetadata'), $args );
 		} elseif ( 'get_intermediate_image_sizes' === $method ) {

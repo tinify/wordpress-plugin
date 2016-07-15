@@ -37,7 +37,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		$this->wp->addOption( 'tinypng_sizes[0]', 'on' );
 		$this->wp->addOption( 'tinypng_sizes[medium]', 'on' );
 		$this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
-		$this->wp->addImageSize( 'post-thumbnail', array( 'width' => 825, 'height' => 510) );
+		$this->wp->addImageSize( 'post-thumbnail', array( 'width' => 825, 'height' => 510 ) );
 
 		global $_wp_additional_image_sizes;
 		$_wp_additional_image_sizes = array( 'post-thumbnail' => array( 'width' => 825, 'height' => 510 ) );
@@ -75,34 +75,37 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 	}
 
 	public function test_should_show_additional_size() {
-		$this->wp->addImageSize( 'additional_size_1', array( 'width' => 666, 'height' => 333) );
+		$this->wp->addImageSize( 'additional_size_1', array( 'width' => 666, 'height' => 333 ) );
 		$this->subject->get_sizes();
 		$sizes = $this->subject->get_sizes();
 		$this->assertEquals(
 			array( 'width' => 666, 'height' => 333, 'tinify' => true ),
-		$sizes['additional_size_1']);
+			$sizes['additional_size_1']
+		);
 	}
 
 	public function test_should_show_additional_size_without_height() {
-		$this->wp->addImageSize( 'additional_size_no_height', array( 'width' => 777) );
+		$this->wp->addImageSize( 'additional_size_no_height', array( 'width' => 777 ) );
 		$this->subject->get_sizes();
 		$sizes = $this->subject->get_sizes();
 		$this->assertEquals(
 			array( 'width' => 777, 'height' => 0, 'tinify' => true ),
-		$sizes['additional_size_no_height']);
+			$sizes['additional_size_no_height']
+		);
 	}
 
 	public function test_should_show_additional_size_without_width() {
-		$this->wp->addImageSize( 'additional_size_no_width', array( 'height' => 888) );
+		$this->wp->addImageSize( 'additional_size_no_width', array( 'height' => 888 ) );
 		$this->subject->get_sizes();
 		$sizes = $this->subject->get_sizes();
 		$this->assertEquals(
 			array( 'width' => 0, 'height' => 888, 'tinify' => true ),
-		$sizes['additional_size_no_width']);
+			$sizes['additional_size_no_width']
+		);
 	}
 
 	public function test_should_return_resize_enabled() {
-		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on') );
+		$this->wp->addOption( 'tinypng_resize_original', array( 'enabled' => 'on' ) );
 		$this->assertEquals( true, $this->subject->get_resize_enabled() );
 	}
 

@@ -20,7 +20,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->addOption( 'tinypng_sizes[large]', 'on' );
 		$this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
 
-		$this->wp->addImageSize( 'post-thumbnail', array( 'width' => 825, 'height' => 510) );
+		$this->wp->addImageSize( 'post-thumbnail', array( 'width' => 825, 'height' => 510 ) );
 		$this->wp->createImages();
 	}
 
