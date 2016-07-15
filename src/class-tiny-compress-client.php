@@ -29,11 +29,13 @@ if ( ! defined( '\Tinify\VERSION' ) ) {
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
+	private $last_error_code = 0;
+	private $last_message = '';
+	private $proxy;
+
 	protected function __construct($api_key, $after_compress_callback) {
 		parent::__construct( $after_compress_callback );
 
-		$this->last_error_code = 0;
-		$this->last_message = '';
 		$this->proxy = new WP_HTTP_Proxy();
 
 		\Tinify\setAppIdentifier( self::identifier() );

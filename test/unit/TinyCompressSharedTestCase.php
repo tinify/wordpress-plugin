@@ -265,4 +265,40 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		$this->setExpectedException( 'Tiny_Exception' );
 		throw $exception;
 	}
+
+	public function test_get_compression_count_should_return_null_before_compresion() {
+		$this->assertSame( null, $this->compressor->get_compression_count() );
+	}
+
+	public function test_get_compression_count_should_return_count() {
+		$this->register( 'POST', '/shrink', array(
+			'status' => 201,
+			'headers' => array(
+				'location' => 'https://api.tinify.com/output/compressed.png',
+				'content-type' => 'application/json',
+				'compression-count' => 12,
+			),
+			'body' => '{}',
+		));
+
+		$handler = array(
+			'status' => 200,
+			'headers' => array(
+				'content-type' => 'image/png',
+				'content-length' => 9,
+				'image-width' => 10,
+				'image-height' => 15,
+				'compression-count' => 12,
+			),
+			'body' => 'optimized',
+		);
+
+		$this->register( 'GET', '/output/compressed.png', $handler );
+		$this->register( 'POST', '/output/compressed.png', $handler );
+
+		file_put_contents( $this->vfs->url() . '/image.png', 'unoptimized' );
+		$this->compressor->compress_file( $this->vfs->url() . '/image.png' );
+
+		$this->assertSame( 12, $this->compressor->get_compression_count() );
+	}
 }

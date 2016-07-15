@@ -19,6 +19,10 @@
 */
 
 class Tiny_Compress_Fopen extends Tiny_Compress {
+	private $last_error_code = 0;
+	private $compression_count;
+	private $api_key;
+
 	protected static function identifier() {
 		parent::identifier() . ' fopen';
 	}
@@ -26,7 +30,6 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	protected function __construct($api_key, $after_compress_callback) {
 		parent::__construct( $after_compress_callback );
 
-		$this->last_error_code = 0;
 		$this->api_key = $api_key;
 	}
 
@@ -35,7 +38,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	}
 
 	public function get_compression_count() {
-		return null;
+		return $this->compression_count;
 	}
 
 	public function get_key() {
@@ -151,6 +154,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		$status_code = $this->parse_status_code( $headers );
 		$headers = $this->parse_headers( $headers );
+
+		if ( isset( $headers['compression-count'] ) ) {
+			$this->compression_count = intval( $headers['compression-count'] );
+		}
 
 		$this->last_error_code = $status_code;
 

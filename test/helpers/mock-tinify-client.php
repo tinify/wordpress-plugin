@@ -16,6 +16,12 @@ class MockTinifyClient extends Tinify\Client {
 			$body = isset( $handler['body'] ) ? $handler['body'] : '';
 			$headers = isset( $handler['headers'] ) ? $handler['headers'] : array();
 
+			if ( isset( $headers["compression-count"] ) ) {
+				\Tinify\Tinify::setCompressionCount(
+					intval( $headers["compression-count"] )
+				);
+			}
+
 			$isError = $status <= 199 || $status >= 300;
 			$isJson = true;
 
