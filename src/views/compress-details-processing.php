@@ -2,8 +2,7 @@
 	<div class="details">
 		<span class="icon spinner"></span>
 		<span class="message">
-			<strong><?php echo count( $in_progress ) ?></strong>
-			<span><?php echo _n( 'size being compressed', 'sizes being compressed', count( $in_progress ), 'tiny-compress-images' ) ?></span>
+			<span><?php esc_html_e( 'compressing', 'tiny-compress-images' ) ?></span>
 		</span>
 	</div>
 </div>
