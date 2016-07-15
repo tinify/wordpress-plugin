@@ -207,25 +207,4 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->subject->compress_on_upload( $testmeta, 1 );
 		$this->assertEquals( 2, count( $this->wp->getCalls( 'update_post_meta' ) ) );
 	}
-
-	// skip TODO
-	public function test_analyze_media_library() {
-		// $this->assertEquals("analyze all JPEG/PNG and store file size for each image size in the tiny_compress_images metadata", "todo");
-	}
-
-	public function test_create_api_key_new_user_should_return_api_key() {
-		//Test if we get a api key back
-	}
-
-	public function test_create_api_key_existing_user_should_not_return_api_key() {
-		//Test if we get a api key back. We should not
-	}
-
-	public function test_save_api_key_should_set_key_if_valid() {
-		//Set the key if it is valid
-	}
-
-	public function test_save_api_key_should_not_set_key_if_invalid() {
-		//Do not set key if invalid
-	}
 }

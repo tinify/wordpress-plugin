@@ -279,6 +279,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_resize_enabled() {
+		/* This only applies if the original is being resized. */
+		$sizes = $this->get_sizes();
+		if ( ! $sizes[ Tiny_Image::ORIGINAL ]['tinify'] ) {
+			return false;
+		}
+
 		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
 		return isset( $setting['enabled'] ) && $setting['enabled'] === 'on';
 	}
