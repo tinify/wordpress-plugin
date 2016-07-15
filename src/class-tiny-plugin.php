@@ -330,7 +330,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function media_library_bulk_action() {
-		check_admin_referer( 'bulk-media' );
 
 		if ( empty( $_REQUEST['action'] ) || (
 				'tiny_bulk_action' != $_REQUEST['action'] &&
@@ -342,6 +341,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			return;
 		}
 
+		check_admin_referer( 'bulk-media' );
 		$ids = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
 		wp_redirect(add_query_arg(
 			'_wpnonce',
