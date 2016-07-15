@@ -105,7 +105,7 @@
   }
 
   function updateResizeSettings() {
-    if (jQuery('#tinypng_sizes_0').prop('checked')) {
+    if (propOf('#tinypng_sizes_0', 'checked')) {
       jQuery('.tiny-resize-available').show()
       jQuery('.tiny-resize-unavailable').hide()
     } else {
@@ -113,14 +113,14 @@
       jQuery('.tiny-resize-unavailable').show()
     }
 
-    var original_enabled = jQuery('#tinypng_resize_original_enabled').prop('checked')
+    var original_enabled = propOf('#tinypng_resize_original_enabled', 'checked')
     jQuery('#tinypng_resize_original_width, #tinypng_resize_original_height').each(function (i, el) {
       el.disabled = !original_enabled
     })
   }
 
   function updatePreserveSettings() {
-    if (jQuery('#tinypng_sizes_0').prop('checked')) {
+    if (propOf('#tinypng_sizes_0', 'checked')) {
       jQuery('.tiny-preserve').show()
     } else {
       jQuery('.tiny-preserve').hide()
@@ -148,6 +148,26 @@
     }
   }
 
+  function propOf(selector, property) {
+    if (typeof jQuery.fn.prop === 'function') {
+      /* Added in 1.6. Before jQuery 1.6, the .attr() method sometimes took
+         property values into account. */
+      return jQuery(selector).prop(property)
+    } else {
+      return jQuery(selector).attr(property)
+    }
+  }
+
+  function setPropOf(selector, property, value) {
+    if (typeof jQuery.fn.prop === 'function') {
+      /* Added in 1.6. Before jQuery 1.6, the .attr() method sometimes took
+         property values into account. */
+      jQuery(selector).prop(property, value)
+    } else {
+      jQuery(selector).attr(property, value)
+    }
+  }
+
   function changeEnterKeyTarget(selector, button) {
     eventOn('keyup keypress', selector, function(event) {
       var code = event.keyCode || event.which
@@ -162,11 +182,7 @@
   case 'upload-php':
     eventOn('click', 'button.tiny-compress', compressImage)
 
-    if (typeof jQuery.fn.prop === 'function') {
-      jQuery('button.tiny-compress').prop('disabled', null)
-    } else {
-      jQuery('button.tiny-compress').attr('disabled', null)
-    }
+    setPropOf('button.tiny-compress', 'disabled', null)
 
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]')
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action2]')
@@ -188,12 +204,12 @@
       })
     }
 
-    jQuery('input[name*=tinypng_sizes], input#tinypng_resize_original_enabled').on('click', function() {
+    eventOn('click', 'input[name*=tinypng_sizes], #tinypng_resize_original_enabled', function() {
       /* Unfortunately, we need some additional information to display
          the correct notice. */
       totalSelectedSizes = jQuery('input[name*=tinypng_sizes]:checked').length
       var image_count_url = ajaxurl + '?action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes
-      if (jQuery('input#tinypng_resize_original_enabled').prop('checked') && jQuery('input#tinypng_sizes_0').prop('checked')) {
+      if (propOf('#tinypng_resize_original_enabled', 'checked') && propOf('#tinypng_sizes_0', 'checked')) {
         image_count_url += '&resize_original=true'
       }
       jQuery('#tiny-image-sizes-notice').load(image_count_url)
