@@ -9,7 +9,24 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		clear_uploads();
 	}
 
-	public function test_summary_should_display_accurate_values() {
+	public function test_summary_should_display_correct_values_for_empty_library() {
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( '0', $this->find( '#uploaded-images' )->getText() );
+		$this->assertEquals( '0', $this->find( '#optimizable-image-sizes' )->getText() );
+		$this->assertEquals( '$ 0.00', $this->find( '#estimated-cost' )->getText() );
+		$this->assertEquals( '0', $this->find( '#optimized-image-sizes' )->getText() );
+
+		$this->assertEquals( '-', $this->find( '#unoptimized-library-size' )->getText() );
+		$this->assertEquals( '-', $this->find( '#optimized-library-size' )->getText() );
+		$this->assertEquals( '0%', $this->find( '#savings-percentage' )->getText() );
+
+		$this->assertEquals( '0 / 0 (100%)', $this->find( '#compression-progress-bar' )->getText() );
+	}
+
+	public function test_summary_should_display_correct_values() {
 		$this->set_api_key( 'JPG123' );
 
 		$this->enable_compression_sizes( array() );
@@ -31,6 +48,8 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		$this->assertRegExp( '/[23](\.\d+)? MB/', $this->find( '#unoptimized-library-size' )->getText() );
 		$this->assertRegExp( '/[12](\.\d+)? MB/', $this->find( '#optimized-library-size' )->getText() );
 		$this->assertRegExp( '/2\d(\.\d+)?%/', $this->find( '#savings-percentage' )->getText() );
+
+		$this->assertEquals( '4 / 9 (44%)', $this->find( '#compression-progress-bar' )->getText() );
 	}
 
 	public function test_start_bulk_optimization_should_optimize_remaining_images() {
@@ -55,5 +74,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 			'#optimizable-image-sizes',
 			'0'
 		);
+
+		$this->assertEquals( '9 / 9 (100%)', $this->find( '#compression-progress-bar' )->getText() );
 	}
 }

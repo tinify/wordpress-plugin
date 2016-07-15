@@ -111,7 +111,7 @@ class Tiny_Image_Size {
 	public function uncompressed() {
 		return $this->exists() &&
 			! $this->is_duplicate() &&
-			! (isset( $this->meta['output'] ) && $this->same_size() );
+			! ( isset( $this->meta['output'] ) && $this->same_size() );
 	}
 
 	public function in_progress() {
