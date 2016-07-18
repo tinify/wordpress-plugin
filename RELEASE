@@ -1,6 +1,6 @@
 In order to release a new version of the plugin to wordpress.org, perform the following steps:
 
-1. Update the version in tiny-compress-images.php
+1. Update the version in tiny-compress-images.php and src/class-tiny-plugin.php
 2. Change the 'Stable tag' in readme.txt to the new release number.
 3. Add release notes to readme.txt.
 4. If you've changed the plugin to work with newer version of WordPress add that to the readme.txt as well.
