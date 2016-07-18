@@ -19,7 +19,7 @@
 */
 
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION = '2.0.1';
+	const VERSION = '2.0.2';
 	const MEDIA_COLUMN = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
