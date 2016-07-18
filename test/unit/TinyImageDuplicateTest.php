@@ -17,7 +17,7 @@ class Tiny_Image_Duplicate_Test extends Tiny_TestCase {
 
 		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
 		$this->wp->setTinyMetadata( 1, $this->json( 'image_database_metadata' ) );
-		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata_duplicates' ) );
+		$this->subject = new Tiny_Image( new Tiny_Settings(), 1, $this->json( '_wp_attachment_metadata_duplicates' ) );
 	}
 
 	public function test_get_images_should_return_all_images() {

@@ -84,7 +84,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 
 		$testmeta = $this->wp->getTestMetadata();
-		$tiny_image = new Tiny_Image( 1, $testmeta );
+		$tiny_image = new Tiny_Image( new Tiny_Settings(), 1, $testmeta );
 		$tiny_image->get_image_size()->add_tiny_meta_start();
 		$tiny_image->get_image_size()->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
 		$tiny_image->get_image_size( 'large' )->add_tiny_meta_start();
@@ -101,7 +101,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
 
 		$testmeta = $this->wp->getTestMetadata();
-		$tiny_image = new Tiny_Image( 1, $testmeta );
+		$tiny_image = new Tiny_Image( new Tiny_Settings(), 1, $testmeta );
 		$tiny_image->get_image_size()->add_tiny_meta_start();
 		$tiny_image->get_image_size()->add_tiny_meta( self::success_compress( 'vfs://root/wp-content/uploads/14/01/test.png' ) );
 		$tiny_image->get_image_size( 'large' )->add_tiny_meta_start();

@@ -8,7 +8,7 @@ class Tiny_Image_Empty_Test extends Tiny_TestCase {
 
 		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
 		$this->wp->setTinyMetadata( 1, '' );
-		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
+		$this->subject = new Tiny_Image( new Tiny_Settings(), 1, $this->json( '_wp_attachment_metadata' ) );
 	}
 
 	public function test_get_savings() {

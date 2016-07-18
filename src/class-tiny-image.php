@@ -22,13 +22,15 @@ class Tiny_Image {
 	const META_KEY = 'tiny_compress_images';
 	const ORIGINAL = 0;
 
+	private $settings;
 	private $id;
 	private $name;
 	private $wp_metadata;
 	private $sizes = array();
 	private $statistics = array();
 
-	public function __construct( $id, $wp_metadata = null, $tiny_metadata = null ) {
+	public function __construct( $settings, $id, $wp_metadata = null, $tiny_metadata = null ) {
+		$this->settings = $settings;
 		$this->id = $id;
 		$this->wp_metadata = $wp_metadata;
 		$this->parse_wp_metadata();
@@ -69,9 +71,8 @@ class Tiny_Image {
 			&& isset( $this->wp_metadata['sizes'] )
 			&& is_array( $this->wp_metadata['sizes'] ) ) {
 
-			$settings = new Tiny_Settings();
-			$active_sizes = $settings->get_sizes();
-			$active_tinify_sizes = $settings->get_active_tinify_sizes();
+			$active_sizes = $this->settings->get_sizes();
+			$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
 			foreach ( $this->wp_metadata['sizes'] as $size_name => $size ) {
 				if ( $this->sizes[ $size_name ]->has_been_compressed()
@@ -140,24 +141,24 @@ class Tiny_Image {
 		return get_post_mime_type( $this->id );
 	}
 
-	public function compress( $settings ) {
-		if ( $settings->get_compressor() === null || ! $this->file_type_allowed() ) {
+	public function compress() {
+		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
 		}
 
 		$success = 0;
 		$failed = 0;
 
-		$compressor = $settings->get_compressor();
-		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		$compressor = $this->settings->get_compressor();
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 
 		foreach ( $uncompressed_sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
-				$resize = $settings->get_resize_options( $size_name );
-				$preserve = $settings->get_preserve_options( $size_name );
+				$resize = $this->settings->get_resize_options( $size_name );
+				$preserve = $this->settings->get_preserve_options( $size_name );
 				try {
 					$response = $compressor->compress_file( $size->filename, $resize, $preserve );
 					$size->add_tiny_meta( $response );
@@ -263,8 +264,7 @@ class Tiny_Image {
 	}
 
 	public function get_latest_error() {
-		$settings = new Tiny_Settings();
-		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$error_message = null;
 		$last_timestamp = null;
 		foreach ( $this->sizes as $size_name => $size ) {
@@ -302,9 +302,8 @@ class Tiny_Image {
 		$this->statistics['image_sizes_optimized'] = 0;
 		$this->statistics['available_unoptimized_sizes'] = 0;
 
-		$settings = new Tiny_Settings();
-		$active_sizes = $settings->get_sizes();
-		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		$active_sizes = $this->settings->get_sizes();
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
@@ -342,7 +341,7 @@ class Tiny_Image {
 		return $this->statistics;
 	}
 
-	public static function get_optimization_statistics( $result = null ) {
+	public static function get_optimization_statistics( $settings, $result = null ) {
 		global $wpdb;
 
 		if ( is_null( $result ) ) {
@@ -390,7 +389,12 @@ class Tiny_Image {
 			if ( ! is_array( $tiny_metadata ) ) {
 				$tiny_metadata = array();
 			}
-			$tiny_image = new Tiny_Image( $result[ $i ]['ID'], $wp_metadata, $tiny_metadata );
+			$tiny_image = new Tiny_Image(
+				$settings,
+				$result[ $i ]['ID'],
+				$wp_metadata,
+				$tiny_metadata
+			);
 			$image_stats = $tiny_image->get_statistics();
 			$stats['uploaded-images']++;
 			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimized_sizes'];

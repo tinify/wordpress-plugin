@@ -8,7 +8,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
 		$this->wp->setTinyMetadata( 1, $this->json( 'image_database_metadata' ) );
-		$this->subject = new Tiny_Image( 1, $this->json( '_wp_attachment_metadata' ) );
+		$this->subject = new Tiny_Image( new Tiny_Settings(), 1, $this->json( '_wp_attachment_metadata' ) );
 	}
 
 	public function test_tiny_post_meta_key_may_never_change() {
@@ -16,14 +16,14 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_update_wp_metadata_should_not_update_with_no_resized_original() {
-		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata' ) );
+		$tiny_image = new Tiny_Image( new Tiny_Settings(), 150, $this->json( '_wp_attachment_metadata' ) );
 		$tiny_image_metadata = $tiny_image->get_wp_metadata();
 		$this->assertEquals( 1256, $tiny_image_metadata['width'] );
 		$this->assertEquals( 1256, $tiny_image_metadata['height'] );
 	}
 
 	public function test_update_wp_metadata_should_update_with_resized_original() {
-		$tiny_image = new Tiny_Image( 150, $this->json( '_wp_attachment_metadata' ) );
+		$tiny_image = new Tiny_Image( new Tiny_Settings(), 150, $this->json( '_wp_attachment_metadata' ) );
 		$response = array( 'output' => array( 'width' => 200, 'height' => 100 ) );
 		$tiny_image->get_image_size()->add_tiny_meta_start();
 		$tiny_image->get_image_size()->add_tiny_meta( $response );
@@ -118,7 +118,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 				'unoptimized-library-size' => 328670,
 				'available-for-optimization' => array( array( 'ID' => 1, 'post_title' => 'I am the one and only' ) ),
 			),
-			Tiny_Image::get_optimization_statistics( $wpdb_results )
+			Tiny_Image::get_optimization_statistics( new Tiny_Settings(), $wpdb_results )
 		);
 	}
 }
