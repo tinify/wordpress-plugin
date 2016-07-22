@@ -436,6 +436,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $admin_colors;
 	}
 
+	function friendly_user_name() {
+		$user = wp_get_current_user();
+		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
+		return $name;
+	}
+
 	private function get_ids_to_compress() {
 		if ( empty( $_REQUEST['ids'] ) ) {
 			return array();

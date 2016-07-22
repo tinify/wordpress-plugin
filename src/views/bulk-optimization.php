@@ -51,9 +51,13 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
-							esc_html_e( 'Great! Your entire library is optimimized!' );
+							printf( esc_html__( '%s, this is great! Your entire library is optimimized!' ), $this->friendly_user_name() );
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
-							( $percentage_of_files > 75 ) ? esc_html_e( 'You are doing great!', 'tiny-compress-images' ) : esc_html_e( 'You are doing good.', 'tiny-compress-images' );
+							if ( $percentage_of_files > 75 ) {
+								printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), $this->friendly_user_name() );
+							} else {
+								printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
+							}
 							echo ' ';
 							printf( esc_html__( '%d%% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
 							echo ' ';
