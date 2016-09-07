@@ -211,6 +211,24 @@
     }
   });
 
+  jQuery('.tooltip').on('mouseenter', function(){
+    jQuery(this).find('.tip').show()
+    clearTimeout('.tooltip')
+  })
+
+  jQuery('.tooltip').on('mouseleave', function(){
+    var that = this
+    toolTip = setTimeout(function() {
+      if (jQuery(that).find('.tip').is(':visible')) {
+        jQuery('.tip').hide()
+      }
+    }, 150)
+  })
+
+  jQuery('.tip').on('mouseenter', function(){
+    clearTimeout(toolTip)
+  })
+
   window.bulkOptimizationAutorun = startBulkOptimization
   window.bulkOptimization = prepareBulkOptimization
 

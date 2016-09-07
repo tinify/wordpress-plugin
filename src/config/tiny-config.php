@@ -6,6 +6,6 @@ if ( ! defined( 'TINY_DEBUG' ) ) {
 
 class Tiny_Config {
 	/* URL is only used by fopen driver. */
-	const URL = 'https://api.tinify.com/shrink';
+	const URL = 'http://webservice/shrink';
 	const MONTHLY_FREE_COMPRESSIONS = 500;
 }
