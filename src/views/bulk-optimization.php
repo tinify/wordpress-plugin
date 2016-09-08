@@ -114,7 +114,10 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											}
 											?>
 										</p>
-										<p><b>1 image = <?php echo sizeof( $active_tinify_sizes ) ?> compressions</b></p><p> <a href="/wp-admin/options-media.php#tiny-compress-images">Change Settings</a></p>
+										<p>
+											For each uploaded image, <b> <?php echo sizeof( $active_tinify_sizes ) ?> image sizes </b>are compressed. You can changed these settings
+											<a href="/wp-admin/options-media.php#tiny-compress-images">here</a>.
+										</p>
 									</div>
 								</div>
 							</td>
@@ -124,14 +127,17 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
 								<div class="cost-currency">USD</div>
-
-								<div class="tooltip">
-									<span class="dashicons dashicons-info"></span>
-									<div class="tip">
-										<p>If you wish to compress more than <b>500 images a month</b> and you are still on a free account <a href="https://tinypng.com/developers">upgrade here.</a></p>
+								<?php if ($estimated_costs > 0): ?>
+									<div class="tooltip">
+										<span class="dashicons dashicons-info"></span>
+										<div class="tip">
+											<p>
+												If you wish to compress more than <b>500 image sizes</b> a month  and you are still on a free account
+												<a href="https://tinypng.com/developers">upgrade here.</a>
+											</p>
+										</div>
 									</div>
-								</div>
-
+								<? endif; ?>
 							</td>
 						</tr>
 					</table>
