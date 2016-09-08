@@ -211,12 +211,12 @@
     }
   });
 
-  jQuery('.tooltip').on('mouseenter', function(){
+  jQuery('.tooltip').mouseenter(function(){
     jQuery(this).find('.tip').show()
     clearTimeout('.tooltip')
   })
 
-  jQuery('.tooltip').on('mouseleave', function(){
+  jQuery('.tooltip').mouseleave(function(){
     var that = this
     toolTip = setTimeout(function() {
       if (jQuery(that).find('.tip').is(':visible')) {
@@ -225,7 +225,7 @@
     }, 150)
   })
 
-  jQuery('.tip').on('mouseenter', function(){
+  jQuery('.tip').mouseenter(function(){
     clearTimeout(toolTip)
   })
 
