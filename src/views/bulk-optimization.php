@@ -201,18 +201,16 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 			</div>
 		</div>
 		<div class="optimize">
-			<?php if ( true ) { ?>
-				<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
-					<div id="progress-size" class="progress">
-					</div>
-					<div class="numbers" >
-						<span id="optimized-so-far"><?php echo $stats['optimized-image-sizes'] ?></span>
-						/
-						<span><?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?></span>
-						<span id="percentage"></span>
-					</div>
+			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
+				<div id="progress-size" class="progress">
 				</div>
-			<?php } ?>
+				<div class="numbers" >
+					<span id="optimized-so-far"><?php echo $stats['optimized-image-sizes'] ?></span>
+					/
+					<span><?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?></span>
+					<span id="percentage"></span>
+				</div>
+			</div>
 			<?php
 			if ( $stats['available-unoptimised-sizes'] > 0 ) {
 				require_once dirname( __FILE__ ) . '/bulk-optimization-form.php';
