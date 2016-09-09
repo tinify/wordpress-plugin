@@ -113,6 +113,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'add_plugin_links' )
 		);
 
+		add_action( 'wr2x_retina_file_added',
+			$this->get_method( 'compress_retina_image' ),
+			10, 3
+		);
+
+		add_action( 'wr2x_retina_file_removed',
+			$this->get_method( 'remove_retina_image' ),
+			10, 2
+		);
+
 		add_thickbox();
 	}
 
@@ -139,6 +149,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			),
 		);
 		return array_merge( $additional, $current_links );
+	}
+
+	public function compress_retina_image( $attachment_id, $path, $size_name ) {
+		if ( $this->settings->compress_wr2x_images() ) {
+			$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
+			$tiny_image->compress_retina( $size_name . '_wr2x', $path );
+		}
+	}
+
+	public function remove_retina_image( $attachment_id, $path ) {
+		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
+		$tiny_image->remove_retina_metadata();
 	}
 
 	public function enqueue_scripts( $hook ) {
