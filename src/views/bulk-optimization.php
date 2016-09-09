@@ -51,7 +51,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
-							printf( esc_html__( '%s, this is great! Your entire library is optimimized!' ), $this->friendly_user_name() );
+							printf( esc_html__( '%s, this is great! Your entire library is optimized!' ), $this->friendly_user_name() );
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
 							if ( $percentage_of_files > 75 ) {
 								printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), $this->friendly_user_name() );
@@ -115,8 +115,14 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											?>
 										</p>
 										<p>
-											For each uploaded image, <b> <?php echo sizeof( $active_tinify_sizes ) ?> image sizes </b>are compressed. You can changed these settings
-											<a href="/wp-admin/options-media.php#tiny-compress-images">here</a>.
+											<?php esc_html_e( 'For each uploaded image, ', 'tiny-compress-images' ) ?>
+											<strong>
+												<?php echo sizeof( $active_tinify_sizes ) ?>
+												<?php sizeof( $active_tinify_sizes ) > 1 ? esc_html_e( 'sizes', 'tiny-compress-images' ) : esc_html_e( 'size', 'tiny-compress-images' ) ?>
+											</strong>
+											<?php sizeof( $active_tinify_sizes ) > 1 ? esc_html_e( 'are compressed.', 'tiny-compress-images' ) : esc_html_e( 'is compressed.', 'tiny-compress-images' ) ?>
+											<?php esc_html_e( 'You can changed these settings', 'tiny-compress-images' ) ?>
+											<a href="/wp-admin/options-media.php#tiny-compress-images"><?php esc_html_e( 'here', 'tiny-compress-images' )?></a>.
 										</p>
 									</div>
 								</div>
@@ -127,17 +133,22 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
 								<div class="cost-currency">USD</div>
-								<?php if ($estimated_costs > 0): ?>
+								<?php if ( $estimated_costs > 0 ) { ?>
 									<div class="tooltip">
 										<span class="dashicons dashicons-info"></span>
 										<div class="tip">
 											<p>
-												If you wish to compress more than <b>500 image sizes</b> a month  and you are still on a free account
-												<a href="https://tinypng.com/developers">upgrade here.</a>
+												<?php esc_html_e( 'If you wish to compress more than ', 'tiny-compress-images' ) ?>
+												<strong>
+													<?php echo Tiny_Config::MONTHLY_FREE_COMPRESSIONS ?>
+													<?php esc_html_e( 'image sizes', 'tiny-compress-images' ) ?>
+												</strong>
+												<?php esc_html_e( 'a month and you are still on a free account', 'tiny-compress-images' ) ?>
+												<a href="https://tinypng.com/developers"><?php esc_html_e( 'upgrade here.', 'tiny-compress-images' ) ?></a>
 											</p>
 										</div>
 									</div>
-								<? endif; ?>
+								<?php } ?>
 							</td>
 						</tr>
 					</table>

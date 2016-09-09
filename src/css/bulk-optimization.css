@@ -261,7 +261,7 @@ div.tiny-bulk-optimization div.optimize div.progressbar div.progress {
 	}
 }
 
-div.tiny-bulk-optimization > div.dashboard > div.statistics td.item.costs > div.cost-currency {
+#tiny-bulk-optimization > div.dashboard > div.statistics td.item.costs > div.cost-currency {
 	display: inline-block;
 }
 
