@@ -191,6 +191,7 @@
     eventOn('click', 'button.tiny-compress', compressImage)
     break
   case 'options-media-php':
+  case 'settings_page_media': // Enhanced Media Library plugin
     changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]')
     changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]')
 
@@ -208,9 +209,17 @@
       /* Unfortunately, we need some additional information to display
          the correct notice. */
       totalSelectedSizes = jQuery('input[name*=tinypng_sizes]:checked').length
+      compressWr2x = propOf('#tinypng_sizes_wr2x', 'checked')
+      if (compressWr2x) {
+        totalSelectedSizes--;
+      }
+
       var image_count_url = ajaxurl + '?action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes
       if (propOf('#tinypng_resize_original_enabled', 'checked') && propOf('#tinypng_sizes_0', 'checked')) {
         image_count_url += '&resize_original=true'
+      }
+      if (compressWr2x) {
+        image_count_url += '&compress_wr2x=true'
       }
       jQuery('#tiny-image-sizes-notice').load(image_count_url)
     })
