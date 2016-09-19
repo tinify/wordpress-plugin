@@ -21,6 +21,7 @@ Make your website faster by optimizing your JPEG and PNG images. This plugin aut
 * Easy bulk optimization of your existing media library.
 * Resize large original images by setting a maximum width and/or height.
 * Preserve copyright metadata, creation date and GPS location in the original images.
+* Supports compression of animated PNG.
 * Select which thumbnail sizes of an image may be optimized.
 * Multisite support with a single API key.
 * WooCommerce compatible.
@@ -37,7 +38,7 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 = Getting started =
 
-Install this plugin and obtain your free API key from https://tinypng.com/developers. With a free account you can optimize **roughly 100 images each month** (based on a regular WordPress installation). The exact number depends on the amount of thumbnails you use. You can change which of the generated thumbnail sizes should be optimized in the *Settings > Media* page. If you’re a heavy user you can optimize more images for a small additional fee per image.
+Install this plugin and obtain your free API key from https://tinypng.com/developers. With a free account you can optimize **roughly 100 images each month** (based on a regular WordPress installation). The exact total depends on the number of thumbnail sizes that are in use in your WordPress installation. You can change which of the generated thumbnail sizes should be optimized in the *Settings > Media* page. If you’re a heavy user you can optimize more images for a small additional fee.
 
 = Optimizing all your images =
 
