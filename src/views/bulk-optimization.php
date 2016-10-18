@@ -47,11 +47,11 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) * 100, 2 );
 						}
 						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimised-sizes'] ) {
-							esc_html_e( 'This page is designed to bulk optimize all your images. You don\'t seem to have uploaded any JPEG or PNG images yet.' );
+							esc_html_e( 'This page is designed to bulk optimize all your images. You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
-							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.' );
+							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
-							printf( esc_html__( '%s, this is great! Your entire library is optimized!' ), $this->friendly_user_name() );
+							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
 							if ( $percentage_of_files > 75 ) {
 								printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), $this->friendly_user_name() );
