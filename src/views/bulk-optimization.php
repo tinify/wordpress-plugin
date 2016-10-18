@@ -67,13 +67,11 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						}
 						?>
 					</p>
-					<p>
-						<?php
-						if ( Tiny_Settings::wr2x_active() ) {
-							esc_html_e( 'Notice that the WP Retina 2x sizes will not be compressed using this page. You will need to bulk generate the retina sizes separately from the WP Retina 2x page.', 'tiny-compress-images' );
-						}
-						?>
-					</p>
+					<?php if ( Tiny_Settings::wr2x_active() ) { ?>
+						<p>
+							<?php esc_html_e( 'Notice that the WP Retina 2x sizes will not be compressed using this page. You will need to bulk generate the retina sizes separately from the WP Retina 2x page.', 'tiny-compress-images' ); ?>
+						</p>
+					<?php } ?>
 					<table class="totals">
 						<tr>
 							<td class="item">
