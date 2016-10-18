@@ -113,6 +113,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'add_plugin_links' )
 		);
 
+		add_filter( 'admin_footer_text',
+			$this->get_method( 'add_admin_footer_text' ), 1
+		);
+
 		add_action( 'wr2x_retina_file_added',
 			$this->get_method( 'compress_retina_image' ),
 			10, 3
@@ -429,6 +433,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$auto_start_bulk = isset( $_REQUEST['ids'] );
 
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
+	}
+
+	public function add_admin_footer_text( $footer_text ) {
+		$current_screen = get_current_screen();
+		if ( isset( $current_screen->id ) &&
+			( $current_screen->id == "media_page_tiny-bulk-optimization" ) ) {
+			$rating_url = "https://wordpress.org/support/view/plugin-reviews/tiny-compress-images?filter=5#new-post";
+			$rating_link = '<a href="' . $rating_url . '" target="_blank" data-rated="' . esc_attr__( 'Thanks!', self::NAME ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>';
+			$footer_text = sprintf( wp_kses( __( 'If you like <strong>Compress JPEG & PNG images</strong> please leave us a %s rating!', self::NAME ), array( 'strong' => array() ) ), $rating_link );
+		}
+		return $footer_text;
 	}
 
 	private static function retrieve_admin_colors() {
