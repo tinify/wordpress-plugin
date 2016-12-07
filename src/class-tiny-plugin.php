@@ -68,6 +68,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function admin_init() {
+		add_action('wp_dashboard_setup',
+			$this->get_method( 'add_dashboard_widget' )
+		);
+
 		add_action( 'admin_enqueue_scripts',
 			$this->get_method( 'enqueue_scripts' )
 		);
@@ -103,6 +107,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'wp_ajax_tiny_get_optimization_statistics',
 			$this->get_method( 'ajax_optimization_statistics' )
+		);
+
+		add_action( 'wp_ajax_tiny_widget_get_optimization_statistics',
+			$this->get_method( 'ajax_widget_optimization_statistics' )
 		);
 
 		$plugin = plugin_basename(
@@ -345,6 +353,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
+	public function ajax_widget_optimization_statistics () {
+		if ( ! $this->check_ajax_referer() ) {
+			exit();
+		}
+		$stats = Tiny_Image::get_optimization_statistics( $this->settings );
+		$stats["username"] = $this->friendly_user_name();
+		$stats["link"] = admin_url( 'upload.php?page=tiny-bulk-optimization' );
+		echo json_encode( $stats );
+		exit();
+	}
+
 	public function ajax_optimization_statistics() {
 		if ( ! $this->check_ajax_referer() ) {
 			exit();
@@ -431,6 +450,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
 	}
 
+	public function add_dashboard_widget() {
+		wp_add_dashboard_widget(
+      $this->get_prefixed_name('dashboard_widget'),
+      'TinyPNG Compress PNG & JPG images',
+      // No callback function needed since content is generated in JS
+      function() { }
+    );
+	}
+
 	private static function retrieve_admin_colors() {
 		global $_wp_admin_css_colors;
 		$admin_colour_scheme = get_user_option( 'admin_color', get_current_user_id() );
@@ -457,6 +485,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		return $admin_colors;
 	}
+
 
 	function friendly_user_name() {
 		$user = wp_get_current_user();

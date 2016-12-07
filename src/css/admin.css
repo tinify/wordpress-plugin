@@ -299,3 +299,99 @@ input[type=number][name*="tinypng_resize_original"] {
 .tiny-compress-images h4 {
 	margin: 0.5em 0;
 }
+
+div#tinypng_dashboard_widget div.widget-chart {
+	position: relative;
+	width: 50%;
+	text-align: center;
+}
+
+div#tinypng_dashboard_widget div.widget-chart svg circle.main {
+	fill: #ebebeb;
+	animation: shwoosh 2s ease;
+	transition: stroke-dasharray 1s ease;
+}
+
+div#tinypng_dashboard_widget div.widget-chart svg circle.inner {
+	fill: #fff;
+}
+
+div#tinypng_dashboard_widget div.widget-chart div.value {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	color: #7acb44;
+	text-align: center;
+}
+
+div#tinypng_dashboard_widget div.widget-chart div.value div.percentage {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 65px;
+	font-size: 2.4em;
+	line-height: 1em;
+}
+
+div#tinypng_dashboard_widget div.widget-chart div.value div.label {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 1.4em;
+	line-height: 1.2em;
+}
+
+div#tinypng_dashboard_widget .inside {
+	margin: 0;
+}
+
+div#tinypng_dashboard_widget .inside .panda-laying {
+	background: url('../images/panda-laying.png');
+}
+
+div#tinypng_dashboard_widget .inside .panda-eating {
+	background: url('../images/panda-eating.png');
+}
+
+div#tinypng_dashboard_widget .inside .panda-waiting {
+	background: url('../images/panda-waiting.png');
+}
+
+div#tinypng_dashboard_widget .inside .panda-background {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-size: cover;
+	background-position: center bottom;
+}
+
+div#tinypng_dashboard_widget .inside .media-library-optimized {
+	position: relative;
+  z-index: 1;
+}
+
+div#tinypng_dashboard_widget .widget-percentage, div#tinypng_dashboard_widget .widget-label {
+	color: #40444F;
+}
+
+div#tinypng_dashboard_widget .widget-label {
+	font-size: 1.2em;
+}
+
+div#tinypng_dashboard_widget .widget-percentage {
+	margin-bottom: 5px;
+	font-size: 2em;
+}
+
+div#tinypng_dashboard_widget #optimization-chart {
+	margin-bottom: 40px;
+}
+
+.media-library-optimized {
+	padding:4%;
+	padding-bottom: 0px;
+	margin-bottom: 50px;
+}

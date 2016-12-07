@@ -21,12 +21,15 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 ?>
 <style>
 
-div.savings div.chart svg circle.main {
+#optimization-chart svg circle.main {
 	stroke-width: <?php echo $chart['dash-stroke'] ?>;
 	stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>;
 }
+#optimization-chart svg circle.main {
+	stroke: #7acb44;
+}
 
-div.tiny-bulk-optimization div.savings div.chart div.value {
+#optimization-chart div.chart div.value {
 	min-width: <?php echo $chart['size'] ?>px;
 }
 
