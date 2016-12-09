@@ -18,12 +18,6 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/**
- * Add a widget to the dashboard.
- *
- * This function is hooked into the 'wp_dashboard_setup' action below.
- */
-
 abstract class Tiny_WP_Base {
 	const NAME = 'tiny-compress-images';
 	const PREFIX = 'tinypng_';

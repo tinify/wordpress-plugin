@@ -33,7 +33,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public static function version() {
 		/* Avoid using get_plugin_data() because it is not loaded early enough
-		   in xmlrpc.php. */
+			 in xmlrpc.php. */
 		return self::VERSION;
 	}
 
@@ -443,13 +443,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_enqueue_script( self::NAME .'_dashboard_widget' );
 
 		wp_add_dashboard_widget(
-      $this->get_prefixed_name('dashboard_widget'),
-      'TinyPNG Compress PNG & JPG images',
-      $this->get_method('add_widget_view')
-    );
+			$this->get_prefixed_name( 'dashboard_widget' ),
+			'TinyPNG Compress PNG & JPG images',
+			$this->get_method( 'add_widget_view' )
+		);
 	}
 
-	function add_widget_view () {
+	function add_widget_view() {
 		$username = $this->friendly_user_name();
 		include( dirname( __FILE__ ) . '/views/dashboard-widget.php' );
 	}
@@ -498,8 +498,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		global $wpdb;
 		return $wpdb->get_results(
 			"SELECT ID, post_title FROM $wpdb->posts
-             WHERE post_type = 'attachment' $condition
-             AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-             ORDER BY ID DESC", ARRAY_A);
+						 WHERE post_type = 'attachment' $condition
+						 AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
+						 ORDER BY ID DESC", ARRAY_A);
 	}
 }
