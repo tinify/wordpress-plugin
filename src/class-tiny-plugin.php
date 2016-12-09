@@ -17,7 +17,6 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 class Tiny_Plugin extends Tiny_WP_Base {
 	const VERSION = '2.1.0';
 	const MEDIA_COLUMN = self::NAME;
@@ -107,10 +106,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'wp_ajax_tiny_get_optimization_statistics',
 			$this->get_method( 'ajax_optimization_statistics' )
-		);
-
-		add_action( 'wp_ajax_tiny_widget_get_optimization_statistics',
-			$this->get_method( 'ajax_widget_optimization_statistics' )
 		);
 
 		$plugin = plugin_basename(
@@ -353,17 +348,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
-	public function ajax_widget_optimization_statistics () {
-		if ( ! $this->check_ajax_referer() ) {
-			exit();
-		}
-		$stats = Tiny_Image::get_optimization_statistics( $this->settings );
-		$stats["username"] = $this->friendly_user_name();
-		$stats["link"] = admin_url( 'upload.php?page=tiny-bulk-optimization' );
-		echo json_encode( $stats );
-		exit();
-	}
-
 	public function ajax_optimization_statistics() {
 		if ( ! $this->check_ajax_referer() ) {
 			exit();
@@ -451,12 +435,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function add_dashboard_widget() {
+		wp_register_script( self::NAME .'_dashboard_widget',
+			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
+			array(), self::version(), true
+		);
+
+		wp_enqueue_script( self::NAME .'_dashboard_widget' );
+
 		wp_add_dashboard_widget(
       $this->get_prefixed_name('dashboard_widget'),
       'TinyPNG Compress PNG & JPG images',
-      // No callback function needed since content is generated in JS
-      function() { }
+      $this->get_method('add_widget_view')
     );
+	}
+
+	function add_widget_view () {
+		$username = $this->friendly_user_name();
+		include( dirname( __FILE__ ) . '/views/dashboard-widget.php' );
 	}
 
 	private static function retrieve_admin_colors() {
@@ -485,7 +480,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		return $admin_colors;
 	}
-
 
 	function friendly_user_name() {
 		$user = wp_get_current_user();

@@ -346,16 +346,35 @@ div#tinypng_dashboard_widget .inside {
 	margin: 0;
 }
 
-div#tinypng_dashboard_widget .inside .panda-laying {
+div#tinypng_dashboard_widget .inside #widget-spinner {
+	background: url(../images/spinner.gif) no-repeat;
+	-webkit-background-size: 25px 25px;
+	background-size: 25px 25px;
+	opacity: .7;
+	filter: alpha(opacity=70);
+	width: 25px;
+	height: 25px;
+	margin: 0 auto;
+	margin-top: 25px;
+	margin-bottom: 20px;
+}
+
+div#tinypng_dashboard_widget.full-optimized .inside .panda-background{
 	background: url('../images/panda-laying.png');
+	background-size: cover;
+	background-position: right bottom;
 }
 
-div#tinypng_dashboard_widget .inside .panda-eating {
+div#tinypng_dashboard_widget.half-optimized .inside .panda-background{
 	background: url('../images/panda-eating.png');
+	background-size: cover;
+	background-position: right bottom;
 }
 
-div#tinypng_dashboard_widget .inside .panda-waiting {
+div#tinypng_dashboard_widget.not-optimized .inside .panda-background{
 	background: url('../images/panda-waiting.png');
+	background-size: cover;
+	background-position: right bottom;
 }
 
 div#tinypng_dashboard_widget .inside .panda-background {
@@ -364,13 +383,24 @@ div#tinypng_dashboard_widget .inside .panda-background {
 	position: absolute;
 	left: 0;
 	top: 0;
-	background-size: cover;
-	background-position: center bottom;
 }
 
 div#tinypng_dashboard_widget .inside .media-library-optimized {
 	position: relative;
   z-index: 1;
+  display: none;
+}
+
+div#tinypng_dashboard_widget.full-optimized .inside #widget-full-optimized{
+	display: block;
+}
+
+div#tinypng_dashboard_widget.not-optimized .inside #widget-not-optimized{
+	display: block;
+}
+
+div#tinypng_dashboard_widget.half-optimized .inside #widget-half-optimized{
+	display: block;
 }
 
 div#tinypng_dashboard_widget .widget-percentage, div#tinypng_dashboard_widget .widget-label {
