@@ -1,7 +1,7 @@
 (function() {
   function generateDashboardWidget(element) {
     var element = jQuery(element)
-    var container = element.find('div.inside')
+    var container = element.find('.inside')
     jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
@@ -31,9 +31,15 @@
     showContent(libraryOptimized, stats);
     var chart = widgetChart(savingsPercentage);
     var style = widgetChartStyle(chart);
-    container.find('style').append(style);
+
+    // .append not supported in IE8
+    try {
+      jQuery('#widget-style').append(style);
+    } catch(err) {
+
+    }
     jQuery('#optimization-chart').removeClass('hidden');
-    jQuery('#widget-spinner').addClass('hidden');
+    jQuery('#widget-spinner').attr('class', 'hidden');
   }
 
   function addPercentageToChart(percentage) {

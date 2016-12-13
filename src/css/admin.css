@@ -302,8 +302,7 @@ input[type=number][name*="tinypng_resize_original"] {
 
 div#tinypng_dashboard_widget div.widget-chart {
 	position: relative;
-	width: 50%;
-	text-align: center;
+	margin-left: 50px;
 }
 
 div#tinypng_dashboard_widget div.widget-chart svg circle.main {
@@ -320,7 +319,7 @@ div#tinypng_dashboard_widget div.widget-chart div.value {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
+	width: 180px;
 	color: #7acb44;
 	text-align: center;
 }
@@ -344,6 +343,9 @@ div#tinypng_dashboard_widget div.widget-chart div.value div.label {
 
 div#tinypng_dashboard_widget .inside {
 	margin: 0;
+	/*padding-bottom: 40px;*/
+	min-height: 200px;
+	padding-bottom: 120px;
 }
 
 div#tinypng_dashboard_widget .inside #widget-spinner {
@@ -359,22 +361,32 @@ div#tinypng_dashboard_widget .inside #widget-spinner {
 	margin-bottom: 20px;
 }
 
-div#tinypng_dashboard_widget.full-optimized .inside .panda-background{
+div#tinypng_dashboard_widget.full-optimized .inside .panda-background {
 	background: url('../images/panda-laying.png');
+	background-repeat: no-repeat;
+	/* Safari version <= 4*/
+	-webkit-background-size: 100%;
 	background-size: cover;
 	background-position: right bottom;
 }
 
-div#tinypng_dashboard_widget.half-optimized .inside .panda-background{
+div#tinypng_dashboard_widget.half-optimized .inside .panda-background {
 	background: url('../images/panda-eating.png');
+	background-repeat: no-repeat;
+	/* Safari version <= 4*/
+	-webkit-background-size: 100%;
 	background-size: cover;
-	background-position: right bottom;
+	background-position: bottom;
 }
 
-div#tinypng_dashboard_widget.not-optimized .inside .panda-background{
+div#tinypng_dashboard_widget.not-optimized .inside .panda-background {
 	background: url('../images/panda-waiting.png');
+	background-repeat: no-repeat;
+	/* Safari version <= 4*/
+	-webkit-background-size: 100%;
 	background-size: cover;
-	background-position: right bottom;
+	background-position: bottom;
+
 }
 
 div#tinypng_dashboard_widget .inside .panda-background {
@@ -414,10 +426,6 @@ div#tinypng_dashboard_widget .widget-label {
 div#tinypng_dashboard_widget .widget-percentage {
 	margin-bottom: 5px;
 	font-size: 2em;
-}
-
-div#tinypng_dashboard_widget #optimization-chart {
-	margin-bottom: 40px;
 }
 
 .media-library-optimized {

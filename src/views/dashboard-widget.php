@@ -14,7 +14,7 @@ $chart['inner-radius'] = $chart['radius'] - $chart['stroke'] / 2;
 
 ?>
 
-<style>
+<style id="widget-style" type="text/css">
 
 #optimization-chart svg circle.main {
 	stroke-width: <?php echo $chart['dash-stroke'] ?>;
@@ -30,7 +30,7 @@ $chart['inner-radius'] = $chart['radius'] - $chart['stroke'] / 2;
 
 </style>
 
-<div id='widget-spinner' ></div>
+<div id='widget-spinner' class=""></div>
 <div class='panda-background'></div>
 <div class='media-library-optimized' id='widget-not-optimized'>
 	<p><?php printf( esc_html__( 'Hi %s, you haven’t compressed any images in your media library. If you like you can to optimize your whole library in one go with the %s.', 'tiny-compress-images' ), $username, $link ) ?></p>
