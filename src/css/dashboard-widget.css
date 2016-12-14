@@ -37,6 +37,7 @@ div.tiny_dashboard_widget .inside .sky-background {
 	width: 100%;
 	opacity: 0.33;
   background: linear-gradient(180deg, #C6DDE4 0%, #FEFEFF 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33C6DDE4', endColorstr='#33FEFEFF',GradientType=0 ); /* IE6-9 */
 }
 
 div.tiny_dashboard_widget .inside .cloud,
@@ -84,6 +85,23 @@ div.tiny_dashboard_widget.no-images-uploaded .inside .panda-background {
 	width: 241px;
 	height: 203px;
 }
+
+.ie8 div.tiny_dashboard_widget .inside .panda-background {
+	background: none;
+}
+
+.ie8 div.tiny_dashboard_widget #optimization-chart {
+	width: 100%;
+}
+
+.ie8 div.tiny_dashboard_widget #optimization-chart .percentage {
+	margin-top: 50px;
+}
+
+.ie9 + #wpbody div.tiny_dashboard_widget.full-optimized .inside.mobile .panda-background {
+	left:15%;
+}
+
 div.tiny_dashboard_widget .inside .panda-background {
 	background-repeat: no-repeat !important;
 	-webkit-background-size: 100% !important;
@@ -108,6 +126,7 @@ div.tiny_dashboard_widget.half-optimized .inside.mobile .panda-background {
 }
 
 div.tiny_dashboard_widget.full-optimized .inside.mobile .panda-background {
+	-ms-transform: translate(-50%);
 	left: 50%;
   transform: translateX(-50%);
 }

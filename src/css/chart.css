@@ -5,6 +5,10 @@
 	text-align: center;
 }
 
+.ie8 #optimization-chart {
+	margin: 0;
+}
+
 #optimization-chart svg circle.main {
 	fill: #ebebeb;
 	animation: shwoosh 2s ease;

@@ -32,7 +32,7 @@
 
   function attachHandlers(container) {
    checkIfSmallContainer(container);
-   jQuery(window).on('resize', function(){checkIfSmallContainer(container)});
+   jQuery(window).resize(function(){checkIfSmallContainer(container)});
   }
 
   function checkIfSmallContainer(container) {
