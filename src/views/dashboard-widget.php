@@ -17,10 +17,9 @@
 <div class="media-library-optimized" id="widget-half-optimized">
 	<p>
 		<?php printf( esc_html__( 'Hi %s, you are doing good.', 'tiny-compress-images' ), $username ) ?>
-		<?php printf( esc_html__( 'With your current settings you can still optimize %s image sizes from your %s uploaded JPEG and PNG images.', 'tiny-compress-images' ), "<span id='unoptimised-sizes'></span>", "<span id='uploaded-images'></span>") ?>
-		<?php printf( esc_html__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), $link  ) ?>
+		<?php printf( esc_html__( 'With your current settings you can still optimize %s image sizes from your %s uploaded JPEG and PNG images.', 'tiny-compress-images' ), "<span id='unoptimised-sizes'></span>", "<span id='uploaded-images'></span>" ) ?>
+		<?php printf( esc_html__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), $link ) ?>
 	</p>
 </div>
 
 <?php require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php'; ?>
-
