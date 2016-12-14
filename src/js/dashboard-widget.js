@@ -36,7 +36,6 @@
   }
 
   function checkIfSmallContainer(container) {
-    console.log(jQuery(container).width())
      if (jQuery(container).width() < 400) {
         jQuery(container).addClass('mobile')
      } else if (jQuery(container).width() < 490 && jQuery(container).width() >= 400) {
