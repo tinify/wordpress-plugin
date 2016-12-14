@@ -1,7 +1,11 @@
 (function() {
   function generateDashboardWidget(element) {
     var element = jQuery(element)
+    jQuery('.chart').addClass('hidden')
     var container = element.find('.inside')
+    // Adding a class to the widget element so that classes are only used in the stylesheet
+    jQuery('#tinypng_dashboard_widget').addClass('tiny_dashboard_widget')
+    attachHandlers(container);
     jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
@@ -26,6 +30,23 @@
     })
   }
 
+  function attachHandlers(container) {
+   checkIfSmallContainer(container);
+   jQuery(window).on('resize', function(){checkIfSmallContainer(container)});
+  }
+
+  function checkIfSmallContainer(container) {
+    console.log(jQuery(container).width())
+     if (jQuery(container).width() < 400) {
+        jQuery(container).addClass('mobile')
+     } else if (jQuery(container).width() < 490 && jQuery(container).width() >= 400) {
+        jQuery(container).addClass('tablet')
+        jQuery(container).removeClass('mobile')
+     } else if (jQuery(container).width() >= 490) {
+        jQuery(container).removeClass('tablet').removeClass('mobile')
+     }
+  }
+
   function updateWidgetContent(savingsPercentage, libraryOptimized, stats, container) {
     addPercentageToChart(savingsPercentage);
     showContent(libraryOptimized, stats);
@@ -34,7 +55,7 @@
 
     // .append not supported in IE8
     try {
-      jQuery('#widget-style').append(style);
+      jQuery('.inside style').append(style);
     } catch(err) {
 
     }
@@ -43,16 +64,19 @@
   }
 
   function addPercentageToChart(percentage) {
-    jQuery('.widget-percentage').find('span').html(percentage)
+    jQuery('#savings-percentage').find('span').html(percentage)
   }
 
   function showContent(percentage, stats) {
-    if ( percentage == 0 ) {
-      jQuery('#tinypng_dashboard_widget').addClass('not-optimized')
+    if ( 0 == stats['uploaded-images'] + stats['available-unoptimised-sizes'] ) {
+      jQuery('#tinypng_dashboard_widget').addClass('no-images-uploaded')
+    } else if ( percentage == 0 ) {
+       jQuery('#tinypng_dashboard_widget').addClass('not-optimized')
     } else if ( percentage == 100 ) {
       jQuery('#tinypng_dashboard_widget').addClass('full-optimized')
     } else {
-      jQuery('#widget-half-optimized').find('.compressions-remaining').html( stats['optimized-image-sizes'] + '/' + (stats['optimized-image-sizes'] + stats['available-unoptimised-sizes']))
+      jQuery("#uploaded-images").html( stats['uploaded-images'] )
+      jQuery("#unoptimised-sizes").html( stats['available-unoptimised-sizes'] )
       jQuery('#tinypng_dashboard_widget').addClass('half-optimized')
     }
   }
@@ -84,8 +108,8 @@
   }
 
   function widgetChartStyle(chart) {
-    style = " #optimization-chart svg circle.main {" +
-            " stroke-dasharray:" + chart['dash-array-size'] + ' ' + chart['circle-size'] + ";}"+
+    jQuery('#optimization-chart svg circle.main').css('stroke-dasharray', chart['dash-array-size'] + ' ' + chart['circle-size'])
+    style =
             " @keyframes shwoosh {" +
               " from { stroke-dasharray: 0 " + chart['circle-size'] + "}" +
               " to { stroke-dasharray:" + chart['dash-array-size'] + " " + chart['circle-size'] + "}}"

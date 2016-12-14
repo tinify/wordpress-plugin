@@ -172,6 +172,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			array(), self::version()
 		);
 
+		wp_enqueue_style( self::NAME .'_chart',
+			plugins_url( '/css/chart.css', __FILE__ ),
+			array(), self::version()
+		);
+
 		wp_register_script( self::NAME .'_admin',
 			plugins_url( '/js/admin.js', __FILE__ ),
 			array(), self::version(), true
@@ -440,11 +445,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			array(), self::version(), true
 		);
 
+		wp_enqueue_style( self::NAME .'_dashboard_widget',
+			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
+			array(), self::version()
+		);
+
 		wp_enqueue_script( self::NAME .'_dashboard_widget' );
 
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
-			'TinyPNG Compress PNG & JPG images',
+			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
 			$this->get_method( 'add_widget_view' )
 		);
 	}

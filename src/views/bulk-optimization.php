@@ -128,7 +128,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										  </strong>
 											<?php sizeof( $active_tinify_sizes ) > 1 ? esc_html_e( 'are compressed.', 'tiny-compress-images' ) : esc_html_e( 'is compressed.', 'tiny-compress-images' ) ?>
 										<?php } ?>
-										<?php printf( wp_kses( __( 'You can change these settings %s', 'tiny-compress-images' ), array( 'a' => array( 'href' => array() ) ) ), '<a href='. admin_url( 'options-media.php#tiny-compress-images' ). '>'. __( 'here', 'tiny-compress-images' ). '</a>' )?>
+										<?php printf( wp_kses( __( 'You can change these settings %s', 'tiny-compress-images' ), array( 'a' => array( 'href' => array() ) ) ), '<a href='. admin_url( 'options-media.php#tiny-compress-images' ). '>'. __( 'here', 'tiny-compress-images' ). '.</a>' )?>
 										</p>
 									</div>
 								</div>

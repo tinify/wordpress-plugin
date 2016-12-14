@@ -2,11 +2,15 @@
 
 $chart = array();
 
-if ( 0 != $stats['unoptimized-library-size'] ) {
-	$chart['percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
+if ($stats) {
+	if ( 0 != $stats['unoptimized-library-size'] ) {
+		$chart['percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
+	} else {
+		$chart['percentage'] = 0;
+	}
 } else {
 	$chart['percentage'] = 0;
-}
+};
 
 $chart['size'] = 180;
 $chart['radius'] = $chart['size'] / 2 * 0.9;
@@ -33,14 +37,16 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 	min-width: <?php echo $chart['size'] ?>px;
 }
 
-@keyframes shwoosh {
-	from {
-		stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size'] ?>
+<?php if ($stats) { ?>
+	@keyframes shwoosh {
+		from {
+			stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size'] ?>
+		}
+		to {
+			stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>
+		}
 	}
-	to {
-		stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>
-	}
-}
+<?php } ?>
 
 </style>
 
@@ -50,7 +56,7 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 		<circle class="inner" r="<?php echo $chart['inner-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>" />
 	</svg>
 	<div class="value">
-		<div class="percentage" id="savings-percentage"><?php echo $chart['percentage'] ?>%</div>
+		<div class="percentage" id="savings-percentage"><span><?php echo $chart['percentage'] ?></span>%</div>
 		<div class="label" ><?php echo esc_html__( 'savings', 'tiny-compress-images' ); ?></div>
 	</div>
 </div>
