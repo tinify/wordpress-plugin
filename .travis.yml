@@ -12,71 +12,71 @@ matrix:
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=47 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=46 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=45 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=44 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=43 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=42 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=41 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=40 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=39 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=38 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=37 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=36 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=35 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=34 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=33 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=32 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=31 INTEGRATION_TESTS=true
-    script: sudo bin/integration-tests
+    script: bin/integration-tests
 install:
 - composer install
 - if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo service mysql stop; sudo bin/install-docker; fi
