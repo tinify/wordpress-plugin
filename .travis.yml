@@ -7,7 +7,6 @@ php:
 - 7.0
 - 7.1
 - hhvm
-services: []
 matrix:
   include:
   - dist: trusty
@@ -80,7 +79,7 @@ matrix:
     script: bin/integration-tests
 install:
 - composer install
-- if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo bin/install-docker; fi
+- if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo service mysql stop; sudo bin/install-docker; fi
 script:
 - bin/unit-tests
 - bin/check-style --warning-severity=0 src
