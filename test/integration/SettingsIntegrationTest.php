@@ -168,6 +168,9 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->assertContains( 'tinypng_sizes[0]', $enabled_sizes );
 		$this->assertContains( 'tinypng_sizes[thumbnail]', $enabled_sizes );
 		$this->assertContains( 'tinypng_sizes[medium]', $enabled_sizes );
+		if ( $this->has_medium_large_size() ) {
+			$this->assertContains( 'tinypng_sizes[medium_large]', $enabled_sizes );
+		}
 		$this->assertContains( 'tinypng_sizes[large]', $enabled_sizes );
 	}
 
