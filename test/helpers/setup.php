@@ -131,10 +131,10 @@ function setup_wordpress_site( $driver ) {
 		return $h1->getText();
 	}, $h1s );
 
-	if ( array_search( 'Dashboard', $texts ) !== NULL) {
+	if ( array_search( 'Dashboard', $texts ) !== false ) {
 		print "Setting up WordPress is successful.\n";
 		/* Already logged in. */
-	} elseif ( array_search( 'Success', $texts ) !== NULL ) {
+	} elseif ( array_search( 'Success', $texts ) !== false || array_search( 'Success!', $texts ) !== false ) {
 		print "Setting up WordPress is successful.\n";
 		login( $driver );
 	} else {
