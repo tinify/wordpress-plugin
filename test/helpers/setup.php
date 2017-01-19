@@ -28,7 +28,6 @@ function configure_wordpress_for_testing( $driver ) {
 		setup_wordpress_language( $driver );
 		setup_wordpress_site( $driver );
 		set_siteurl( wordpress() );
-		login( $driver );
 		activate_plugin( $driver );
 		backup_wordpress_site();
 	}
@@ -116,6 +115,10 @@ function setup_wordpress_site( $driver ) {
 	$driver->findElement( WebDriverBy::name( 'user_name' ) )->clear()->sendKeys( 'admin' );
 	if ( wordpress_version() > 42 ) {
 		$driver->findElement( WebDriverBy::id( 'pass1-text' ) )->clear()->sendKeys( 'a' )->sendKeys( 'dmin' );
+
+		/* Confirm use of weak password if necessary. */
+		$confirm = $driver->findElement( WebDriverBy::name( 'pw_weak' ) );
+		if ( $confirm && ! $confirm->isSelected() ) $confirm->click();
 	} else {
 		$driver->findElement( WebDriverBy::name( 'admin_password' ) )->sendKeys( 'admin' );
 		$driver->findElement( WebDriverBy::name( 'admin_password2' ) )->sendKeys( 'admin' );
@@ -128,8 +131,12 @@ function setup_wordpress_site( $driver ) {
 		return $h1->getText();
 	}, $h1s );
 
-	if ( array_search( 'Success', $texts ) >= 0 ) {
+	if ( array_search( 'Dashboard', $texts ) !== false ) {
 		print "Setting up WordPress is successful.\n";
+		/* Already logged in. */
+	} elseif ( array_search( 'Success', $texts ) !== false || array_search( 'Success!', $texts ) !== false ) {
+		print "Setting up WordPress is successful.\n";
+		login( $driver );
 	} else {
 		var_dump( $driver->getPageSource() );
 		throw new UnexpectedValueException( 'Setting up WordPress failed.' );

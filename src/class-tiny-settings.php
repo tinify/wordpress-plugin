@@ -383,8 +383,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} else if ( Tiny_Image::is_retina( $size ) ) {
 			$label = esc_html__( 'WP Retina 2x sizes', 'tiny-compress-images' );
 		} else {
-			$label = esc_html__( ucfirst( $size ) )
-				. ' - ' . $option['width'] . 'x' . $option['height'];
+			$width = $option['width'];
+			if ( ! $width ) {
+				$width = '?';
+			}
+
+			$height = $option['height'];
+			if ( ! $height ) {
+				$height = '?';
+			}
+
+			$label = esc_html__( ucfirst( str_replace( '_', ' ', $size ) ) )
+				. ' - ' . $width . 'x' . $height;
 		}
 		echo '<p>';
 		echo '<input type="checkbox" id="' . $id . '" name="' . $name .
