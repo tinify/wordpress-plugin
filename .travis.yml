@@ -7,6 +7,7 @@ php:
 - 7.0
 - 7.1
 - hhvm
+services: []
 matrix:
   include:
   - dist: trusty
