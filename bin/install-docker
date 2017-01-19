@@ -4,7 +4,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-DOCKER_VERSION=1.12.0~rc2
+DOCKER_VERSION=1.12.6
 LSB_RELEASE=$(lsb_release -cs)
 OS_NAME=$(uname -s)
 OS_ARCH=$(uname -m)
