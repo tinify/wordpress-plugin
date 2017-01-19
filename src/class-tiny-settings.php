@@ -216,7 +216,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$width  = get_option( $size . '_size_w' );
 		$height = get_option( $size . '_size_h' );
-		if ( $width && $height ) {
+
+		/* Note: dimensions might be 0 to indicate no limit. */
+		if ( isset( $width ) && isset( $height ) ) {
 			return array( $width, $height );
 		}
 

@@ -73,6 +73,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 			0 => array( 'width' => null, 'height' => null, 'tinify' => true ),
 			'thumbnail' => array( 'width' => 150, 'height' => 150, 'tinify' => false ),
 			'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => true ),
+			'medium_large' => array( 'width' => 768, 'height' => 0, 'tinify' => false ),
 			'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => false ),
 			'post-thumbnail' => array( 'width' => 825, 'height' => 510, 'tinify' => true ),
 		), $this->subject->get_sizes());
@@ -86,6 +87,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 			0 => array( 'width' => null, 'height' => null, 'tinify' => false ),
 			'thumbnail' => array( 'width' => 150, 'height' => 150, 'tinify' => false ),
 			'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => false ),
+			'medium_large' => array( 'width' => 768, 'height' => 0, 'tinify' => false ),
 			'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => false ),
 		), $this->subject->get_sizes());
 	}
@@ -96,6 +98,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 			0 => array( 'width' => null, 'height' => null, 'tinify' => true ),
 			'thumbnail' => array( 'width' => 150, 'height' => 150, 'tinify' => true ),
 			'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => true ),
+			'medium_large' => array( 'width' => 768, 'height' => 0, 'tinify' => true ),
 			'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => true ),
 		), $this->subject->get_sizes());
 	}

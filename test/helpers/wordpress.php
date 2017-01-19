@@ -15,6 +15,8 @@ class WordPressOptions {
 			'thumbnail_size_h' => 150,
 			'medium_size_w' => 300,
 			'medium_size_h' => 300,
+			'medium_large_size_w' => 768,
+			'medium_large_size_h' => 0,
 			'large_size_w' => 1024,
 			'large_size_h' => 1024,
 		 );
@@ -109,7 +111,7 @@ class WordPressStubs {
 		} elseif ( 'update_post_meta' === $method ) {
 			return call_user_func_array( array( $this, 'updateMetadata' ), $args );
 		} elseif ( 'get_intermediate_image_sizes' === $method ) {
-			return array_merge( array( 'thumbnail', 'medium', 'large' ), array_keys( $GLOBALS['_wp_additional_image_sizes'] ) );
+			return array_merge( array( 'thumbnail', 'medium', 'medium_large', 'large' ), array_keys( $GLOBALS['_wp_additional_image_sizes'] ) );
 		} elseif ( 'get_plugin_data' === $method ) {
 			return array( 'Version' => '1.7.2' );
 		} elseif ( 'wp_upload_dir' === $method ) {
