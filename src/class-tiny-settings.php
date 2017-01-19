@@ -384,10 +384,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label = esc_html__( 'WP Retina 2x sizes', 'tiny-compress-images' );
 		} else {
 			$width = $option['width'];
-			if ( ! $width ) $width = '?';
+			if ( ! $width ) {
+				$width = '?';
+			}
 
 			$height = $option['height'];
-			if ( ! $height ) $height = '?';
+			if ( ! $height ) {
+				$height = '?';
+			}
 
 			$label = esc_html__( ucfirst( str_replace( '_', ' ', $size ) ) )
 				. ' - ' . $width . 'x' . $height;
