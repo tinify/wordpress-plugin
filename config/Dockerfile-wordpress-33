@@ -16,5 +16,5 @@ RUN curl -o wordpress.tar.gz -sSL https://wordpress.org/wordpress-${WORDPRESS_UP
 # Fix empty dashboard bug (http://wordpress.stackexchange.com/questions/127427/how-to-fix-empty-dashboard-issue-in-wordpress).
 RUN sed -i '706s/self::$this/$this/' /usr/src/wordpress/wp-admin/includes/screen.php
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]

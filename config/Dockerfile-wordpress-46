@@ -11,5 +11,5 @@ RUN curl -o wordpress.tar.gz -sSL https://wordpress.org/wordpress-${WORDPRESS_UP
   && rm wordpress.tar.gz \
   && chown -R www-data:www-data /usr/src/wordpress
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
