@@ -2,7 +2,7 @@
 
 $chart = array();
 
-if ( $stats ) {
+if ( isset( $stats ) ) {
 	if ( 0 != $stats['unoptimized-library-size'] ) {
 		$chart['percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
 	} else {
@@ -37,7 +37,7 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 	min-width: <?php echo $chart['size'] ?>px;
 }
 
-<?php if ( $stats ) { ?>
+<?php if ( isset( $stats ) ) { ?>
 	@keyframes shwoosh {
 		from {
 			stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size'] ?>

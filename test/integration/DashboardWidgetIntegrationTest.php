@@ -16,6 +16,19 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_widget_without_images() {
 		$element = $this->find(
+			'#tinypng_dashboard_widget #no-images-uploaded p'
+		);
+
+		$this->assertEquals(
+			'You don\'t seem to have uploaded any JPEG or PNG images yet.',
+			$element->getText()
+		);
+	}
+
+
+	public function test_should_show_widget_without_optimized_images() {
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+		$element = $this->find(
 			'#tinypng_dashboard_widget #widget-not-optimized p'
 		);
 
@@ -36,7 +49,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		);
 
 		$this->assertEquals(
-			'Hi Admin, you are doing good. 4/8 of your media library is optimized. If you like you can to optimize the remainder of your library with the bulk optimization page.',
+			'Hi Admin, you are doing good. With your current settings you can still optimize 4 image sizes from your 2 uploaded JPEG and PNG images. Start the bulk optimization to optimize the remainder of your library.',
 			$element->getText()
 		);
 	}

@@ -216,6 +216,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				array(), self::version()
 			);
 
+			wp_enqueue_style( self::NAME .'_chart',
+				plugins_url( '/css/chart.css', __FILE__ ),
+				array(), self::version()
+			);
+
 			wp_register_script(
 				self::NAME . '_tiny_bulk_optimization',
 				plugins_url( '/js/bulk-optimization.js', __FILE__ ),
@@ -443,6 +448,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_register_script( self::NAME .'_dashboard_widget',
 			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
 			array(), self::version(), true
+		);
+
+		wp_enqueue_style( self::NAME .'_chart',
+			plugins_url( '/css/chart.css', __FILE__ ),
+			array(), self::version()
 		);
 
 		wp_enqueue_style( self::NAME .'_dashboard_widget',

@@ -6,7 +6,7 @@
 <div class="panda-background"></div>
 <div class="grass"></div>
 <div class="media-library-optimized" id="no-images-uploaded">
-	<?php esc_html_e( 'You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' ) ?>
+	<p><?php esc_html_e( 'You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' ) ?></p>
 </div>
 <div class="media-library-optimized" id="widget-not-optimized">
 	<p><?php printf( esc_html__( 'Hi %s, you haven’t compressed any images in your media library. If you like you can to optimize your whole library in one go with the %s page.', 'tiny-compress-images' ), $username, $link ) ?></p>

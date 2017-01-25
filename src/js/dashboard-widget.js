@@ -1,11 +1,15 @@
 (function() {
   function generateDashboardWidget(element) {
     var element = jQuery(element)
-    jQuery('.chart').addClass('hidden')
     var container = element.find('.inside')
+    jQuery('.chart').addClass('hidden')
     // Adding a class to the widget element so that classes are only used in the stylesheet
     jQuery('#tinypng_dashboard_widget').addClass('tiny_dashboard_widget')
     attachHandlers(container);
+    retrieveStats(container);
+  }
+
+  function retrieveStats(container) {
     jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
@@ -18,24 +22,21 @@
         if (data == 0) {
           container.append("<p> An error occured. </p>")
         } else {
-          var stats = jQuery.parseJSON(data);
-          var savings = savingsPercentage(stats);
-          var libraryOptimized = optimizedPercentage(stats);
-          updateWidgetContent(savings, libraryOptimized, stats, container);
+          renderWidget(data, container);
         }
       },
       error: function() {
-        container.append("<h2> An error occured. </h2>")
+        container.append("<p> An error occured. </p>")
       }
     })
   }
 
   function attachHandlers(container) {
-   checkIfSmallContainer(container);
-   jQuery(window).resize(function(){checkIfSmallContainer(container)});
+   setContainerClass(container);
+   jQuery(window).resize(function(){setContainerClass(container)});
   }
 
-  function checkIfSmallContainer(container) {
+  function setContainerClass(container) {
      if (jQuery(container).width() < 400) {
         jQuery(container).addClass('mobile')
      } else if (jQuery(container).width() < 490 && jQuery(container).width() >= 400) {
@@ -46,27 +47,22 @@
      }
   }
 
-  function updateWidgetContent(savingsPercentage, libraryOptimized, stats, container) {
-    addPercentageToChart(savingsPercentage);
-    showContent(libraryOptimized, stats);
-    var chart = widgetChart(savingsPercentage);
-    var style = widgetChartStyle(chart);
-
-    // .append not supported in IE8
-    try {
-      jQuery('.inside style').append(style);
-    } catch(err) {
-
-    }
+  function renderWidget(data, container) {
+    var stats = jQuery.parseJSON(data);
+    var savings = savingsPercentage(stats);
+    var libraryOptimized = optimizedPercentage(stats);
+    renderContent(libraryOptimized, stats, savings);
+    renderChart(savings);
     jQuery('#optimization-chart').removeClass('hidden');
     jQuery('#widget-spinner').attr('class', 'hidden');
   }
 
-  function addPercentageToChart(percentage) {
+  function renderPercentage(percentage) {
     jQuery('#savings-percentage').find('span').html(percentage)
   }
 
-  function showContent(percentage, stats) {
+  function renderContent(percentage, stats, savingsPercentage) {
+    renderPercentage(savingsPercentage);
     if ( 0 == stats['uploaded-images'] + stats['available-unoptimised-sizes'] ) {
       jQuery('#tinypng_dashboard_widget').addClass('no-images-uploaded')
     } else if ( percentage == 0 ) {
@@ -80,7 +76,7 @@
     }
   }
 
-  function widgetChart(percentage) {
+  function chartOptions(percentage) {
     chart = {};
     chart['size'] = 180;
     chart['radius'] = chart['size'] / 2 * 0.9;
@@ -106,13 +102,20 @@
     }
   }
 
-  function widgetChartStyle(chart) {
+  function renderChart(savingsPercentage) {
+    chart = chartOptions(savingsPercentage);
     jQuery('#optimization-chart svg circle.main').css('stroke-dasharray', chart['dash-array-size'] + ' ' + chart['circle-size'])
     style =
             " @keyframes shwoosh {" +
               " from { stroke-dasharray: 0 " + chart['circle-size'] + "}" +
               " to { stroke-dasharray:" + chart['dash-array-size'] + " " + chart['circle-size'] + "}}"
-    return style
+
+    // JQuery bug where you cannot append to style tag https://bugs.jquery.com/ticket/9832
+    try {
+      jQuery('#tinypng_dashboard_widget .inside style').append(style);
+    } catch(err) {
+
+    }
   }
 
   // Check if widget is loaded
