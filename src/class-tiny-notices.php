@@ -119,7 +119,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$css = array( $klass, 'notice', 'tiny-notice' );
 		if ( ! $dismissible ) {
 			$add = '</p>';
-		} else if ( self::check_wp_version( 4.2 ) ) {
+		} elseif ( self::check_wp_version( 4.2 ) ) {
 			$add = '</p>';
 			$css[] = 'is-dismissible';
 		} else {

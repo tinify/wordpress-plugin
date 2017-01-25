@@ -118,7 +118,7 @@ function setup_wordpress_site( $driver ) {
 
 		/* Confirm use of weak password if necessary. */
 		$confirm = $driver->findElement( WebDriverBy::name( 'pw_weak' ) );
-		if ( $confirm && ! $confirm->isSelected() ) $confirm->click();
+		if ( $confirm && ! $confirm->isSelected() ) { $confirm->click(); }
 	} else {
 		$driver->findElement( WebDriverBy::name( 'admin_password' ) )->sendKeys( 'admin' );
 		$driver->findElement( WebDriverBy::name( 'admin_password2' ) )->sendKeys( 'admin' );

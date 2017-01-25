@@ -16,8 +16,8 @@ class Client {
 		return __DIR__ . '/../data/cacert.pem';
 	}
 
-	function __construct($key, $appIdentifier = null) {
-		$userAgent = join( ' ', array_filter( array( self::userAgent(), $appIdentifier) ) );
+	function __construct( $key, $appIdentifier = null ) {
+		$userAgent = join( ' ', array_filter( array( self::userAgent(), $appIdentifier ) ) );
 		$this->options = array(
 			CURLOPT_BINARYTRANSFER => true,
 			CURLOPT_RETURNTRANSFER => true,
@@ -27,7 +27,7 @@ class Client {
 		);
 	}
 
-	function request($method, $url, $body = null, $header = array() ) {
+	function request( $method, $url, $body = null, $header = array() ) {
 		if ( is_array( $body ) ) {
 			if ( ! empty( $body ) ) {
 				$body = json_encode( $body );
@@ -98,7 +98,7 @@ class Client {
 		}
 	}
 
-	protected static function parseHeaders($headers) {
+	protected static function parseHeaders( $headers ) {
 		if ( ! is_array( $headers ) ) {
 			$headers = explode( "\r\n", $headers );
 		}
@@ -111,7 +111,7 @@ class Client {
 
 			$split = explode( ':', $header, 2 );
 			if ( count( $split ) === 2 ) {
-				$result[strtolower( $split[0] )] = trim( $split[1] );
+				$result[ strtolower( $split[0] ) ] = trim( $split[1] );
 			}
 		}
 		return $result;
