@@ -79,6 +79,6 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_should_display_tooltips() {
-		$this->assertGreaterThanOrEqual( '1', sizeof($this->find_all( 'div.tip' )));
+		$this->assertGreaterThanOrEqual( '1', sizeof( $this->find_all( 'div.tip' ) ) );
 	}
 }

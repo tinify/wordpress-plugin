@@ -51,7 +51,7 @@ class Tiny_Image {
 		$upload_dir = wp_upload_dir();
 		$path_prefix = $upload_dir['basedir'] . '/';
 		if ( isset( $path_info['dirname'] ) ) {
-			$path_prefix .= $path_info['dirname'] .'/';
+			$path_prefix .= $path_info['dirname'] . '/';
 		}
 
 		$filename = $path_prefix . $this->name;

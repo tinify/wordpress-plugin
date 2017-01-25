@@ -21,11 +21,11 @@ ksort( $size_exists );
 		<?php if ( $error ) {
 			// dashicons-warning available for WP 4.3+ ?>
 			<span class="icon dashicons dashicons-no error"></span>
-		<?php } else if ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
+		<?php } elseif ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
-		<?php } else if ( $total['compressed'] > 0 && $available_unoptimized_sizes > 0 ) { ?>
+		<?php } elseif ( $total['compressed'] > 0 && $available_unoptimized_sizes > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
-		<?php } else if ( $total['compressed'] > 0 ) { ?>
+		<?php } elseif ( $total['compressed'] > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes success"></span>
 		<?php } ?>
 		<span class="icon spinner hidden"></span>
@@ -43,13 +43,13 @@ ksort( $size_exists );
 		<?php } ?>
 		<?php if ( $size_before - $size_after ) { ?>
 			<span class="message">
-				<?php printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 ) ?>
+				<?php printf( esc_html__( 'Total savings %1$.0f%2$%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 ) ?>
 			</span>
 			<br />
 		<?php } ?>
 		<?php if ( $error ) { ?>
 			<span class="message error_message">
-				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': '. esc_html__( $error, 'tiny-compress-images' ) ?>
+				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html__( $error, 'tiny-compress-images' ) ?>
 			</span>
 			<br/>
 		<?php } ?>
@@ -91,34 +91,34 @@ ksort( $size_exists );
 					echo ' ';
 					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
-					} else if ( $size->missing() && ( Tiny_Settings::wr2x_active() || ! Tiny_Image::is_retina( $size_name ) ) ) {
+					} elseif ( $size->missing() && ( Tiny_Settings::wr2x_active() || ! Tiny_Image::is_retina( $size_name ) ) ) {
 						echo '<em>' . esc_html__( '(file removed)', 'tiny-compress-images' ) . '</em>';
-					} else if ( $size->modified() ) {
+					} elseif ( $size->modified() ) {
 						echo '<em>' . esc_html__( '(modified after compression)', 'tiny-compress-images' ) . '</em>';
-					} else if ( Tiny_Image::is_retina( $size_name ) ) {
+					} elseif ( Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(WP Retina 2x)', 'tiny-compress-images' ) . '</em>';
-					} else if ( $size->resized() ) {
-						printf( '<em>' . esc_html__( '(resized to %dx%d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
+					} elseif ( $size->resized() ) {
+						printf( '<em>' . esc_html__( '(resized to %1$dx%1$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
 					}
 					echo '</td>';
 
 					if ( $size->is_duplicate() ) {
 						echo '<td>-</td>';
 						printf( '<td colspan=2><em>' . esc_html__( 'Same file as "%s"', 'tiny-compress-images' ) . '</em></td>', esc_html__( ucfirst( $size->duplicate_of_size() ) ) );
-					} else if ( $size->has_been_compressed() ) {
+					} elseif ( $size->has_been_compressed() ) {
 						echo '<td>' . size_format( $size->meta['input']['size'], 1 ) . '</td>';
 						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';
 						echo '<td>' . sprintf( esc_html__( '%s ago' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
-					} else if ( ! $size->exists() ) {
+					} elseif ( ! $size->exists() ) {
 						echo '<td>-</td>';
 						echo '<td colspan=2><em>' . esc_html__( 'Not present', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( isset( $size_active[ $size_name ] ) || Tiny_Image::is_retina( $size_name ) ) {
+					} elseif ( isset( $size_active[ $size_name ] ) || Tiny_Image::is_retina( $size_name ) ) {
 						echo '<td>' . size_format( $size->filesize(), 1 ) . '</td>';
 						echo '<td colspan=2><em>' . esc_html__( 'Not compressed', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( isset( $size_exists[ $size_name ] ) ) {
+					} elseif ( isset( $size_exists[ $size_name ] ) ) {
 						echo '<td>' . size_format( $size->filesize(), 1 ) . '</td>';
 						echo '<td colspan=2><em>' . esc_html__( 'Not configured to be compressed', 'tiny-compress-images' ) . '</em></td>';
-					} else if ( ! array_key_exists( $size_name, $active_sizes ) ) {
+					} elseif ( ! array_key_exists( $size_name, $active_sizes ) ) {
 						echo '<td>' . size_format( $size->filesize(), 1 ) . '</td>';
 						echo '<td colspan=2><em>' . esc_html__( 'Size is not in use', 'tiny-compress-images' ) . '</em></td>';
 					} else {
@@ -145,12 +145,12 @@ ksort( $size_exists );
 			<strong>
 				<?php
 				if ( $size_before - $size_after ) {
-					printf( esc_html__( 'Total savings %.0f%% (%s)', 'tiny-compress-images' ),
+					printf( esc_html__( 'Total savings %1$.0f%2$% (%3$s)', 'tiny-compress-images' ),
 						( 1 - $size_after / floatval( $size_before ) ) * 100,
 						size_format( $size_before - $size_after, 1 )
 					);
 				} else {
-					printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), 0 );
+					printf( esc_html__( 'Total savings %1$.0f%2$%', 'tiny-compress-images' ), 0 );
 				}
 				?>
 			</strong>

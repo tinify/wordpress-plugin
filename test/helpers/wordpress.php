@@ -217,7 +217,7 @@ class WordPressStubs {
 			'sizes' => array(),
 		);
 
-		$regex = '#^' . preg_quote( $name ) .'-([^.]+)[.](png|jpe?g)$#';
+		$regex = '#^' . preg_quote( $name ) . '-([^.]+)[.](png|jpe?g)$#';
 		$dir = $this->vfs->getChild( self::UPLOAD_DIR . "/$path" );
 		foreach ( $dir->getChildren() as $child ) {
 			$file = $child->getName();

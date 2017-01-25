@@ -55,7 +55,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		if ( 429 == $status_code || 400 == $status_code ) {
 			return true;
-		} else if ( is_array( $details ) && isset( $details['error'] ) ) {
+		} elseif ( is_array( $details ) && isset( $details['error'] ) ) {
 			throw new Tiny_Exception(
 				$details['message'],
 				'Tinify\Exception',
@@ -81,13 +81,13 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'Tinify\Exception',
 				$status_code
 			);
-		} else if ( $status_code >= 400 ) {
+		} elseif ( $status_code >= 400 ) {
 			throw new Tiny_Exception(
 				'Unexpected error during compression',
 				'Tinify\Exception',
 				$status_code
 			);
-		} else if ( null === $output_url ) {
+		} elseif ( null === $output_url ) {
 			throw new Tiny_Exception(
 				'Could not find output location',
 				'Tinify\Exception'
@@ -103,7 +103,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'Tinify\Exception',
 				$status_code
 			);
-		} else if ( $status_code >= 400 ) {
+		} elseif ( $status_code >= 400 ) {
 			throw new Tiny_Exception(
 				'Unexpected error during output retrieval',
 				'Tinify\Exception',

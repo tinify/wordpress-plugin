@@ -56,7 +56,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 					'Please register or provide an API key to start compressing images',
 					'tiny-compress-images'
 				);
-			} else if ( $this->get_api_key_pending() ) {
+			} elseif ( $this->get_api_key_pending() ) {
 				$notice_class = 'notice-warning';
 				$notice = esc_html__(
 					'Please activate your account to start compressing images',
@@ -380,7 +380,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
 				esc_html__( 'overwritten by compressed image', 'tiny-compress-images' ) . ')';
-		} else if ( Tiny_Image::is_retina( $size ) ) {
+		} elseif ( Tiny_Image::is_retina( $size ) ) {
 			$label = esc_html__( 'WP Retina 2x sizes', 'tiny-compress-images' );
 		} else {
 			$width = $option['width'];
@@ -464,7 +464,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		echo '<p class="tiny-resize-available">';
 		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
-			'" value="on" '. $checked . '/>';
+			'" value="on" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
 		echo '<br>';
 		echo '</p>';
@@ -530,7 +530,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
 		$value = isset( $settings[ $name ] ) ? $settings[ $name ] : '2048';
-		echo '<input type="number" id="'. $id .'" name="' . $field .
+		echo '<input type="number" id="' . $id . '" name="' . $field .
 			'" value="' . $value . '" size="5" />';
 	}
 
