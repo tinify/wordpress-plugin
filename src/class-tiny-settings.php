@@ -530,7 +530,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
 		$value = isset( $settings[ $name ] ) ? $settings[ $name ] : '2048';
-		echo '<input type="number" id="'. $id .'" name="' . $field .
+		echo '<input type="number" id="' . $id . '" name="' . $field .
 			'" value="' . $value . '" size="5" />';
 	}
 

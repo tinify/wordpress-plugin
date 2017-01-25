@@ -193,7 +193,7 @@ function close_webdriver() {
 function reset_webservice() {
 	$request = curl_init();
 	curl_setopt_array($request, array(
-		CURLOPT_URL => 'http://' . getenv( 'HOST' ) .':8080/reset',
+		CURLOPT_URL => 'http://' . getenv( 'HOST' ) . ':8080/reset',
 	));
 	$response = curl_exec( $request );
 	curl_close( $request );

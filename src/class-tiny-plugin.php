@@ -164,18 +164,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		wp_enqueue_style( self::NAME .'_admin',
+		wp_enqueue_style( self::NAME . '_admin',
 			plugins_url( '/css/admin.css', __FILE__ ),
 			array(), self::version()
 		);
 
-		wp_register_script( self::NAME .'_admin',
+		wp_register_script( self::NAME . '_admin',
 			plugins_url( '/js/admin.js', __FILE__ ),
 			array(), self::version(), true
 		);
 
 		// WordPress < 3.3 does not handle multidimensional arrays
-		wp_localize_script( self::NAME .'_admin', 'tinyCompress', array(
+		wp_localize_script( self::NAME . '_admin', 'tinyCompress', array(
 			'nonce' => wp_create_nonce( 'tiny-compress' ),
 			'wpVersion' => self::wp_version(),
 			'pluginVersion' => self::version(),
@@ -199,7 +199,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'L10nWaiting' => __( 'Waiting', 'tiny-compress-images' ),
 		));
 
-		wp_enqueue_script( self::NAME .'_admin' );
+		wp_enqueue_script( self::NAME . '_admin' );
 
 		if ( 'media_page_tiny-bulk-optimization' == $hook ) {
 			wp_enqueue_style(
@@ -214,7 +214,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				array(), self::version(), true
 			);
 
-			wp_enqueue_script( self::NAME .'_tiny_bulk_optimization' );
+			wp_enqueue_script( self::NAME . '_tiny_bulk_optimization' );
 		}
 
 	}
