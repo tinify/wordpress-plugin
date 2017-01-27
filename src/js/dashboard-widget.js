@@ -34,6 +34,9 @@
   function attachHandlers(container) {
    setContainerClass(container);
    jQuery(window).resize(function(){setContainerClass(container)});
+   jQuery('#tinypng_dashboard_widget .hndle').click(function() {
+    jQuery(this).siblings('.inside').removeClass('mobile')
+   })
   }
 
   function setContainerClass(container) {
@@ -53,7 +56,7 @@
     var libraryOptimized = optimizedPercentage(stats);
     renderContent(libraryOptimized, stats, savings);
     renderChart(savings);
-    jQuery('#optimization-chart').removeClass('hidden');
+    jQuery('#optimization-chart').show();
     jQuery('#widget-spinner').attr('class', 'hidden');
   }
 
@@ -69,6 +72,7 @@
        jQuery('#tinypng_dashboard_widget').addClass('not-optimized')
     } else if ( percentage == 100 ) {
       jQuery('#tinypng_dashboard_widget').addClass('full-optimized')
+      jQuery('#ie8-compressed').find('span').html(savingsPercentage)
     } else {
       jQuery("#uploaded-images").html( stats['uploaded-images'] )
       jQuery("#unoptimised-sizes").html( stats['available-unoptimised-sizes'] )
@@ -78,7 +82,7 @@
 
   function chartOptions(percentage) {
     chart = {};
-    chart['size'] = 180;
+    chart['size'] = 160;
     chart['radius'] = chart['size'] / 2 * 0.9;
     chart['main-radius'] = chart['radius'] * 0.88;
     chart['circle-size'] = 2 * Math.PI * chart['main-radius'];
@@ -96,7 +100,7 @@
 
   function savingsPercentage(stats) {
     if ( 0 != stats['unoptimized-library-size'] ) {
-      return Math.round( 100 - ( stats['optimized-library-size'] / stats['unoptimized-library-size'] * 100 ), 1 );
+      return 100 - Math.round((stats['optimized-library-size'] / stats['unoptimized-library-size'] * 1000))/ 10;
     } else {
       return 0
     }

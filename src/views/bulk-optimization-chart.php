@@ -12,7 +12,7 @@ if ( isset( $stats ) ) {
 	$chart['percentage'] = 0;
 };
 
-$chart['size'] = 180;
+$chart['size'] = 160;
 $chart['radius'] = $chart['size'] / 2 * 0.9;
 $chart['main-radius'] = $chart['radius'] * 0.88;
 $chart['center'] = $chart['size'] / 2;

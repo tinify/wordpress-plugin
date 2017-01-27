@@ -1,4 +1,13 @@
 <?php $link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" .  esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>'; ?>
+<style type="text/css" >
+	.media-library-optimized,
+	#optimization-chart  {
+		display: none;
+	}
+	.ie8 #optimization-chart  {
+		display: none !important;
+	}
+</style>
 
 <div id="widget-spinner" class=""></div>
 <div class="sky-background"></div>
@@ -16,6 +25,7 @@
 </div>
 <div class="media-library-optimized" id="widget-full-optimized">
 	<p><?php printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() ) ?></p>
+	<p id="ie8-compressed"><?php printf( wp_kses( __( 'You have compressed <span></span>%% of your media library.', 'tiny-compress-images' ), array( 'span' => array() ) ) )?></p>
 </div>
 <div class="media-library-optimized" id="widget-half-optimized">
 	<p>
