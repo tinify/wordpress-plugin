@@ -445,11 +445,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function add_dashboard_widget() {
-		wp_register_script( self::NAME .'_dashboard_widget',
-			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
-			array(), self::version(), true
-		);
-
 		wp_enqueue_style( self::NAME .'_chart',
 			plugins_url( '/css/chart.css', __FILE__ ),
 			array(), self::version()
@@ -458,6 +453,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_enqueue_style( self::NAME .'_dashboard_widget',
 			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
 			array(), self::version()
+		);
+		wp_register_script( self::NAME .'_dashboard_widget',
+			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
+			array(), self::version(), true
 		);
 
 		wp_enqueue_script( self::NAME .'_dashboard_widget' );
@@ -470,7 +469,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	function add_widget_view() {
-		$username = $this->friendly_user_name();
 		include( dirname( __FILE__ ) . '/views/dashboard-widget.php' );
 	}
 
