@@ -2,13 +2,17 @@
 
 $chart = array();
 
-if ( 0 != $stats['unoptimized-library-size'] ) {
-	$chart['percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
+if ( isset( $stats ) ) {
+	if ( 0 != $stats['unoptimized-library-size'] ) {
+		$chart['percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
+	} else {
+		$chart['percentage'] = 0;
+	}
 } else {
 	$chart['percentage'] = 0;
-}
+};
 
-$chart['size'] = 180;
+$chart['size'] = 160;
 $chart['radius'] = $chart['size'] / 2 * 0.9;
 $chart['main-radius'] = $chart['radius'] * 0.88;
 $chart['center'] = $chart['size'] / 2;
@@ -21,23 +25,28 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 ?>
 <style>
 
-div.savings div.chart svg circle.main {
+#optimization-chart svg circle.main {
 	stroke-width: <?php echo $chart['dash-stroke'] ?>;
 	stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>;
 }
+#optimization-chart svg circle.main {
+	stroke: #7acb44;
+}
 
-div.tiny-bulk-optimization div.savings div.chart div.value {
+#optimization-chart div.chart div.value {
 	min-width: <?php echo $chart['size'] ?>px;
 }
 
-@keyframes shwoosh {
-	from {
-		stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size'] ?>
+<?php if ( isset( $stats ) ) { ?>
+	@keyframes shwoosh {
+		from {
+			stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size'] ?>
+		}
+		to {
+			stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>
+		}
 	}
-	to {
-		stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>
-	}
-}
+<?php } ?>
 
 </style>
 
@@ -47,7 +56,7 @@ div.tiny-bulk-optimization div.savings div.chart div.value {
 		<circle class="inner" r="<?php echo $chart['inner-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>" />
 	</svg>
 	<div class="value">
-		<div class="percentage" id="savings-percentage"><?php echo $chart['percentage'] ?>%</div>
+		<div class="percentage" id="savings-percentage"><span><?php echo $chart['percentage'] ?></span>%</div>
 		<div class="label" ><?php echo esc_html__( 'savings', 'tiny-compress-images' ); ?></div>
 	</div>
 </div>

@@ -47,7 +47,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) * 100, 2 );
 						}
 						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimised-sizes'] ) {
-							esc_html_e( 'This page is designed to bulk optimize all your images. You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' );
+							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
+							echo ' ';
+							esc_html_e( 'You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
@@ -59,9 +61,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 								printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
 							}
 							echo ' ';
-							printf( esc_html__( '%1$d%2$% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
+							printf( esc_html__( '%d%% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
 							echo ' ';
-							printf( esc_html__( 'Start the bulk optimization to optimize the remainder of your library.', 'tiny-compress-images' ) );
+							printf( esc_html__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), esc_html__( 'bulk optimization', 'tiny-compress-images' ) );
 						} else {
 							esc_html_e( 'Here you can start optimizing your entire library. Press the big button to start improving your website speed instantly!', 'tiny-compress-images' );
 						}
@@ -95,7 +97,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimised-sizes'] > 0 ) { ?>
 											<p>
 												<?php
-												printf( esc_html__( 'With your current settings you can still optimize %1$d images sizes from your %1$d uploaded JPEG and PNG images.',
+												printf( esc_html__( 'With your current settings you can still optimize %s image sizes from your %s uploaded JPEG and PNG images.',
 												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images'] );
 												?>
 											</p>
@@ -121,14 +123,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										</p>
 										<p>
 										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
-											<?php esc_html_e( 'For each uploaded image, ', 'tiny-compress-images' ) ?>
-											<strong>
-												<?php echo sizeof( $active_tinify_sizes ) ?>
-												<?php sizeof( $active_tinify_sizes ) > 1 ? esc_html_e( 'sizes', 'tiny-compress-images' ) : esc_html_e( 'size', 'tiny-compress-images' ) ?>
-										  </strong>
-											<?php sizeof( $active_tinify_sizes ) > 1 ? esc_html_e( 'are compressed.', 'tiny-compress-images' ) : esc_html_e( 'is compressed.', 'tiny-compress-images' ) ?>
+											<?php printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array( 'strong' => array() ) ), count( $active_tinify_sizes ) ) ?>
 										<?php } ?>
-										<?php printf( wp_kses( __( 'You can change these settings %s', 'tiny-compress-images' ), array( 'a' => array( 'href' => array() ) ) ), '<a href=' . admin_url( 'options-media.php#tiny-compress-images' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
+										<?php printf( wp_kses( __( 'You can change these settings %s.', 'tiny-compress-images' ), array( 'a' => array( 'href' => array() ) ) ), '<a href=' . admin_url( 'options-media.php#tiny-compress-images' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
 										</p>
 									</div>
 								</div>

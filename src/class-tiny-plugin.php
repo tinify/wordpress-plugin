@@ -17,9 +17,8 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION = '2.1.0';
+	const VERSION = '2.2.0';
 	const MEDIA_COLUMN = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
@@ -34,7 +33,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public static function version() {
 		/* Avoid using get_plugin_data() because it is not loaded early enough
-		   in xmlrpc.php. */
+			 in xmlrpc.php. */
 		return self::VERSION;
 	}
 
@@ -68,6 +67,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function admin_init() {
+		add_action('wp_dashboard_setup',
+			$this->get_method( 'add_dashboard_widget' )
+		);
+
 		add_action( 'admin_enqueue_scripts',
 			$this->get_method( 'enqueue_scripts' )
 		);
@@ -169,6 +172,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			array(), self::version()
 		);
 
+		wp_enqueue_style( self::NAME . '_chart',
+			plugins_url( '/css/chart.css', __FILE__ ),
+			array(), self::version()
+		);
+
 		wp_register_script( self::NAME . '_admin',
 			plugins_url( '/js/admin.js', __FILE__ ),
 			array(), self::version(), true
@@ -205,6 +213,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			wp_enqueue_style(
 				self::NAME . '_tiny_bulk_optimization',
 				plugins_url( '/css/bulk-optimization.css', __FILE__ ),
+				array(), self::version()
+			);
+
+			wp_enqueue_style( self::NAME .'_chart',
+				plugins_url( '/css/chart.css', __FILE__ ),
 				array(), self::version()
 			);
 
@@ -431,6 +444,34 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
 	}
 
+	public function add_dashboard_widget() {
+		wp_enqueue_style( self::NAME .'_chart',
+			plugins_url( '/css/chart.css', __FILE__ ),
+			array(), self::version()
+		);
+
+		wp_enqueue_style( self::NAME .'_dashboard_widget',
+			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
+			array(), self::version()
+		);
+		wp_register_script( self::NAME .'_dashboard_widget',
+			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
+			array(), self::version(), true
+		);
+
+		wp_enqueue_script( self::NAME .'_dashboard_widget' );
+
+		wp_add_dashboard_widget(
+			$this->get_prefixed_name( 'dashboard_widget' ),
+			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
+			$this->get_method( 'add_widget_view' )
+		);
+	}
+
+	function add_widget_view() {
+		include( dirname( __FILE__ ) . '/views/dashboard-widget.php' );
+	}
+
 	private static function retrieve_admin_colors() {
 		global $_wp_admin_css_colors;
 		$admin_colour_scheme = get_user_option( 'admin_color', get_current_user_id() );
@@ -475,8 +516,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		global $wpdb;
 		return $wpdb->get_results(
 			"SELECT ID, post_title FROM $wpdb->posts
-             WHERE post_type = 'attachment' $condition
-             AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-             ORDER BY ID DESC", ARRAY_A);
+						 WHERE post_type = 'attachment' $condition
+						 AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
+						 ORDER BY ID DESC", ARRAY_A);
 	}
 }
