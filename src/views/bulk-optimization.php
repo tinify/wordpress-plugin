@@ -59,7 +59,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 								printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
 							}
 							echo ' ';
-							printf( esc_html__( '%1$d%2$% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
+							printf( esc_html__( '%d%% of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files );
 							echo ' ';
 							printf( esc_html__( 'Start the bulk optimization to optimize the remainder of your library.', 'tiny-compress-images' ) );
 						} else {
@@ -95,7 +95,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimised-sizes'] > 0 ) { ?>
 											<p>
 												<?php
-												printf( esc_html__( 'With your current settings you can still optimize %1$d images sizes from your %1$d uploaded JPEG and PNG images.',
+												printf( esc_html__( 'With your current settings you can still optimize %d images sizes from your %d uploaded JPEG and PNG images.',
 												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images'] );
 												?>
 											</p>
