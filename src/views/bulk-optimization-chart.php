@@ -3,11 +3,7 @@
 $chart = array();
 
 if ( isset( $stats ) ) {
-	if ( 0 != $stats['unoptimized-library-size'] ) {
-		$chart['percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
-	} else {
-		$chart['percentage'] = 0;
-	}
+		$chart['percentage'] = $stats['display-percentage'];
 } else {
 	$chart['percentage'] = 0;
 };

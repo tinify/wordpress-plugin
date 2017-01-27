@@ -452,6 +452,12 @@ class Tiny_Image {
 				);
 			}
 		}
+
+		if ( 0 != $stats['unoptimized-library-size'] ) {
+			$stats['display-percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
+		} else {
+			$stats['display-percentage'] = 0;
+		}
 		return $stats;
 	}
 

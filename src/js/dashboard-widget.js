@@ -52,7 +52,7 @@
 
   function renderWidget(data, container) {
     var stats = jQuery.parseJSON(data);
-    var savings = savingsPercentage(stats);
+    var savings = stats['display-percentage'];
     var libraryOptimized = optimizedPercentage(stats);
     renderContent(libraryOptimized, stats, savings);
     renderChart(savings);
@@ -93,14 +93,6 @@
   function optimizedPercentage(stats) {
     if ( 0 != stats['unoptimized-library-size'] ) {
       return Math.round((stats['optimized-image-sizes'] / (stats['optimized-image-sizes'] + stats['available-unoptimised-sizes']) * 100), 0);
-    } else {
-      return 0
-    }
-  }
-
-  function savingsPercentage(stats) {
-    if ( 0 != stats['unoptimized-library-size'] ) {
-      return 100 - Math.round((stats['optimized-library-size'] / stats['unoptimized-library-size'] * 1000))/ 10;
     } else {
       return 0
     }
