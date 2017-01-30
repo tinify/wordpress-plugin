@@ -84,7 +84,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function has_medium_large_size() {
-		return wordpress_version() > 44;
+		return wordpress_version() >= 44;
 	}
 
 	protected function postbox_dimension_selector() {
