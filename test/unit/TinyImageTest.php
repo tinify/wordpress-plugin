@@ -117,6 +117,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 				'optimized-library-size' => 328670,
 				'unoptimized-library-size' => 328670,
 				'available-for-optimization' => array( array( 'ID' => 1, 'post_title' => 'I am the one and only' ) ),
+				'display-percentage' => 0.0
 			),
 			Tiny_Image::get_optimization_statistics( new Tiny_Settings(), $wpdb_results )
 		);

@@ -98,7 +98,7 @@ ksort( $size_exists );
 					} elseif ( Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(WP Retina 2x)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->resized() ) {
-						printf( '<em>' . esc_html__( '(resized to %1$dx%1$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
+						printf( '<em>' . esc_html__( '(resized to %1$dx%2$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
 					}
 					echo '</td>';
 

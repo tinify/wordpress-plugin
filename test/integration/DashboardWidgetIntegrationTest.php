@@ -28,8 +28,9 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_widget_without_optimized_images() {
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
+		$this->visit( '/wp-admin/index.php' );
 		$element = $this->find(
-			'#tinypng_dashboard_widget #widget-not-optimized p'
+			'#widget-not-optimized p'
 		);
 
 		$this->assertEquals(
@@ -49,7 +50,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		);
 
 		$this->assertEquals(
-			'Hi Admin, you are doing good. With your current settings you can still optimize 4 image sizes from your 2 uploaded JPEG and PNG images. Start the bulk optimization to optimize the remainder of your library.',
+			'Admin, you are doing good. With your current settings you can still optimize 5 image sizes from your 2 uploaded JPEG and PNG images. Start the bulk optimization to optimize the remainder of your library.',
 			$element->getText()
 		);
 	}
@@ -64,7 +65,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		);
 
 		$this->assertEquals(
-			'Hi Admin, great job! Your entire library is optimized!',
+			'Admin, this is great! Your entire library is optimized!',
 			$element->getText()
 		);
 	}

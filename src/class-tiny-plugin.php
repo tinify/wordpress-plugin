@@ -454,6 +454,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
 			array(), self::version()
 		);
+
 		wp_register_script( self::NAME .'_dashboard_widget',
 			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
 			array(), self::version(), true
