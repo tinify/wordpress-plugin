@@ -79,9 +79,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 				} else {
 					$details .= ' without curl';
 				}
-				$message = esc_html__(
-					'You are using an outdated platform (' . $details .
-					') – some features are disabled', 'tiny-compress-images'
+				$message = printf(
+					esc_html__(
+						'You are using an outdated platform (%s) – some features are disabled',
+						'tiny-compress-images'
+					), $details
 				);
 				$this->notices->show( 'deprecated', $message, 'notice-warning', false );
 			}
@@ -423,8 +425,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 				Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_sizes_count
 			);
 			printf( wp_kses( __(
-				'With these settings you can compress ' .
-					'<strong> at least %s images </strong> for free each month.',
+				'With these settings you can compress
+				<strong> at least %s images </strong> for free each month.',
 				'tiny-compress-images'
 			), array( 'strong' => array() ) ), $free_images_per_month );
 

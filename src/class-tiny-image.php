@@ -416,7 +416,7 @@ class Tiny_Image {
 				GROUP BY unique_attachment_name
 				ORDER BY ID DESC";
 
-			$result = $wpdb->get_results( $query, ARRAY_A );
+			$result = $wpdb->get_results( $query, ARRAY_A ); // WPCS: unprepared SQL OK.
 		}
 
 		$stats = array();
@@ -454,7 +454,10 @@ class Tiny_Image {
 		}
 
 		if ( 0 != $stats['unoptimized-library-size'] ) {
-			$stats['display-percentage'] = round( 100 - ( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1 );
+			$stats['display-percentage'] = round(
+				100 -
+				( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1
+			);
 		} else {
 			$stats['display-percentage'] = 0;
 		}
