@@ -48,11 +48,17 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		$element = $this->find(
 			'#tinypng_dashboard_widget #widget-half-optimized p'
 		);
-
-		$this->assertEquals(
-			'Admin, you are doing good. With your current settings you can still optimize 5 image sizes from your 2 uploaded JPEG and PNG images. Start the bulk optimization to optimize the remainder of your library.',
-			$element->getText()
-		);
+		if ( $this->has_medium_large_size() ) {
+			$this->assertEquals(
+				'Admin, you are doing good. With your current settings you can still optimize 5 image sizes from your 2 uploaded JPEG and PNG images. Start the bulk optimization to optimize the remainder of your library.',
+				$element->getText()
+			);
+		} else {
+			$this->assertEquals(
+				'Admin, you are doing good. With your current settings you can still optimize 4 image sizes from your 2 uploaded JPEG and PNG images. Start the bulk optimization to optimize the remainder of your library.',
+				$element->getText()
+			);
+		}
 	}
 
 	public function test_should_show_widget_with_all_images_optimized() {
