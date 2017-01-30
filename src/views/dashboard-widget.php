@@ -1,14 +1,10 @@
-<?php $link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" .  esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>'; ?>
-<style type="text/css" >
-	.media-library-optimized,
-	#optimization-chart  {
-		display: none;
-	}
-	.ie8 #optimization-chart  {
-		display: none !important;
-	}
-</style>
+<?php $link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" . esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>'; ?>
 
+<style type="text/css" >
+	div.media-library-optimized { display: none; }
+	div#optimization-chart { display: none; }
+	.ie8 #optimization-chart { display: none !important; }
+</style>
 <div id="widget-spinner" class=""></div>
 <div class="sky-background"></div>
 <div class="cloud"></div>
@@ -30,7 +26,7 @@
 <div class="media-library-optimized" id="widget-half-optimized">
 	<p>
 		<?php printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() ) ?>
-		<?php printf( esc_html__( 'With your current settings you can still optimize %s image sizes from your %s uploaded JPEG and PNG images.', 'tiny-compress-images' ), '<span id="unoptimised-sizes"></span>', '<span id="uploaded-images"></span>' ) ?>
+		<?php printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG and PNG images.', 'tiny-compress-images' ), '<span id="unoptimised-sizes"></span>', '<span id="uploaded-images"></span>' ) ?>
 		<?php printf( wp_kses( __( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), array( 'a' => array( 'href' => array() ) ) ), $link )?>
 	</p>
 </div>

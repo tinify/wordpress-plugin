@@ -1,17 +1,7 @@
-#optimization-chart {
-	margin: 12px 0 40px;
-	min-width: 180px;
-}
-
-#optimization-chart .value .percentage,
-#optimization-chart .value .label {
-	color: #40444F;
-}
-
 div.tiny_dashboard_widget .inside {
 	margin: 0;
 	min-height: 200px;
-	padding-bottom: 0px;
+	padding-bottom: 0;
 	overflow: hidden;
 }
 
@@ -36,8 +26,8 @@ div.tiny_dashboard_widget .inside .sky-background {
 	height: 100%;
 	width: 100%;
 	opacity: 0.33;
-  background: linear-gradient(180deg, #C6DDE4 0%, #FEFEFF 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33C6DDE4', endColorstr='#33FEFEFF',GradientType=0 ); /* IE6-9 */
+	background: linear-gradient(180deg, #c6dde4 0%, #fefeff 100%);
+	/* ie6-9 */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33C6DDE4', endColorstr='#33FEFEFF',GradientType=0 );
 }
 
 div.tiny_dashboard_widget .inside .cloud,
@@ -127,9 +117,9 @@ div.tiny_dashboard_widget.full-optimized .inside.mobile div#optimization-chart {
 }
 
 div.tiny_dashboard_widget .inside .media-library-optimized {
-  display: none;
+	display: none;
 	position: relative;
-  z-index: 1;
+	z-index: 1;
 }
 
 div.tiny_dashboard_widget.full-optimized .inside #widget-full-optimized,
@@ -139,8 +129,9 @@ div.tiny_dashboard_widget.half-optimized .inside #widget-half-optimized {
 	display: block;
 }
 
-div.tiny_dashboard_widget .widget-percentage, div.tiny_dashboard_widget .widget-label {
-	color: #40444F;
+div.tiny_dashboard_widget .widget-percentage,
+div.tiny_dashboard_widget .widget-label {
+	color: #40444f;
 }
 
 div.tiny_dashboard_widget .widget-label {
@@ -153,12 +144,22 @@ div.tiny_dashboard_widget .widget-percentage {
 }
 
 div.tiny_dashboard_widget .media-library-optimized {
-	padding:10px 20px;
+	padding: 10px 20px;
 	padding-bottom: 0px;
 }
 
 div.tiny_dashboard_widget .media-library-optimized p {
 	margin-bottom: 0;
+}
+
+div.tiny_dashboard_widget div#optimization-chart {
+	margin: 12px 0 40px;
+	min-width: 160px;
+}
+
+div.tiny_dashboard_widget div#optimization-chart div.value div.percentage,
+div.tiny_dashboard_widget div#optimization-chart div.value div.label {
+	color: #40444f;
 }
 
 .ie8 div.tiny_dashboard_widget .inside .panda-background {
@@ -176,7 +177,7 @@ div.tiny_dashboard_widget .media-library-optimized p {
 }
 
 .ie8 div.tiny_dashboard_widget .inside .grass {
-	background:  url('../images/grass-ie8.png');
+	background-image: url("../images/grass-ie8.png");
 	background-repeat: no-repeat !important;
 	background-position: bottom !important;
 	width: 100%;
