@@ -21,7 +21,7 @@ div#optimization-chart {
 <div class="panda-background"></div>
 <div class="grass"></div>
 <div class="media-library-optimized" id="no-images-uploaded">
-	<p><?php esc_html_e( 'You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' ) ?></p>
+	<p><?php esc_html_e( 'You do not seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' ) ?></p>
 </div>
 <div class="media-library-optimized" id="widget-not-optimized">
 	<p>

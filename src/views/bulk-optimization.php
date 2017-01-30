@@ -49,7 +49,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimised-sizes'] ) {
 							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
 							echo ' ';
-							esc_html_e( 'You don\'t seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' );
+							esc_html_e( 'You do not seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
