@@ -470,6 +470,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	function add_widget_view() {
+		$admin_colors = self::retrieve_admin_colors();
 		include( dirname( __FILE__ ) . '/views/dashboard-widget.php' );
 	}
 

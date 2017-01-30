@@ -1,10 +1,20 @@
 <?php $link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" . esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>'; ?>
 
 <style type="text/css" >
-	div.media-library-optimized { display: none; }
-	div#optimization-chart { display: none; }
-	.ie8 #optimization-chart { display: none !important; }
+div.media-library-optimized {
+	display: none;
+}
+div#optimization-chart {
+	display: none;
+}
+.ie8 div#optimization-chart {
+	display: none !important;
+}
+#optimization-chart svg circle.main {
+	stroke: <?php echo $admin_colors[2] ?>;
+}
 </style>
+
 <div id="widget-spinner" class=""></div>
 <div class="sky-background"></div>
 <div class="cloud"></div>

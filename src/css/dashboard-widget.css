@@ -157,11 +157,6 @@ div.tiny_dashboard_widget div#optimization-chart {
 	min-width: 160px;
 }
 
-div.tiny_dashboard_widget div#optimization-chart div.value div.percentage,
-div.tiny_dashboard_widget div#optimization-chart div.value div.label {
-	color: #40444f;
-}
-
 .ie8 div.tiny_dashboard_widget .inside .panda-background {
 	background: none;
 }
