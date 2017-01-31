@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: optimize, compress, shrink, resize, faster, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, performance, panda, wordpress app
 Requires at least: 3.0.6
 Tested up to: 4.7
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,7 @@ Make your website faster by optimizing your JPEG and PNG images. This plugin aut
 * Color profiles are automatically translated to the standard RGB color space.
 * Convert CMYK to RGB to save more space and maximize compatibility.
 * Optimize and resize uploads with the WordPress mobile app.
+* Dashboard widget with your total savings.
 * No file size limits.
 
 = How does it work? =
@@ -109,6 +110,9 @@ A: Everything will keep on working, but newly uploaded images will not be optimi
 A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and click on the start button to optimize all unoptimized images in your media library.
 
 == Changelog ==
+= 2.2.1 =
+* Fixed an error that was introduced in v2.2.0 where all custom image sizes did not show up.
+* Added support for image sizes with unspecified height or width.
 
 = 2.2.0 =
 * New dashboard widget that shows your media library savings.
