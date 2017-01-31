@@ -220,8 +220,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$height = get_option( $size . '_size_h' );
 
 		/* Note: dimensions might be 0 to indicate no limit. */
-		if ( isset( $width ) && isset( $height ) ) {
-			return array( $width, $height );
+		if ( $width || $height ) {
+		  return array( $width, $height );
 		}
 
 		if ( isset( $_wp_additional_image_sizes[ $size ] ) ) {
