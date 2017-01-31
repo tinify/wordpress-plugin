@@ -85,7 +85,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
     $this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
     $this->wp->addOption( 'tinypng_sizes[zero-width]', 'off' );
     $this->wp->addOption( 'tinypng_sizes[zero-height]', 'off' );
-    $this->wp->addOption( 'tinypng_sizes[zero-width-height]', 'on' );
+    $this->wp->addOption( 'tinypng_sizes[zero-width-height]', 'off' );
 
     $this->wp->addImageSize( 'zero-width', array( 'width' => 0, 'height' => 510 ) );
     $this->wp->addImageSize( 'zero-height', array( 'width' => 825, 'height' => 0 ) );
