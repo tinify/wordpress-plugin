@@ -83,7 +83,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
     $this->wp->addOption( 'tinypng_sizes[0]', 'on' );
     $this->wp->addOption( 'tinypng_sizes[medium]', 'on' );
     $this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
-    $this->wp->addOption( 'tinypng_sizes[zero-width]', 'on' );
+    $this->wp->addOption( 'tinypng_sizes[zero-width]', 'off' );
     $this->wp->addOption( 'tinypng_sizes[zero-height]', 'off' );
     $this->wp->addOption( 'tinypng_sizes[zero-width-height]', 'on' );
 
@@ -98,7 +98,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
       'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => true ),
       'medium_large' => array( 'width' => 768, 'height' => 0, 'tinify' => false ),
       'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => false ),
-      'zero-width' => array( 'width' => 0, 'height' => 510, 'tinify' => true ),
+      'zero-width' => array( 'width' => 0, 'height' => 510, 'tinify' => false ),
       'zero-height' => array( 'width' => 825, 'height' => 0, 'tinify' => false )
     ), $this->subject->get_sizes());
   }
