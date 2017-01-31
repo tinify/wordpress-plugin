@@ -425,7 +425,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				Tiny_Config::MONTHLY_FREE_COMPRESSIONS / $active_sizes_count
 			);
 			printf( wp_kses( __(
-				'With these settings you can compress <strong>at least %s images</strong> for free each month.',
+				'With these settings you can compress '
+				. '<strong>at least %s images</strong>'
+				. ' for free each month.',
 				'tiny-compress-images'
 			), array( 'strong' => array() ) ), $free_images_per_month );
 
