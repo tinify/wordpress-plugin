@@ -140,15 +140,10 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									<div class="tooltip">
 										<span class="dashicons dashicons-info"></span>
 										<div class="tip">
-											<p>
-												<?php esc_html_e( 'If you wish to compress more than ', 'tiny-compress-images' ) ?>
-												<strong>
-													<?php echo Tiny_Config::MONTHLY_FREE_COMPRESSIONS ?>
-													<?php esc_html_e( 'image sizes', 'tiny-compress-images' ) ?>
-												</strong>
-												<?php esc_html_e( 'a month and you are still on a free account', 'tiny-compress-images' ) ?>
-												<a href="https://tinypng.com/developers"><?php esc_html_e( 'upgrade here.', 'tiny-compress-images' ) ?></a>
-											</p>
+											<p><?php
+											printf( wp_kses( __( 'If you wish to compress more than <strong>%d %s</strong> a month and you are still on a free account %s.', 'tiny-compress-images' ),
+											array( 'strong' => array(), 'a' => array( 'href' => array() ) ) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/developers">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
+											?></p>
 										</div>
 									</div>
 								<?php } ?>
