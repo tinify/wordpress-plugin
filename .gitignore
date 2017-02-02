@@ -2,6 +2,7 @@
 *.bak
 /vendor
 .DS_Store
+composer.phar
 /tmp/*
 !/tmp/.gitkeep
 /src/languages/
