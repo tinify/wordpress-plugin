@@ -79,7 +79,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				} else {
 					$details .= ' without curl';
 				}
-				$message = printf(
+				$message = sprintf(
 					esc_html__(
 						'You are using an outdated platform (%s) – some features are disabled',
 						'tiny-compress-images'
