@@ -80,28 +80,28 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 	}
 
 	public function test_should_not_retrieve_sizes_with_zero_width_and_height_values() {
-    $this->wp->addOption( 'tinypng_sizes[0]', 'on' );
-    $this->wp->addOption( 'tinypng_sizes[medium]', 'on' );
-    $this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
-    $this->wp->addOption( 'tinypng_sizes[zero-width]', 'off' );
-    $this->wp->addOption( 'tinypng_sizes[zero-height]', 'off' );
-    $this->wp->addOption( 'tinypng_sizes[zero-width-height]', 'off' );
+		$this->wp->addOption( 'tinypng_sizes[0]', 'on' );
+		$this->wp->addOption( 'tinypng_sizes[medium]', 'on' );
+		$this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
+		$this->wp->addOption( 'tinypng_sizes[zero-width]', 'off' );
+		$this->wp->addOption( 'tinypng_sizes[zero-height]', 'off' );
+		$this->wp->addOption( 'tinypng_sizes[zero-width-height]', 'off' );
 
-    $this->wp->addImageSize( 'zero-width', array( 'width' => 0, 'height' => 510 ) );
-    $this->wp->addImageSize( 'zero-height', array( 'width' => 825, 'height' => 0 ) );
-    $this->wp->addImageSize( 'zero-width-height', array( 'width' => 0, 'height' => 0 ) );
+		$this->wp->addImageSize( 'zero-width', array( 'width' => 0, 'height' => 510 ) );
+		$this->wp->addImageSize( 'zero-height', array( 'width' => 825, 'height' => 0 ) );
+		$this->wp->addImageSize( 'zero-width-height', array( 'width' => 0, 'height' => 0 ) );
 
-    $this->subject->get_sizes();
-    $this->assertEquals(array(
-      0 => array( 'width' => null, 'height' => null, 'tinify' => true ),
-      'thumbnail' => array( 'width' => 150, 'height' => 150, 'tinify' => false ),
-      'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => true ),
-      'medium_large' => array( 'width' => 768, 'height' => 0, 'tinify' => false ),
-      'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => false ),
-      'zero-width' => array( 'width' => 0, 'height' => 510, 'tinify' => false ),
-      'zero-height' => array( 'width' => 825, 'height' => 0, 'tinify' => false )
-    ), $this->subject->get_sizes());
-  }
+		$this->subject->get_sizes();
+		$this->assertEquals(array(
+			0 => array( 'width' => null, 'height' => null, 'tinify' => true ),
+			'thumbnail' => array( 'width' => 150, 'height' => 150, 'tinify' => false ),
+			'medium' => array( 'width' => 300, 'height' => 300, 'tinify' => true ),
+			'medium_large' => array( 'width' => 768, 'height' => 0, 'tinify' => false ),
+			'large' => array( 'width' => 1024, 'height' => 1024, 'tinify' => false ),
+			'zero-width' => array( 'width' => 0, 'height' => 510, 'tinify' => false ),
+			'zero-height' => array( 'width' => 825, 'height' => 0, 'tinify' => false )
+		), $this->subject->get_sizes());
+	}
 
 	public function test_should_skip_dummy_size() {
 		$this->wp->addOption( 'tinypng_sizes[tiny_dummy]', 'on' );
