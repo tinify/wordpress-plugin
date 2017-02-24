@@ -1352,12 +1352,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinify/tinify-php.git",
-                "reference": "fe7e745121eefe4d281e588cf6f2ed933d00dbac"
+                "reference": "45e79fee561f6264dfa10f423a121a1a5293089a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/fe7e745121eefe4d281e588cf6f2ed933d00dbac",
-                "reference": "fe7e745121eefe4d281e588cf6f2ed933d00dbac",
+                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/45e79fee561f6264dfa10f423a121a1a5293089a",
+                "reference": "45e79fee561f6264dfa10f423a121a1a5293089a",
                 "shasum": ""
             },
             "require": {
@@ -1404,7 +1404,7 @@
                 "source": "https://github.com/tinify/tinify-php/tree/create-key",
                 "issues": "https://github.com/tinify/tinify-php/issues"
             },
-            "time": "2017-01-19 10:34:17"
+            "time": "2017-02-24 09:07:29"
         },
         {
             "name": "wp-coding-standards/wpcs",
