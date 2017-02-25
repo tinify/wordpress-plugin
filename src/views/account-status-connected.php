@@ -61,11 +61,11 @@
 	<div class="update" style="display: none">
 		<h4><?php echo esc_html__( 'Change your API key', 'tiny-compress-images' ); ?></h4>
 		<p class="introduction"><?php
-			$link = sprintf( '<a href="https://tinypng.com/developers" target="_blank">%s</a>',
-				esc_html__( 'TinyPNG developer section', 'tiny-compress-images' )
+			$link = sprintf( '<a href="https://tinypng.com/dashboard/developers" target="_blank">%s</a>',
+				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			printf( esc_html__(
-				'Enter your API key. If you have lost your key, go to the %s to retrieve it.',
+				'Enter your API key. If you have lost your key, go to your %s to retrieve it.',
 				'tiny-compress-images'
 			), $link );
 		?></p>

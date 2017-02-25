@@ -36,11 +36,11 @@ $email = trim( $user->user_email );
 		?></h4>
 
 		<p class="introduction"><?php
-			$link = sprintf( '<a href="https://tinypng.com/developers" target="_blank">%s</a>',
-				esc_html__( 'TinyPNG developer section', 'tiny-compress-images' )
+			$link = sprintf( '<a href="https://tinypng.com/dashboard/developers" target="_blank">%s</a>',
+				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			printf( esc_html__(
-				'Enter your API key. Go to the %s to retrieve it.',
+				'Enter your API key. Go to your %s to retrieve it.',
 				'tiny-compress-images'
 			), $link );
 		?></p>
