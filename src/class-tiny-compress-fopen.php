@@ -24,7 +24,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	private $api_key;
 
 	protected static function identifier() {
-		parent::identifier() . ' fopen';
+		return parent::identifier() . ' fopen';
 	}
 
 	protected function __construct( $api_key, $after_compress_callback ) {
