@@ -225,7 +225,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 
 		if ( $resize_opts || $preserve_opts ) {
-			$headers = array( 'Content-Type' => 'application/json' );
+			$headers = array( 'Content-Type: application/json' );
 			return $this->request_options( 'GET', json_encode( $body ), $headers );
 		} else {
 			return $this->request_options( 'GET' );
