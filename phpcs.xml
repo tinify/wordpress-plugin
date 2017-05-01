@@ -10,6 +10,9 @@
     </properties>
     <exclude-pattern>src/views</exclude-pattern>
   </rule>
+  <rule ref="WordPress.WP.I18n.UnorderedPlaceholders">
+    <severity>0</severity>
+  </rule>
 
   <file>tiny-compress-images.php</file>
   <file>src</file>
