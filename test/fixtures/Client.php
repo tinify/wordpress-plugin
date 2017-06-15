@@ -90,12 +90,15 @@ class Client {
 				throw Exception::create( $body->message, $body->error, $status );
 			}
 
-			return (object) array( 'body' => $body, 'headers' => $headers );
+			return (object) array(
+				'body' => $body,
+				'headers' => $headers,
+			);
 		} else {
 			$message = sprintf( '%s (#%d)', curl_error( $request ), curl_errno( $request ) );
 			curl_close( $request );
 			throw new ConnectionException( 'Error while connecting: ' . $message );
-		}
+		}// End if().
 	}
 
 	protected static function parseHeaders( $headers ) {

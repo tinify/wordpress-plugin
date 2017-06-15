@@ -1,7 +1,8 @@
 <?php
 
 $available_sizes = array_keys( $this->settings->get_sizes() );
-$active_sizes = $this->settings->get_sizes();;
+$active_sizes = $this->settings->get_sizes();
+;
 $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed' ) );
@@ -31,7 +32,9 @@ ksort( $size_exists );
 		<span class="icon spinner hidden"></span>
 		<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimized_sizes) ) { ?>
 			<span class="message">
-				<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array( 'strong' => array() ) ), $total['has_been_compressed'] ) ?>
+				<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array(
+					'strong' => array(),
+				) ), $total['has_been_compressed'] ) ?>
 			</span>
 			<br/>
 		<?php } ?>
@@ -128,7 +131,7 @@ ksort( $size_exists );
 					?>
 				</tr><?php
 				$i++;
-			}
+			}// End foreach().
 			if ( $image_statistics['image_sizes_optimized'] > 0 ) { ?>
 				<tfoot>
 					<tr>
@@ -145,7 +148,7 @@ ksort( $size_exists );
 			<strong>
 				<?php
 				if ( $size_before - $size_after ) {
-					printf( esc_html__( 'Total savings %.0f%% (%s)', 'tiny-compress-images' ),
+					printf( esc_html__( 'Total savings %1$.0f%% (%2$s)', 'tiny-compress-images' ),
 						( 1 - $size_after / floatval( $size_before ) ) * 100,
 						size_format( $size_before - $size_after, 1 )
 					);

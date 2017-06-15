@@ -70,7 +70,7 @@ abstract class Tiny_Compress {
 
 		try {
 			$result = $this->validate();
-		} catch (Tiny_Exception $err) {
+		} catch ( Tiny_Exception $err ) {
 			if ( $err->get_status() == 401 ) {
 				$message = 'The key that you have entered is not valid';
 			} else {
@@ -109,7 +109,7 @@ abstract class Tiny_Compress {
 				$resize_opts,
 				$preserve_opts
 			);
-		} catch (Tiny_Exception $err) {
+		} catch ( Tiny_Exception $err ) {
 			$this->call_after_compress_callback();
 			throw $err;
 		}

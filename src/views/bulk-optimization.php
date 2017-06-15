@@ -78,7 +78,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						<tr>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uploaded <br> images', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
+									<?php echo wp_kses( __( 'Uploaded <br> images', 'tiny-compress-images' ), array(
+										'br' => array(),
+									) ) ?>
 								</h3>
 								<span id="uploaded-images">
 									<?php echo $stats['uploaded-images']; ?>
@@ -86,7 +88,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
+									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array(
+										'br' => array(),
+									) ) ?>
 								</h3>
 								<span id="optimizable-image-sizes">
 									<?php echo $stats['available-unoptimised-sizes'] ?>
@@ -123,16 +127,24 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										</p>
 										<p>
 										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
-											<?php printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array( 'strong' => array() ) ), count( $active_tinify_sizes ) ) ?>
+											<?php printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
+												'strong' => array(),
+											) ), count( $active_tinify_sizes ) ) ?>
 										<?php } ?>
-										<?php printf( wp_kses( __( 'You can change these settings %s.', 'tiny-compress-images' ), array( 'a' => array( 'href' => array() ) ) ), '<a href=' . admin_url( 'options-media.php#tiny-compress-images' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
+										<?php printf( wp_kses( __( 'You can change these settings %s.', 'tiny-compress-images' ), array(
+											'a' => array(
+											'href' => array(),
+											),
+										) ), '<a href=' . admin_url( 'options-media.php#tiny-compress-images' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
 										</p>
 									</div>
 								</div>
 							</td>
 							<td class="item costs">
 								<h3>
-									<?php echo wp_kses( __( 'Estimated <br> cost', 'tiny-compress-images' ), array( 'br' => array() ) ) ?>
+									<?php echo wp_kses( __( 'Estimated <br> cost', 'tiny-compress-images' ), array(
+										'br' => array(),
+									) ) ?>
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
 								<div class="cost-currency">USD</div>
@@ -141,8 +153,13 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<span class="dashicons dashicons-info"></span>
 										<div class="tip">
 											<p><?php
-											printf( wp_kses( __( 'If you wish to compress more than <strong>%d %s</strong> a month and you are still on a free account %s.', 'tiny-compress-images' ),
-											array( 'strong' => array(), 'a' => array( 'href' => array() ) ) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/developers">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
+											printf( wp_kses( __( 'If you wish to compress more than <strong>%1$d %2$s</strong> a month and you are still on a free account %3$s.', 'tiny-compress-images' ),
+												array(
+												'strong' => array(),
+												'a' => array(
+													'href' => array(),
+												),
+											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/developers">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
 											?></p>
 										</div>
 									</div>

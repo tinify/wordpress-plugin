@@ -89,7 +89,9 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 	}
 
 	public function stream_stat() {
-		return array( 'wrapper_data' => array( 'test' ) );
+		return array(
+			'wrapper_data' => array( 'test' ),
+		);
 	}
 
 	public function stream_tell() {

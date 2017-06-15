@@ -33,7 +33,10 @@ class MockTinifyClient extends Tinify\Client {
 				throw \Tinify\Exception::create( $body->message, $body->error, $status );
 			}
 
-			return (object) array( 'body' => $body, 'headers' => $headers );
+			return (object) array(
+				'body' => $body,
+				'headers' => $headers,
+			);
 		} else {
 			throw new Exception( 'No handler for ' . $key );
 		}

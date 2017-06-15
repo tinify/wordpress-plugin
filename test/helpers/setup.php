@@ -162,7 +162,7 @@ function login( $driver ) {
 					WebDriverBy::cssSelector( 'div.wrap h1, div.wrap h2' )
 				)
 			);
-	} catch (Exception $e) {
+	} catch ( Exception $e ) {
 		var_dump( $driver->getPageSource() );
 		print( $e );
 		throw new UnexpectedValueException( 'Login failed.' );

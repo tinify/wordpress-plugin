@@ -6,9 +6,18 @@ class Tiny_Image_Duplicate_Test extends Tiny_TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->wp->addImageSize( 'medium-2', array( 'width' => 300, 'height' => 300 ) );
-		$this->wp->addImageSize( 'custom-thumbnail', array( 'width' => 175, 'height' => 175 ) );
-		$this->wp->addImageSize( 'custom-thumbnail-2', array( 'width' => 175, 'height' => 175 ) );
+		$this->wp->addImageSize( 'medium-2', array(
+			'width' => 300,
+			'height' => 300,
+		) );
+		$this->wp->addImageSize( 'custom-thumbnail', array(
+			'width' => 175,
+			'height' => 175,
+		) );
+		$this->wp->addImageSize( 'custom-thumbnail-2', array(
+			'width' => 175,
+			'height' => 175,
+		) );
 
 		$this->wp->addOption( 'tinypng_sizes[medium-2]', 'on' );
 		$this->wp->addOption( 'tinypng_sizes[custom-thumbnail]', 'off' );

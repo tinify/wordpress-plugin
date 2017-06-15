@@ -24,7 +24,12 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 	public function test_update_wp_metadata_should_update_with_resized_original() {
 		$tiny_image = new Tiny_Image( new Tiny_Settings(), 150, $this->json( '_wp_attachment_metadata' ) );
-		$response = array( 'output' => array( 'width' => 200, 'height' => 100 ) );
+		$response = array(
+			'output' => array(
+				'width' => 200,
+				'height' => 100,
+			),
+		);
 		$tiny_image->get_image_size()->add_tiny_meta_start();
 		$tiny_image->get_image_size()->add_tiny_meta( $response );
 		$tiny_image->add_wp_metadata( Tiny_Image::ORIGINAL, $tiny_image->get_image_size() );
@@ -105,9 +110,24 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$wpdb_wp_metadata = serialize( $this->json( '_wp_attachment_metadata' ) );
 		$wpdb_tiny_metadata = serialize( $this->json( 'image_database_metadata' ) );
 		$wpdb_results = array(
-			array( 'ID' => 1, 'post_title' => 'I am the one and only', 'meta_value' => $wpdb_wp_metadata, 'tiny_meta_value' => $wpdb_wp_metadata ),
-			array( 'ID' => 3628, 'post_title' => 'Ferrari.jpeg', 'meta_value' => '', 'tiny_meta_value' => '' ),
-			array( 'ID' => 4350, 'post_title' => 'IMG 3092', 'meta_value' => '', 'tiny_meta_value' => '' ),
+			array(
+				'ID' => 1,
+				'post_title' => 'I am the one and only',
+				'meta_value' => $wpdb_wp_metadata,
+				'tiny_meta_value' => $wpdb_wp_metadata,
+			),
+			array(
+				'ID' => 3628,
+				'post_title' => 'Ferrari.jpeg',
+				'meta_value' => '',
+				'tiny_meta_value' => '',
+			),
+			array(
+				'ID' => 4350,
+				'post_title' => 'IMG 3092',
+				'meta_value' => '',
+				'tiny_meta_value' => '',
+			),
 		);
 		$this->assertEquals(
 			array(
@@ -116,8 +136,13 @@ class Tiny_Image_Test extends Tiny_TestCase {
 				'available-unoptimised-sizes' => 4,
 				'optimized-library-size' => 328670,
 				'unoptimized-library-size' => 328670,
-				'available-for-optimization' => array( array( 'ID' => 1, 'post_title' => 'I am the one and only' ) ),
-				'display-percentage' => 0.0
+				'available-for-optimization' => array(
+					array(
+						'ID' => 1,
+						'post_title' => 'I am the one and only',
+					),
+				),
+				'display-percentage' => 0.0,
 			),
 			Tiny_Image::get_optimization_statistics( new Tiny_Settings(), $wpdb_results )
 		);

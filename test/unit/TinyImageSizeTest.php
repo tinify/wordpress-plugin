@@ -41,20 +41,48 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 
 	public function test_add_tiny_meta_should_add_end_time() {
 		$this->large->add_tiny_meta_start();
-		$this->large->add_tiny_meta( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024 ) ) );
+		$this->large->add_tiny_meta( array(
+			'input' => array(
+				'size' => 1024,
+			),
+			'output' => array(
+				'size' => 1024,
+			),
+		) );
 		$this->assertEqualWithinDelta( time(), $this->large->meta['end'], 2 );
 	}
 
 	public function test_add_response_should_response() {
 		$this->large->add_tiny_meta_start();
-		$this->large->add_tiny_meta( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024 ) ) );
+		$this->large->add_tiny_meta( array(
+			'input' => array(
+				'size' => 1024,
+			),
+			'output' => array(
+				'size' => 1024,
+			),
+		) );
 		$actual = $this->large->meta;
 		unset( $actual['end'] );
-		$this->assertEquals( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024 ) ), $actual );
+		$this->assertEquals( array(
+			'input' => array(
+				'size' => 1024,
+			),
+			'output' => array(
+				'size' => 1024,
+			),
+		), $actual );
 	}
 
 	public function test_add_response_should_not_add_if_no_request_was_made() {
-		$this->large->add_tiny_meta( array( 'input' => array( 'size' => 1024 ), 'output' => array( 'size' => 1024 ) ) );
+		$this->large->add_tiny_meta( array(
+			'input' => array(
+				'size' => 1024,
+			),
+			'output' => array(
+				'size' => 1024,
+			),
+		) );
 		$this->assertEquals( array(), $this->large->meta );
 	}
 
@@ -62,7 +90,10 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 		$this->large->add_tiny_meta_start();
 		$this->large->add_tiny_meta_error( new Tiny_Exception( 'Image could not be found', 'Not found' ) );
 		unset( $this->large->meta['timestamp'] );
-		$this->assertEquals( array( 'error' => 'Not found', 'message' => 'Image could not be found' ),  $this->large->meta );
+		$this->assertEquals( array(
+			'error' => 'Not found',
+			'message' => 'Image could not be found',
+		),  $this->large->meta );
 	}
 
 	public function test_add_exception_should_add_timestamp() {
