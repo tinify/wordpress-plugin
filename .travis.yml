@@ -12,6 +12,10 @@ matrix:
     php: hhvm
   - dist: trusty
     php: 7.0
+    env: WORDPRESS_VERSION=48 INTEGRATION_TESTS=true
+    script: bin/integration-tests
+  - dist: trusty
+    php: 7.0
     env: WORDPRESS_VERSION=47 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
