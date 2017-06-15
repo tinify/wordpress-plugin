@@ -57,7 +57,7 @@
         if (status.ok) {
           var target = jQuery('#tiny-account-status')
           if (target.length) {
-            jQuery.get(ajaxurl + '?action=tiny_account_status', function(data) {
+            jQuery.get(ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_account_status', function(data) {
               jQuery(event.target).attr({disabled: false}).removeClass('loading')
               target.replaceWith(data)
             })
@@ -200,7 +200,7 @@
 
     var target = jQuery('#tiny-account-status[data-state=pending]')
     if (target.length) {
-      jQuery.get(ajaxurl + '?action=tiny_account_status', function(data) {
+      jQuery.get(ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_account_status', function(data) {
         target.replaceWith(data)
       })
     }
@@ -214,7 +214,7 @@
         totalSelectedSizes--;
       }
 
-      var image_count_url = ajaxurl + '?action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes
+      var image_count_url = ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes
       if (propOf('#tinypng_resize_original_enabled', 'checked') && propOf('#tinypng_sizes_0', 'checked')) {
         image_count_url += '&resize_original=true'
       }
