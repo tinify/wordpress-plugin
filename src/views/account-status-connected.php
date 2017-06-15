@@ -3,7 +3,7 @@
 		<p class="status"><?php
 		if ( $status->ok ) {
 			if ( isset( $status->message ) ) {
-				echo esc_html__( $status->message, 'tiny-compress-images' );
+				echo esc_html( $status->message, 'tiny-compress-images' );
 			} else {
 				echo esc_html__( 'Your account is connected', 'tiny-compress-images' );
 			}
@@ -35,7 +35,7 @@
 		} else {
 			if ( isset( $status->message ) ) {
 				echo esc_html__( 'Error', 'tiny-compress-images' ) . ': ';
-				echo esc_html__( $status->message, 'tiny-compress-images' );
+				echo esc_html( $status->message, 'tiny-compress-images' );
 			} else {
 				esc_html__(
 					'API status could not be checked, enable cURL for more information',

@@ -118,7 +118,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 													if ( '0' == $name ) {
 														echo '<li>- ' . esc_html__( 'Original image', 'tiny-compress-images' ) . '</li>';
 													} else {
-														echo '<li>- ' . esc_html__( ucfirst( $name ) ) . '</li>';
+														echo '<li>- ' . esc_html( ucfirst( $name ) ) . '</li>';
 													}
 												}
 												echo '</ul>';

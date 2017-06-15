@@ -9,7 +9,7 @@
  * License: GPLv2 or later
  */
 
-require dirname( __FILE__ ) . '/src/config/tiny-config.php';
+require dirname( __FILE__ ) . '/src/config/class-tiny-config.php';
 require dirname( __FILE__ ) . '/src/class-tiny-php.php';
 require dirname( __FILE__ ) . '/src/class-tiny-wp-base.php';
 require dirname( __FILE__ ) . '/src/class-tiny-exception.php';

@@ -29,14 +29,14 @@ function wait_for_service_port {
 }
 
 function prepare_test_config {
-  mv src/config/tiny-config.php src/config/tiny-config.php.bak
+  mv src/config/class-tiny-config.php src/config/class-tiny-config.php.bak
   mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
-  cp test/fixtures/tiny-config.php src/config/tiny-config.php
+  cp test/fixtures/class-tiny-config.php src/config/class-tiny-config.php
   cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
 }
 
 function restore_config {
-  mv src/config/tiny-config.php.bak src/config/tiny-config.php
+  mv src/config/class-tiny-config.php.bak src/config/class-tiny-config.php
   mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
 }
 

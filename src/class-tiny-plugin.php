@@ -296,7 +296,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				"You don't have permission to upload files.",
 				'tiny-compress-images'
 			);
-			echo json_encode( array( 'error' => $message ) );
+			echo json_encode( array(
+				'error' => $message,
+			) );
 			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
@@ -304,7 +306,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'Not a valid media file.',
 				'tiny-compress-images'
 			);
-			echo json_encode( array( 'error' => $message ) );
+			echo json_encode( array(
+				'error' => $message,
+			) );
 			exit();
 		}
 		$id = intval( $_POST['id'] );
@@ -314,7 +318,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'Could not find metadata of media file.',
 				'tiny-compress-images'
 			);
-			echo json_encode( array( 'error' => $message ) );
+			echo json_encode( array(
+				'error' => $message,
+			) );
 			exit;
 		}
 
@@ -517,9 +523,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT ID, post_title FROM $wpdb->posts
-						 WHERE post_type = 'attachment' $condition
-						 AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-						 ORDER BY ID DESC", ARRAY_A);
+			$wpdb->prepare(
+				"SELECT ID, post_title FROM $wpdb->posts
+							 WHERE post_type = 'attachment' %s
+							 AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
+							 ORDER BY ID DESC",
+			$condition),
+		ARRAY_A);
 	}
 }

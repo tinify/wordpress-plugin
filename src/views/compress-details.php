@@ -52,7 +52,7 @@ ksort( $size_exists );
 		<?php } ?>
 		<?php if ( $error ) { ?>
 			<span class="message error_message">
-				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html__( $error, 'tiny-compress-images' ) ?>
+				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error, 'tiny-compress-images' ) ?>
 			</span>
 			<br/>
 		<?php } ?>
@@ -90,7 +90,7 @@ ksort( $size_exists );
 				<tr class="<?php echo ( 0 == $i % 2 ) ? 'even' : 'odd' ?>">
 					<?php
 					echo '<td>';
-					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html__( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
+					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
 					echo ' ';
 					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
@@ -107,7 +107,7 @@ ksort( $size_exists );
 
 					if ( $size->is_duplicate() ) {
 						echo '<td>-</td>';
-						printf( '<td colspan=2><em>' . esc_html__( 'Same file as "%s"', 'tiny-compress-images' ) . '</em></td>', esc_html__( ucfirst( $size->duplicate_of_size() ) ) );
+						printf( '<td colspan=2><em>' . esc_html__( 'Same file as "%s"', 'tiny-compress-images' ) . '</em></td>', esc_html( ucfirst( $size->duplicate_of_size() ) ) );
 					} elseif ( $size->has_been_compressed() ) {
 						echo '<td>' . size_format( $size->meta['input']['size'], 1 ) . '</td>';
 						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';

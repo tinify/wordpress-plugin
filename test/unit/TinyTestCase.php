@@ -3,7 +3,7 @@
 require_once dirname( __FILE__ ) . '/../helpers/mock-http-stream-wrapper.php';
 require_once dirname( __FILE__ ) . '/../helpers/mock-tinify-client.php';
 require_once dirname( __FILE__ ) . '/../helpers/wordpress.php';
-require_once dirname( __FILE__ ) . '/../../src/config/tiny-config.php';
+require_once dirname( __FILE__ ) . '/../../src/config/class-tiny-config.php';
 require_once 'vendor/autoload.php';
 
 use org\bovigo\vfs\vfsStream;
