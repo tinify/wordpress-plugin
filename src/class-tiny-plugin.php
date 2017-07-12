@@ -522,7 +522,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$condition = "AND ID IN($ids)";
 
 		global $wpdb;
-		return $wpdb->get_results(
+		return $wpdb->get_results( // WPCS: unprepared SQL OK.
 			"SELECT ID, post_title FROM $wpdb->posts
 			WHERE post_type = 'attachment' $condition
 			AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
