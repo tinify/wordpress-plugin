@@ -552,7 +552,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			update_option( $field, $count );
 		}
 		if ( $compressor->limit_reached() ) {
-			$link = '<a href="https://tinypng.com/developers" target="_blank">' .
+			$link = '<a href="https://tinypng.com/dashboard/developers" target="_blank">' .
 				esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 
 			$this->notices->add('limit-reached',
@@ -588,7 +588,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} else {
 			$status = $this->compressor->get_status();
 			$status->pending = false;
-
 			if ( $status->ok ) {
 				if ( $this->get_api_key_pending() ) {
 					$this->clear_api_key_pending();
@@ -602,7 +601,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 					);
 				}
 			}
-
 			include( dirname( __FILE__ ) . '/views/account-status-connected.php' );
 		}
 	}

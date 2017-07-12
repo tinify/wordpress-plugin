@@ -10,7 +10,7 @@
 			echo ' ';
 
 			printf( esc_html__(
-				'If you have lost your key, go to the %s to retrieve it.',
+				'If needed you can go to the %s to retrieve it.',
 				'tiny-compress-images'
 			), $link );
 		?></p>
