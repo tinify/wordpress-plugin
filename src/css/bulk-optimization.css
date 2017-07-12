@@ -139,8 +139,6 @@ div.tiny-bulk-optimization div.savings div.legend {
 	margin-left: 50%;
 }
 
-
-
 div.tiny-bulk-optimization div.savings div.legend {
 	/* margin-left defined inline */
 	padding: 22px 0;
@@ -213,10 +211,6 @@ div.tiny-bulk-optimization div.optimize div.progressbar div.progress {
 	}
 }
 
-#tiny-bulk-optimization > div.dashboard > div.statistics td.item.costs > div.cost-currency {
-	display: inline-block;
-}
-
 div.tiny-bulk-optimization div.optimize div.progressbar div.numbers {
 	position: relative;
 	z-index: 3;
@@ -269,7 +263,6 @@ div.tiny-bulk-optimization table.whitebox {
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 	background-color: #fff;
 }
-
 
 @media only screen and (max-width: 799px) {
 	div.tiny-bulk-optimization table.whitebox {
@@ -329,4 +322,3 @@ div.tiny-bulk-optimization table.whitebox tr.failed button.toggle-row:before {
 div.tiny-bulk-optimization table.whitebox tr.failed.is-expanded span.icon {
 	display: none;
 }
-

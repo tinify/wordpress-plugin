@@ -147,7 +147,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									) ) ?>
 								</h3>
 								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ) ?></span>
-								<div class="cost-currency">USD</div>
+								USD
 								<?php if ( $estimated_costs > 0 ) { ?>
 									<div class="tooltip">
 										<span class="dashicons dashicons-info"></span>
