@@ -45,7 +45,7 @@
 }
 
 @media only screen and (max-width: 400px) {
-	#optimization-chart {
+	div.tiny-bulk-optimization #optimization-chart {
 		float: none;
 		width: 100%;
 	}

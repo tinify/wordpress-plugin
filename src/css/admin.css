@@ -55,7 +55,7 @@ div.tiny-account-status div.status-pending:before {
 div.tiny-account-status div.status-loading:before {
 	left: -2px;
 	top: 0;
-	background: url(../images/spinner.gif) no-repeat center;
+	background: url("../images/spinner.gif") no-repeat center;
 	background-size: 20px 20px;
 	content: "";
 }

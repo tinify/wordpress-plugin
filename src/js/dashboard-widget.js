@@ -72,12 +72,12 @@
        jQuery('#tinypng_dashboard_widget').addClass('not-optimized')
     } else if ( percentage == 100 ) {
       jQuery('#tinypng_dashboard_widget').addClass('full-optimized')
-      jQuery('#ie8-compressed').find('span').html(savingsPercentage)
     } else {
       jQuery("#uploaded-images").html( stats['uploaded-images'] )
       jQuery("#unoptimised-sizes").html( stats['available-unoptimised-sizes'] )
       jQuery('#tinypng_dashboard_widget').addClass('half-optimized')
     }
+    jQuery('#ie8-compressed').find('span').html(savingsPercentage)
   }
 
   function chartOptions(percentage) {
