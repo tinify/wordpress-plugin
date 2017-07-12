@@ -523,12 +523,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT ID, post_title FROM $wpdb->posts
-							 WHERE post_type = 'attachment' %s
-							 AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-							 ORDER BY ID DESC",
-			$condition),
-		ARRAY_A);
+			"SELECT ID, post_title FROM $wpdb->posts
+			WHERE post_type = 'attachment' $condition
+			AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
+			ORDER BY ID DESC", ARRAY_A);
 	}
 }
