@@ -16,7 +16,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_widget_without_images() {
 		$element = $this->find(
-			'div.no-images p'
+			'div.no-images-uploaded p'
 		);
 
 		$this->assertEquals(

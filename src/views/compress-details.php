@@ -2,7 +2,6 @@
 
 $available_sizes = array_keys( $this->settings->get_sizes() );
 $active_sizes = $this->settings->get_sizes();
-;
 $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed' ) );

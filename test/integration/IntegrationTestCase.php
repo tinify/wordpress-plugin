@@ -14,7 +14,9 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	public static function set_up_before_class() {
 		self::$driver = RemoteWebDriver::createBySessionId(
 			$GLOBALS['global_session_id'],
-			$GLOBALS['global_webdriver_host']
+			$GLOBALS['global_webdriver_host'],
+			60 * 1000, // Connection timeout in miliseconds
+			180 * 1000 // Request timeout in miliseconds
 		);
 
 		self::$db = new mysqli( getenv( 'HOST' ), 'root',
@@ -27,8 +29,16 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		self::$driver->get( wordpress( $path ) );
 	}
 
-	protected function refresh() {
-		self::$driver->navigate()->refresh();
+	protected function refresh( $depth = 0 ) {
+		try {
+			self::$driver->navigate()->refresh();
+		} catch (Exception $e) {
+			/* Retry this request up to 5 times since it occasionally fails in testing. */
+			if ($depth < 5) {
+				$depth++;
+				return $this->refresh( $depth );
+			}
+		}
 	}
 
 	protected function find( $selector, $base = null ) {
