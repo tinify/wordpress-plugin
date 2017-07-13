@@ -202,7 +202,12 @@ function reset_webservice() {
 // $global_webdriver_host = 'http://127.0.0.1:4444/wd/hub';
 // $global_driver = RemoteWebDriver::create($global_webdriver_host, DesiredCapabilities::firefox());
 $global_webdriver_host = 'http://127.0.0.1:8910';
-$global_driver = RemoteWebDriver::create( $global_webdriver_host, DesiredCapabilities::phantomjs() );
+$global_driver = RemoteWebDriver::create(
+	$global_webdriver_host,
+	DesiredCapabilities::phantomjs(),
+	60 * 1000, // Connection timeout in miliseconds
+	180 * 1000 // Request timeout in miliseconds
+);
 $global_session_id = $global_driver->getSessionID();
 $window = new WebDriverDimension( 1280, 1024 );
 $global_driver->manage()->window()->setSize( $window );
