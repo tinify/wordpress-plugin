@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: optimize, compress, shrink, resize, faster, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, performance, panda, wordpress app
 Requires at least: 3.0.6
 Tested up to: 4.8
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,9 +110,14 @@ A: Everything will keep on working, but newly uploaded images will not be optimi
 A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and click on the start button to optimize all unoptimized images in your media library.
 
 == Changelog ==
+= 2.2.4 =
+* Fixed bug with drop-down menu in the Media Library.
+* Compression limit notice now links directly to your API dashboard.
+* Tweaked styling of the dashboard widget.
+
 = 2.2.3 =
-* Website link now goes directly to your dashboard
-* Fixed compression issue for some fopen users.
+* Changed links to make it easier to go directly to your API dashboard.
+* Fixed a compression issue for some fopen users.
 
 = 2.2.2 =
 * Improved robustness in case an unexpected network error occurs.

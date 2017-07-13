@@ -16,7 +16,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_widget_without_images() {
 		$element = $this->find(
-			'#no-images-uploaded p'
+			'div.no-images p'
 		);
 
 		$this->assertEquals(
@@ -30,7 +30,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->visit( '/wp-admin/index.php' );
 		$element = $this->find(
-			'#widget-not-optimized p'
+			'#tinypng_dashboard_widget div.not-optimized p'
 		);
 
 		$this->assertEquals(
@@ -46,7 +46,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		$this->visit( '/wp-admin/index.php' );
 
 		$element = $this->find(
-			'#tinypng_dashboard_widget #widget-half-optimized p'
+			'#tinypng_dashboard_widget div.half-optimized p'
 		);
 
 		$this->assertContains(
@@ -61,7 +61,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		$this->visit( '/wp-admin/index.php' );
 
 		$element = $this->find(
-			'#tinypng_dashboard_widget #widget-full-optimized p'
+			'#tinypng_dashboard_widget div.full-optimized p'
 		);
 
 		$this->assertEquals(

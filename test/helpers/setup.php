@@ -102,8 +102,16 @@ function is_wordpress_setup() {
 	}
 }
 
-function setup_wordpress_language( $driver ) {
-	$driver->get( wordpress( '/wp-admin/install.php' ) );
+function setup_wordpress_language( $driver, $depth = 0 ) {
+	try {
+		$driver->get( wordpress( '/wp-admin/install.php' ) );
+	} catch (Exception $e) {
+		/* Retry this request up to 5 times since it occasionally fails in testing. */
+		if ($depth < 5) {
+			$depth++;
+			return setup_wordpress_Language( $driver, $depth );
+		}
+	}
 	$driver->findElement( WebDriverBy::tagName( 'form' ) )->submit();
 }
 
