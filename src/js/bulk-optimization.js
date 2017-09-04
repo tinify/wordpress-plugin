@@ -62,9 +62,11 @@
       row.addClass("failed")
       row.find(".status").html(tinyCompress.L10nInternalError + "<br>" + error.toString())
       row.find(".status").attr("title", error.toString())
+      data = {}
     } else if (data == null) {
       row.addClass("failed")
       row.find(".status").html(tinyCompress.L10nCancelled)
+      data = {}
     } else if (data.error) {
       row.addClass("failed")
       row.find(".status").html(tinyCompress.L10nError + "<br>" + data.error)
