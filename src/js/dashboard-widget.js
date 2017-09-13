@@ -14,7 +14,7 @@
       url: ajaxurl,
       type: 'POST',
       data: {
-        _nonce: tinyCompress.nonce,
+        _nonce: tinyCompressDashboard.nonce,
         action: 'tiny_get_optimization_statistics',
         id: '#tinypng_dashboard_widget'
       },

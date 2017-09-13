@@ -466,6 +466,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			array(), self::version(), true
 		);
 
+		/* This might be deduplicated with the admin script localization, but
+		   the order of including scripts is sometimes different. So in that
+		   case we need to make sure that the order of inclusion is correc.t */
+		wp_localize_script( self::NAME . '_dashboard_widget', 'tinyCompressDashboard', array(
+			'nonce' => wp_create_nonce( 'tiny-compress' ),
+		));
+
 		wp_enqueue_script( self::NAME . '_dashboard_widget' );
 
 		wp_add_dashboard_widget(
