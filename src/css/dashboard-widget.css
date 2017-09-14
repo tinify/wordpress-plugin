@@ -123,3 +123,7 @@ div.tiny_dashboard_widget.full-optimized div.inside.mobile div#optimization-char
 	position: relative;
 	z-index: 1;
 }
+
+#tinypng_dashboard_widget > button.handlediv {
+	margin-top: 0;
+}
