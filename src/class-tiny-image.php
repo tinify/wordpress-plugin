@@ -45,6 +45,12 @@ class Tiny_Image {
 		if ( ! is_array( $this->wp_metadata ) ) {
 			return;
 		}
+		if ( ! isset( $this->wp_metadata['file'] ) ) {
+			/* No file metadata found, this might be another plugin messing with
+			   metadata. Simply ignore this! */
+			return;
+		}
+
 		$path_info = pathinfo( $this->wp_metadata['file'] );
 		$this->name = $path_info['basename'];
 
