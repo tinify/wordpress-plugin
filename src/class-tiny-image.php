@@ -42,7 +42,7 @@ class Tiny_Image {
 		if ( ! is_array( $this->wp_metadata ) ) {
 			$this->wp_metadata = wp_get_attachment_metadata( $this->id );
 		}
-		if ( ! is_array( $this->wp_metadata ) ) {
+		if ( ! is_array( $this->wp_metadata ) || ! isset($this->wp_metadata['file'] ) ) {
 			return;
 		}
 		if ( ! isset( $this->wp_metadata['file'] ) ) {
@@ -74,6 +74,7 @@ class Tiny_Image {
 		$filenames = array();
 
 		if ( is_array( $this->wp_metadata )
+			&& isset( $this->wp_metadata['file'] ) 
 			&& isset( $this->wp_metadata['sizes'] )
 			&& is_array( $this->wp_metadata['sizes'] ) ) {
 
