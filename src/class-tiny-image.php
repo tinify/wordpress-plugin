@@ -74,6 +74,7 @@ class Tiny_Image {
 		$filenames = array();
 
 		if ( is_array( $this->wp_metadata )
+			&& isset( $this->wp_metadata['file'] )
 			&& isset( $this->wp_metadata['sizes'] )
 			&& is_array( $this->wp_metadata['sizes'] ) ) {
 
