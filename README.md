@@ -33,6 +33,9 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 1. Install Docker 1.12 and docker-compose.
 2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 45`.
 
+### Check if the code follows WordPress standard
+1. Run `bin/check-style <optional path to file>`.
+
 ### Translating the plugin
 Language packs will be generated for the plugin once translations for a
 language are 100% filled in and approved.
