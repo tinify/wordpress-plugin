@@ -48,7 +48,7 @@ You can optimize all your JPEG and PNG images at once by going to *Media > Bulk 
 
 = Multisite support =
 
-The API key can optionally be configured in wp-config.php. This removes the need to set a key on each site individually in your multisite network.
+The API key can optionally be configured in wp-config.php. This removes the need to set a key on each site individually in your multisite network. The installation instructions give more information how to configure this.
 
 = Contact us =
 
@@ -80,7 +80,11 @@ Want to contribute? Check out the [Tinify Wordpress plugin on GitHub](https://gi
 
 = Optional configuration =
 
-The API key can also be configured in wp-config.php. You can add a `TINY_API_KEY` constant with your API key. Once set up you will see a message on the media settings page. This will work for normal and multisite WordPress installations.
+The API key can also be configured in wp-config.php. To do this you may add the following PHP code to your wp-config.php file.
+
+define( 'TINY_API_KEY', 'YOUR_API_KEY_HERE' );
+
+Once set up you will see a message on the media settings page. This will work for normal and multisite WordPress installations.
 
 == Screenshots ==
 
