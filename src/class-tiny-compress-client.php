@@ -32,11 +32,13 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	private $last_error_code = 0;
 	private $last_message = '';
 	private $proxy;
+	private $proxy_url;
 
 	protected function __construct( $api_key, $after_compress_callback ) {
 		parent::__construct( $after_compress_callback );
 
 		$this->proxy = new WP_HTTP_Proxy();
+		$this->proxy_url = $this->set_proxy_url();
 
 		\Tinify\setAppIdentifier( self::identifier() );
 		\Tinify\setKey( $api_key );
@@ -60,10 +62,15 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	protected function validate() {
 		try {
-			$this->last_error_code = 0;
-			$this->set_request_options( \Tinify\Tinify::getClient() );
 
-			\Tinify\Tinify::getClient()->request( 'post', '/shrink' );
+			$tinify = new \Tinify\Tinify();
+			$tinify->setProxy( $this->proxy_url );
+			$client = $tinify->getClient();
+
+			$this->last_error_code = 0;
+			$this->set_request_options( $client );
+
+			$client->request( 'post', '/shrink' );
 			return true;
 
 		} catch ( \Tinify\Exception $err ) {
@@ -84,7 +91,12 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	protected function compress( $input, $resize_opts, $preserve_opts ) {
 		try {
 			$this->last_error_code = 0;
-			$this->set_request_options( \Tinify\Tinify::getClient() );
+
+			$tinify = new \Tinify\Tinify();
+			$tinify->setProxy( $this->proxy_url );
+			$client = $tinify->getClient();
+
+			$this->set_request_options( $client );
 
 			$source = \Tinify\fromBuffer( $input );
 
@@ -128,12 +140,17 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	public function create_key( $email, $options ) {
 		try {
-			$this->last_error_code = 0;
-			$this->set_request_options(
-				\Tinify\Tinify::getClient( \Tinify\Tinify::ANONYMOUS )
-			);
 
-			\Tinify\createKey( $email, $options );
+			$this->last_error_code = 0;
+
+			$tinify = new \Tinify\Tinify();
+			$tinify->setProxy( $this->proxy_url );
+			$client = $tinify->getClient( \Tinify\Tinify::ANONYMOUS );
+
+			$this->set_request_options( $client );
+
+
+			$tinify->createKey( $email, $options );
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
@@ -170,5 +187,32 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				$options[ CURLOPT_PROXYUSERPWD ] = $this->proxy->authentication();
 			}
 		}
+	}
+
+	private function set_proxy_url () {
+
+		$proxy_url = NULL;
+
+		if ( $this->proxy->is_enabled() && $this->proxy->send_through_proxy( $url ) ) {
+
+			$proxy_url = '//';
+
+			if ( $this->proxy->use_authentication() ) {
+				$proxy_url .= $this->proxy->authentication() . '@';
+			}
+
+			if ( substr( $this->proxy->host(), 0 , 2 ) == '//' )
+				$proxy_url .= substr( $this->proxy->host(), 2 );
+			else {
+				$proxy_url .= str_replace( array( 'http://', 'https://' ), '', $this->proxy->host() );
+			}
+
+			$proxy_url .= ':';
+
+			$proxy_url .= $this->proxy->port();
+
+		}
+
+		return $proxy_url;
 	}
 }
