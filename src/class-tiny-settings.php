@@ -496,8 +496,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			esc_html__(
 				'Preserve creation date and time in the original image',
 				'tiny-compress-images'
-			) . ' ' .
-			esc_html__( '(JPEG only)', 'tiny-compress-images' )
+			)
 		);
 
 		$this->render_preserve_input(
