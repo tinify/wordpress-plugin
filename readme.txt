@@ -40,7 +40,7 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 = Getting started =
 
-Install this plugin and obtain your free API key from https://tinypng.com/developers. With a free account you can optimize **roughly 100 images each month** (based on a regular WordPress installation). The exact total depends on the number of thumbnail sizes that are in use in your WordPress installation. You can change which of the generated thumbnail sizes should be optimized in the *Settings > Media* page. If you’re a heavy user you can optimize more images for a small additional fee.
+Install this plugin and follow the instructions to set up your account. With a regular WordPress installation you can optimize **roughly 100 images each month** for free. The exact total depends on the number of thumbnail sizes that are in use in your WordPress installation. You can change which of the generated thumbnail sizes should be optimized in the *Settings > Media* page. Once installed you can also switch to a [paid account](https://tinypng.com/dashboard/developers) to remove the limits and optimize as many images as you like.
 
 = Optimizing all your images =
 
@@ -48,7 +48,7 @@ You can optimize all your JPEG and PNG images at once by going to *Media > Bulk 
 
 = Multisite support =
 
-The API key can optionally be configured in wp-config.php. This removes the need to set a key on each site individually in your multisite network. The installation instructions give more information how to configure this.
+The plugin is fully multisite compatible and you can set the API key for all sites at once by defining it in the *wp-config.php* file. View the installation instructions for more information.
 
 = Contact us =
 
@@ -80,11 +80,11 @@ Want to contribute? Check out the [Tinify Wordpress plugin on GitHub](https://gi
 
 = Optional configuration =
 
-The API key can also be configured in wp-config.php. To do this you may add the following PHP code to your wp-config.php file.
+The API key can also be configured in your *wp-config.php* file. To do this you can add the following PHP code that sets the API key.
 
-define( 'TINY_API_KEY', 'YOUR_API_KEY_HERE' );
+`define( 'TINY_API_KEY', 'YOUR_API_KEY_HERE' );`
 
-Once set up you will see a message on the media settings page. This will work for normal and multisite WordPress installations.
+Once set up you will see a message on the *Settings > Media* page. This will work for normal and multisite WordPress installations.
 
 == Screenshots ==
 
@@ -98,6 +98,9 @@ Once set up you will see a message on the media settings page. This will work fo
 = Q: How many images can I optimize for free? =
 A: In a default WordPress installation you can optimize around 100 images for free each month. WordPress creates different thumbnails of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the *Settings > Media* page before you start optimization.
 
+= Q: How can I remove the 500 limit? =
+A: Just add your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/developers) to remove the limit. For a small fee the additional compressions above 500 will then be charged to your account at the end of each month.
+
 = Q: What happens to the optimized images when I uninstall the plugin? =
 A: When you remove the plugin all your optimized images will remain optimized.
 
@@ -107,11 +110,20 @@ A: When you upload an image to your website, WordPress will create different siz
 = Q: Is there a file size limit? =
 A: No. There are no limitations on the size of the images you want to compress.
 
+= Q: Can I use the same API key on all my websites? =
+A: Yes, there are no limitations. You can add the same key everywhere.
+
+= Q: Can I hide my API key from the admin? =
+A: Yes, you can hide your API key from the admin so other admin users will not be able to see it. To do this you should define the API key in your *wp-config.php* file. See the installation instructions for more information.
+
 = Q: What happens when I reach my monthly limit? =
-A: Everything will keep on working, but newly uploaded images will not be optimized. Of course we encourage everyone to sign up for a paid account to cover the hosting and development costs of the service.
+A: Everything will keep on working, but newly uploaded images will not be optimized. Of course we encourage everyone to [switch](https://tinypng.com/dashboard/developers) to a paid account to cover the hosting and development costs of the service.
 
 = Q: Can I optimize all existing images in my media library? =
 A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and click on the start button to optimize all unoptimized images in your media library.
+
+= Q: How do I switch to a paid account? =
+A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/developers). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
 = 2.2.6 =
