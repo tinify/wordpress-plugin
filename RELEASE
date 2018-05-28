@@ -1,13 +1,13 @@
-In order to release a new version of the plugin to wordpress.org, perform the following steps:
+Perform the following steps to release a new version of the plugin on wordpress.org:
 
 1. Update the version in tiny-compress-images.php and src/class-tiny-plugin.php
 2. Change the 'Stable tag' in readme.txt to the new release number.
 3. Add release notes to readme.txt.
 4. If you've changed the plugin to work with newer version of WordPress add that to the readme.txt as well.
 5. Commit and push to GitHub.
-6. Create a new release in GitHub and pull it in.
+6. Create a new tag in GitHub.
 7. Locally, checkout the new tag: `git checkout <tagged version>`.
-8. If not already done so, checkout the plugin's Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
+8. If not already done so, checkout the Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
 9. Run `svn update` when the Subversion repository already existed.
 10. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`. Make sure src/vendor/* is NOT ignored in SVN.
 11. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
@@ -16,3 +16,23 @@ In order to release a new version of the plugin to wordpress.org, perform the fo
 14. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
 15. Commit the trunk to Subversion: `svn ci -m "<message>"`.
 16. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
+17. Visit https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images and add the missing translations.
+
+Perform the following steps to make changes to the plugin page on wordpress.org:
+
+1. Make the desired changes in the readme.txt file.
+2. Commit and push to GitHub.
+3. Checkout the trunk of the Subversion repository.
+4. Add the updated readme.txt and Commit the changes to the trunk.
+5. Visit https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images and add any missing translations.
+6. Checkout the latest tag of the Subversion repository (e.g. 2.2.6).
+7. Add the updated readme.txt and Commit the changes again.
+8. See the changes (almost immediately) on https://wordpress.org/plugins/tiny-compress-images/ 
+
+Perform the following steps to change the "Tested up to wordpress version" on wordpress.org:
+
+1. Check if the plugin is compatible with the latest version of WordPress.
+2. Make the changes to readme.txt. Only the major version needs to be specified (e.g. "Tested up to: 4.9").
+3. Commit and push to GitHub.
+4. Checkout the latest tag of the Subversion repository (e.g. 2.2.6).
+5. Add the updated readme.txt and Commit the changes.
