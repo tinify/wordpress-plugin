@@ -57,7 +57,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		add_filter( 'wp_generate_attachment_metadata',
-			$this->get_method( 'compress_on_upload' ),
+			$this->get_method( 'process_attachment' ),
 			10, 2
 		);
 
@@ -96,6 +96,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'show_media_info' )
 		);
 
+		add_filter( 'wp_ajax_tiny_async_optimize_upload_new_media',
+			$this->get_method( 'compress_on_upload' )
+		);
+
 		add_action( 'wp_ajax_tiny_compress_image_from_library',
 			$this->get_method( 'compress_image_from_library' )
 		);
@@ -106,6 +110,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'wp_ajax_tiny_get_optimization_statistics',
 			$this->get_method( 'ajax_optimization_statistics' )
+		);
+
+		add_action( 'wp_ajax_tiny_get_compress_status',
+			$this->get_method( 'ajax_compress_status' )
 		);
 
 		$plugin = plugin_basename(
@@ -232,14 +240,55 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	}
 
-	public function compress_on_upload( $metadata, $attachment_id ) {
+	public function process_attachment( $metadata, $attachment_id ) {
+		if ( $this->settings->get_auto_compress_enabled() ) {
+			if ( $this->settings->get_background_compress_enabled() ) {
+				$this->async_compress_on_upload( $metadata, $attachment_id );
+			} else {
+				$this->blocking_compress_on_upload( $metadata, $attachment_id );
+			}
+		}
+		return $metadata;
+	}
+
+	public function blocking_compress_on_upload( $metadata, $attachment_id ) {
 		if ( ! empty( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 			$result = $tiny_image->compress( $this->settings );
 			return $tiny_image->get_wp_metadata();
-		} else {
-			return $metadata;
 		}
+	}
+
+	public function async_compress_on_upload( $metadata, $attachment_id ) {
+		$context     = 'wp';
+		$action      = 'tiny_async_optimize_upload_new_media';
+		$_ajax_nonce = wp_create_nonce( 'new_media-' . $attachment_id );
+		$body = compact( 'action', '_ajax_nonce', 'metadata', 'attachment_id', 'context' );
+
+		$args = array(
+			'timeout'   => 0.01,
+			'blocking'  => false,
+			'body'      => $body,
+			'cookies'   => isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array(),
+			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+		);
+
+		wp_remote_post( "http://localhost/wp-admin/admin-ajax.php", $args );
+	}
+
+	public function compress_on_upload() {
+		$attachment_id = intval( $_POST["attachment_id"] );
+		$metadata = $_POST['metadata'];
+		if ( is_array( $metadata ) ) {
+			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
+			$result = $tiny_image->compress( $this->settings );
+			// The wp_update_attachment_metadata call is thrown because the
+			// dimensions of the original image can change. This will then
+			// trigger other plugins and can result in unexpected behaviour and
+			// further changes to the image. This may require another approach.
+			wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
+		}
+		die( 1 );
 	}
 
 	public function compress_image_from_library() {

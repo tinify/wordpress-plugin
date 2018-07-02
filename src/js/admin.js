@@ -104,6 +104,12 @@
     return false
   }
 
+  function updateGeneralSettings() {
+    if (propOf('#tinypng_background_compress_enabled', 'checked')) {
+      setPropOf('#tinypng_auto_compress_enabled', 'checked', 'checked')
+    }
+  }
+
   function updateResizeSettings() {
     if (propOf('#tinypng_sizes_0', 'checked')) {
       jQuery('.tiny-resize-available').show()
@@ -131,6 +137,7 @@
   }
 
   function updateSettings() {
+    updateGeneralSettings()
     updateResizeSettings()
     updatePreserveSettings()
   }
@@ -222,6 +229,11 @@
         image_count_url += '&compress_wr2x=true'
       }
       jQuery('#tiny-image-sizes-notice').load(image_count_url)
+    })
+
+    eventOn('click', '#tinypng_background_compress_enabled', function() {
+      console.log('tinypng_background_compress_enabled')
+      updateSettings()
     })
 
     jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(updateSettings)

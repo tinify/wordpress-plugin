@@ -118,6 +118,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = self::get_prefixed_name( 'api_key_pending' );
 		register_setting( 'media', $field );
 
+		$field = self::get_prefixed_name( 'auto_compress' );
+		register_setting( 'media', $field );
+		add_settings_field( $field,
+			esc_html__( 'General settings', 'tiny-compress-images' ),
+			$this->get_method( 'render_general_settings' ),
+			'media',
+			$section
+		);
+
+		$field = self::get_prefixed_name( 'background_compress' );
+		register_setting( 'media', $field );
+
 		$field = self::get_prefixed_name( 'sizes' );
 		register_setting( 'media', $field );
 		add_settings_field( $field,
@@ -295,6 +307,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
 	}
 
+	public function get_auto_compress_enabled() {
+		$setting = get_option( self::get_prefixed_name( 'auto_compress' ) );
+		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
+	}
+
+	public function get_background_compress_enabled() {
+		$setting = get_option( self::get_prefixed_name( 'background_compress' ) );
+		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
+	}
+
 	public function get_preserve_enabled( $name ) {
 		$setting = get_option( self::get_prefixed_name( 'preserve_data' ) );
 		return isset( $setting[ $name ] ) && 'on' === $setting[ $name ];
@@ -345,6 +367,40 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_section() {
 		echo '<div class="' . self::NAME . '">';
 		echo '<span id="' . self::NAME . '"></span>';
+	}
+
+	public function render_general_settings() {
+		$id = self::get_prefixed_name( 'auto_compress_enabled' );
+		$name = self::get_prefixed_name( 'auto_compress[enabled]' );
+		$checked = ( $this->get_auto_compress_enabled() ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Automatically compress every image uploaded to Wordpress',
+			'tiny-compress-images'
+		);
+
+		echo '<p class="tiny-auto-compress">';
+		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
+			'" value="on" ' . $checked . '/>';
+		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<br>';
+		echo '</p>';
+
+		$id = self::get_prefixed_name( 'background_compress_enabled' );
+		$name = self::get_prefixed_name( 'background_compress[enabled]' );
+		$checked = ( $this->get_background_compress_enabled() ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Compress newly uploaded images in the background',
+			'tiny-compress-images'
+		);
+
+		echo '<p class="tiny-auto-compress">';
+		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
+			'" value="on" ' . $checked . '/>';
+		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<br>';
+		echo '</p>';
 	}
 
 	public function render_sizes() {
@@ -515,6 +571,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 			) . ' ' .
 			esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
+	}
+
+	public function render_general_settings_input( $name, $description ) {
+		echo '<p class="tiny-general">';
+		$id = sprintf( self::get_prefixed_name( 'general_%s' ), $name );
+		$field = sprintf( self::get_prefixed_name( 'general[%s]' ), $name );
+		$checked = ( $this->get_preserve_enabled( $name ) ? ' checked="checked"' : '' );
+		$label = esc_html( $description, 'tiny-compress-images' );
+		echo '<input type="checkbox" id="' . $id . '" name="' . $field .
+			'" value="on" ' . $checked . '/>';
+		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<br>';
+		echo '</p>';
 	}
 
 	public function render_preserve_input( $name, $description ) {
