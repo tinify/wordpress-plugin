@@ -13,6 +13,8 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		$this->assertEquals(array(
 			array( 'media', 'tinypng_api_key' ),
 			array( 'media', 'tinypng_api_key_pending' ),
+			array( 'media', 'tinypng_auto_compress' ),
+			array( 'media', 'tinypng_background_compress' ),
 			array( 'media', 'tinypng_sizes' ),
 			array( 'media', 'tinypng_resize_original' ),
 			array( 'media', 'tinypng_preserve_data' ),
@@ -46,9 +48,16 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 				'tinypng_settings',
 			),
 			array(
+				'tinypng_auto_compress',
+				'General settings',
+				array( $this->subject, 'render_general_settings' ),
+				'media',
+				'tinypng_settings',
+			),
+			array(
 				'tinypng_sizes',
 				'File compression',
-			array( $this->subject, 'render_sizes' ),
+				array( $this->subject, 'render_sizes' ),
 				'media',
 				'tinypng_settings',
 			),
@@ -56,10 +65,12 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 				'tinypng_resize_original',
 				'Original image',
 				array( $this->subject, 'render_resize' ),
-				'media',
-				'tinypng_settings',
+					'media',
+					'tinypng_settings',
+				),
 			),
-		), $this->wp->getCalls( 'add_settings_field' ) );
+			$this->wp->getCalls( 'add_settings_field' )
+		);
 	}
 
 	public function test_should_retrieve_sizes_with_settings() {

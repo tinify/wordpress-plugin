@@ -112,8 +112,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'ajax_optimization_statistics' )
 		);
 
-		add_action( 'wp_ajax_tiny_get_compress_status',
-			$this->get_method( 'ajax_compress_status' )
+		add_action( 'wp_ajax_tiny_get_compression_status',
+			$this->get_method( 'ajax_compression_status' )
 		);
 
 		$plugin = plugin_basename(
@@ -243,9 +243,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function process_attachment( $metadata, $attachment_id ) {
 		if ( $this->settings->get_auto_compress_enabled() ) {
 			if ( $this->settings->get_background_compress_enabled() ) {
-				$this->async_compress_on_upload( $metadata, $attachment_id );
+				return $this->async_compress_on_upload( $metadata, $attachment_id );
 			} else {
-				$this->blocking_compress_on_upload( $metadata, $attachment_id );
+				return $this->blocking_compress_on_upload( $metadata, $attachment_id );
 			}
 		}
 		return $metadata;
@@ -256,6 +256,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 			$result = $tiny_image->compress( $this->settings );
 			return $tiny_image->get_wp_metadata();
+		} else {
+			return $metadata;
 		}
 	}
 
@@ -419,6 +421,37 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		$stats = Tiny_Image::get_optimization_statistics( $this->settings );
 		echo json_encode( $stats );
+		exit();
+	}
+
+	public function ajax_compression_status() {
+		if ( ! $this->check_ajax_referer() ) {
+			exit();
+		}
+
+		if ( empty( $_POST['id'] ) ) {
+			$message = esc_html__(
+				'Not a valid media file.',
+				'tiny-compress-images'
+			);
+			echo $message;
+			exit();
+		}
+		$id = intval( $_POST['id'] );
+		$metadata = wp_get_attachment_metadata( $id );
+		if ( ! is_array( $metadata ) ) {
+			$message = esc_html__(
+				'Could not find metadata of media file.',
+				'tiny-compress-images'
+			);
+			echo $message;
+			exit;
+		}
+
+		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
+
+		echo $this->render_compress_details( $tiny_image );
+
 		exit();
 	}
 

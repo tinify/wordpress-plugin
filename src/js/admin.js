@@ -23,6 +23,38 @@
     })
   }
 
+  function watchCompressingImages() {
+    if (jQuery('.details-container[data-status="compressing"]').length > 0) {
+      statusCheckIntervalId = setInterval(checkCompressingImages, 5000)
+    }
+  }
+
+  function checkCompressingImages() {
+    jQuery('.details-container[data-status="compressing"]').each(function(index, element) {
+      element = jQuery(element)
+      var container = element.closest('div.tiny-ajax-container')
+      jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+          _nonce: tinyCompress.nonce,
+          action: 'tiny_get_compression_status',
+          id: element.attr('data-id')
+        },
+        success: function(data) {
+          container.html(data)
+          if (jQuery('.details-container[data-status="compressing"]').length == 0) {
+            clearInterval(statusCheckIntervalId)
+          }
+        },
+        error: function() {
+          element.removeAttr('disabled')
+          container.find('span.spinner').addClass('hidden')
+        }
+      })
+    })
+  }
+
   function submitKey(event) {
     event.preventDefault()
     jQuery(event.target).attr({disabled: true}).addClass('loading')
@@ -105,8 +137,11 @@
   }
 
   function updateGeneralSettings() {
-    if (propOf('#tinypng_background_compress_enabled', 'checked')) {
-      setPropOf('#tinypng_auto_compress_enabled', 'checked', 'checked')
+    if (propOf('#tinypng_auto_compress_enabled', 'checked')) {
+      jQuery('#tinypng_background_compress_enabled').parents('p').show()
+    } else {
+      jQuery('#tinypng_background_compress_enabled').parents('p').hide()
+      setPropOf('#tinypng_background_compress_enabled', 'checked', false)
     }
   }
 
@@ -146,6 +181,8 @@
   if (typeof window.adminpage !== 'undefined') {
     adminpage = window.adminpage
   }
+
+  var statusCheckIntervalId
 
   function eventOn(event, eventSelector, callback) {
     if (typeof jQuery.fn.on === 'function') {
@@ -191,6 +228,8 @@
 
     setPropOf('button.tiny-compress', 'disabled', null)
 
+    watchCompressingImages()
+
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]')
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action2]')
     break
@@ -231,8 +270,7 @@
       jQuery('#tiny-image-sizes-notice').load(image_count_url)
     })
 
-    eventOn('click', '#tinypng_background_compress_enabled', function() {
-      console.log('tinypng_background_compress_enabled')
+    eventOn('click', '#tinypng_auto_compress_enabled', function() {
       updateSettings()
     })
 
