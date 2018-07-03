@@ -275,11 +275,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
-		wp_remote_post( "http://localhost/wp-admin/admin-ajax.php", $args );
+		// TODO: this is only needed to have it work in docker.
+		wp_remote_post( 'http://localhost/wp-admin/admin-ajax.php', $args );
 	}
 
 	public function compress_on_upload() {
-		$attachment_id = intval( $_POST["attachment_id"] );
+		$attachment_id = intval( $_POST['attachment_id'] );
 		$metadata = $_POST['metadata'];
 		if ( is_array( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
