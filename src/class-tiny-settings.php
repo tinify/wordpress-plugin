@@ -309,7 +309,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function get_auto_compress_enabled() {
 		$setting = get_option( self::get_prefixed_name( 'auto_compress' ) );
-		return ! is_array( $setting ) || isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
+		return ! is_array( $setting ) ||
+						( isset( $setting['enabled'] ) && 'on' === $setting['enabled'] );
 	}
 
 	public function get_background_compress_enabled() {
