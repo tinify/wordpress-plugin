@@ -243,7 +243,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function process_attachment( $metadata, $attachment_id ) {
 		if ( $this->settings->get_auto_compress_enabled() ) {
 			if ( $this->settings->get_background_compress_enabled() ) {
-				return $this->async_compress_on_upload( $metadata, $attachment_id );
+				$this->async_compress_on_upload( $metadata, $attachment_id );
 			} else {
 				return $this->blocking_compress_on_upload( $metadata, $attachment_id );
 			}
@@ -291,7 +291,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			// further changes to the image. This may require another approach.
 			wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 		}
-		die( 1 );
+		exit();
 	}
 
 	public function compress_image_from_library() {
