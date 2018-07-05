@@ -150,8 +150,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function add_plugin_links( $current_links ) {
 		$additional = array(
 			'settings' => sprintf(
-				'<a href="options-media.php#%s">%s</a>',
-				self::NAME,
+				'<a href="options-general.php?page=tinify">%s</a>',
 				esc_html__( 'Settings', 'tiny-compress-images' )
 			),
 			'bulk' => sprintf(
@@ -275,7 +274,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
-		// TODO: this is only needed to have it work in docker.
+		// FIX: this is only needed to have it work in docker.
+		// wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
 		wp_remote_post( 'http://localhost/wp-admin/admin-ajax.php', $args );
 	}
 
@@ -289,7 +289,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			// dimensions of the original image can change. This will then
 			// trigger other plugins and can result in unexpected behaviour and
 			// further changes to the image. This may require another approach.
-			wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
+			wp_update_attachment_metadata( $attachment_id, $tiny_image->get_wp_metadata() );
 		}
 		exit();
 	}

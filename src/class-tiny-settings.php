@@ -28,6 +28,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
+		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 	}
 
 	private function init_compressor() {
@@ -38,7 +39,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_absolute_url() {
-		return get_admin_url( null, 'options-media.php#' . self::NAME );
+		return get_admin_url( null, 'options-general.php?page=tinify' );
 	}
 
 	public function xmlrpc_init() {
@@ -46,6 +47,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
 		}
+	}
+
+	public function add_menu() {
+		add_options_page('JPEG and PNG optimization', 'JPEG and PNG optimization', 'manage_options', 'tinify', array( $this, 'add_options_to_page' ) );
 	}
 
 	public function admin_init() {
@@ -66,7 +71,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 			if ( isset( $notice ) && $notice ) {
 				$link = sprintf(
-					'<a href="options-media.php#%s">%s</a>', self::NAME, $notice
+					'<a href="options-general.php?page=tinify">%s</a>', $notice
 				);
 				$this->notices->show( 'setting', $link, $notice_class, false );
 			}
@@ -99,62 +104,26 @@ class Tiny_Settings extends Tiny_WP_Base {
 			);
 		}
 
-		$section = self::get_prefixed_name( 'settings' );
-		add_settings_section( $section,
-			esc_html__( 'JPEG and PNG optimization', 'tiny-compress-images' ),
-			$this->get_method( 'render_section' ),
-			'media'
-		);
-
 		$field = self::get_prefixed_name( 'api_key' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'TinyPNG account', 'tiny-compress-images' ),
-			$this->get_method( 'render_pending_status' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'api_key_pending' );
-		register_setting( 'media', $field );
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'auto_compress' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'General settings', 'tiny-compress-images' ),
-			$this->get_method( 'render_general_settings' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'background_compress' );
-		register_setting( 'media', $field );
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'sizes' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'File compression', 'tiny-compress-images' ),
-			$this->get_method( 'render_sizes' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'resize_original' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'Original image', 'tiny-compress-images' ),
-			$this->get_method( 'render_resize' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'preserve_data' );
-		register_setting( 'media', $field );
-
-		add_settings_section( 'section_end', '',
-			$this->get_method( 'render_section_end' ),
-			'media'
-		);
+		register_setting( 'tinify', $field );
 
 		add_action(
 			'wp_ajax_tiny_image_sizes_notice',
@@ -175,6 +144,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'wp_ajax_tiny_settings_update_api_key',
 			$this->get_method( 'update_api_key' )
 		);
+	}
+
+	public function add_options_to_page() {
+		include( dirname( __FILE__ ) . '/views/settings.php' );
 	}
 
 	public function image_sizes_notice() {
@@ -308,9 +281,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_auto_compress_enabled() {
+		$init_setting = get_option( self::get_prefixed_name( 'auto_compress_initialized' ) );
+		if ( $init_setting != "1" ) {
+			update_option( self::get_prefixed_name( 'auto_compress_initialized' ), true );
+		}
 		$setting = get_option( self::get_prefixed_name( 'auto_compress' ) );
-		return ! is_array( $setting ) ||
-						( isset( $setting['enabled'] ) && 'on' === $setting['enabled'] );
+		return $init_setting != "1" ||
+					( isset( $setting['enabled'] ) && 'on' === $setting['enabled'] );
 	}
 
 	public function get_background_compress_enabled() {
@@ -368,6 +345,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_section() {
+		echo '<h2>' . esc_html__( 'JPEG and PNG optimization', 'tiny-compress-images' ) . '</h2>';
 		echo '<div class="' . self::NAME . '">';
 		echo '<span id="' . self::NAME . '"></span>';
 	}

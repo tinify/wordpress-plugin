@@ -5,7 +5,7 @@ require_once dirname( __FILE__ ) . '/IntegrationTestCase.php';
 class SettingsIntegrationTest extends IntegrationTestCase {
 	public function set_up() {
 		parent::set_up();
-		$this->visit( '/wp-admin/options-media.php' );
+		$this->visit( '/wp-admin/options-general.php?page=tinify' );
 	}
 
 	public function tear_down() {
@@ -30,7 +30,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 	public function test_settings_should_show_notice_if_key_is_missing() {
 		$this->assertStringEndsWith(
-			'options-media.php#tiny-compress-images',
+			'options-general.php#tinify',
 			$this->find( '.error a' )->getAttribute( 'href' )
 		);
 	}

@@ -201,7 +201,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->find( '.tiny-notice button, .tiny-notice a.tiny-dismiss' )->click();
 		$this->wait_for_text_disappearance( 'a.tiny-dismiss', 'Dismiss' );
 
-		$this->visit( '/wp-admin/options-media.php' );
+		$this->visit( '/wp-admin/options-general.php?page=tinify' );
 		$this->assertEquals( 0, count( $this->find_all( 'div.error p' ) ) );
 	}
 
