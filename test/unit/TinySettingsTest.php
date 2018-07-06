@@ -11,66 +11,13 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 
 	public function test_admin_init_should_register_keys() {
 		$this->assertEquals(array(
-			array( 'media', 'tinypng_api_key' ),
-			array( 'media', 'tinypng_api_key_pending' ),
-			array( 'media', 'tinypng_auto_compress' ),
-			array( 'media', 'tinypng_background_compress' ),
-			array( 'media', 'tinypng_sizes' ),
-			array( 'media', 'tinypng_resize_original' ),
-			array( 'media', 'tinypng_preserve_data' ),
+			array( 'tinify', 'tinypng_api_key' ),
+			array( 'tinify', 'tinypng_api_key_pending' ),
+			array( 'tinify', 'tinypng_optimization_method' ),
+			array( 'tinify', 'tinypng_sizes' ),
+			array( 'tinify', 'tinypng_resize_original' ),
+			array( 'tinify', 'tinypng_preserve_data' ),
 		), $this->wp->getCalls( 'register_setting' ));
-	}
-
-	public function test_admin_init_should_add_settings_section() {
-		$this->assertEquals( array(
-			array(
-				'tinypng_settings',
-				'JPEG and PNG optimization',
-				array( $this->subject, 'render_section' ),
-				'media',
-			),
-			array(
-				'section_end',
-				'',
-				array( $this->subject, 'render_section_end' ),
-				'media',
-			),
-		), $this->wp->getCalls( 'add_settings_section' ) );
-	}
-
-	public function test_admin_init_should_add_settings_field() {
-		$this->assertEquals( array(
-			array(
-				'tinypng_api_key',
-				'TinyPNG account',
-				array( $this->subject, 'render_pending_status' ),
-				'media',
-				'tinypng_settings',
-			),
-			array(
-				'tinypng_auto_compress',
-				'General settings',
-				array( $this->subject, 'render_general_settings' ),
-				'media',
-				'tinypng_settings',
-			),
-			array(
-				'tinypng_sizes',
-				'File compression',
-				array( $this->subject, 'render_sizes' ),
-				'media',
-				'tinypng_settings',
-			),
-			array(
-				'tinypng_resize_original',
-				'Original image',
-				array( $this->subject, 'render_resize' ),
-					'media',
-					'tinypng_settings',
-				),
-			),
-			$this->wp->getCalls( 'add_settings_field' )
-		);
 	}
 
 	public function test_should_retrieve_sizes_with_settings() {

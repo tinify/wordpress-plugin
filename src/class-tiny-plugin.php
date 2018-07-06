@@ -240,8 +240,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function process_attachment( $metadata, $attachment_id ) {
-		if ( $this->settings->get_auto_compress_enabled() ) {
-			if ( $this->settings->get_background_compress_enabled() ) {
+		if ( $this->settings->auto_compress_enabled() ) {
+			if ( $this->settings->background_compress_enabled() ) {
 				$this->async_compress_on_upload( $metadata, $attachment_id );
 			} else {
 				return $this->blocking_compress_on_upload( $metadata, $attachment_id );

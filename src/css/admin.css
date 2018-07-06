@@ -166,11 +166,53 @@ div.tiny-account-status.wide div.create button.loading, div.tiny-account-status.
 	}
 }
 
-p.tiny-resize-resolution {
-	margin-left: 24px;
+table.tinify-settings p.intro {
+	color: #555D66;
 }
 
-p.tiny-resize-resolution input {
+table.tinify-settings div.sizes {
+	margin: 20px 0;
+}
+
+table.tinify-settings input[type="checkbox"], table.tinify-settings input[type="radio"] {
+	margin-right: 12px;
+}
+
+div.optimization-options {
+	margin-top: 20px;
+}
+
+p.tiny-radio  {
+	margin-right: 12px;
+}
+
+p.tiny-radio label {
+	font-weight: bold;
+}
+
+p.tiny-radio span {
+	margin-left: 28px;
+	color: #555D66;
+	line-height: 30px;
+}
+
+div.tiny-resize-available {
+	margin-top: 10px;
+}
+
+div.tiny-resize-resolution {
+	margin: 10px 0 20px 28px;
+}
+
+div.tiny-resize-resolution span {
+	color: #555D66;
+}
+
+div.tiny-resize-inputs {
+	margin-top: 10px;
+}
+
+div.tiny-resize-inputs input {
 	margin-right: 6px;
 }
 
@@ -297,5 +339,5 @@ input[type=number][name*="tinypng_resize_original"] {
 }
 
 .tiny-compress-images h4 {
-	margin: 0.5em 0;
+	margin: 5px 0;
 }

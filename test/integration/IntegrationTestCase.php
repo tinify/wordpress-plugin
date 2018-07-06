@@ -126,6 +126,10 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->set_option( 'tinypng_api_key', $api_key );
 	}
 
+	protected function set_optimization_method( $optimization_method ) {
+		$this->set_option( 'tinypng_optimization_method', serialize( $optimization_method ) );
+	}
+
 	protected function enable_compression_sizes( $sizes ) {
 		$value = array( '_tiny_dummy' => 'on' );
 		foreach ( $sizes as $size ) {

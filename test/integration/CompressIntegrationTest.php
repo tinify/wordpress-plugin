@@ -40,6 +40,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_valid_key_should_show_sizes_compressed() {
 		$this->set_api_key( 'JPG123' );
+		$this->set_optimization_method("auto");
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->assertContains(
@@ -230,6 +231,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'width' => 300,
 			'height' => 200,
 		));
+		$this->set_optimization_method("auto");
 
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
@@ -263,6 +265,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'method' => 'scale',
 			'height' => 200,
 		));
+		$this->set_optimization_method("auto");
 
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();

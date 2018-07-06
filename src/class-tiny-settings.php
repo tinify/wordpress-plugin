@@ -110,10 +110,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = self::get_prefixed_name( 'api_key_pending' );
 		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name( 'auto_compress' );
-		register_setting( 'tinify', $field );
-
-		$field = self::get_prefixed_name( 'background_compress' );
+		$field = self::get_prefixed_name( 'optimization_method' );
 		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'sizes' );
@@ -269,6 +266,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->tinify_sizes;
 	}
 
+	public function new_plugin_install() {
+		$sizes_settings = get_option( self::get_prefixed_name( 'sizes' ) );
+		return ! is_array( $sizes_settings );
+	}
+
 	public function get_resize_enabled() {
 		/* This only applies if the original is being resized. */
 		$sizes = $this->get_sizes();
@@ -280,21 +282,25 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
 	}
 
-	public function get_auto_compress_enabled() {
-		$init_setting = get_option( self::get_prefixed_name( 'auto_compress_initialized' ) );
-		if ( $init_setting != "1" ) {
-			update_option( self::get_prefixed_name( 'auto_compress_initialized' ), true );
+	public function get_optimization_method() {
+		$setting = get_option( self::get_prefixed_name( 'optimization_method' ) );
+		if ( isset( $setting ) && $setting ) {
+			return $setting;
+		} else if ( $this->new_plugin_install() ) {
+			update_option( self::get_prefixed_name( 'optimization_method' ), "background" );
+			return "background";
+		} else {
+			update_option( self::get_prefixed_name( 'optimization_method' ), "auto" );
+			return "auto";
 		}
-		$setting = get_option( self::get_prefixed_name( 'auto_compress' ) );
-		return $init_setting != "1" ||
-					( isset( $setting['enabled'] ) && 'on' === $setting['enabled'] );
 	}
 
-	public function get_background_compress_enabled() {
-		// TODO: Set this as default for new instalations?
+	public function auto_compress_enabled() {
+		return $this->get_optimization_method() === "auto" || $this->get_optimization_method() === "background";
+	}
 
-		$setting = get_option( self::get_prefixed_name( 'background_compress' ) );
-		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
+	public function background_compress_enabled() {
+		return $this->get_optimization_method() === "background";
 	}
 
 	public function get_preserve_enabled( $name ) {
@@ -350,47 +356,63 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<span id="' . self::NAME . '"></span>';
 	}
 
-	public function render_general_settings() {
-		$id = self::get_prefixed_name( 'auto_compress_enabled' );
-		$name = self::get_prefixed_name( 'auto_compress[enabled]' );
-		$checked = ( $this->get_auto_compress_enabled() ? ' checked="checked"' : '' );
-
-		$label = esc_html__(
-			'Automatically compress every image uploaded to Wordpress',
+	public function render_optimization_method_settings() {
+		$heading = esc_html__(
+			'When should we optimize your images?',
 			'tiny-compress-images'
 		);
+		echo '<h4>' . $heading . '</h4>';
+		echo '<div class="optimization-options">';
 
-		echo '<p class="tiny-auto-compress">';
-		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
-			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
-		echo '<br>';
-		echo '</p>';
+		$name = self::get_prefixed_name( 'optimization_method' );
+		$optimization_method = $this->get_optimization_method();
 
 		$id = self::get_prefixed_name( 'background_compress_enabled' );
-		$name = self::get_prefixed_name( 'background_compress[enabled]' );
-		$checked = ( $this->get_background_compress_enabled() ? ' checked="checked"' : '' );
+		$checked = ( $optimization_method == 'background' ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Compress newly uploaded images in the background',
+			'Optimize images in the background (Recommended)',
+			'tiny-compress-images'
+		);
+		$description = esc_html__(
+			'This is the fastest method, but can cause issues with other image related plugins.',
 			'tiny-compress-images'
 		);
 
-		echo '<p class="tiny-auto-compress">';
-		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
-			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
-		echo '<br>';
-		echo '</p>';
+		$this->render_optimization_method_radiobutton($name, $label, $description, 'background', $checked);
+
+		$id = self::get_prefixed_name( 'auto_compress_enabled' );
+		$checked = ( $optimization_method === 'auto' ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Optimize images during upload',
+			'tiny-compress-images'
+		);
+		$description = esc_html__(
+			'Uploads will take longer but is compatible with other image related plugins.',
+			'tiny-compress-images'
+		);
+
+		$this->render_optimization_method_radiobutton($name, $label, $description, 'auto', $checked);
+
+		$id = self::get_prefixed_name( 'auto_compress_disabled' );
+		$checked = ( $optimization_method === 'manual' ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Do not optimize my images automatically',
+			'tiny-compress-images'
+		);
+		$description = esc_html__(
+			'Manually select the images you want to optimize in the media library.',
+			'tiny-compress-images'
+		);
+
+		$this->render_optimization_method_radiobutton($name, $label, $description, 'manual', $checked);
+
+		echo '</div>';
 	}
 
 	public function render_sizes() {
-		echo '<p>';
-		esc_html_e(
-			'Choose sizes to compress. Remember each selected size counts as a compression.',
-			'tiny-compress-images'
-		);
-		echo '</p>';
 		echo '<input type="hidden" name="' .
 			self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' ) . '" value="on"/>';
 
@@ -418,7 +440,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
-				esc_html__( 'overwritten by compressed image', 'tiny-compress-images' ) . ')';
+				esc_html__( 'Your original image will be overwritten by the compressed image', 'tiny-compress-images' ) . ')';
 		} elseif ( Tiny_Image::is_retina( $size ) ) {
 			$label = esc_html__( 'WP Retina 2x sizes', 'tiny-compress-images' );
 		} else {
@@ -444,6 +466,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_image_sizes_notice(
 		$active_sizes_count, $resize_original_enabled, $compress_wr2x ) {
+		echo '<p>';
+		esc_html_e(
+			'Each selected size counts as a compression. ',
+			'tiny-compress-images'
+		);
+		echo '</p>';
 		echo '<p>';
 		if ( $resize_original_enabled ) {
 			$active_sizes_count++;
@@ -491,7 +519,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_resize() {
 		echo '<p class="tiny-resize-unavailable" style="display: none">';
 		esc_html_e(
-			'Enable compression of the original image size for more options.',
+			'Enable optimization of the original image size for more options.',
 			'tiny-compress-images'
 		);
 		echo '</p>';
@@ -501,32 +529,37 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( $this->get_resize_enabled() ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Resize and compress the original image',
+			'Resize the original image',
 			'tiny-compress-images'
 		);
 
-		echo '<p class="tiny-resize-available">';
+		echo '<div class="tiny-resize-available">';
 		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
 			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
-		echo '<br>';
-		echo '</p>';
+		echo '<label for="' . $id . '">' . $label . '</label><br>';
 
-		echo '<p class="tiny-resize-available tiny-resize-resolution">';
-		printf( '%s ', esc_html__( 'Max Width' ) );
-		$this->render_resize_input( 'width' );
-		printf( '%s ', esc_html__( 'Max Height' ) );
-		$this->render_resize_input( 'height' );
-		echo '</p>';
-
-		echo '<p class="tiny-resize-available tiny-resize-resolution">';
-
+		echo '<div class="tiny-resize-available tiny-resize-resolution">';
+		echo '<span><strong>';
 		esc_html_e(
-			'Resizing takes 1 additional compression for each image that is larger.',
+			'Save space',
 			'tiny-compress-images'
 		);
-
-		echo '</p><br>';
+		echo '</strong> ';
+		esc_html_e(
+			'by setting a maximum width and height for all images uploaded',
+			'tiny-compress-images'
+		);
+		echo '</span><br><span>';
+		esc_html_e(
+			'Resizing takes an additional optimization credit for each image that is larger.',
+			'tiny-compress-images'
+		);
+		echo '</span><div class="tiny-resize-inputs">';
+		printf( '%s: ', esc_html__( 'Max Width' ) );
+		$this->render_resize_input( 'width' );
+		printf( '%s: ', esc_html__( 'Max Height' ) );
+		$this->render_resize_input( 'height' );
+		echo '</div></div></div>';
 
 		$this->render_preserve_input(
 			'creation',
@@ -554,15 +587,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 	}
 
-	public function render_general_settings_input( $name, $description ) {
-		echo '<p class="tiny-general">';
-		$id = sprintf( self::get_prefixed_name( 'general_%s' ), $name );
-		$field = sprintf( self::get_prefixed_name( 'general[%s]' ), $name );
-		$checked = ( $this->get_preserve_enabled( $name ) ? ' checked="checked"' : '' );
-		$label = esc_html( $description, 'tiny-compress-images' );
-		echo '<input type="checkbox" id="' . $id . '" name="' . $field .
-			'" value="on" ' . $checked . '/>';
+	public function render_optimization_method_radiobutton( $name, $label, $description, $value, $checked ) {
+		echo '<p class="tiny-radio">';
+		$id = sprintf( self::get_prefixed_name( 'optimization_method_%s' ), $value );
+		$label = esc_html( $label, 'tiny-compress-images' );
+		$description = esc_html( $description, 'tiny-compress-images' );
+		echo '<input type="radio" id="' . $id . '" name="' . $name .
+				 		'" value="' . $value . '" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<br>';
+		echo '<span>' . $description . '</span>';
 		echo '<br>';
 		echo '</p>';
 	}

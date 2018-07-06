@@ -30,7 +30,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 	public function test_settings_should_show_notice_if_key_is_missing() {
 		$this->assertStringEndsWith(
-			'options-general.php#tinify',
+			'options-general.php?page=tinify',
 			$this->find( '.error a' )->getAttribute( 'href' )
 		);
 	}
@@ -247,7 +247,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	public function test_settings_should_show_resizing_when_original_enabled() {
 		$elements = $this->find_all( 'label[for=tinypng_resize_original_enabled]' );
 		$this->assertEquals(
-			'Resize and compress the original image',
+			'Resize the original image',
 			$elements[0]->getText()
 		);
 
@@ -269,7 +269,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$elements = $this->find_all( 'p.tiny-resize-unavailable' );
 		$this->assertEquals(
-			'Enable compression of the original image size for more options.',
+			'Enable optimization of the original image size for more options.',
 			$elements[0]->getText()
 		);
 	}

@@ -34,7 +34,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 		);
 
 		$this->assertStringEndsWith(
-			'options-general.php#tinify',
+			'options-general.php?page=tinify',
 			$element->getAttribute( 'href' )
 		);
 	}
