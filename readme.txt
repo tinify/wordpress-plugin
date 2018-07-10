@@ -1,7 +1,7 @@
 === Compress JPEG & PNG images ===
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
-Tags: optimize, compress, shrink, resize, faster, fit, scale, improve, images, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, performance, panda, wordpress app
+Tags: optimize, compress, shrink, resize, faster, fit, scale, improve, images, picture, pictures, photo, photos, image, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, performance, panda, george, wordpress app, SEO, lossy, wp compress, sitespeed, shortpixel, kraken, PageRank, cheetaho, s3
 Requires at least: 3.0.6
 Tested up to: 4.9
 Stable tag: 2.2.6
