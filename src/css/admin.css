@@ -166,8 +166,24 @@ div.tiny-account-status.wide div.create button.loading, div.tiny-account-status.
 	}
 }
 
+.incompatible-plugins.error h3 {
+	margin: 10px 0;
+}
+
+.incompatible-plugins.error table {
+	margin-bottom: 10px;
+}
+
+.incompatible-plugins.error table td.bullet {
+	width: 20px;
+}
+
+.incompatible-plugins.error table td.name {
+	padding-right: 100px;
+}
+
 table.tinify-settings p.intro {
-	color: #555D66;
+	color: #777777;
 }
 
 table.tinify-settings div.sizes {
@@ -192,7 +208,7 @@ p.tiny-radio label {
 
 p.tiny-radio span {
 	margin-left: 28px;
-	color: #555D66;
+	color: #777777;
 	line-height: 30px;
 }
 
@@ -205,7 +221,7 @@ div.tiny-resize-resolution {
 }
 
 div.tiny-resize-resolution span {
-	color: #555D66;
+	color: #777777;
 }
 
 div.tiny-resize-inputs {

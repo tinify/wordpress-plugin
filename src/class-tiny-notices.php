@@ -1,7 +1,7 @@
 <?php
 /*
 * Tiny Compress Images - WordPress plugin.
-* Copyright (C) 2015-2017 Voormedia B.V.
+* Copyright (C) 2015-2018 Voormedia B.V.
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the Free
@@ -135,6 +135,41 @@ class Tiny_Notices extends Tiny_WP_Base {
 				'',
 				"echo '<div class=\"$css\" data-name=\"$name\"><p>" .
 					$plugin_name . ": $message$add</div>';"
+			)
+		);
+	}
+
+	public function show_incompatible_plugins( $incompatible_plugins ) {
+		$notice = '<div class="error notice tiny-notice incompatible-plugins">';
+		$notice .= '<h3>';
+		$notice .= esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		$notice .= '</h3>';
+		$notice .= '<p>';
+		$notice .= esc_html__(
+			'The following plugins are not compatible with
+			 this plugin and may lead to unexpected results',
+			'tiny-compress-images'
+		);
+		$notice .= ':</p>';
+		$notice .= '<table>';
+		foreach ( $incompatible_plugins as $name => $file ) {
+			$notice .= '<tr><td class="bullet">&bullet;</td><td class="name">';
+			$notice .= $name;
+			$notice .= '</td><td>';
+			$nonce = wp_create_nonce( 'deactivate-plugin_' . $file );
+			$query_string = 'action=deactivate&plugin=' . $file . '&_wpnonce=' . $nonce;
+			$url = admin_url( 'plugins.php?' . $query_string );
+			$notice .= '<a class="button button-primary" href="' . $url . '">';
+			$notice .= esc_html__( 'deactivate', 'tiny-compress-images' );
+			$notice .= '</a></td></tr>';
+		}
+		$notice .= '</table>';
+		$notice .= '</div>';
+
+		add_action( 'admin_notices',
+			create_function(
+				'',
+				"echo '$notice';"
 			)
 		);
 	}

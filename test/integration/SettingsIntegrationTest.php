@@ -23,7 +23,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	public function test_settings_should_contain_title() {
 		$headings = array_map( function( $heading ) {
 			return $heading->getText();
-		}, $this->find_all( 'h2, h3' ) );
+		}, $this->find_all( 'h1' ) );
 
 		$this->assertContains( 'JPEG and PNG optimization', $headings );
 	}
@@ -159,6 +159,16 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals(
 			'An email has been sent with a link to activate your account',
 			$this->find( 'div.tiny-account-status p.status' )->getText()
+		);
+	}
+
+	public function test_settings_should_store_optimization_method() {
+		$this->find( '#tinypng_optimization_method_auto' )->click();
+		$this->find( 'form' )->submit();
+
+		$this->assertEquals(
+			'true',
+			$this->find( '#tinypng_optimization_method_auto' )->getAttribute( 'checked' )
 		);
 	}
 

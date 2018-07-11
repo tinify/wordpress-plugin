@@ -1,7 +1,7 @@
 <?php
 /*
 * Tiny Compress Images - WordPress plugin.
-* Copyright (C) 2015-2017 Voormedia B.V.
+* Copyright (C) 2015-2018 Voormedia B.V.
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the Free
@@ -23,7 +23,14 @@ class Tiny_PHP {
 		return ini_get( 'allow_url_fopen' );
 	}
 
+	public static function curl_exec_available() {
+		$disabled_functions = explode( ',', ini_get( 'disable_functions' ) );
+		return ! in_array( 'curl_exec', $disabled_functions );
+	}
+
 	public static function client_supported() {
-		return version_compare( PHP_VERSION, '5.3', '>' ) && extension_loaded( 'curl' );
+		return 	version_compare( PHP_VERSION, '5.3', '>' ) &&
+						extension_loaded( 'curl' ) &&
+						Tiny_PHP::curl_exec_available();
 	}
 }

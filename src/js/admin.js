@@ -94,6 +94,7 @@
               target.replaceWith(data)
             })
           }
+          jQuery("div.tiny-notice[data-name='setting']").remove()
         } else {
           jQuery(event.target).attr({disabled: false}).removeClass('loading')
           parent.addClass('failure')
@@ -136,15 +137,6 @@
     return false
   }
 
-  function updateGeneralSettings() {
-    if (propOf('#tinypng_auto_compress_enabled', 'checked')) {
-      jQuery('#tinypng_background_compress_enabled').parents('p').show()
-    } else {
-      jQuery('#tinypng_background_compress_enabled').parents('p').hide()
-      setPropOf('#tinypng_background_compress_enabled', 'checked', false)
-    }
-  }
-
   function updateResizeSettings() {
     if (propOf('#tinypng_sizes_0', 'checked')) {
       jQuery('.tiny-resize-available').show()
@@ -172,7 +164,6 @@
   }
 
   function updateSettings() {
-    updateGeneralSettings()
     updateResizeSettings()
     updatePreserveSettings()
   }
