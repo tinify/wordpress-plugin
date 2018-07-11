@@ -234,3 +234,5 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 
 = 1.0.0 =
 * Initial version.
+
+:)
