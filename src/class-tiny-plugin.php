@@ -274,9 +274,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
-		// FIX: this is only needed to have it work in docker.
-		// wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
-		wp_remote_post( 'http://localhost/wp-admin/admin-ajax.php', $args );
+		if ( getenv("WORDPRESS_HOST") !== false ) {
+			wp_remote_post( getenv("WORDPRESS_HOST") . '/wp-admin/admin-ajax.php', $args );
+		} else {
+			wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
+		}
 	}
 
 	public function compress_on_upload() {

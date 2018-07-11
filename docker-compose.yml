@@ -16,6 +16,7 @@ services:
     environment:
       WORDPRESS_DB_NAME: wordpress_${WORDPRESS_VERSION}
       WORDPRESS_DB_PASSWORD: root
+      WORDPRESS_HOST: http://localhost
 
   mysql:
     image: mysql
