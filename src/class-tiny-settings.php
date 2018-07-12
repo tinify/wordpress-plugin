@@ -307,6 +307,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->get_optimization_method() === 'background';
 	}
 
+	public function has_offload_s3_installed() {
+		if ( ! is_plugin_active( self::$offload_s3_plugin ) ) {
+			return false;
+		}
+		$setting = get_option( 'tantan_wordpress_s3' );
+		if ( ! is_array( $setting ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public function incompatible_offload_s3_settings() {
 		/* Check if Offload S3 plugin is installed. */
 		if ( ! is_plugin_active( self::$offload_s3_plugin ) ) {
@@ -317,7 +329,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 			return false;
 		}
 		/* Check if Offload S3 is configured to remove local files. */
-		return ( array_key_exists( 'remove-local-file', $setting ) &&
+		return ( $this->has_offload_s3_installed() &&
+						 array_key_exists( 'remove-local-file', $setting ) &&
 						 '1' === $setting['remove-local-file'] &&
 				 		 'background' === $this->get_optimization_method() );
 	}
@@ -461,7 +474,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'tiny-compress-images'
 			);
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
-		} else {
+		} else if ( $this->has_offload_s3_installed() ) {
 			$message = esc_html__(
 				'We noticed that you have installed WP Offload S3.
 				 Please note that the combination of having optimizations done in the background
