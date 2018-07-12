@@ -159,7 +159,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 												'a' => array(
 													'href' => array(),
 												),
-											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/developers">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
+											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/api">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
 											?></p>
 										</div>
 									</div>

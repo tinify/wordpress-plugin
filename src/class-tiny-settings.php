@@ -307,6 +307,21 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->get_optimization_method() === 'background';
 	}
 
+	public function incompatible_offload_s3_settings() {
+		/* Check if Offload S3 plugin is installed. */
+		if ( ! is_plugin_active( self::$offload_s3_plugin ) ) {
+			return false;
+		}
+		$setting = get_option( 'tantan_wordpress_s3' );
+		if ( ! is_array( $setting ) ) {
+			return false;
+		}
+		/* Check if Offload S3 is configured to remove local files. */
+		return ( array_key_exists( 'remove-local-file', $setting ) &&
+						 '1' === $setting['remove-local-file'] &&
+				 		 'background' === $this->get_optimization_method() );
+	}
+
 	public function get_preserve_enabled( $name ) {
 		$setting = get_option( self::get_prefixed_name( 'preserve_data' ) );
 		return isset( $setting[ $name ] ) && 'on' === $setting[ $name ];
@@ -436,26 +451,26 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_offload_s3_notice() {
-		/* Check if Offload S3 plugin is installed. */
-		if ( ! is_plugin_active( self::$offload_s3_plugin ) ) {
-			return;
-		}
-		$setting = get_option( 'tantan_wordpress_s3' );
-		if ( ! is_array( $setting ) ) {
-			return;
-		}
-		/* Check if Offload S3 is configured to remove local files. */
-		if ( '1' === $setting['remove-local-file'] &&
-				 'background' === $this->get_optimization_method() ) {
+		if ( $this->incompatible_offload_s3_settings() ) {
 			$message = esc_html__(
 				'We noticed that you have installed WP Offload S3 and have enabled
 				 background compressions while also having WP Offload S3 remove the files
-				 from the local server. This combination of settings doesn\'t work. You\'ll
+				 from the Wordpress folder. This combination of settings doesn\'t work. You\'ll
 				 either have to disable the WP Offload S3 setting to remove files from the server
 				 or configure Compress JPEG & PNG images to optimize images during upload.',
 				'tiny-compress-images'
 			);
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
+		} else {
+			$message = esc_html__(
+				'We noticed that you have installed WP Offload S3.
+				 Please note that the combination of having optimizations done in the background
+				 while removing the files from the local Wordpress folder will not work for new images.
+				 If your images are removed from your Wordpress upload folder then you will first
+				 need to copy them back, otherwise compressing existing images will not work.',
+				'tiny-compress-images'
+			);
+			$this->notices->show( 'offload-s3', $message, 'notice-warning', true );
 		}
 	}
 
@@ -764,7 +779,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			update_option( $field, $count );
 		}
 		if ( $compressor->limit_reached() ) {
-			$link = '<a href="https://tinypng.com/dashboard/developers" target="_blank">' .
+			$link = '<a href="https://tinypng.com/dashboard/api" target="_blank">' .
 				esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 
 			$this->notices->add('limit-reached',

@@ -236,7 +236,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 			wp_enqueue_script( self::NAME . '_tiny_bulk_optimization' );
 		}
-
 	}
 
 	public function process_attachment( $metadata, $attachment_id ) {

@@ -16,7 +16,7 @@
 			$compressions = self::get_compression_count();
 			/* It is not possible to check if a subscription is free or flexible. */
 			if ( self::limit_reached() ) {
-				$link = '<a href="https://tinypng.com/dashboard/developers" target="_blank">' . esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
+				$link = '<a href="https://tinypng.com/dashboard/api" target="_blank">' . esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 				esc_html_e(
 					'You have reached your free limit this month.',
 					'tiny-compress-images'
@@ -61,7 +61,7 @@
 	<div class="update" style="display: none">
 		<h4><?php echo esc_html__( 'Change your API key', 'tiny-compress-images' ); ?></h4>
 		<p class="introduction"><?php
-			$link = sprintf( '<a href="https://tinypng.com/dashboard/developers" target="_blank">%s</a>',
+			$link = sprintf( '<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			printf( esc_html__(
