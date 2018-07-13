@@ -21,7 +21,9 @@ ksort( $size_exists );
 		<?php if ( $error ) {
 			// dashicons-warning available for WP 4.3+ ?>
 			<span class="icon dashicons dashicons-no error"></span>
-		<?php } elseif ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
+		<?php } elseif ( $this->settings->remove_local_files_setting_enabled() && 0 === $available_unoptimized_sizes ) { ?>
+			<span class="icon dashicons dashicons-yes success"></span>
+		<?php } elseif ( ( $total['missing'] > 0 && ! $this->settings->remove_local_files_setting_enabled() ) || $total['modified'] > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
 		<?php } elseif ( $total['compressed'] > 0 && $available_unoptimized_sizes > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
@@ -29,7 +31,7 @@ ksort( $size_exists );
 			<span class="icon dashicons dashicons-yes success"></span>
 		<?php } ?>
 		<span class="icon spinner hidden"></span>
-		<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimized_sizes) ) { ?>
+		<?php if ( $total['has_been_compressed'] > 0 || 0 === $available_unoptimized_sizes ) { ?>
 			<span class="message">
 				<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array(
 					'strong' => array(),
@@ -59,7 +61,7 @@ ksort( $size_exists );
 			<?php esc_html_e( 'Details', 'tiny-compress-images' ) ?>
 		</a>
 	</div>
-	<?php if ( $active['uncompressed'] > 0 ) { ?>
+	<?php if ( $available_unoptimized_sizes > 0 ) { ?>
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
 			<?php esc_html_e( 'Compress', 'tiny-compress-images' ) ?>
 		</button>
@@ -91,7 +93,9 @@ ksort( $size_exists );
 					echo '<td>';
 					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
 					echo ' ';
-					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
+					if ( array_key_exists( $size_name, $active_sizes ) && $this->settings->has_offload_s3_installed() ) {
+						echo '<em>' . esc_html__( '(stored on S3)', 'tiny-compress-images' ) . '</em>';
+					} elseif ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->missing() && ( Tiny_Settings::wr2x_active() || ! Tiny_Image::is_retina( $size_name ) ) ) {
 						echo '<em>' . esc_html__( '(file removed)', 'tiny-compress-images' ) . '</em>';

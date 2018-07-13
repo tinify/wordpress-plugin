@@ -308,7 +308,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function has_offload_s3_installed() {
-		if ( ! is_plugin_active( self::$offload_s3_plugin ) ) {
+		if (
+			! function_exists( 'is_plugin_active' ) ||
+			! is_plugin_active( self::$offload_s3_plugin )
+		) {
 			return false;
 		}
 		$setting = get_option( 'tantan_wordpress_s3' );
@@ -319,9 +322,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return true;
 	}
 
-	public function incompatible_offload_s3_settings() {
+	public function remove_local_files_setting_enabled() {
 		/* Check if Offload S3 plugin is installed. */
-		if ( ! is_plugin_active( self::$offload_s3_plugin ) ) {
+		if (
+			! function_exists( 'is_plugin_active' ) ||
+			! is_plugin_active( self::$offload_s3_plugin )
+		) {
 			return false;
 		}
 		$setting = get_option( 'tantan_wordpress_s3' );
@@ -331,8 +337,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		/* Check if Offload S3 is configured to remove local files. */
 		return ( $this->has_offload_s3_installed() &&
 						 array_key_exists( 'remove-local-file', $setting ) &&
-						 '1' === $setting['remove-local-file'] &&
-				 		 'background' === $this->get_optimization_method() );
+						 '1' === $setting['remove-local-file'] );
 	}
 
 	public function get_preserve_enabled( $name ) {
@@ -464,26 +469,15 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_offload_s3_notice() {
-		if ( $this->incompatible_offload_s3_settings() ) {
+		if ( $this->remove_local_files_setting_enabled() &&
+				 'background' === $this->get_optimization_method() ) {
 			$message = esc_html__(
-				'We noticed that you have installed WP Offload S3 and have enabled
-				 background compressions while also having WP Offload S3 remove the files
-				 from the Wordpress folder. This combination of settings doesn\'t work. You\'ll
-				 either have to disable the WP Offload S3 setting to remove files from the server
-				 or configure Compress JPEG & PNG images to optimize images during upload.',
+				'Removing files from the server is incompatible with background compressions.
+				 Images will still be automatically compressed, but no longer in the background.',
 				'tiny-compress-images'
 			);
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
-		} else if ( $this->has_offload_s3_installed() ) {
-			$message = esc_html__(
-				'We noticed that you have installed WP Offload S3.
-				 Please note that the combination of having optimizations done in the background
-				 while removing the files from the local Wordpress folder will not work for new images.
-				 If your images are removed from your Wordpress upload folder then you will first
-				 need to copy them back, otherwise compressing existing images will not work.',
-				'tiny-compress-images'
-			);
-			$this->notices->show( 'offload-s3', $message, 'notice-warning', true );
+			update_option( self::get_prefixed_name( 'optimization_method' ), 'auto' );
 		}
 	}
 
@@ -510,12 +504,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		$this->render_optimization_method_radiobtn(
+		$this->render_optimization_method_radiobutton(
 			$name,
 			$label,
 			$description,
 			'background',
-			$checked
+			$checked,
+			$this->remove_local_files_setting_enabled()
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_enabled' );
@@ -530,12 +525,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		$this->render_optimization_method_radiobtn(
+		$this->render_optimization_method_radiobutton(
 			$name,
 			$label,
 			$description,
 			'auto',
-			$checked
+			$checked,
+			false
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_disabled' );
@@ -550,12 +546,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		$this->render_optimization_method_radiobtn(
+		$this->render_optimization_method_radiobutton(
 			$name,
 			$label,
 			$description,
 			'manual',
-			$checked
+			$checked,
+			false
 		);
 
 		echo '</div>';
@@ -739,17 +736,37 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 	}
 
-	public function render_optimization_method_radiobtn( $name, $label, $desc, $value, $checked ) {
-		echo '<p class="tiny-radio">';
+	public function render_optimization_method_radiobutton(
+			$name,
+			$label,
+			$desc,
+			$value,
+			$checked,
+			$disabled
+	) {
+		if ( $disabled ) {
+			echo '<p class="tiny-radio disabled">';
+		} else {
+			echo '<p class="tiny-radio">';
+		}
 		$id = sprintf( self::get_prefixed_name( 'optimization_method_%s' ), $value );
 		$label = esc_html( $label, 'tiny-compress-images' );
 		$desc = esc_html( $desc, 'tiny-compress-images' );
+		$disabled = ( $disabled ? ' disabled="disabled"' : '' );
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
-							'" value="' . $value . '" ' . $checked . '/>';
+							'" value="' . $value . '" ' . $checked . ' ' . $disabled . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
 		echo '<br>';
-		echo '<span>' . $desc . '</span>';
+		echo '<span class="description">' . $desc . '</span>';
 		echo '<br>';
+		if ( $disabled ) {
+			$message = esc_html__(
+				'Background compressions are disabled because you have configured WP Offload S3
+				 to remove files from the server.',
+				'tiny-compress-images'
+			);
+			echo '<span>' . $message . '</span><br>';
+		}
 		echo '</p>';
 	}
 

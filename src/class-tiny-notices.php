@@ -146,8 +146,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= '</h3>';
 		$notice .= '<p>';
 		$notice .= esc_html__(
-			'The following plugins are not compatible with
-			 this plugin and may lead to unexpected results',
+			'These plugins are incompatible and may cause unexpected results',
 			'tiny-compress-images'
 		);
 		$notice .= ':</p>';

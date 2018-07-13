@@ -202,6 +202,10 @@ p.tiny-radio  {
 	margin-right: 12px;
 }
 
+p.tiny-radio.disabled label, p.tiny-radio.disabled span.description {
+	opacity: 0.5;
+}
+
 p.tiny-radio label {
 	font-weight: bold;
 }

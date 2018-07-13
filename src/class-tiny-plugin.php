@@ -240,12 +240,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function process_attachment( $metadata, $attachment_id ) {
 		if ( $this->settings->auto_compress_enabled() ) {
-			if ( $this->settings->background_compress_enabled() ) {
+			if (
+				$this->settings->background_compress_enabled() &&
+				! $this->settings->remove_local_files_setting_enabled()
+			) {
 				$this->async_compress_on_upload( $metadata, $attachment_id );
 			} else {
 				return $this->blocking_compress_on_upload( $metadata, $attachment_id );
 			}
 		}
+
 		return $metadata;
 	}
 
@@ -273,8 +277,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
-		if ( getenv("WORDPRESS_HOST") !== false ) {
-			wp_remote_post( getenv("WORDPRESS_HOST") . '/wp-admin/admin-ajax.php', $args );
+		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
+			wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
 		} else {
 			wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
 		}
