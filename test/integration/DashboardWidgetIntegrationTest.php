@@ -27,6 +27,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 
 
 	public function test_should_show_widget_without_optimized_images() {
+		$this->set_optimization_method( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->visit( '/wp-admin/index.php' );
 		$element = $this->find(
@@ -40,6 +41,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_should_show_widget_with_some_images_optimized() {
+		$this->set_optimization_method( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->set_api_key( 'JPG123' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
@@ -56,6 +58,7 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_should_show_widget_with_all_images_optimized() {
+		$this->set_optimization_method( 'auto' );
 		$this->set_api_key( 'JPG123' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->visit( '/wp-admin/index.php' );
