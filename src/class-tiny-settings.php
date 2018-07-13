@@ -63,8 +63,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function add_menu() {
 		add_options_page(
-			'JPEG and PNG optimization',
-			'JPEG and PNG optimization',
+			'Compress JPEG & PNG images',
+			'Compress JPEG & PNG images',
 			'manage_options',
 			'tinify',
 			array( $this, 'add_options_to_page' )
@@ -445,7 +445,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_settings_link() {
 		echo '<div class="tinify-settings"><h2>';
 		esc_html_e(
-			'JPEG and PNG optimization',
+			'Compress JPEG & PNG images',
 			'tiny-compress-images'
 		);
 		echo '</h2>';
@@ -483,7 +483,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_optimization_method_settings() {
 		$heading = esc_html__(
-			'When should we optimize your images?',
+			'When should we compress your images?',
 			'tiny-compress-images'
 		);
 		echo '<h4>' . $heading . '</h4>';
@@ -496,7 +496,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'background' === $optimization_method ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Optimize images in the background (Recommended)',
+			'Compress images in the background (Recommended)',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(
@@ -517,7 +517,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'auto' === $optimization_method ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Optimize images during upload',
+			'Compress images during upload',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(
@@ -538,11 +538,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'manual' === $optimization_method ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Do not optimize my images automatically',
+			'Do not compress my images automatically',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(
-			'Manually select the images you want to optimize in the media library.',
+			'Manually select the images you want to compress in the media library.',
 			'tiny-compress-images'
 		);
 
@@ -668,7 +668,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_resize() {
 		echo '<p class="tiny-resize-unavailable" style="display: none">';
 		esc_html_e(
-			'Enable optimization of the original image size for more options.',
+			'Enable compression of the original image size for more options.',
 			'tiny-compress-images'
 		);
 		echo '</p>';
@@ -700,7 +700,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 		echo '</span><br><span>';
 		esc_html_e(
-			'Resizing takes an additional optimization credit for each image that is larger.',
+			'Resizing takes 1 additional compression for each image that is larger.',
 			'tiny-compress-images'
 		);
 		echo '</span><div class="tiny-resize-inputs">';
