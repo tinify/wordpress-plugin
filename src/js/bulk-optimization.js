@@ -43,9 +43,9 @@
     var successFullSaved = parseInt(data.size_change, 10);
     var newHumanReadableLibrarySize = data.human_readable_library_size;
     if (successFullCompressions === 0) {
-      row.find('.status').html(tinyCompress.L10nNoActionTaken);
+      row.find('.status').html(tinyCompress.L10nNoActionTaken).attr("data-status", "no-action-taken");
     } else {
-      row.find('.status').html(successFullCompressions + ' ' + tinyCompress.L10nCompressed);
+      row.find('.status').html(successFullCompressions + ' ' + tinyCompress.L10nCompressed).attr("data-status", "compressed");
       updateProgressBar(successFullCompressions);
       updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize);
     }
@@ -102,11 +102,13 @@
     row.find('.initial-size').html(data.initial_total_size);
     row.find('.optimized-size').html(data.optimized_total_size);
     row.find('.savings').html(data.savings);
-
-    var nextImage = i + compsAtOnce;
     var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
     var optimizedSoFar = parseInt(jQuery('#optimized-so-far').text(), 10);
-    if (items[nextImage]) {
+    var nextImage = undefined;
+    if (jQuery('td.status[data-status="waiting"]').length > 0) {
+      nextImage = jQuery("tr.media-item").index(jQuery('td.status[data-status="waiting"]:first').parents('tr'));
+    }
+    if (nextImage !== undefined && items[nextImage]) {
       if (!window.optimizationCancelled) {
         drawSomeRows(items, 1);
       }
@@ -129,7 +131,7 @@
 
     var row = jQuery('#optimization-items tr').eq(parseInt(i, 10)+1);
     row.find('.status').removeClass('todo');
-    row.find('.status').html(tinyCompress.L10nCompressing);
+    row.find('.status').html(tinyCompress.L10nCompressing).attr("data-status", "compressing");
     jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
@@ -162,7 +164,9 @@
     drawSomeRows(items, 10);
 
     for (var i = 0; i < compsAtOnce; i++) {
-      bulkOptimizeItem(items, i);
+      if (items.length >= i+1) {
+        bulkOptimizeItem(items, i);
+      }
     }
   }
 
@@ -179,7 +183,7 @@
           '<td class=\'column-author savings\' data-colname=\'' + tinyCompress.L10nSavings + '\' ></>' +
           '<td class=\'status todo\' data-colname=\'' + tinyCompress.L10nStatus + '\' />' +
         '</tr>');
-      row.find('.status').html(tinyCompress.L10nWaiting);
+      row.find('.status').html(tinyCompress.L10nWaiting).attr("data-status", "waiting");
       row.find('.name').html(items[drawNow].post_title);
       list.append(row);
     }
@@ -189,7 +193,7 @@
   function cancelOptimization() {
     window.optimizationCancelled = true;
     jQuery('div#optimization-spinner').css('display', 'none');
-    jQuery(jQuery('#optimization-items tr td.status.todo')).html(tinyCompress.L10nCancelled);
+    jQuery(jQuery('#optimization-items tr td.status.todo')).html(tinyCompress.L10nCancelled).attr("data-status", "cancelled");
     jQuery('div#bulk-optimization-actions input').removeClass('visible');
     jQuery('div#bulk-optimization-actions input#id-cancelling').addClass('visible');
   }

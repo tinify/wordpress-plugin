@@ -25,7 +25,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 			return $heading->getText();
 		}, $this->find_all( 'h1' ) );
 
-		$this->assertContains( 'JPEG and PNG optimization', $headings );
+		$this->assertContains( 'Compress JPEG & PNG images', $headings );
 	}
 
 	public function test_settings_should_show_notice_if_key_is_missing() {
@@ -279,7 +279,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$elements = $this->find_all( 'p.tiny-resize-unavailable' );
 		$this->assertEquals(
-			'Enable optimization of the original image size for more options.',
+			'Enable compression of the original image size for more options.',
 			$elements[0]->getText()
 		);
 	}

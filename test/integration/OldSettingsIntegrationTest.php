@@ -19,7 +19,7 @@ class OldSettingsIntegrationTest extends IntegrationTestCase {
 			return $heading->getText();
 		}, $this->find_all( 'h2' ) );
 
-		$this->assertContains( 'JPEG and PNG optimization', $headings );
+		$this->assertContains( 'Compress JPEG & PNG images', $headings );
 	}
 
 	public function test_old_settings_should_contain_link() {
