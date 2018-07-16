@@ -45,7 +45,7 @@
     if (successFullCompressions === 0) {
       row.find('.status').html(tinyCompress.L10nNoActionTaken).attr("data-status", "no-action-taken");
     } else {
-      row.find('.status').html(successFullCompressions + ' ' + tinyCompress.L10nCompressed).attr("data-status", "compressed");
+      row.find('.status').html('<span class="icon dashicons dashicons-yes success"></span>' + successFullCompressions + ' ' + tinyCompress.L10nCompressed).attr("data-status", "compressed");
       updateProgressBar(successFullCompressions);
       updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize);
     }
@@ -131,7 +131,7 @@
 
     var row = jQuery('#optimization-items tr').eq(parseInt(i, 10)+1);
     row.find('.status').removeClass('todo');
-    row.find('.status').html(tinyCompress.L10nCompressing).attr("data-status", "compressing");
+    row.find('.status').html('<span class="icon spinner"></span>' + tinyCompress.L10nCompressing).attr("data-status", "compressing");
     jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
@@ -177,11 +177,10 @@
       row = jQuery('<tr class=\'media-item\'>' +
           '<th class=\'thumbnail\' />' +
           '<td class=\'column-primary name\' />' +
-          '<td class=\'column-author sizes-optimized\' data-colname=\'' + tinyCompress.L10nSizesOptimized + '\' ></>' +
           '<td class=\'column-author initial-size\' data-colname=\'' + tinyCompress.L10nInitialSize + '\' ></>' +
           '<td class=\'column-author optimized-size\' data-colname=\'' + tinyCompress.L10nCurrentSize + '\' ></>' +
           '<td class=\'column-author savings\' data-colname=\'' + tinyCompress.L10nSavings + '\' ></>' +
-          '<td class=\'status todo\' data-colname=\'' + tinyCompress.L10nStatus + '\' />' +
+          '<td class=\'column-author status todo\' data-colname=\'' + tinyCompress.L10nStatus + '\' />' +
         '</tr>');
       row.find('.status').html(tinyCompress.L10nWaiting).attr("data-status", "waiting");
       row.find('.name').html(items[drawNow].post_title);
