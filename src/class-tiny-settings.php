@@ -745,6 +745,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$disabled
 	) {
 		if ( $disabled ) {
+			echo '<div class="notice notice-warning inline"><p>';
+			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
+			$message = esc_html_e(
+				'Background compressions are disabled because you have configured WP Offload S3
+				 to remove files from the server.',
+				'tiny-compress-images'
+			);
+			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
 			echo '<p class="tiny-radio">';
@@ -759,14 +767,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<br>';
 		echo '<span class="description">' . $desc . '</span>';
 		echo '<br>';
-		if ( $disabled ) {
-			$message = esc_html__(
-				'Background compressions are disabled because you have configured WP Offload S3
-				 to remove files from the server.',
-				'tiny-compress-images'
-			);
-			echo '<span>' . $message . '</span><br>';
-		}
 		echo '</p>';
 	}
 
