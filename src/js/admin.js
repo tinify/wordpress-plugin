@@ -49,7 +49,7 @@
         action: 'tiny_settings_' + action + '_api_key',
         key: key,
         name: name,
-        email: email,
+        email: email
       },
 
       success: function(json) {
