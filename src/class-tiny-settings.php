@@ -443,12 +443,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_settings_link() {
-		echo '<div class="tinify-settings"><h2>';
+		echo '<div class="tinify-settings"><h3>';
 		esc_html_e(
 			'Compress JPEG & PNG images',
 			'tiny-compress-images'
 		);
-		echo '</h2>';
+		echo '</h3>';
 		$url = admin_url( 'options-general.php?page=tinify' );
 		$link = "<a href='" . $url . "'>" . esc_html__( 'settings', 'tiny-compress-images' ) . '</a>';
 		printf(
