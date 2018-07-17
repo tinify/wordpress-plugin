@@ -135,7 +135,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											'a' => array(
 											'href' => array(),
 											),
-										) ), '<a href=' . admin_url( 'options-general.php#tinify' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
+										) ), '<a href=' . admin_url( 'options-general.php?page=tinify' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
 										</p>
 									</div>
 								</div>

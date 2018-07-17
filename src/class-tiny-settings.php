@@ -450,7 +450,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 		echo '</h3>';
 		$url = admin_url( 'options-general.php?page=tinify' );
-		$link = "<a href='" . $url . "'>" . esc_html__( 'settings', 'tiny-compress-images' ) . '</a>';
+		$link = "<a href='" . $url . "'>";
+		$link .= esc_html__( 'settings', 'tiny-compress-images' );
+		$link .= '</a>';
 		printf(
 			wp_kses(
 				__(
