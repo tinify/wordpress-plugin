@@ -126,8 +126,8 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->set_option( 'tinypng_api_key', $api_key );
 	}
 
-	protected function set_optimization_method( $optimization_method ) {
-		$this->set_option( 'tinypng_optimization_method', serialize( $optimization_method ) );
+	protected function set_compression_timing( $compression_timing ) {
+		$this->set_option( 'tinypng_compression_timing', serialize( $compression_timing ) );
 	}
 
 	protected function enable_compression_sizes( $sizes ) {

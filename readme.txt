@@ -126,7 +126,7 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
-= 2.3.0 =
+= 3.0.0 =
 * Added option to compress images in the background to improve the speed of adding files to Wordpress.
 * Speed up bulk compressions by compressing more images simultaneously.
 * Better WP Offload S3 compatibility by downloading images from S3 before compression for existing images.

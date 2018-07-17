@@ -162,13 +162,13 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
-	public function test_settings_should_store_optimization_method() {
-		$this->find( '#tinypng_optimization_method_auto' )->click();
+	public function test_settings_should_store_compression_timing() {
+		$this->find( '#tinypng_compression_timing_auto' )->click();
 		$this->find( 'form' )->submit();
 
 		$this->assertEquals(
 			'true',
-			$this->find( '#tinypng_optimization_method_auto' )->getAttribute( 'checked' )
+			$this->find( '#tinypng_compression_timing_auto' )->getAttribute( 'checked' )
 		);
 	}
 

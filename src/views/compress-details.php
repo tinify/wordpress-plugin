@@ -15,9 +15,13 @@ $size_active = array_fill_keys( $active_tinify_sizes, true );
 $size_exists = array_fill_keys( $available_sizes, true );
 ksort( $size_exists );
 
+$images_to_compress = array();
+if ( ! empty( $_REQUEST['ids'] ) ) {
+	$images_to_compress = array_map( 'intval', explode( '-', $_REQUEST['ids'] ) );
+}
 ?>
 <div class="details-container">
-	<div class="details" >
+	<div class="details">
 		<?php if ( $error ) {
 			// dashicons-warning available for WP 4.3+ ?>
 			<span class="icon dashicons dashicons-no error"></span>
@@ -62,6 +66,9 @@ ksort( $size_exists );
 		</a>
 	</div>
 	<?php if ( $available_unoptimized_sizes > 0 ) { ?>
+		<?php if ( in_array( $tiny_image->get_id(), $images_to_compress ) ) { ?>
+			<span class="hidden auto-compress"></span>
+		<?php } ?>
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
 			<?php esc_html_e( 'Compress', 'tiny-compress-images' ) ?>
 		</button>

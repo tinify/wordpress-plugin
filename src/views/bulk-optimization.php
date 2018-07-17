@@ -234,13 +234,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 		</div>
 	</div>
 	<script type="text/javascript">
-	<?php
-	if ( $auto_start_bulk ) {
-		echo 'jQuery(function() { bulkOptimizationAutorun(' . json_encode( $this->get_ids_to_compress() ) . ')})';
-	} else {
-		echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})';
-	}
-	?>
+	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})'; ?>
 	</script>
 	<table class="wp-list-table widefat fixed striped media whitebox" id="optimization-items" >
 		<thead>

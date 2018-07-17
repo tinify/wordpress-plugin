@@ -23,6 +23,12 @@
     })
   }
 
+  function compressImageSelection() {
+    jQuery('span.auto-compress').each(function(index, element) {
+      jQuery(element).siblings('button').click()
+    });
+  }
+
   function watchCompressingImages() {
     if (jQuery('.details-container[data-status="compressing"]').length > 0) {
       statusCheckIntervalId = setInterval(checkCompressingImages, 5000)
@@ -219,6 +225,7 @@
 
     setPropOf('button.tiny-compress', 'disabled', null)
 
+    compressImageSelection()
     watchCompressingImages()
 
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]')

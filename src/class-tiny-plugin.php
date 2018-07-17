@@ -475,11 +475,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		check_admin_referer( 'bulk-media' );
 		$ids = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
-		wp_redirect(add_query_arg(
-			'_wpnonce',
-			wp_create_nonce( 'tiny-bulk-optimization' ),
-			admin_url( "upload.php?page=tiny-bulk-optimization&ids=$ids" )
-		));
+		wp_redirect( admin_url( 'upload.php?mode=list&ids=' . $ids ) );
 		exit();
 	}
 
@@ -532,8 +528,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$admin_colors = self::retrieve_admin_colors();
 
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-
-		$auto_start_bulk = isset( $_REQUEST['ids'] );
 
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
 	}
@@ -606,21 +600,5 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$user = wp_get_current_user();
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
-	}
-
-	private function get_ids_to_compress() {
-		if ( empty( $_REQUEST['ids'] ) ) {
-			return array();
-		}
-
-		$ids = implode( ',', array_map( 'intval', explode( '-', $_REQUEST['ids'] ) ) );
-		$condition = "AND ID IN($ids)";
-
-		global $wpdb;
-		return $wpdb->get_results( // WPCS: unprepared SQL OK.
-			"SELECT ID, post_title FROM $wpdb->posts
-			WHERE post_type = 'attachment' $condition
-			AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-			ORDER BY ID DESC", ARRAY_A);
 	}
 }

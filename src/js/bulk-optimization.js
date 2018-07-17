@@ -43,7 +43,7 @@
     var successFullSaved = parseInt(data.size_change, 10);
     var newHumanReadableLibrarySize = data.human_readable_library_size;
     if (successFullCompressions === 0) {
-      row.find('.status').html(tinyCompress.L10nNoActionTaken).attr("data-status", "no-action-taken");
+      row.find('.status').html('<span class="icon dashicons dashicons-no alert"></span>' + tinyCompress.L10nNoActionTaken).attr("data-status", "no-action-taken");
     } else {
       row.find('.status').html('<span class="icon dashicons dashicons-yes success"></span>' + successFullCompressions + ' ' + tinyCompress.L10nCompressed).attr("data-status", "compressed");
       updateProgressBar(successFullCompressions);
@@ -62,19 +62,23 @@
       row.addClass('failed');
       row.find('.status').html(tinyCompress.L10nInternalError + '<br>' + error.toString());
       row.find('.status').attr('title', error.toString());
+      row.find('.status').attr('data-status', 'error');
       data = {};
     } else if (data == null) {
       row.addClass('failed');
       row.find('.status').html(tinyCompress.L10nError);
+      row.find('.status').attr('data-status', 'error');
       data = {};
     } else if (data.error) {
       row.addClass('failed');
       row.find('.status').html(tinyCompress.L10nError + '<br>' + data.error);
       row.find('.status').attr('title', data.error);
+      row.find('.status').attr('data-status', 'error');
     } else if (data.failed > 0) {
       row.addClass('failed');
       row.find('.status').html('<span class=\'icon dashicons dashicons-no error\'></span><span class=\'message\'>' + tinyCompress.L10nLatestError + ': ' + data.message + '</span>');
       row.find('.status').attr('title', data.message);
+      row.find('.status').attr('data-status', 'error');
     } else {
       row.addClass('success');
       updateRowAfterCompression(row, data);
@@ -102,8 +106,7 @@
     row.find('.initial-size').html(data.initial_total_size);
     row.find('.optimized-size').html(data.optimized_total_size);
     row.find('.savings').html(data.savings);
-    var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
-    var optimizedSoFar = parseInt(jQuery('#optimized-so-far').text(), 10);
+    var totalToOptimize = jQuery('td.status[data-status="waiting"],td.status[data-status="compressing"]').length;
     var nextImage = undefined;
     if (jQuery('td.status[data-status="waiting"]').length > 0) {
       nextImage = jQuery("tr.media-item").index(jQuery('td.status[data-status="waiting"]:first').parents('tr'));
@@ -113,12 +116,11 @@
         drawSomeRows(items, 1);
       }
       bulkOptimizeItem(items, nextImage);
-    } else if ( optimizedSoFar === totalToOptimize) {
+    } else if (totalToOptimize === 0) {
       var message = jQuery('<div class=\'updated\'><p></p></div>');
       message.find('p').html(tinyCompress.L10nAllDone);
       message.insertAfter(jQuery('#tiny-bulk-optimization h1'));
       jQuery('div#optimization-spinner').css('display', 'none');
-      jQuery('div.progress').css('width', '100%');
       jQuery('div#bulk-optimization-actions').hide();
       jQuery('div.progress').css('animation', 'none');
     }

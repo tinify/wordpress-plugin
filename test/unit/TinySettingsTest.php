@@ -13,7 +13,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		$this->assertEquals(array(
 			array( 'tinify', 'tinypng_api_key' ),
 			array( 'tinify', 'tinypng_api_key_pending' ),
-			array( 'tinify', 'tinypng_optimization_method' ),
+			array( 'tinify', 'tinypng_compression_timing' ),
 			array( 'tinify', 'tinypng_sizes' ),
 			array( 'tinify', 'tinypng_resize_original' ),
 			array( 'tinify', 'tinypng_preserve_data' ),

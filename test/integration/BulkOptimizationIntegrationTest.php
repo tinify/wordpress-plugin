@@ -28,7 +28,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 
 	public function test_summary_should_display_correct_values() {
 		$this->set_api_key( 'JPG123' );
-		$this->set_optimization_method( 'auto' );
+		$this->set_compression_timing( 'auto' );
 
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
@@ -55,7 +55,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 
 	public function test_start_bulk_optimization_should_optimize_remaining_images() {
 		$this->set_api_key( 'JPG123' );
-		$this->set_optimization_method( 'auto' );
+		$this->set_compression_timing( 'auto' );
 
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );

@@ -98,7 +98,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = self::get_prefixed_name( 'api_key_pending' );
 		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name( 'optimization_method' );
+		$field = self::get_prefixed_name( 'compression_timing' );
 		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'sizes' );
@@ -270,8 +270,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function new_plugin_install() {
 		/* We merely have to check whether a newly added setting is already stored. */
-		$optimization_method = get_option( self::get_prefixed_name( 'optimization_method' ) );
-		return ! $optimization_method;
+		$compression_timing = get_option( self::get_prefixed_name( 'compression_timing' ) );
+		return ! $compression_timing;
 	}
 
 	public function get_resize_enabled() {
@@ -285,26 +285,26 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
 	}
 
-	public function get_optimization_method() {
-		$setting = get_option( self::get_prefixed_name( 'optimization_method' ) );
+	public function get_compression_timing() {
+		$setting = get_option( self::get_prefixed_name( 'compression_timing' ) );
 		if ( isset( $setting ) && $setting ) {
 			return $setting;
 		} elseif ( $this->new_plugin_install() ) {
-			update_option( self::get_prefixed_name( 'optimization_method' ), 'background' );
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'background' );
 			return 'background';
 		} else {
-			update_option( self::get_prefixed_name( 'optimization_method' ), 'auto' );
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
 			return 'auto';
 		}
 	}
 
 	public function auto_compress_enabled() {
-		return 	$this->get_optimization_method() === 'auto' ||
-						$this->get_optimization_method() === 'background';
+		return 	$this->get_compression_timing() === 'auto' ||
+						$this->get_compression_timing() === 'background';
 	}
 
 	public function background_compress_enabled() {
-		return $this->get_optimization_method() === 'background';
+		return $this->get_compression_timing() === 'background';
 	}
 
 	public function has_offload_s3_installed() {
@@ -472,18 +472,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_offload_s3_notice() {
 		if ( $this->remove_local_files_setting_enabled() &&
-				 'background' === $this->get_optimization_method() ) {
+				 'background' === $this->get_compression_timing() ) {
 			$message = esc_html__(
 				'Removing files from the server is incompatible with background compressions.
 				 Images will still be automatically compressed, but no longer in the background.',
 				'tiny-compress-images'
 			);
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
-			update_option( self::get_prefixed_name( 'optimization_method' ), 'auto' );
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
 		}
 	}
 
-	public function render_optimization_method_settings() {
+	public function render_compression_timing_settings() {
 		$heading = esc_html__(
 			'When should your images be compressed?',
 			'tiny-compress-images'
@@ -491,11 +491,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<h4>' . $heading . '</h4>';
 		echo '<div class="optimization-options">';
 
-		$name = self::get_prefixed_name( 'optimization_method' );
-		$optimization_method = $this->get_optimization_method();
+		$name = self::get_prefixed_name( 'compression_timing' );
+		$compression_timing = $this->get_compression_timing();
 
 		$id = self::get_prefixed_name( 'background_compress_enabled' );
-		$checked = ( 'background' === $optimization_method ? ' checked="checked"' : '' );
+		$checked = ( 'background' === $compression_timing ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
 			'Compress images in the background during upload (Recommended)',
@@ -506,7 +506,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		$this->render_optimization_method_radiobutton(
+		$this->render_compression_timing_radiobutton(
 			$name,
 			$label,
 			$description,
@@ -516,7 +516,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_enabled' );
-		$checked = ( 'auto' === $optimization_method ? ' checked="checked"' : '' );
+		$checked = ( 'auto' === $compression_timing ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
 			'Compress images during upload',
@@ -527,7 +527,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		$this->render_optimization_method_radiobutton(
+		$this->render_compression_timing_radiobutton(
 			$name,
 			$label,
 			$description,
@@ -537,7 +537,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_disabled' );
-		$checked = ( 'manual' === $optimization_method ? ' checked="checked"' : '' );
+		$checked = ( 'manual' === $compression_timing ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
 			'Do not compress my images automatically',
@@ -548,7 +548,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'tiny-compress-images'
 		);
 
-		$this->render_optimization_method_radiobutton(
+		$this->render_compression_timing_radiobutton(
 			$name,
 			$label,
 			$description,
@@ -700,10 +700,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'by setting a maximum width and height for all images uploaded.',
 			'tiny-compress-images'
 		);
-		echo '</span><br><span>';
-		esc_html_e(
-			'Resizing takes 1 additional compression for each image that is larger.',
-			'tiny-compress-images'
+		echo ' ';
+		echo sprintf(
+			esc_html__(
+				'Resizing takes %s for each image that is larger.',
+				'tiny-compress-images'
+			),
+			'<strong>' . esc_html__(
+				'1 additional compression',
+				'tiny-compress-images'
+			) . '</strong>'
 		);
 		echo '</span><div class="tiny-resize-inputs">';
 		printf( '%s: ', esc_html__( 'Max Width' ) );
@@ -738,7 +744,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 	}
 
-	public function render_optimization_method_radiobutton(
+	public function render_compression_timing_radiobutton(
 			$name,
 			$label,
 			$desc,
@@ -759,7 +765,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} else {
 			echo '<p class="tiny-radio">';
 		}
-		$id = sprintf( self::get_prefixed_name( 'optimization_method_%s' ), $value );
+		$id = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
 		$label = esc_html( $label, 'tiny-compress-images' );
 		$desc = esc_html( $desc, 'tiny-compress-images' );
 		$disabled = ( $disabled ? ' disabled="disabled"' : '' );

@@ -15,9 +15,9 @@
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Compression method', 'tiny-compress-images' ) ?></th>
+						<th scope="row"><?php esc_html_e( 'Compression timing', 'tiny-compress-images' ) ?></th>
 						<td>
-							<?php $this->render_optimization_method_settings() ?>
+							<?php $this->render_compression_timing_settings() ?>
 						</td>
 					</tr>
 					<tr>
