@@ -17,7 +17,7 @@ class OldSettingsIntegrationTest extends IntegrationTestCase {
 	public function test_old_settings_should_contain_heading() {
 		$headings = array_map( function( $heading ) {
 			return $heading->getText();
-		}, $this->find_all( 'h2' ) );
+		}, $this->find_all( 'h3' ) );
 
 		$this->assertContains( 'Compress JPEG & PNG images', $headings );
 	}
