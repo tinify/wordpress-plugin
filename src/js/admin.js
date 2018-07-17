@@ -92,9 +92,9 @@
         name: name,
         email: email
       },
-
       success: function(json) {
-        var status = JSON.parse(json);
+        var status = jQuery.parseJSON(json);
+        
         if (status.ok) {
           var target = jQuery('#tiny-account-status');
           if (target.length) {
@@ -110,7 +110,6 @@
           parent.find('p.message').text(status.message).show();
         }
       },
-
       error: function() {
         jQuery(event.target).attr({disabled: false}).removeClass('loading');
         parent.addClass('failure');
