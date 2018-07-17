@@ -202,6 +202,16 @@ p.tiny-radio  {
 	margin-right: 12px;
 }
 
+p.tiny-radio span.description {
+	display: inline-block;
+}
+
+@media only screen and (max-width: 782px) {
+	p.tiny-radio span.description {
+		margin-left: 38px;
+	}
+}
+
 p.tiny-radio.disabled label, p.tiny-radio.disabled span.description {
 	opacity: 0.5;
 }
@@ -222,6 +232,12 @@ div.tiny-resize-available {
 
 div.tiny-resize-resolution {
 	margin: 10px 0 20px 28px;
+}
+
+@media only screen and (max-width: 782px) {
+	div.tiny-resize-resolution {
+		margin-left: 38px;
+	}
 }
 
 div.tiny-resize-resolution span {

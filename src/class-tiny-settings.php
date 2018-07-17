@@ -450,11 +450,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 		echo '</h2>';
 		$url = admin_url( 'options-general.php?page=tinify' );
-		$link = "<a href='" . $url . "'>" . esc_html__( 'page', 'tiny-compress-images' ) . '</a>';
+		$link = "<a href='" . $url . "'>" . esc_html__( 'settings', 'tiny-compress-images' ) . '</a>';
 		printf(
 			wp_kses(
 				__(
-					'We\'ve moved the settings to a separate %s.',
+					'The %s have moved.',
 					'tiny-compress-images'
 				),
 				array(
@@ -483,7 +483,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_optimization_method_settings() {
 		$heading = esc_html__(
-			'When should we compress your images?',
+			'When should your images be compressed?',
 			'tiny-compress-images'
 		);
 		echo '<h4>' . $heading . '</h4>';
@@ -496,7 +496,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'background' === $optimization_method ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Compress images in the background (Recommended)',
+			'Compress images in the background during upload (Recommended)',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(
@@ -748,8 +748,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
 			$message = esc_html_e(
-				'Background compressions are disabled because you have configured WP Offload S3
-				 to remove files from the server.',
+				'For background compression to work you will need to configure WP Offload S3
+				 to keep a copy of the images on the server.',
 				'tiny-compress-images'
 			);
 			echo '</p></div>';

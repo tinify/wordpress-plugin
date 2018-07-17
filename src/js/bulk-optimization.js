@@ -1,5 +1,5 @@
 (function() {
-  var compsAtOnce = 5;
+  var parallelCompressions = 5;
 
   function updateProgressBar(successFullCompressions) {
     var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
@@ -143,7 +143,7 @@
         current_size: window.currentLibraryBytes
       },
       success: function(data) { bulkOptimizationCallback(null, data, items, i); },
-      error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, null, items, i, compsAtOnce); }
+      error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, null, items, i, parallelCompressions); }
     });
     jQuery('#tiny-progress span').html(i + 1);
   }
@@ -163,7 +163,7 @@
     updateProgressBar(0);
     drawSomeRows(items, 10);
 
-    for (var i = 0; i < compsAtOnce; i++) {
+    for (var i = 0; i < parallelCompressions; i++) {
       if (items.length >= i+1) {
         bulkOptimizeItem(items, i);
       }
