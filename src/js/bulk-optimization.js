@@ -161,7 +161,7 @@
     jQuery('div.progress').css('animation', 'progress-bar 80s linear infinite');
     jQuery('div#optimization-spinner').css('display', 'inline-block');
     updateProgressBar(0);
-    drawSomeRows(items, 10);
+    drawSomeRows(items, 5 + parallelCompressions);
 
     for (var i = 0; i < parallelCompressions; i++) {
       if (items.length >= i+1) {
