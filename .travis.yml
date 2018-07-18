@@ -1,6 +1,5 @@
 language: php
 php:
-- 5.3
 - 5.4
 - 5.5
 - 5.6
@@ -8,6 +7,9 @@ php:
 - 7.1
 matrix:
   include:
+  - dist: precise
+    php: 5.3
+    script: bin/unit-tests
   - dist: trusty
     php: hhvm
   - dist: trusty
