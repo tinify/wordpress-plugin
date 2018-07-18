@@ -1,4 +1,4 @@
-FROM wordpress:4
+FROM wordpress:4-php5.6
 
 RUN docker-php-ext-install mysql
 
