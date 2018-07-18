@@ -127,7 +127,7 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 	}
 
 	protected function set_compression_timing( $compression_timing ) {
-		$this->set_option( 'tinypng_compression_timing', serialize( $compression_timing ) );
+		$this->set_option( 'tinypng_compression_timing', $compression_timing );
 	}
 
 	protected function enable_compression_sizes( $sizes ) {

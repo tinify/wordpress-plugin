@@ -19,6 +19,14 @@
 */
 
 class Tiny_PHP {
+	public static function has_fully_supported_php() {
+		return version_compare( PHP_VERSION, '5.3', '>' );
+	}
+
+	public static function curl_available() {
+		return extension_loaded( 'curl' );
+	}
+
 	public static function fopen_available() {
 		return ini_get( 'allow_url_fopen' );
 	}
@@ -29,8 +37,8 @@ class Tiny_PHP {
 	}
 
 	public static function client_supported() {
-		return 	version_compare( PHP_VERSION, '5.3', '>' ) &&
-						extension_loaded( 'curl' ) &&
+		return 	Tiny_PHP::has_fully_supported_php() &&
+						Tiny_PHP::curl_available() &&
 						Tiny_PHP::curl_exec_available();
 	}
 }

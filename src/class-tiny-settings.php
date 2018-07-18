@@ -415,22 +415,36 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_outdated_platform_notice() {
 		if ( ! Tiny_PHP::client_supported() ) {
-			$details = 'PHP ' . PHP_VERSION;
-			if ( extension_loaded( 'curl' ) ) {
-				$curlinfo = curl_version();
-				$details .= ' with curl ' . $curlinfo['version'];
-				if ( ! Tiny_PHP::curl_exec_available() ) {
-					$details .= ' and curl_exec disabled';
+			if ( ! Tiny_PHP::has_fully_supported_php() ) {
+				$details = 'PHP ' . PHP_VERSION;
+				if ( Tiny_PHP::curl_available() ) {
+					$curlinfo = curl_version();
+					$details .= ' with curl ' . $curlinfo['version'];
+					if ( ! Tiny_PHP::curl_exec_available() ) {
+						$details .= ' and curl_exec disabled';
+					}
+				} else {
+					$details .= ' without curl';
 				}
-			} else {
-				$details .= ' without curl';
-			}
-			$message = sprintf(
-				esc_html__(
-					'You are using an outdated platform (%s) – some features are disabled',
+				$message = sprintf(
+					esc_html__(
+						'You are using an outdated platform (%s)',
+						'tiny-compress-images'
+					), $details
+				);
+			} elseif ( ! Tiny_PHP::curl_available() ) {
+				$message = esc_html__(
+					'We noticed that cURL is not available.
+					 For the best experience we recommend to have cURL made available.',
 					'tiny-compress-images'
-				), $details
-			);
+				);
+			} elseif ( ! Tiny_PHP::curl_exec_available() ) {
+				$message = esc_html__(
+					'We noticed that curl_exec is disabled in your PHP configuration.
+					 Please update this setting for the best experience.',
+					'tiny-compress-images'
+				);
+			}
 			$this->notices->show( 'deprecated', $message, 'notice-warning', false );
 		}
 	}
@@ -485,7 +499,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_compression_timing_settings() {
 		$heading = esc_html__(
-			'When should your images be compressed?',
+			'When should new images be compressed?',
 			'tiny-compress-images'
 		);
 		echo '<h4>' . $heading . '</h4>';
@@ -498,11 +512,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'background' === $compression_timing ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Compress images in the background during upload (Recommended)',
+			'Compress new images in the background (Recommended)',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(
-			'This is the fastest method, but can cause issues with other image related plugins.',
+			'This is the fastest method, but can cause issues with some image related plugins.',
 			'tiny-compress-images'
 		);
 
@@ -519,11 +533,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'auto' === $compression_timing ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Compress images during upload',
+			'Compress new images during upload',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(
-			'Uploads will take longer but is compatible with other image related plugins.',
+			'Uploads will take longer, but provides higher compatibility with other plugins.',
 			'tiny-compress-images'
 		);
 
@@ -540,7 +554,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( 'manual' === $compression_timing ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Do not compress my images automatically',
+			'Do not compress new images automatically',
 			'tiny-compress-images'
 		);
 		$description = esc_html__(

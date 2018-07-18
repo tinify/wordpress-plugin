@@ -152,7 +152,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= ':</p>';
 		$notice .= '<table>';
 		foreach ( $incompatible_plugins as $name => $file ) {
-			$notice .= '<tr><td class="bullet">&bullet;</td><td class="name">';
+			$notice .= '<tr><td class="bullet">•</td><td class="name">';
 			$notice .= $name;
 			$notice .= '</td><td>';
 			$nonce = wp_create_nonce( 'deactivate-plugin_' . $file );

@@ -200,6 +200,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'header' => array_merge( $headers, array(
 					'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
 					'User-Agent: ' . self::identifier(),
+					'Content-Type: multipart/form-data',
 				) ),
 				'content' => $body,
 				'follow_location' => 0,

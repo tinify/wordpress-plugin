@@ -243,7 +243,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'width' => 300,
 			'height' => 200,
 		));
-		$this->set_compression_timing( 'auto' );
 
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
@@ -279,7 +278,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
 			'method' => 'scale',
 			'height' => 200,
 		));
-		$this->set_compression_timing( 'auto' );
 
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->find_link( 'input-example' )->click();
