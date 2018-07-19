@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Compress JPEG & PNG images
  * Description: Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG.
- * Version: 2.2.6
+ * Version: 3.3.0
  * Author: TinyPNG
  * Author URI: https://tinypng.com
  * Text Domain: tiny-compress-images
