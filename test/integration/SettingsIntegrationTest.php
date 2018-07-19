@@ -5,7 +5,7 @@ require_once dirname( __FILE__ ) . '/IntegrationTestCase.php';
 class SettingsIntegrationTest extends IntegrationTestCase {
 	public function set_up() {
 		parent::set_up();
-		$this->visit( '/wp-admin/options-media.php' );
+		$this->visit( '/wp-admin/options-general.php?page=tinify' );
 	}
 
 	public function tear_down() {
@@ -23,14 +23,14 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	public function test_settings_should_contain_title() {
 		$headings = array_map( function( $heading ) {
 			return $heading->getText();
-		}, $this->find_all( 'h2, h3' ) );
+		}, $this->find_all( 'h1' ) );
 
-		$this->assertContains( 'JPEG and PNG optimization', $headings );
+		$this->assertContains( 'Compress JPEG & PNG images', $headings );
 	}
 
 	public function test_settings_should_show_notice_if_key_is_missing() {
 		$this->assertStringEndsWith(
-			'options-media.php#tiny-compress-images',
+			'options-general.php?page=tinify',
 			$this->find( '.error a' )->getAttribute( 'href' )
 		);
 	}
@@ -162,6 +162,16 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
+	public function test_settings_should_store_compression_timing() {
+		$this->find( '#tinypng_compression_timing_auto' )->click();
+		$this->find( 'form' )->submit();
+
+		$this->assertEquals(
+			'true',
+			$this->find( '#tinypng_compression_timing_auto' )->getAttribute( 'checked' )
+		);
+	}
+
 	public function test_settings_should_enable_all_sizes_by_default() {
 		$enabled_sizes = $this->get_enabled_sizes();
 
@@ -247,7 +257,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 	public function test_settings_should_show_resizing_when_original_enabled() {
 		$elements = $this->find_all( 'label[for=tinypng_resize_original_enabled]' );
 		$this->assertEquals(
-			'Resize and compress the original image',
+			'Resize the original image',
 			$elements[0]->getText()
 		);
 

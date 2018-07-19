@@ -1,6 +1,5 @@
 language: php
 php:
-- 5.3
 - 5.4
 - 5.5
 - 5.6
@@ -8,8 +7,15 @@ php:
 - 7.1
 matrix:
   include:
+  - dist: precise
+    php: 5.3
+    script: bin/unit-tests
   - dist: trusty
     php: hhvm
+  - dist: trusty
+    php: 7.0
+    env: WORDPRESS_VERSION=49 INTEGRATION_TESTS=true
+    script: bin/integration-tests
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=48 INTEGRATION_TESTS=true
@@ -69,18 +75,6 @@ matrix:
   - dist: trusty
     php: 7.0
     env: WORDPRESS_VERSION=34 INTEGRATION_TESTS=true
-    script: bin/integration-tests
-  - dist: trusty
-    php: 7.0
-    env: WORDPRESS_VERSION=33 INTEGRATION_TESTS=true
-    script: bin/integration-tests
-  - dist: trusty
-    php: 7.0
-    env: WORDPRESS_VERSION=32 INTEGRATION_TESTS=true
-    script: bin/integration-tests
-  - dist: trusty
-    php: 7.0
-    env: WORDPRESS_VERSION=31 INTEGRATION_TESTS=true
     script: bin/integration-tests
 install:
 - composer install

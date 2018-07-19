@@ -270,19 +270,22 @@ div.tiny-bulk-optimization table.whitebox {
 	}
 }
 
+div.tiny-bulk-optimization table.whitebox th.column-primary {
+	width: 30%;
+}
+
+@media only screen and (max-width: 782px) {
+	div.tiny-bulk-optimization table.whitebox th.column-primary {
+		width: 100%;
+	}
+}
+
 div.tiny-bulk-optimization table.whitebox th.column-author {
 	/* WP 3.1-4.2 */ width: auto;
 }
 
 div.tiny-bulk-optimization table.whitebox thead th.thumbnail {
 	width: 30px;
-}
-
-div.tiny-bulk-optimization table.whitebox thead th.savings {
-	width: 70px;
-}
-
-div.tiny-bulk-optimization table.whitebox thead th.status {
 }
 
 div.tiny-bulk-optimization table.whitebox th.thumbnail {

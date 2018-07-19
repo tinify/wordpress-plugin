@@ -34,7 +34,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 		);
 
 		$this->assertStringEndsWith(
-			'options-media.php#tiny-compress-images',
+			'options-general.php?page=tinify',
 			$element->getAttribute( 'href' )
 		);
 	}

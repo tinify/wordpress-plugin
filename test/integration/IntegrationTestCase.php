@@ -126,6 +126,10 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		$this->set_option( 'tinypng_api_key', $api_key );
 	}
 
+	protected function set_compression_timing( $compression_timing ) {
+		$this->set_option( 'tinypng_compression_timing', $compression_timing );
+	}
+
 	protected function enable_compression_sizes( $sizes ) {
 		$value = array( '_tiny_dummy' => 'on' );
 		foreach ( $sizes as $size ) {

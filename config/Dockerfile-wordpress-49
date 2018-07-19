@@ -1,10 +1,8 @@
 FROM wordpress:4
 
-RUN docker-php-ext-install mysql
-
-ENV WORDPRESS_VERSION 3.1.4
-ENV WORDPRESS_UPSTREAM_VERSION 3.1.4
-ENV WORDPRESS_SHA1 b93ff680a7035378abac1063abebf72a473e8a78
+ENV WORDPRESS_VERSION 4.9
+ENV WORDPRESS_UPSTREAM_VERSION 4.9
+ENV WORDPRESS_SHA1 6127bd2aed7b7c0a2c1789c8f17a2222a9081d6c
 
 # upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
 RUN curl -o wordpress.tar.gz -sSL https://wordpress.org/wordpress-${WORDPRESS_UPSTREAM_VERSION}.tar.gz \

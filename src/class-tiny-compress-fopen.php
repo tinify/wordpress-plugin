@@ -1,7 +1,7 @@
 <?php
 /*
 * Tiny Compress Images - WordPress plugin.
-* Copyright (C) 2015-2017 Voormedia B.V.
+* Copyright (C) 2015-2018 Voormedia B.V.
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the Free
@@ -200,6 +200,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'header' => array_merge( $headers, array(
 					'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
 					'User-Agent: ' . self::identifier(),
+					'Content-Type: multipart/form-data',
 				) ),
 				'content' => $body,
 				'follow_location' => 0,

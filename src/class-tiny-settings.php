@@ -1,7 +1,7 @@
 <?php
 /*
 * Tiny Compress Images - WordPress plugin.
-* Copyright (C) 2015-2017 Voormedia B.V.
+* Copyright (C) 2015-2018 Voormedia B.V.
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the Free
@@ -25,9 +25,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 	private $compressor;
 	private $notices;
 
+	protected static $incompatible_plugins = array(
+		'CheetahO Image Optimizer' => 'cheetaho-image-optimizer/cheetaho.php',
+		'EWWW Image Optimizer' => 'ewww-image-optimizer/ewww-image-optimizer.php',
+		'Imagify' => 'imagify/imagify.php',
+		'Kraken Image Optimizer' => 'kraken-image-optimizer/kraken.php',
+		'ShortPixel Image Optimizer' => 'shortpixel-image-optimiser/wp-shortpixel.php',
+		'WP Smush' => 'wp-smushit/wp-smush.php',
+		'WP Smush Pro' => 'wp-smush-pro/wp-smush.php',
+	);
+
+	protected static $offload_s3_plugin = 'amazon-s3-and-cloudfront/wordpress-s3.php';
+
 	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
+		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 	}
 
 	private function init_compressor() {
@@ -38,7 +51,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_absolute_url() {
-		return get_admin_url( null, 'options-media.php#' . self::NAME );
+		return get_admin_url( null, 'options-general.php?page=tinify' );
 	}
 
 	public function xmlrpc_init() {
@@ -48,46 +61,20 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
+	public function add_menu() {
+		add_options_page(
+			'Compress JPEG & PNG images',
+			'Compress JPEG & PNG images',
+			'manage_options',
+			'tinify',
+			array( $this, 'add_options_to_page' )
+		);
+	}
+
 	public function admin_init() {
 		if ( current_user_can( 'manage_options' ) ) {
-			if ( ! $this->get_api_key() ) {
-				$notice_class = 'error';
-				$notice = esc_html__(
-					'Please register or provide an API key to start compressing images',
-					'tiny-compress-images'
-				);
-			} elseif ( $this->get_api_key_pending() ) {
-				$notice_class = 'notice-warning';
-				$notice = esc_html__(
-					'Please activate your account to start compressing images',
-					'tiny-compress-images'
-				);
-			}
-
-			if ( isset( $notice ) && $notice ) {
-				$link = sprintf(
-					'<a href="options-media.php#%s">%s</a>', self::NAME, $notice
-				);
-				$this->notices->show( 'setting', $link, $notice_class, false );
-			}
-
-			if ( ! Tiny_PHP::client_supported() ) {
-				$details = 'PHP ' . PHP_VERSION;
-				if ( extension_loaded( 'curl' ) ) {
-					$curlinfo = curl_version();
-					$details .= ' with curl ' . $curlinfo['version'];
-				} else {
-					$details .= ' without curl';
-				}
-				$message = sprintf(
-					esc_html__(
-						'You are using an outdated platform (%s) – some features are disabled',
-						'tiny-compress-images'
-					), $details
-				);
-				$this->notices->show( 'deprecated', $message, 'notice-warning', false );
-			}
-		}// End if().
+			$this->render_notices();
+		}
 
 		try {
 			$this->init_compressor();
@@ -99,50 +86,29 @@ class Tiny_Settings extends Tiny_WP_Base {
 			);
 		}
 
-		$section = self::get_prefixed_name( 'settings' );
-		add_settings_section( $section,
-			esc_html__( 'JPEG and PNG optimization', 'tiny-compress-images' ),
-			$this->get_method( 'render_section' ),
+		/* Create link to new settings page from media settings page. */
+		add_settings_section( 'section_end', '',
+			$this->get_method( 'render_settings_link' ),
 			'media'
 		);
 
 		$field = self::get_prefixed_name( 'api_key' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'TinyPNG account', 'tiny-compress-images' ),
-			$this->get_method( 'render_pending_status' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'api_key_pending' );
-		register_setting( 'media', $field );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'compression_timing' );
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'sizes' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'File compression', 'tiny-compress-images' ),
-			$this->get_method( 'render_sizes' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'resize_original' );
-		register_setting( 'media', $field );
-		add_settings_field( $field,
-			esc_html__( 'Original image', 'tiny-compress-images' ),
-			$this->get_method( 'render_resize' ),
-			'media',
-			$section
-		);
+		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'preserve_data' );
-		register_setting( 'media', $field );
-
-		add_settings_section( 'section_end', '',
-			$this->get_method( 'render_section_end' ),
-			'media'
-		);
+		register_setting( 'tinify', $field );
 
 		add_action(
 			'wp_ajax_tiny_image_sizes_notice',
@@ -163,6 +129,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'wp_ajax_tiny_settings_update_api_key',
 			$this->get_method( 'update_api_key' )
 		);
+	}
+
+	public function add_options_to_page() {
+		include( dirname( __FILE__ ) . '/views/settings.php' );
 	}
 
 	public function image_sizes_notice() {
@@ -189,6 +159,20 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function get_status() {
 		return intval( get_option( self::get_prefixed_name( 'status' ) ) );
+	}
+
+	public function disabled_required_functions() {
+		$required_functions = array( 'curl_exec' );
+		$disabled_required_functions = array();
+		$disabled_functions = explode( ',', ini_get( 'disable_functions' ) );
+
+		foreach ( $required_functions as $required_function ) {
+			if ( in_array( $required_function, $disabled_functions ) ) {
+				array_push( $disabled_required_functions, $required_function );
+			}
+		}
+
+		return $disabled_required_functions;
 	}
 
 	protected function get_api_key() {
@@ -284,6 +268,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->tinify_sizes;
 	}
 
+	public function new_plugin_install() {
+		/* We merely have to check whether a newly added setting is already stored. */
+		$compression_timing = get_option( self::get_prefixed_name( 'compression_timing' ) );
+		return ! $compression_timing;
+	}
+
 	public function get_resize_enabled() {
 		/* This only applies if the original is being resized. */
 		$sizes = $this->get_sizes();
@@ -293,6 +283,61 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
 		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
+	}
+
+	public function get_compression_timing() {
+		$setting = get_option( self::get_prefixed_name( 'compression_timing' ) );
+		if ( isset( $setting ) && $setting ) {
+			return $setting;
+		} elseif ( $this->new_plugin_install() ) {
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'background' );
+			return 'background';
+		} else {
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
+			return 'auto';
+		}
+	}
+
+	public function auto_compress_enabled() {
+		return 	$this->get_compression_timing() === 'auto' ||
+						$this->get_compression_timing() === 'background';
+	}
+
+	public function background_compress_enabled() {
+		return $this->get_compression_timing() === 'background';
+	}
+
+	public function has_offload_s3_installed() {
+		if (
+			! function_exists( 'is_plugin_active' ) ||
+			! is_plugin_active( self::$offload_s3_plugin )
+		) {
+			return false;
+		}
+		$setting = get_option( 'tantan_wordpress_s3' );
+		if ( ! is_array( $setting ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function remove_local_files_setting_enabled() {
+		/* Check if Offload S3 plugin is installed. */
+		if (
+			! function_exists( 'is_plugin_active' ) ||
+			! is_plugin_active( self::$offload_s3_plugin )
+		) {
+			return false;
+		}
+		$setting = get_option( 'tantan_wordpress_s3' );
+		if ( ! is_array( $setting ) ) {
+			return false;
+		}
+		/* Check if Offload S3 is configured to remove local files. */
+		return ( $this->has_offload_s3_installed() &&
+						 array_key_exists( 'remove-local-file', $setting ) &&
+						 '1' === $setting['remove-local-file'] );
 	}
 
 	public function get_preserve_enabled( $name ) {
@@ -338,22 +383,198 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return sizeof( $options ) >= 2 ? $options : false;
 	}
 
-	public function render_section_end() {
+	public function render_notices() {
+		$this->render_setup_incomplete_notice();
+		$this->render_outdated_platform_notice();
+		$this->render_incompatible_plugins_notice();
+		$this->render_offload_s3_notice();
+	}
+
+	public function render_setup_incomplete_notice() {
+		if ( ! $this->get_api_key() ) {
+			$notice_class = 'error';
+			$notice = esc_html__(
+				'Please register or provide an API key to start compressing images',
+				'tiny-compress-images'
+			);
+		} elseif ( $this->get_api_key_pending() ) {
+			$notice_class = 'notice-warning';
+			$notice = esc_html__(
+				'Please activate your account to start compressing images',
+				'tiny-compress-images'
+			);
+		}
+
+		if ( isset( $notice ) && $notice ) {
+			$link = sprintf(
+				'<a href="options-general.php?page=tinify">%s</a>', $notice
+			);
+			$this->notices->show( 'setting', $link, $notice_class, false );
+		}
+	}
+
+	public function render_outdated_platform_notice() {
+		if ( ! Tiny_PHP::client_supported() ) {
+			if ( ! Tiny_PHP::has_fully_supported_php() ) {
+				$details = 'PHP ' . PHP_VERSION;
+				if ( Tiny_PHP::curl_available() ) {
+					$curlinfo = curl_version();
+					$details .= ' with curl ' . $curlinfo['version'];
+					if ( ! Tiny_PHP::curl_exec_available() ) {
+						$details .= ' and curl_exec disabled';
+					}
+				} else {
+					$details .= ' without curl';
+				}
+				$message = sprintf(
+					esc_html__(
+						'You are using an outdated platform (%s)',
+						'tiny-compress-images'
+					), $details
+				);
+			} elseif ( ! Tiny_PHP::curl_available() ) {
+				$message = esc_html__(
+					'We noticed that cURL is not available.
+					 For the best experience we recommend to have cURL made available.',
+					'tiny-compress-images'
+				);
+			} elseif ( ! Tiny_PHP::curl_exec_available() ) {
+				$message = esc_html__(
+					'We noticed that curl_exec is disabled in your PHP configuration.
+					 Please update this setting for the best experience.',
+					'tiny-compress-images'
+				);
+			}
+			$this->notices->show( 'deprecated', $message, 'notice-warning', false );
+		}
+	}
+
+	public function render_incompatible_plugins_notice() {
+		$incompatible_plugins = array_filter( self::$incompatible_plugins, 'is_plugin_active' );
+		if ( count( $incompatible_plugins ) > 0 ) {
+			$this->notices->show_incompatible_plugins( $incompatible_plugins );
+		}
+	}
+
+	public function render_settings_link() {
+		echo '<div class="tinify-settings"><h3>';
+		esc_html_e(
+			'Compress JPEG & PNG images',
+			'tiny-compress-images'
+		);
+		echo '</h3>';
+		$url = admin_url( 'options-general.php?page=tinify' );
+		$link = "<a href='" . $url . "'>";
+		$link .= esc_html__( 'settings', 'tiny-compress-images' );
+		$link .= '</a>';
+		printf(
+			wp_kses(
+				__(
+					'The %s have moved.',
+					'tiny-compress-images'
+				),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			$link
+		);
 		echo '</div>';
 	}
 
-	public function render_section() {
-		echo '<div class="' . self::NAME . '">';
-		echo '<span id="' . self::NAME . '"></span>';
+	public function render_offload_s3_notice() {
+		if ( $this->remove_local_files_setting_enabled() &&
+				 'background' === $this->get_compression_timing() ) {
+			$message = esc_html__(
+				'Removing files from the server is incompatible with background compressions.
+				 Images will still be automatically compressed, but no longer in the background.',
+				'tiny-compress-images'
+			);
+			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
+		}
+	}
+
+	public function render_compression_timing_settings() {
+		$heading = esc_html__(
+			'When should new images be compressed?',
+			'tiny-compress-images'
+		);
+		echo '<h4>' . $heading . '</h4>';
+		echo '<div class="optimization-options">';
+
+		$name = self::get_prefixed_name( 'compression_timing' );
+		$compression_timing = $this->get_compression_timing();
+
+		$id = self::get_prefixed_name( 'background_compress_enabled' );
+		$checked = ( 'background' === $compression_timing ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Compress new images in the background (Recommended)',
+			'tiny-compress-images'
+		);
+		$description = esc_html__(
+			'This is the fastest method, but can cause issues with some image related plugins.',
+			'tiny-compress-images'
+		);
+
+		$this->render_compression_timing_radiobutton(
+			$name,
+			$label,
+			$description,
+			'background',
+			$checked,
+			$this->remove_local_files_setting_enabled()
+		);
+
+		$id = self::get_prefixed_name( 'auto_compress_enabled' );
+		$checked = ( 'auto' === $compression_timing ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Compress new images during upload',
+			'tiny-compress-images'
+		);
+		$description = esc_html__(
+			'Uploads will take longer, but provides higher compatibility with other plugins.',
+			'tiny-compress-images'
+		);
+
+		$this->render_compression_timing_radiobutton(
+			$name,
+			$label,
+			$description,
+			'auto',
+			$checked,
+			false
+		);
+
+		$id = self::get_prefixed_name( 'auto_compress_disabled' );
+		$checked = ( 'manual' === $compression_timing ? ' checked="checked"' : '' );
+
+		$label = esc_html__(
+			'Do not compress new images automatically',
+			'tiny-compress-images'
+		);
+		$description = esc_html__(
+			'Manually select the images you want to compress in the media library.',
+			'tiny-compress-images'
+		);
+
+		$this->render_compression_timing_radiobutton(
+			$name,
+			$label,
+			$description,
+			'manual',
+			$checked,
+			false
+		);
+
+		echo '</div>';
 	}
 
 	public function render_sizes() {
-		echo '<p>';
-		esc_html_e(
-			'Choose sizes to compress. Remember each selected size counts as a compression.',
-			'tiny-compress-images'
-		);
-		echo '</p>';
 		echo '<input type="hidden" name="' .
 			self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' ) . '" value="on"/>';
 
@@ -381,7 +602,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
-				esc_html__( 'overwritten by compressed image', 'tiny-compress-images' ) . ')';
+				esc_html__(
+					'Your original image will be overwritten by the compressed image',
+					'tiny-compress-images'
+				) . ')';
 		} elseif ( Tiny_Image::is_retina( $size ) ) {
 			$label = esc_html__( 'WP Retina 2x sizes', 'tiny-compress-images' );
 		} else {
@@ -407,6 +631,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_image_sizes_notice(
 		$active_sizes_count, $resize_original_enabled, $compress_wr2x ) {
+		echo '<p>';
+		esc_html_e(
+			'Each selected size counts as a compression. ',
+			'tiny-compress-images'
+		);
+		echo '</p>';
 		echo '<p>';
 		if ( $resize_original_enabled ) {
 			$active_sizes_count++;
@@ -464,32 +694,43 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$checked = ( $this->get_resize_enabled() ? ' checked="checked"' : '' );
 
 		$label = esc_html__(
-			'Resize and compress the original image',
+			'Resize the original image',
 			'tiny-compress-images'
 		);
 
-		echo '<p class="tiny-resize-available">';
+		echo '<div class="tiny-resize-available">';
 		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
 			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
-		echo '<br>';
-		echo '</p>';
+		echo '<label for="' . $id . '">' . $label . '</label><br>';
 
-		echo '<p class="tiny-resize-available tiny-resize-resolution">';
-		printf( '%s ', esc_html__( 'Max Width' ) );
-		$this->render_resize_input( 'width' );
-		printf( '%s ', esc_html__( 'Max Height' ) );
-		$this->render_resize_input( 'height' );
-		echo '</p>';
-
-		echo '<p class="tiny-resize-available tiny-resize-resolution">';
-
+		echo '<div class="tiny-resize-available tiny-resize-resolution">';
+		echo '<span><strong>';
 		esc_html_e(
-			'Resizing takes 1 additional compression for each image that is larger.',
+			'Save space',
 			'tiny-compress-images'
 		);
-
-		echo '</p><br>';
+		echo '</strong> ';
+		esc_html_e(
+			'by setting a maximum width and height for all images uploaded.',
+			'tiny-compress-images'
+		);
+		echo ' ';
+		echo sprintf(
+			esc_html__(
+				'Resizing takes %s for each image that is larger.',
+				'tiny-compress-images'
+			),
+			'<strong>' . esc_html__(
+				'1 additional compression',
+				'tiny-compress-images'
+			) . '</strong>'
+		);
+		echo '</span><div class="tiny-resize-inputs">';
+		printf( '%s: ', esc_html__( 'Max Width' ) );
+		$this->render_resize_input( 'width' );
+		printf( '%s: ', esc_html__( 'Max Height' ) );
+		$this->render_resize_input( 'height' );
+		echo '</div></div></div>';
 
 		$this->render_preserve_input(
 			'creation',
@@ -515,6 +756,40 @@ class Tiny_Settings extends Tiny_WP_Base {
 			) . ' ' .
 			esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
+	}
+
+	public function render_compression_timing_radiobutton(
+			$name,
+			$label,
+			$desc,
+			$value,
+			$checked,
+			$disabled
+	) {
+		if ( $disabled ) {
+			echo '<div class="notice notice-warning inline"><p>';
+			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
+			$message = esc_html_e(
+				'For background compression to work you will need to configure WP Offload S3
+				 to keep a copy of the images on the server.',
+				'tiny-compress-images'
+			);
+			echo '</p></div>';
+			echo '<p class="tiny-radio disabled">';
+		} else {
+			echo '<p class="tiny-radio">';
+		}
+		$id = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
+		$label = esc_html( $label, 'tiny-compress-images' );
+		$desc = esc_html( $desc, 'tiny-compress-images' );
+		$disabled = ( $disabled ? ' disabled="disabled"' : '' );
+		echo '<input type="radio" id="' . $id . '" name="' . $name .
+							'" value="' . $value . '" ' . $checked . ' ' . $disabled . '/>';
+		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<br>';
+		echo '<span class="description">' . $desc . '</span>';
+		echo '<br>';
+		echo '</p>';
 	}
 
 	public function render_preserve_input( $name, $description ) {
@@ -544,6 +819,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return get_option( $field );
 	}
 
+	public function limit_reached() {
+		$this->compressor->get_compression_count();
+		return $this->compressor->limit_reached();
+	}
+
 	public function after_compress_callback( $compressor ) {
 		$count = $compressor->get_compression_count();
 		if ( ! is_null( $count ) ) {
@@ -551,17 +831,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 			update_option( $field, $count );
 		}
 		if ( $compressor->limit_reached() ) {
-			$link = '<a href="https://tinypng.com/dashboard/developers" target="_blank">' .
+			$link = '<a href="https://tinypng.com/dashboard/api" target="_blank">' .
 				esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 
 			$this->notices->add('limit-reached',
-				sprintf(
-					esc_html__(
-						'You have reached your limit of %s compressions this month.',
-						'tiny-compress-images'
-					),
-					$count
-				) .
+				esc_html__(
+					'You have reached your free limit this month.',
+					'tiny-compress-images'
+				) . ' ' .
 				sprintf(
 					esc_html__(
 						'Upgrade your %s if you like to compress more images.',
@@ -650,7 +927,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$compressor->create_key( $_POST['email'], array(
 					'name' => $_POST['name'],
 					'identifier' => $identifier,
-					'link' => $link,
+					'link' => 'http://localhost',
 				) );
 
 				update_option( self::get_prefixed_name( 'api_key_pending' ), true );

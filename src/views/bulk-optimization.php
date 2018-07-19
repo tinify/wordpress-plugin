@@ -135,7 +135,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											'a' => array(
 											'href' => array(),
 											),
-										) ), '<a href=' . admin_url( 'options-media.php#tiny-compress-images' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
+										) ), '<a href=' . admin_url( 'options-general.php?page=tinify' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>' )?>
 										</p>
 									</div>
 								</div>
@@ -159,7 +159,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 												'a' => array(
 													'href' => array(),
 												),
-											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/developers">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
+											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/api">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
 											?></p>
 										</div>
 									</div>
@@ -234,13 +234,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 		</div>
 	</div>
 	<script type="text/javascript">
-	<?php
-	if ( $auto_start_bulk ) {
-		echo 'jQuery(function() { bulkOptimizationAutorun(' . json_encode( $this->get_ids_to_compress() ) . ')})';
-	} else {
-		echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})';
-	}
-	?>
+	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})'; ?>
 	</script>
 	<table class="wp-list-table widefat fixed striped media whitebox" id="optimization-items" >
 		<thead>
@@ -248,11 +242,10 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 				<?php // column-author WP 3.8-4.2 mobile view ?>
 				<th class="thumbnail"></th>
 				<th class="column-primary" ><?php esc_html_e( 'File', 'tiny-compress-images' ) ?></th>
-				<th class="column-author"><?php esc_html_e( 'Sizes Optimized', 'tiny-compress-images' ) ?></th>
 				<th class="column-author"><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
 				<th class="column-author"><?php esc_html_e( 'Current Size', 'tiny-compress-images' ) ?></th>
 				<th class="column-author savings" ><?php esc_html_e( 'Savings', 'tiny-compress-images' ) ?></th>
-				<th class="status" ><?php esc_html_e( 'Status', 'tiny-compress-images' ) ?></th>
+				<th class="column-author status" ><?php esc_html_e( 'Status', 'tiny-compress-images' ) ?></th>
 			</tr>
 		</thead>
 		<tbody>

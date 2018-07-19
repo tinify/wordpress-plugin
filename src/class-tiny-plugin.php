@@ -1,7 +1,7 @@
 <?php
 /*
 * Tiny Compress Images - WordPress plugin.
-* Copyright (C) 2015-2017 Voormedia B.V.
+* Copyright (C) 2015-2018 Voormedia B.V.
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the Free
@@ -57,7 +57,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		add_filter( 'wp_generate_attachment_metadata',
-			$this->get_method( 'compress_on_upload' ),
+			$this->get_method( 'process_attachment' ),
 			10, 2
 		);
 
@@ -96,6 +96,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'show_media_info' )
 		);
 
+		add_filter( 'wp_ajax_tiny_async_optimize_upload_new_media',
+			$this->get_method( 'compress_on_upload' )
+		);
+
 		add_action( 'wp_ajax_tiny_compress_image_from_library',
 			$this->get_method( 'compress_image_from_library' )
 		);
@@ -106,6 +110,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'wp_ajax_tiny_get_optimization_statistics',
 			$this->get_method( 'ajax_optimization_statistics' )
+		);
+
+		add_action( 'wp_ajax_tiny_get_compression_status',
+			$this->get_method( 'ajax_compression_status' )
 		);
 
 		$plugin = plugin_basename(
@@ -142,8 +150,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function add_plugin_links( $current_links ) {
 		$additional = array(
 			'settings' => sprintf(
-				'<a href="options-media.php#%s">%s</a>',
-				self::NAME,
+				'<a href="options-general.php?page=tinify">%s</a>',
 				esc_html__( 'Settings', 'tiny-compress-images' )
 			),
 			'bulk' => sprintf(
@@ -229,10 +236,24 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 			wp_enqueue_script( self::NAME . '_tiny_bulk_optimization' );
 		}
-
 	}
 
-	public function compress_on_upload( $metadata, $attachment_id ) {
+	public function process_attachment( $metadata, $attachment_id ) {
+		if ( $this->settings->auto_compress_enabled() ) {
+			if (
+				$this->settings->background_compress_enabled() &&
+				! $this->settings->remove_local_files_setting_enabled()
+			) {
+				$this->async_compress_on_upload( $metadata, $attachment_id );
+			} else {
+				return $this->blocking_compress_on_upload( $metadata, $attachment_id );
+			}
+		}
+
+		return $metadata;
+	}
+
+	public function blocking_compress_on_upload( $metadata, $attachment_id ) {
 		if ( ! empty( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 			$result = $tiny_image->compress( $this->settings );
@@ -240,6 +261,42 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		} else {
 			return $metadata;
 		}
+	}
+
+	public function async_compress_on_upload( $metadata, $attachment_id ) {
+		$context     = 'wp';
+		$action      = 'tiny_async_optimize_upload_new_media';
+		$_ajax_nonce = wp_create_nonce( 'new_media-' . $attachment_id );
+		$body = compact( 'action', '_ajax_nonce', 'metadata', 'attachment_id', 'context' );
+
+		$args = array(
+			'timeout'   => 0.01,
+			'blocking'  => false,
+			'body'      => $body,
+			'cookies'   => isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array(),
+			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+		);
+
+		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
+			wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
+		} else {
+			wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
+		}
+	}
+
+	public function compress_on_upload() {
+		$attachment_id = intval( $_POST['attachment_id'] );
+		$metadata = $_POST['metadata'];
+		if ( is_array( $metadata ) ) {
+			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
+			$result = $tiny_image->compress( $this->settings );
+			// The wp_update_attachment_metadata call is thrown because the
+			// dimensions of the original image can change. This will then
+			// trigger other plugins and can result in unexpected behaviour and
+			// further changes to the image. This may require another approach.
+			wp_update_attachment_metadata( $attachment_id, $tiny_image->get_wp_metadata() );
+		}
+		exit();
 	}
 
 	public function compress_image_from_library() {
@@ -373,6 +430,37 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
+	public function ajax_compression_status() {
+		if ( ! $this->check_ajax_referer() ) {
+			exit();
+		}
+
+		if ( empty( $_POST['id'] ) ) {
+			$message = esc_html__(
+				'Not a valid media file.',
+				'tiny-compress-images'
+			);
+			echo $message;
+			exit();
+		}
+		$id = intval( $_POST['id'] );
+		$metadata = wp_get_attachment_metadata( $id );
+		if ( ! is_array( $metadata ) ) {
+			$message = esc_html__(
+				'Could not find metadata of media file.',
+				'tiny-compress-images'
+			);
+			echo $message;
+			exit;
+		}
+
+		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
+
+		echo $this->render_compress_details( $tiny_image );
+
+		exit();
+	}
+
 	public function media_library_bulk_action() {
 
 		if ( empty( $_REQUEST['action'] ) || (
@@ -387,11 +475,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		check_admin_referer( 'bulk-media' );
 		$ids = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
-		wp_redirect(add_query_arg(
-			'_wpnonce',
-			wp_create_nonce( 'tiny-bulk-optimization' ),
-			admin_url( "upload.php?page=tiny-bulk-optimization&ids=$ids" )
-		));
+		wp_redirect( admin_url( 'upload.php?mode=list&ids=' . $ids ) );
 		exit();
 	}
 
@@ -444,8 +528,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$admin_colors = self::retrieve_admin_colors();
 
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-
-		$auto_start_bulk = isset( $_REQUEST['ids'] );
 
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
 	}
@@ -518,21 +600,5 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$user = wp_get_current_user();
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
-	}
-
-	private function get_ids_to_compress() {
-		if ( empty( $_REQUEST['ids'] ) ) {
-			return array();
-		}
-
-		$ids = implode( ',', array_map( 'intval', explode( '-', $_REQUEST['ids'] ) ) );
-		$condition = "AND ID IN($ids)";
-
-		global $wpdb;
-		return $wpdb->get_results( // WPCS: unprepared SQL OK.
-			"SELECT ID, post_title FROM $wpdb->posts
-			WHERE post_type = 'attachment' $condition
-			AND (post_mime_type = 'image/jpeg' OR post_mime_type = 'image/png')
-			ORDER BY ID DESC", ARRAY_A);
 	}
 }

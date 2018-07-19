@@ -166,11 +166,89 @@ div.tiny-account-status.wide div.create button.loading, div.tiny-account-status.
 	}
 }
 
-p.tiny-resize-resolution {
-	margin-left: 24px;
+.incompatible-plugins.error h3 {
+	margin: 10px 0;
 }
 
-p.tiny-resize-resolution input {
+.incompatible-plugins.error table {
+	margin-bottom: 10px;
+}
+
+.incompatible-plugins.error table td.bullet {
+	width: 20px;
+}
+
+.incompatible-plugins.error table td.name {
+	padding-right: 100px;
+}
+
+table.tinify-settings p.intro {
+	color: #777777;
+}
+
+table.tinify-settings div.sizes {
+	margin: 20px 0;
+}
+
+table.tinify-settings input[type="checkbox"], table.tinify-settings input[type="radio"] {
+	margin-right: 12px;
+}
+
+div.optimization-options {
+	margin-top: 20px;
+}
+
+p.tiny-radio  {
+	margin-right: 12px;
+}
+
+p.tiny-radio span.description {
+	display: inline-block;
+}
+
+@media only screen and (max-width: 782px) {
+	p.tiny-radio span.description {
+		margin-left: 38px;
+	}
+}
+
+p.tiny-radio.disabled label, p.tiny-radio.disabled span.description {
+	opacity: 0.5;
+}
+
+p.tiny-radio label {
+	font-weight: bold;
+}
+
+p.tiny-radio span {
+	margin-left: 28px;
+	color: #777777;
+	line-height: 30px;
+}
+
+div.tiny-resize-available {
+	margin-top: 10px;
+}
+
+div.tiny-resize-resolution {
+	margin: 10px 0 20px 28px;
+}
+
+@media only screen and (max-width: 782px) {
+	div.tiny-resize-resolution {
+		margin-left: 38px;
+	}
+}
+
+div.tiny-resize-resolution span {
+	color: #777777;
+}
+
+div.tiny-resize-inputs {
+	margin-top: 10px;
+}
+
+div.tiny-resize-inputs input {
 	margin-right: 6px;
 }
 
@@ -297,5 +375,5 @@ input[type=number][name*="tinypng_resize_original"] {
 }
 
 .tiny-compress-images h4 {
-	margin: 0.5em 0;
+	margin: 5px 0;
 }

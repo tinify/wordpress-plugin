@@ -10,6 +10,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_upload_without_key_should_show_error() {
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->assertContains(
@@ -20,6 +21,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_invalid_key_should_show_error() {
 		$this->set_api_key( '1234' );
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->assertContains(
@@ -30,6 +32,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_limited_key_should_show_error() {
 		$this->set_api_key( 'LIMIT123' );
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->assertContains(
@@ -40,6 +43,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_valid_key_should_show_sizes_compressed() {
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->assertContains(
@@ -50,6 +54,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_gateway_timeout_should_show_error() {
 		$this->set_api_key( 'GATEWAYTIMEOUT' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array( 'medium' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
@@ -61,6 +66,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_upload_with_incorrect_metadata_should_show_error() {
 		$this->set_api_key( 'PNG123 INVALID' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array( '0', 'medium' ) );
 		$this->enable_preserve( array( 'copyright' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
@@ -74,6 +80,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_upload_should_show_details_in_edit_screen() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->enable_compression_sizes( array( 'medium', 'large' ) );
@@ -88,6 +95,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_upload_should_show_details_in_edit_screen_popup() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'PNG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 		$this->upload_media( 'test/fixtures/input-example.png' );
 
@@ -103,6 +111,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_upload_should_show_compression_details_in_edit_screen_popup() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
@@ -139,8 +148,8 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_compress_button_in_edit_screen_should_compress_images() {
 		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
-
 		$this->set_api_key( 'JPG123' );
 		$this->enable_compression_sizes( array( 'medium', 'large' ) );
 
@@ -155,7 +164,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_compress_button_should_compress_uncompressed_sizes() {
 		$this->set_api_key( 'JPG123' );
-
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array( 'medium' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->enable_compression_sizes( array( 'medium', 'thumbnail' ) );
@@ -180,6 +189,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_compress_button_should_show_error_for_incorrect_json() {
+		$this->set_compression_timing( 'auto' );
 		$this->enable_compression_sizes( array() );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 		$this->enable_compression_sizes( array( 'medium', 'large' ) );
@@ -196,17 +206,19 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_limit_reached_dismiss_button_should_remove_error() {
 		$this->set_api_key( 'LIMIT123' );
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->find( '.tiny-notice button, .tiny-notice a.tiny-dismiss' )->click();
 		$this->wait_for_text_disappearance( 'a.tiny-dismiss', 'Dismiss' );
 
-		$this->visit( '/wp-admin/options-media.php' );
+		$this->visit( '/wp-admin/options-general.php?page=tinify' );
 		$this->assertEquals( 0, count( $this->find_all( 'div.error p' ) ) );
 	}
 
 	public function test_resize_fit_should_display_resized_text_in_library() {
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_resize(array(
 			'method' => 'fit',
 			'width' => 300,
@@ -225,6 +237,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_resize_fit_should_display_resized_text_in_edit_screen() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_resize(array(
 			'method' => 'fit',
 			'width' => 300,
@@ -242,6 +255,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_resize_scale_should_display_resized_text_in_library() {
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_resize(array(
 			'method' => 'scale',
 			'height' => 200,
@@ -259,6 +273,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_resize_scale_should_display_resized_text_in_edit_screen() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_resize(array(
 			'method' => 'scale',
 			'height' => 200,
@@ -275,6 +290,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_superfluous_resize_should_not_display_resized_text_in_library() {
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_resize(array(
 			'method' => 'fit',
 			'width' => 15000,
@@ -293,6 +309,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_superfluous_resize_should_display_original_dimensions_in_edit_screen() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_resize(array(
 			'method' => 'fit',
 			'width' => 15000,
@@ -310,6 +327,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_resize_disabled_should_not_display_resized_text_in_library() {
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->disable_resize();
 
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
@@ -324,6 +342,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	public function test_resize_disabled_should_display_original_dimensions_in_edit_screen() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->disable_resize();
 
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
@@ -337,6 +356,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 
 	public function test_preserve_copyright_should_not_display_modification_in_library() {
 		$this->set_api_key( 'PRESERVEJPG123' );
+		$this->set_compression_timing( 'auto' );
 		$this->enable_preserve( array( 'copyright' ) );
 		$this->upload_media( 'test/fixtures/input-copyright.jpg' );
 
@@ -347,11 +367,13 @@ class CompressIntegrationTest extends IntegrationTestCase {
 	}
 
 	public function test_unsupported_format_should_not_show_compress_info_in_library() {
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.gif' );
 		$this->assertEquals( '', $this->find( 'td.column-tiny-compress-images' )->getText() );
 	}
 
 	public function test_non_image_file_should_not_show_compress_info_in_library() {
+		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.pdf' );
 		$this->assertEquals( '', $this->find( 'td.column-tiny-compress-images' )->getText() );
 	}
