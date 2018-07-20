@@ -67,6 +67,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 			array( 'jpeg_quality', array( 'Tiny_Plugin', 'jpeg_quality' ) ),
 			array( 'wp_editor_set_quality', array( 'Tiny_Plugin', 'jpeg_quality' ) ),
 			array( 'wp_generate_attachment_metadata', array( $this->subject, 'process_attachment' ), 10, 2 ),
+			array( 'wp_ajax_nopriv_tiny_rpc', array( $this->subject, 'process_rpc_request' ) ),
 		), $this->wp->getCalls( 'add_filter' ));
 	}
 

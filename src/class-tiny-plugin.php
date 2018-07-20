@@ -61,6 +61,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
+		add_filter( 'wp_ajax_nopriv_tiny_rpc',
+			$this->get_method( 'process_rpc_request' )
+		);
+
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
@@ -277,11 +281,66 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
+		if ( defined( 'XMLRPC_REQUEST' ) && get_current_user_id() ) {
+			/* We generate a hash to be used for the transient we use to store the current user. */
+			$rpc_hash = md5( maybe_serialize( $body ) );
+
+			$args['body']['tiny_rpc_action'] = $args['body']['action'];
+			/* We set a different action to make sure that all RPC requests are first validated. */
+			$args['body']['action']          = 'tiny_rpc';
+			$args['body']['tiny_rpc_hash']   = $rpc_hash;
+			$args['body']['tiny_rpc_nonce']  = wp_create_nonce( 'tiny_rpc_' . $rpc_hash );
+
+			/*
+				We can't use cookies here, so we save the user id in a transient
+				so that we can retrieve it again when processing the RPC request.
+				We should be able to use a relatively short timeout, as the request
+				should be processed directly afterwards.
+			*/
+			set_transient( 'tiny_rpc_' . $rpc_hash, get_current_user_id(), 10 );
+		}
+
 		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
 			wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
 		} else {
 			wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
 		}
+	}
+
+	public function process_rpc_request() {
+		if (
+			empty( $_POST['tiny_rpc_action'] ) ||
+			empty( $_POST['tiny_rpc_hash'] ) ||
+			32 !== strlen( $_POST['tiny_rpc_hash'] )
+		) {
+			exit();
+		}
+
+		$rpc_hash = sanitize_key( $_POST['tiny_rpc_hash'] );
+		$user_id = absint( get_transient( 'tiny_rpc_' . $rpc_hash ) );
+		$user = $user_id ? get_userdata( $user_id ) : false;
+
+		/* We no longer need the transient. */
+		delete_transient( 'tiny_rpc_' . $rpc_hash );
+
+		if ( ! $user || ! $user->exists() ) {
+			exit();
+		}
+		wp_set_current_user( $user_id );
+
+		if ( ! check_ajax_referer( 'tiny_rpc_' . $rpc_hash, 'tiny_rpc_nonce', false ) ) {
+			exit();
+		}
+
+		/* Now that everything is checked, perform the actual action. */
+		$action = $_POST['tiny_rpc_action'];
+		unset(
+			$_POST['action'],
+			$_POST['tiny_rpc_action'],
+			$_POST['tiny_rpc_id'],
+			$_POST['tiny_rpc_nonce']
+		);
+		do_action( 'wp_ajax_' . $action );
 	}
 
 	public function compress_on_upload() {
