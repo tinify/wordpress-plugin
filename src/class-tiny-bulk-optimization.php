@@ -20,39 +20,6 @@
 
 class Tiny_Bulk_Optimization {
 	public static function get_optimization_statistics( $settings, $result = null ) {
-		global $wpdb;
-
-		if ( is_null( $result ) ) {
-			// Select posts that have "_wp_attachment_metadata" image metadata
-			// and optionally contain "tiny_compress_images" metadata.
-			$query =
-				"SELECT
-					$wpdb->posts.ID,
-					$wpdb->posts.post_title,
-					$wpdb->postmeta.meta_value,
-					wp_postmeta_file.meta_value AS unique_attachment_name,
-					wp_postmeta_tiny.meta_value AS tiny_meta_value
-				FROM $wpdb->posts
-				LEFT JOIN $wpdb->postmeta
-					ON $wpdb->posts.ID = $wpdb->postmeta.post_id
-				LEFT JOIN $wpdb->postmeta AS wp_postmeta_file
-					ON $wpdb->posts.ID = wp_postmeta_file.post_id
-						AND wp_postmeta_file.meta_key = '_wp_attached_file'
-				LEFT JOIN $wpdb->postmeta AS wp_postmeta_tiny
-					ON $wpdb->posts.ID = wp_postmeta_tiny.post_id
-						AND wp_postmeta_tiny.meta_key = '" . Tiny_Config::META_KEY . "'
-				WHERE $wpdb->posts.post_type = 'attachment'
-					AND (
-						$wpdb->posts.post_mime_type = 'image/jpeg' OR
-						$wpdb->posts.post_mime_type = 'image/png'
-					)
-					AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
-				GROUP BY unique_attachment_name
-				ORDER BY ID DESC";
-
-			$result = $wpdb->get_results( $query, ARRAY_A ); // WPCS: unprepared SQL OK.
-		}
-
 		$stats = array();
 		$stats['uploaded-images'] = 0;
 		$stats['optimized-image-sizes'] = 0;
@@ -61,6 +28,58 @@ class Tiny_Bulk_Optimization {
 		$stats['unoptimized-library-size'] = 0;
 		$stats['available-for-optimization'] = array();
 
+		if ( is_null( $result ) ) {
+			$result = self::wpdb_retrieve_images_and_metadata();
+		}
+		$stats = self::populate_optimization_statistics( $settings, $result, $stats );
+		unset( $result );
+
+		if ( 0 != $stats['unoptimized-library-size'] ) {
+			$stats['display-percentage'] = round(
+				100 -
+				( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1
+			);
+		} else {
+			$stats['display-percentage'] = 0;
+		}
+		return $stats;
+	}
+
+	private static function wpdb_retrieve_images_and_metadata() {
+		global $wpdb;
+
+		// Retrieve posts that have "_wp_attachment_metadata" image metadata
+		// and optionally contain "tiny_compress_images" metadata.
+		$query =
+			"SELECT
+				$wpdb->posts.ID,
+				$wpdb->posts.post_title,
+				$wpdb->postmeta.meta_value,
+				wp_postmeta_file.meta_value AS unique_attachment_name,
+				wp_postmeta_tiny.meta_value AS tiny_meta_value
+			FROM $wpdb->posts
+			LEFT JOIN $wpdb->postmeta
+				ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+			LEFT JOIN $wpdb->postmeta AS wp_postmeta_file
+				ON $wpdb->posts.ID = wp_postmeta_file.post_id
+					AND wp_postmeta_file.meta_key = '_wp_attached_file'
+			LEFT JOIN $wpdb->postmeta AS wp_postmeta_tiny
+				ON $wpdb->posts.ID = wp_postmeta_tiny.post_id
+					AND wp_postmeta_tiny.meta_key = '" . Tiny_Config::META_KEY . "'
+			WHERE
+				$wpdb->posts.post_type = 'attachment'
+				AND (
+					$wpdb->posts.post_mime_type = 'image/jpeg' OR
+					$wpdb->posts.post_mime_type = 'image/png'
+				)
+				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
+			GROUP BY unique_attachment_name
+			ORDER BY ID DESC";
+
+		return $wpdb->get_results( $query, ARRAY_A ); // WPCS: unprepared SQL OK.
+	}
+
+	private static function populate_optimization_statistics( $settings, $result, $stats ) {
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
 			$wp_metadata = unserialize( $result[ $i ]['meta_value'] );
 			$tiny_metadata = unserialize( $result[ $i ]['tiny_meta_value'] );
@@ -85,15 +104,6 @@ class Tiny_Bulk_Optimization {
 					'post_title' => $result[ $i ]['post_title'],
 				);
 			}
-		}
-
-		if ( 0 != $stats['unoptimized-library-size'] ) {
-			$stats['display-percentage'] = round(
-				100 -
-				( $stats['optimized-library-size'] / $stats['unoptimized-library-size'] * 100 ), 1
-			);
-		} else {
-			$stats['display-percentage'] = 0;
 		}
 		return $stats;
 	}
