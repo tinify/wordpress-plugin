@@ -19,6 +19,10 @@
 */
 
 class Tiny_Bulk_Optimization {
+	// Page the retrieved database results for memory purposes
+	// in case the media library is extremely big.
+	const PAGING_SIZE = 25000;
+
 	public static function get_optimization_statistics( $settings, $result = null ) {
 		$stats = array();
 		$stats['uploaded-images'] = 0;
@@ -29,9 +33,15 @@ class Tiny_Bulk_Optimization {
 		$stats['available-for-optimization'] = array();
 
 		if ( is_null( $result ) ) {
-			$result = self::wpdb_retrieve_images_and_metadata();
+			$last_image_id = null;
+			do {
+				$result = self::wpdb_retrieve_images_and_metadata( $last_image_id );
+				$stats = self::populate_optimization_statistics( $settings, $result, $stats );
+				$last_image_id = end( $result )['ID'];
+			} while ( sizeof( $result ) == self::PAGING_SIZE );
+		} else {
+			$stats = self::populate_optimization_statistics( $settings, $result, $stats );
 		}
-		$stats = self::populate_optimization_statistics( $settings, $result, $stats );
 		unset( $result );
 
 		if ( 0 != $stats['unoptimized-library-size'] ) {
@@ -45,11 +55,12 @@ class Tiny_Bulk_Optimization {
 		return $stats;
 	}
 
-	private static function wpdb_retrieve_images_and_metadata() {
+	private static function wpdb_retrieve_images_and_metadata( $start_id ) {
 		global $wpdb;
 
 		// Retrieve posts that have "_wp_attachment_metadata" image metadata
 		// and optionally contain "tiny_compress_images" metadata.
+		$sql_start_id = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
 		$query =
 			"SELECT
 				$wpdb->posts.ID,
@@ -67,6 +78,7 @@ class Tiny_Bulk_Optimization {
 				ON $wpdb->posts.ID = wp_postmeta_tiny.post_id
 					AND wp_postmeta_tiny.meta_key = '" . Tiny_Config::META_KEY . "'
 			WHERE
+				$sql_start_id
 				$wpdb->posts.post_type = 'attachment'
 				AND (
 					$wpdb->posts.post_mime_type = 'image/jpeg' OR
@@ -74,7 +86,8 @@ class Tiny_Bulk_Optimization {
 				)
 				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
 			GROUP BY unique_attachment_name
-			ORDER BY ID DESC";
+			ORDER BY ID DESC
+			LIMIT " . self::PAGING_SIZE;
 
 		return $wpdb->get_results( $query, ARRAY_A ); // WPCS: unprepared SQL OK.
 	}
