@@ -8,7 +8,9 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
 		$this->wp->setTinyMetadata( 1, $this->json( 'image_database_metadata' ) );
-		$this->subject = new Tiny_Image( new Tiny_Settings(), 1, $this->json( '_wp_attachment_metadata' ) );
+		
+		$this->settings = new Tiny_Settings();
+		$this->subject = new Tiny_Image( $this->settings, 1, $this->json( '_wp_attachment_metadata' ) );
 	}
 
 	public function test_tiny_post_meta_key_may_never_change() {
@@ -88,22 +90,28 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_get_statistics() {
+		$active_sizes = $this->settings->get_sizes();
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$this->assertEquals( array(
 			'initial_total_size' => 360542,
 			'optimized_total_size' => 328670,
 			'image_sizes_optimized' => 3,
 			'available_unoptimized_sizes' => 1,
-		), $this->subject->get_statistics() );
+		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
 	}
 
 	public function test_get_image_sizes_available_for_compression_when_file_modified() {
+		$active_sizes = $this->settings->get_sizes();
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$this->wp->createImage( 37857, '2015/09', 'tinypng_gravatar-150x150.png' );
-		$statistics = $this->subject->get_statistics();
+		$statistics = $this->subject->get_statistics( $active_sizes, $active_tinify_sizes );
 		$this->assertEquals( 2, $statistics['available_unoptimized_sizes'] );
 	}
 
 	public function test_get_savings() {
-		$this->assertEquals( 8.8, $this->subject->get_savings( $this->subject->get_statistics() ) );
+		$active_sizes = $this->settings->get_sizes();
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+		$this->assertEquals( 8.8, $this->subject->get_savings( $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) ) );
 	}
 
 	public function test_is_retina_for_retina_size() {

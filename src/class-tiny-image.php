@@ -28,13 +28,20 @@ class Tiny_Image {
 	private $sizes = array();
 	private $statistics = array();
 
-	public function __construct( $settings, $id, $wp_metadata = null, $tiny_metadata = null ) {
+	public function __construct(
+			$settings,
+			$id,
+			$wp_metadata = null,
+			$tiny_metadata = null,
+			$active_sizes = null,
+			$active_tinify_sizes = null
+	) {
 		$this->settings = $settings;
 		$this->id = $id;
 		$this->wp_metadata = $wp_metadata;
 		$this->parse_wp_metadata();
 		$this->parse_tiny_metadata( $tiny_metadata );
-		$this->detect_duplicates();
+		$this->detect_duplicates( $active_sizes, $active_tinify_sizes );
 	}
 
 	private function parse_wp_metadata() {
@@ -69,7 +76,7 @@ class Tiny_Image {
 		}
 	}
 
-	private function detect_duplicates() {
+	private function detect_duplicates( $active_sizes, $active_tinify_sizes ) {
 		$filenames = array();
 
 		if ( is_array( $this->wp_metadata )
@@ -77,8 +84,12 @@ class Tiny_Image {
 			&& isset( $this->wp_metadata['sizes'] )
 			&& is_array( $this->wp_metadata['sizes'] ) ) {
 
-			$active_sizes = $this->settings->get_sizes();
-			$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+			if ( null == $active_sizes ) {
+				$active_sizes = $this->settings->get_sizes();
+			}
+			if ( null == $active_tinify_sizes ) {
+				$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+			}
 
 			foreach ( $this->wp_metadata['sizes'] as $size_name => $size ) {
 				if ( $this->sizes[ $size_name ]->has_been_compressed()
@@ -373,7 +384,7 @@ class Tiny_Image {
 		return '' . number_format( $savings, 1 );
 	}
 
-	public function get_statistics() {
+	public function get_statistics( $active_sizes, $active_tinify_sizes ) {
 		if ( $this->statistics ) {
 			error_log( 'Strangely the image statistics are asked for again.' );
 			return $this->statistics;
@@ -384,16 +395,12 @@ class Tiny_Image {
 		$this->statistics['image_sizes_optimized'] = 0;
 		$this->statistics['available_unoptimized_sizes'] = 0;
 
-		$active_sizes = $this->settings->get_sizes();
-		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				if ( array_key_exists( $size_name, $active_sizes ) ) {
 					if ( isset( $size->meta['input'] ) ) {
 						$input = $size->meta['input'];
 						$this->statistics['initial_total_size'] += intval( $input['size'] );
-
 						if ( isset( $size->meta['output'] ) ) {
 							$output = $size->meta['output'];
 							if ( $size->modified() &&

@@ -93,6 +93,8 @@ class Tiny_Bulk_Optimization {
 	}
 
 	private static function populate_optimization_statistics( $settings, $result, $stats ) {
+		$active_sizes = $settings->get_sizes();
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
 			$wp_metadata = unserialize( $result[ $i ]['meta_value'] );
 			$tiny_metadata = unserialize( $result[ $i ]['tiny_meta_value'] );
@@ -103,9 +105,11 @@ class Tiny_Bulk_Optimization {
 				$settings,
 				$result[ $i ]['ID'],
 				$wp_metadata,
-				$tiny_metadata
+				$tiny_metadata,
+				$active_sizes,
+				$active_tinify_sizes
 			);
-			$image_stats = $tiny_image->get_statistics();
+			$image_stats = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 			$stats['uploaded-images']++;
 			$stats['available-unoptimised-sizes'] += $image_stats['available_unoptimized_sizes'];
 			$stats['optimized-image-sizes'] += $image_stats['image_sizes_optimized'];

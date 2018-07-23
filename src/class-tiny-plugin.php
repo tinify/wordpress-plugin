@@ -441,12 +441,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 
 		$tiny_image_before = new Tiny_Image( $this->settings, $id, $metadata );
-		$image_statistics_before = $tiny_image_before->get_statistics();
+		$image_statistics_before = $tiny_image_before->get_statistics(
+			$this->settings->get_sizes(),
+			$this->settings->get_active_tinify_sizes()
+		);
 		$size_before = $image_statistics_before['optimized_total_size'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 		$result = $tiny_image->compress( $this->settings );
-		$image_statistics = $tiny_image->get_statistics();
+		$image_statistics = $tiny_image->get_statistics(
+			$this->settings->get_sizes(),
+			$this->settings->get_active_tinify_sizes()
+		);
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
 		$current_library_size = intval( $_POST['current_size'] );
