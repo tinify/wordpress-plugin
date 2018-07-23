@@ -127,7 +127,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->subject->blocking_compress_on_upload( $this->wp->getTestMetadata(), 1 );
 
-		$tiny_metadata = $this->wp->getMetadata( 1, Tiny_Image::META_KEY, true );
+		$tiny_metadata = $this->wp->getMetadata( 1, Tiny_Config::META_KEY, true );
 		foreach ( $tiny_metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertBetween( -1, + 1, $values['end'] - time() );
@@ -153,7 +153,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->subject->blocking_compress_on_upload( $this->wp->getTestMetadata(), 1 );
 
-		$tiny_metadata = $this->wp->getMetadata( 1, Tiny_Image::META_KEY, true );
+		$tiny_metadata = $this->wp->getMetadata( 1, Tiny_Config::META_KEY, true );
 		foreach ( $tiny_metadata as $key => $values ) {
 			if ( ! empty( $values ) ) {
 				$this->assertEquals( time(), $values['timestamp'], 2 );

@@ -12,7 +12,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_tiny_post_meta_key_may_never_change() {
-		$this->assertEquals( '61b16225f107e6f0a836bf19d47aa0fd912f8925', sha1( Tiny_Image::META_KEY ) );
+		$this->assertEquals( '61b16225f107e6f0a836bf19d47aa0fd912f8925', sha1( Tiny_Config::META_KEY ) );
 	}
 
 	public function test_update_wp_metadata_should_not_update_with_no_resized_original() {
@@ -104,48 +104,6 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 	public function test_get_savings() {
 		$this->assertEquals( 8.8, $this->subject->get_savings( $this->subject->get_statistics() ) );
-	}
-
-	public function test_get_optimization_statistics() {
-		$wpdb_wp_metadata = serialize( $this->json( '_wp_attachment_metadata' ) );
-		$wpdb_tiny_metadata = serialize( $this->json( 'image_database_metadata' ) );
-		$wpdb_results = array(
-			array(
-				'ID' => 1,
-				'post_title' => 'I am the one and only',
-				'meta_value' => $wpdb_wp_metadata,
-				'tiny_meta_value' => $wpdb_wp_metadata,
-			),
-			array(
-				'ID' => 3628,
-				'post_title' => 'Ferrari.jpeg',
-				'meta_value' => '',
-				'tiny_meta_value' => '',
-			),
-			array(
-				'ID' => 4350,
-				'post_title' => 'IMG 3092',
-				'meta_value' => '',
-				'tiny_meta_value' => '',
-			),
-		);
-		$this->assertEquals(
-			array(
-				'uploaded-images' => 3,
-				'optimized-image-sizes' => 0,
-				'available-unoptimised-sizes' => 4,
-				'optimized-library-size' => 328670,
-				'unoptimized-library-size' => 328670,
-				'available-for-optimization' => array(
-					array(
-						'ID' => 1,
-						'post_title' => 'I am the one and only',
-					),
-				),
-				'display-percentage' => 0.0,
-			),
-			Tiny_Image::get_optimization_statistics( new Tiny_Settings(), $wpdb_results )
-		);
 	}
 
 	public function test_is_retina_for_retina_size() {

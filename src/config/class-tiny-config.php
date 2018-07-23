@@ -8,4 +8,5 @@ class Tiny_Config {
 	/* URL is only used by fopen driver. */
 	const URL = 'https://api.tinify.com/shrink';
 	const MONTHLY_FREE_COMPRESSIONS = 500;
+	const META_KEY = 'tiny_compress_images';
 }

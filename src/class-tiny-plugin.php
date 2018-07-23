@@ -484,7 +484,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( ! $this->check_ajax_referer() ) {
 			exit();
 		}
-		$stats = Tiny_Image::get_optimization_statistics( $this->settings );
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		echo json_encode( $stats );
 		exit();
 	}
@@ -579,7 +579,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function render_bulk_optimization_page() {
-		$stats = Tiny_Image::get_optimization_statistics( $this->settings );
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$estimated_costs = Tiny_Compress::estimate_cost(
 			$stats['available-unoptimised-sizes'],
 			$this->settings->get_compression_count()
