@@ -141,7 +141,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		if ( ! $request ) {
 			throw new Tiny_Exception(
-				'Could not execute request, enable cURL for detailed errors',
+				'Could not execute fopen request',
 				'Tinify\FopenError'
 			);
 		}
