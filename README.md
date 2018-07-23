@@ -52,7 +52,7 @@ Install gettext and generate the .mo language file do the following:
 
 ## License
 
-Copyright (C) 2015-2018 Voormedia B.V.
+Copyright (C) 2015-2018 Tinify B.V.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
