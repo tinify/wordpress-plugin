@@ -37,21 +37,30 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<span class="icon spinner hidden"></span>
 		<?php if ( $total['has_been_compressed'] > 0 || 0 === $available_unoptimized_sizes ) { ?>
 			<span class="message">
-				<?php printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array(
+				<?php
+				/* translators: %d: number of compressed sizes */
+				printf( wp_kses( _n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array(
 					'strong' => array(),
-				) ), $total['has_been_compressed'] ) ?>
+				) ), $total['has_been_compressed'] );
+				?>
 			</span>
 			<br/>
 		<?php } ?>
 		<?php if ( $available_unoptimized_sizes > 0 ) { ?>
 			<span class="message">
-				<?php printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes ) ?>
+				<?php
+				/* translators: %d: number of sizes to be compressed */
+				printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes );
+				?>
 			</span>
 			<br />
 		<?php } ?>
 		<?php if ( $size_before - $size_after ) { ?>
 			<span class="message">
-				<?php printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 ) ?>
+				<?php
+				/* translators: %.0f%: savings percentage */
+				printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 );
+				?>
 			</span>
 			<br />
 		<?php } ?>
@@ -78,7 +87,10 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 <div class="modal" id="modal_<?php echo $tiny_image->get_id() ?>">
 	<div class="tiny-compression-details">
 		<h3>
-			<?php printf( esc_html__( 'Compression details for %s', 'tiny-compress-images' ), $tiny_image->get_name() ) ?>
+			<?php
+				/* translators: %s: image name */
+				printf( esc_html__( 'Compression details for %s', 'tiny-compress-images' ), $tiny_image->get_name() );
+			?>
 		</h3>
 		<table>
 			<tr>
@@ -111,16 +123,19 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 					} elseif ( Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(WP Retina 2x)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->resized() ) {
+						/* translators: %1$dx%2$d: resized image width x height */
 						printf( '<em>' . esc_html__( '(resized to %1$dx%2$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
 					}
 					echo '</td>';
 
 					if ( $size->is_duplicate() ) {
 						echo '<td>-</td>';
+						/* translators: %s: name of similar thumbnail size */
 						printf( '<td colspan=2><em>' . esc_html__( 'Same file as "%s"', 'tiny-compress-images' ) . '</em></td>', esc_html( ucfirst( $size->duplicate_of_size() ) ) );
 					} elseif ( $size->has_been_compressed() ) {
 						echo '<td>' . size_format( $size->meta['input']['size'], 1 ) . '</td>';
 						echo '<td>' . size_format( $size->meta['output']['size'], 1 ) . '</td>';
+						/* translators: %s human friendly time difference */
 						echo '<td>' . sprintf( esc_html__( '%s ago' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
 					} elseif ( ! $size->exists() ) {
 						echo '<td>-</td>';
@@ -158,11 +173,13 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			<strong>
 				<?php
 				if ( $size_before - $size_after ) {
+					/* translators: %1$.0f%%: savings percentage, %2$s: total file size savings */
 					printf( esc_html__( 'Total savings %1$.0f%% (%2$s)', 'tiny-compress-images' ),
 						( 1 - $size_after / floatval( $size_before ) ) * 100,
 						size_format( $size_before - $size_after, 1 )
 					);
 				} else {
+					/* translators: %.0f%%: savings percentage */
 					printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), 0 );
 				}
 				?>

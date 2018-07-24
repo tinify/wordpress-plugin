@@ -146,10 +146,10 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= '</h3>';
 		$notice .= '<p>';
 		$notice .= esc_html__(
-			'These plugins are incompatible and may cause unexpected results',
+			'These plugins are incompatible and may cause unexpected results:',
 			'tiny-compress-images'
 		);
-		$notice .= ':</p>';
+		$notice .= '</p>';
 		$notice .= '<table>';
 		foreach ( $incompatible_plugins as $name => $file ) {
 			$notice .= '<tr><td class="bullet">•</td><td class="name">';
@@ -159,7 +159,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 			$query_string = 'action=deactivate&plugin=' . $file . '&_wpnonce=' . $nonce;
 			$url = admin_url( 'plugins.php?' . $query_string );
 			$notice .= '<a class="button button-primary" href="' . $url . '">';
-			$notice .= esc_html__( 'deactivate', 'tiny-compress-images' );
+			$notice .= esc_html__( 'Deactivate' );
 			$notice .= '</a></td></tr>';
 		}
 		$notice .= '</table>';

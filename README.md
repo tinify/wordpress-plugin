@@ -34,7 +34,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 45`.
 
 ### Check if the code follows WordPress standard
-1. Run `bin/check-style <optional path to file>`.
+1. Run `bin/check-style` to make sure there are no errors.
 
 ### Translating the plugin
 Language packs will be generated for the plugin once translations for a
@@ -49,6 +49,10 @@ Install gettext and generate the .mo language file do the following:
 1. Install gettext for example run `brew install gettext`.
 2. Add a link msgfmt `ln -s /usr/local/Cellar/gettext/0.19.7/bin/msgfmt ~/.bin`.
 3. Generate the .mo files `bin/format-language-files`.
+
+When finished modifying, you can upload the changes to the SVN trunk. Within
+roughly 15 minutes WordPress will be updated and allow to add missing
+translations before publishing the new plugin release.
 
 ## License
 

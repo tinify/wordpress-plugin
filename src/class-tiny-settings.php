@@ -63,8 +63,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function add_menu() {
 		add_options_page(
-			'Compress JPEG & PNG images',
-			'Compress JPEG & PNG images',
+			__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
+			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
 			'manage_options',
 			'tinify',
 			array( $this, 'add_options_to_page' )
@@ -394,13 +394,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( ! $this->get_api_key() ) {
 			$notice_class = 'error';
 			$notice = esc_html__(
-				'Please register or provide an API key to start compressing images',
+				'Please register or provide an API key to start compressing images.',
 				'tiny-compress-images'
 			);
 		} elseif ( $this->get_api_key_pending() ) {
 			$notice_class = 'notice-warning';
 			$notice = esc_html__(
-				'Please activate your account to start compressing images',
+				'Please activate your account to start compressing images.',
 				'tiny-compress-images'
 			);
 		}
@@ -419,34 +419,39 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$details = 'PHP ' . PHP_VERSION;
 				if ( Tiny_PHP::curl_available() ) {
 					$curlinfo = curl_version();
-					$details .= ' with curl ' . $curlinfo['version'];
-					if ( ! Tiny_PHP::curl_exec_available() ) {
-						$details .= ' and curl_exec disabled';
-					}
+					$details .= ' ' . sprintf(
+						/* translators: %s: curl version */
+						esc_html__( 'with curl %s', 'tiny-compress-images' ), $curlinfo['version']
+					);
 				} else {
-					$details .= ' without curl';
+					$details .= ' ' . esc_html__( 'without curl', 'tiny-compress-images' );
+				}
+				if ( Tiny_PHP::curl_exec_disabled() ) {
+					$details .= ' ' .
+						esc_html__( 'and curl_exec disabled', 'tiny-compress-images' );
 				}
 				$message = sprintf(
+					/* translators: %s: details of outdated platform */
 					esc_html__(
-						'You are using an outdated platform (%s)',
+						'You are using an outdated platform (%s).',
 						'tiny-compress-images'
 					), $details
 				);
 			} elseif ( ! Tiny_PHP::curl_available() ) {
+				/* @codingStandardsIgnoreStart */
 				$message = esc_html__(
-					'We noticed that cURL is not available.
-					 For the best experience we recommend to have cURL made available.',
+					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.',
 					'tiny-compress-images'
 				);
-			} elseif ( ! Tiny_PHP::curl_exec_available() ) {
+			} elseif ( Tiny_PHP::curl_exec_disabled() ) {
 				$message = esc_html__(
-					'We noticed that curl_exec is disabled in your PHP configuration.
-					 Please update this setting for the best experience.',
+					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.',
 					'tiny-compress-images'
 				);
+				/* @codingStandardsIgnoreEnd */
 			}
 			$this->notices->show( 'deprecated', $message, 'notice-warning', false );
-		}
+		} // End if().
 	}
 
 	public function render_incompatible_plugins_notice() {
@@ -458,10 +463,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_settings_link() {
 		echo '<div class="tinify-settings"><h3>';
-		esc_html_e(
-			'Compress JPEG & PNG images',
-			'tiny-compress-images'
-		);
+		esc_html_e( 'Compress JPEG & PNG images', 'tiny-compress-images' );
 		echo '</h3>';
 		$url = admin_url( 'options-general.php?page=tinify' );
 		$link = "<a href='" . $url . "'>";
@@ -469,10 +471,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$link .= '</a>';
 		printf(
 			wp_kses(
-				__(
-					'The %s have moved.',
-					'tiny-compress-images'
-				),
+				/* translators: %s: link saying settings */
+				__( 'The %s have moved.', 'tiny-compress-images' ),
 				array(
 					'a' => array(
 						'href' => array(),
@@ -487,11 +487,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_offload_s3_notice() {
 		if ( $this->remove_local_files_setting_enabled() &&
 				 'background' === $this->get_compression_timing() ) {
+			/* @codingStandardsIgnoreStart */
 			$message = esc_html__(
-				'Removing files from the server is incompatible with background compressions.
-				 Images will still be automatically compressed, but no longer in the background.',
+				'Removing files from the server is incompatible with background compressions. Images will still be automatically compressed, but no longer in the background.',
 				'tiny-compress-images'
 			);
+			/* @codingStandardsIgnoreEnd */
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
 			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
 		}
@@ -603,7 +604,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
 				esc_html__(
-					'Your original image will be overwritten by the compressed image',
+					'overwritten by compressed image',
 					'tiny-compress-images'
 				) . ')';
 		} elseif ( Tiny_Image::is_retina( $size ) ) {
@@ -633,7 +634,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$active_sizes_count, $resize_original_enabled, $compress_wr2x ) {
 		echo '<p>';
 		esc_html_e(
-			'Each selected size counts as a compression. ',
+			'Remember each selected size counts as a compression.',
 			'tiny-compress-images'
 		);
 		echo '</p>';
@@ -659,10 +660,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'strong' => array(),
 			);
 
+			/* @codingStandardsIgnoreStart */
+			/* translators: %1$s: number of images */
 			printf( wp_kses( __(
-				'With these settings you can compress <strong>at least %1$s images</strong> %2$s',
+				'With these settings you can compress <strong>at least %1$s images</strong> for free each month.',
 				'tiny-compress-images'
-			), $strong ), $free_images_per_month, 'for free each month.' );
+			), $strong ), $free_images_per_month );
+			/* @codingStandardsIgnoreEnd */
 
 			if ( self::wr2x_active() ) {
 				echo '</p>';
@@ -677,11 +681,15 @@ class Tiny_Settings extends Tiny_WP_Base {
 					'tiny-compress-images'
 				);
 			}
-		}
+		} // End if().
 		echo '</p>';
 	}
 
 	public function render_resize() {
+		$strong = array(
+			'strong' => array(),
+		);
+
 		echo '<p class="tiny-resize-unavailable" style="display: none">';
 		esc_html_e(
 			'Enable compression of the original image size for more options.',
@@ -704,28 +712,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<label for="' . $id . '">' . $label . '</label><br>';
 
 		echo '<div class="tiny-resize-available tiny-resize-resolution">';
-		echo '<span><strong>';
-		esc_html_e(
-			'Save space',
-			'tiny-compress-images'
-		);
-		echo '</strong> ';
-		esc_html_e(
-			'by setting a maximum width and height for all images uploaded.',
-			'tiny-compress-images'
-		);
+		echo '<span>';
+		/* @codingStandardsIgnoreStart */
+		echo wp_kses( __( '<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images' ), $strong );
 		echo ' ';
-		echo sprintf(
-			esc_html__(
-				'Resizing takes %s for each image that is larger.',
-				'tiny-compress-images'
-			),
-			'<strong>' . esc_html__(
-				'1 additional compression',
-				'tiny-compress-images'
-			) . '</strong>'
-		);
-		echo '</span><div class="tiny-resize-inputs">';
+		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong );
+		/* @codingStandardsIgnoreEnd */
+		echo '</span>';
+		echo '<div class="tiny-resize-inputs">';
 		printf( '%s: ', esc_html__( 'Max Width' ) );
 		$this->render_resize_input( 'width' );
 		printf( '%s: ', esc_html__( 'Max Height' ) );
@@ -769,11 +763,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $disabled ) {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
+			/* @codingStandardsIgnoreStart */
 			$message = esc_html_e(
-				'For background compression to work you will need to configure WP Offload S3
-				 to keep a copy of the images on the server.',
+				'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.',
 				'tiny-compress-images'
 			);
+			/* @codingStandardsIgnoreEnd */
 			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
@@ -840,6 +835,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 					'tiny-compress-images'
 				) . ' ' .
 				sprintf(
+					/* translators: %s: link saying TinyPNG API account */
 					esc_html__(
 						'Upgrade your %s if you like to compress more images.',
 						'tiny-compress-images'

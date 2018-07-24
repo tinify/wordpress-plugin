@@ -53,16 +53,21 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
+							/* translators: %s: friendly user name */
 							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
 							if ( $percentage_of_files > 75 ) {
+								/* translators: %s: friendly user name */
 								printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), $this->friendly_user_name() );
 							} else {
+								/* translators: %s: friendly user name */
 								printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
 							}
 							echo ' ';
-							printf( esc_html__( '%1$d %2$s of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files, '%' );
+								/* translators: %1$d%2$s: percentage optimised */
+								printf( esc_html__( '%1$d%2$s of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files, '%' );
 							echo ' ';
+							/* translators: %s: bulk optimization title */
 							printf( esc_html__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), esc_html__( 'bulk optimization', 'tiny-compress-images' ) );
 						} else {
 							esc_html_e( 'Here you can start optimizing your entire library. Press the big button to start improving your website speed instantly!', 'tiny-compress-images' );
@@ -101,6 +106,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimised-sizes'] > 0 ) { ?>
 											<p>
 												<?php
+												/* translators: %1$s: number of sizes that can be optimised, %2$s number of images */
 												printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG and PNG images.',
 												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images'] );
 												?>
@@ -127,11 +133,15 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										</p>
 										<p>
 										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
-											<?php printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
+											<?php
+											/* translators: %d: number of sizes to be compressed */
+											printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
 												'strong' => array(),
 											) ), count( $active_tinify_sizes ) ) ?>
 										<?php } ?>
-										<?php printf( wp_kses( __( 'You can change these settings %s.', 'tiny-compress-images' ), array(
+										<?php
+										/* translators: %s: link to settings page saying here */
+										printf( wp_kses( __( 'You can change these settings %s.', 'tiny-compress-images' ), array(
 											'a' => array(
 											'href' => array(),
 											),
@@ -153,6 +163,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<span class="dashicons dashicons-info"></span>
 										<div class="tip">
 											<p><?php
+											/* translators: %1$d %2$s: number of image sizes, %3$s: link saying upgrade here */
 											printf( wp_kses( __( 'If you wish to compress more than <strong>%1$d %2$s</strong> a month and you are still on a free account %3$s.', 'tiny-compress-images' ),
 												array(
 												'strong' => array(),

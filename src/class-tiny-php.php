@@ -31,14 +31,14 @@ class Tiny_PHP {
 		return ini_get( 'allow_url_fopen' );
 	}
 
-	public static function curl_exec_available() {
+	public static function curl_exec_disabled() {
 		$disabled_functions = explode( ',', ini_get( 'disable_functions' ) );
-		return ! in_array( 'curl_exec', $disabled_functions );
+		return in_array( 'curl_exec', $disabled_functions );
 	}
 
 	public static function client_supported() {
 		return 	Tiny_PHP::has_fully_supported_php() &&
 						Tiny_PHP::curl_available() &&
-						Tiny_PHP::curl_exec_available();
+						! Tiny_PHP::curl_exec_disabled();
 	}
 }

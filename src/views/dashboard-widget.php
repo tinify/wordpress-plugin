@@ -22,34 +22,54 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 </div>
 <div class="description not-optimized">
 	<p>
-		<?php printf( esc_html__( 'Hi %s, you haven’t compressed any images in your media library.', 'tiny-compress-images' ), $this->friendly_user_name() ) ?>
-		<?php printf( wp_kses( __( 'If you like you can to optimize your whole library in one go with the %s page.', 'tiny-compress-images' ), array(
+		<?php
+		/* translators: %s: friendly user name */
+		printf( esc_html__( 'Hi %s, you haven’t compressed any images in your media library.', 'tiny-compress-images' ), $this->friendly_user_name() );
+		echo ' ';
+		/* translators: %s: bulk optimization page */
+		printf( wp_kses( __( 'If you like you can to optimize your whole library in one go with the %s page.', 'tiny-compress-images' ), array(
 			'a' => array(
 			'href' => array(),
 			),
-		) ), $link )?>
+		) ), $link );
+		?>
 	</p>
 </div>
 <div class="description half-optimized">
 	<p>
-		<?php printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() ) ?>
-		<?php printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG and PNG images.', 'tiny-compress-images' ), '<span id="unoptimised-sizes"></span>', '<span id="uploaded-images"></span>' ) ?>
-		<?php printf( wp_kses( __( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), array(
+		<?php
+		/* translators: %s: friendly user name */
+		printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
+		echo ' ';
+		/* translators: %s: number of optimizable sizes and number of uploaded images */
+		printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG and PNG images.', 'tiny-compress-images' ), '<span id="unoptimised-sizes"></span>', '<span id="uploaded-images"></span>' );
+		echo ' ';
+		/* translators: %s: bulk optimization link */
+		printf( wp_kses( __( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), array(
 			'a' => array(
 			'href' => array(),
 			),
-		) ), $link )?>
+		) ), $link );
+		?>
 	</p>
 </div>
 <div class="description full-optimized">
-	<p><?php printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() ) ?></p>
+	<p>
+		<?php
+		/* translators: %s: friendly user name */
+		printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
+		?>
+	</p>
 </div>
 <div class="description" id="ie8-compressed">
 	<p>
-		<?php printf( wp_kses( __( 'You have <strong>saved %s</strong> of your media library size.', 'tiny-compress-images' ), array(
+		<?php
+		/* translators: %s: savings percentage */
+		printf( wp_kses( __( 'You have <strong>saved %s</strong> of your media library size.', 'tiny-compress-images' ), array(
 			'span' => array(),
 			'strong' => array(),
-		) ), '<span></span>%' )?>
+		) ), '<span></span>%' );
+		?>
 	</p>
 </div>
 

@@ -22,11 +22,13 @@
 					'tiny-compress-images'
 				);
 				echo '<br>';
+				/* translators: %s: link saying TinyPNG API account */
 				printf( esc_html__(
-					'If you need to compress more images you can change your %s.',
+					'If you need to compress more images you can upgrade your %s.',
 					'tiny-compress-images'
 				), $link );
 			} else {
+				/* translators: %s: number of compressions */
 				printf( esc_html__(
 					'You have made %s compressions this month.',
 					'tiny-compress-images'
@@ -46,6 +48,7 @@
 		?></p>
 		<p><?php
 		if ( defined( 'TINY_API_KEY' ) ) {
+			/* translators: %s: wp-config.php */
 			echo sprintf( esc_html__(
 				'The API key has been configured in %s',
 				'tiny-compress-images'
@@ -64,6 +67,7 @@
 			$link = sprintf( '<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
+			/* translators: %s: link saying API dashboard */
 			printf( esc_html__(
 				'Enter your API key. If you have lost your key, go to your %s to retrieve it.',
 				'tiny-compress-images'

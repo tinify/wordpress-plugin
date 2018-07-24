@@ -9,6 +9,7 @@
 			echo esc_html__( 'Enter your API key.', 'tiny-compress-images' );
 			echo ' ';
 
+			/* translators: %s: link saying TinyPNG developer section */
 			printf( esc_html__(
 				'If needed you can go to the %s to retrieve it.',
 				'tiny-compress-images'

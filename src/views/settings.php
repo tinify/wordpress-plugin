@@ -1,6 +1,6 @@
 <div class="wrap">
 	<h1><?php esc_html_e( 'Compress JPEG & PNG images', 'tiny-compress-images' ) ?></h2>
-	<p><?php esc_html_e( 'Make your website faster by compressing your JPEG and PNG images.', 'tiny-compress-images' ) ?></p>
+	<p><?php esc_html_e( 'Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG.', 'tiny-compress-images' ) ?></p>
 
 	<div class="tiny-compress-images">
 		<span id="tiny-compress-images"></span>
@@ -25,12 +25,12 @@
 						<td>
 							<h4><?php esc_html_e( 'Select image sizes to be compressed', 'tiny-compress-images' ) ?></h4>
 							<p class="intro">
-<?php
-esc_html_e(
-	'Wordpress generates resized versions of every image. Choose which sizes to compress.',
-	'tiny-compress-images'
-)
-?>
+								<?php
+								esc_html_e(
+									'Wordpress generates resized versions of every image. Choose which sizes to compress.',
+									'tiny-compress-images'
+								)
+								?>
 							</p>
 							<div class="sizes">
 								<?php $this->render_sizes() ?>
@@ -46,7 +46,7 @@ esc_html_e(
 				</tbody>
 			</table>
 			<p class="submit">
-				<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+				<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_html_e( 'Save Changes' ) ?>">
 			</p>
 		</form>
 	</div>
