@@ -88,7 +88,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 	<div class="tiny-compression-details">
 		<h3>
 			<?php
-				/* translators: %s: image name */
+				/* translators: %s is the image filename */
 				printf( esc_html__( 'Compression details for %s', 'tiny-compress-images' ), $tiny_image->get_name() );
 			?>
 		</h3>
@@ -110,8 +110,9 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				<tr class="<?php echo ( 0 == $i % 2 ) ? 'even' : 'odd' ?>">
 					<?php
 					echo '<td>';
+					echo '<span title="' . esc_html( basename( $size->filename ) ) . '">';
 					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
-					echo ' ';
+					echo '</span>' . ' ';
 					if ( array_key_exists( $size_name, $active_sizes ) && $this->settings->has_offload_s3_installed() ) {
 						echo '<em>' . esc_html__( '(stored on S3)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
