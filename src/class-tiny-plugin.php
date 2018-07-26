@@ -540,7 +540,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		check_admin_referer( 'bulk-media' );
 		$ids = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
-		wp_redirect( admin_url( 'upload.php?mode=list&ids=' . $ids ) );
+		$page = $_REQUEST['paged'];
+		wp_redirect( admin_url( 'upload.php?mode=list&ids=' . $ids . '&paged=' . $page ) );
 		exit();
 	}
 
