@@ -72,7 +72,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	public function test_compress_should_respect_settings() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->withConsecutive(
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test.png' ) ),
 			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) ),
@@ -82,7 +82,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	public function test_compress_should_not_compress_twice() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 
 		$testmeta = $this->wp->getTestMetadata();
 		$tiny_image = new Tiny_Image( new Tiny_Settings(), 1, $testmeta );
@@ -99,7 +99,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	public function test_compress_when_file_changed() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 
 		$testmeta = $this->wp->getTestMetadata();
 		$tiny_image = new Tiny_Image( new Tiny_Settings(), 1, $testmeta );
@@ -120,7 +120,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	public function test_compress_should_update_metadata() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->will(
 			$this->returnCallback( array( $this, 'success_compress' ) )
 		);
@@ -145,7 +145,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	public function test_should_handle_compress_exceptions() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/jpeg";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/jpeg"; } );
 
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->will(
 			$this->throwException( new Tiny_Exception( 'Does not appear to be a PNG or JPEG file', 'BadSignature' ) )
@@ -171,21 +171,21 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 	public function test_should_return_if_no_compressor() {
 		$this->subject->set_compressor( null );
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 		$this->compressor->expects( $this->never() )->method( 'compress_file' );
 
 		$this->subject->blocking_compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
 	public function test_should_return_if_no_image() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "video/webm";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "video/webm"; } );
 		$this->compressor->expects( $this->never() )->method( 'compress_file' );
 
 		$this->subject->blocking_compress_on_upload( $this->wp->getTestMetadata(), 1 );
 	}
 
 	public function test_wrong_metadata_should_not_show_warnings() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
 			$this->returnCallback( array( $this, 'success_compress' ) )
 		);
@@ -197,7 +197,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 	}
 
 	public function test_wrong_metadata_should_save_tiny_metadata() {
-		$this->wp->stub( 'get_post_mime_type', create_function( '$i', 'return "image/png";' ) );
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 		$this->compressor->expects( $this->exactly( 1 ) )->method( 'compress_file' )->will(
 			$this->returnCallback( array( $this, 'success_compress' ) )
 		);
