@@ -81,7 +81,7 @@ install:
 - if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo service mysql stop; sudo bin/install-docker; fi
 script:
 - bin/unit-tests
-- bin/check-style --warning-severity=0 src
+- bin/check-style
 notifications:
   email: false
   slack:
