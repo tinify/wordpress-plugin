@@ -20,6 +20,17 @@ class Client {
     }
 
     function __construct($key, $appIdentifier = NULL, $proxy = NULL) {
+        $curl = curl_version();
+
+        if (!($curl["features"] & CURL_VERSION_SSL)) {
+            throw new ClientException("Your curl version does not support secure connections");
+        }
+
+        if ($curl["version_number"] < 0x071201) {
+            $version = $curl["version"];
+            throw new ClientException("Your curl version ${version} is outdated; please upgrade to 7.18.1 or higher");
+        }
+
         $userAgent = join(" ", array_filter(array(self::userAgent(), $appIdentifier)));
 
         $this->options = array(
