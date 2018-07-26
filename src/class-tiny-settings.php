@@ -438,17 +438,15 @@ class Tiny_Settings extends Tiny_WP_Base {
 					), $details
 				);
 			} elseif ( ! Tiny_PHP::curl_available() ) {
-				/* @codingStandardsIgnoreStart */
 				$message = esc_html__(
-					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.',
+					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.', // WPCS: Needed for proper translation.
 					'tiny-compress-images'
 				);
 			} elseif ( Tiny_PHP::curl_exec_disabled() ) {
 				$message = esc_html__(
-					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.',
+					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.', // WPCS: Needed for proper translation.
 					'tiny-compress-images'
 				);
-				/* @codingStandardsIgnoreEnd */
 			}
 			$this->notices->show( 'deprecated', $message, 'notice-warning', false );
 		} // End if().
@@ -487,12 +485,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_offload_s3_notice() {
 		if ( $this->remove_local_files_setting_enabled() &&
 				 'background' === $this->get_compression_timing() ) {
-			/* @codingStandardsIgnoreStart */
 			$message = esc_html__(
-				'Removing files from the server is incompatible with background compressions. Images will still be automatically compressed, but no longer in the background.',
+				'Removing files from the server is incompatible with background compressions. Images will still be automatically compressed, but no longer in the background.',  // WPCS: Needed for proper translation.
 				'tiny-compress-images'
 			);
-			/* @codingStandardsIgnoreEnd */
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
 			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
 		}
@@ -660,13 +656,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'strong' => array(),
 			);
 
-			/* @codingStandardsIgnoreStart */
 			/* translators: %1$s: number of images */
 			printf( wp_kses( __(
-				'With these settings you can compress <strong>at least %1$s images</strong> for free each month.',
+				'With these settings you can compress <strong>at least %1$s images</strong> for free each month.', // WPCS: Needed for proper translation.
 				'tiny-compress-images'
 			), $strong ), $free_images_per_month );
-			/* @codingStandardsIgnoreEnd */
 
 			if ( self::wr2x_active() ) {
 				echo '</p>';
@@ -713,11 +707,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		echo '<div class="tiny-resize-available tiny-resize-resolution">';
 		echo '<span>';
-		/* @codingStandardsIgnoreStart */
-		echo wp_kses( __( '<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images' ), $strong );
+		echo wp_kses( __( '<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images' ), $strong );  // WPCS: Needed for proper translation.
 		echo ' ';
-		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong );
-		/* @codingStandardsIgnoreEnd */
+		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong ); // WPCS: Needed for proper translation.
 		echo '</span>';
 		echo '<div class="tiny-resize-inputs">';
 		printf( '%s: ', esc_html__( 'Max Width' ) );
@@ -763,12 +755,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $disabled ) {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
-			/* @codingStandardsIgnoreStart */
 			$message = esc_html_e(
-				'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.',
+				'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
 				'tiny-compress-images'
 			);
-			/* @codingStandardsIgnoreEnd */
 			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
