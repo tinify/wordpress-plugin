@@ -43,8 +43,10 @@
     var successFullSaved = parseInt(data.size_change, 10);
     var newHumanReadableLibrarySize = data.human_readable_library_size;
     if (successFullCompressions === 0) {
+      row.addClass('no-action');
       row.find('.status').html('<span class="icon dashicons dashicons-no alert"></span>' + tinyCompress.L10nNoActionTaken).attr('data-status', 'no-action-taken');
     } else {
+      row.addClass('success');
       row.find('.status').html('<span class="icon dashicons dashicons-yes success"></span>' + successFullCompressions + ' ' + tinyCompress.L10nCompressed).attr('data-status', 'compressed');
       updateProgressBar(successFullCompressions);
       updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize);
@@ -80,7 +82,6 @@
       row.find('.status').attr('title', data.message);
       row.find('.status').attr('data-status', 'error');
     } else {
-      row.addClass('success');
       updateRowAfterCompression(row, data);
     }
 

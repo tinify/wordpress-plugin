@@ -322,6 +322,11 @@ div.tiny-bulk-optimization table.whitebox tr.failed button.toggle-row:before {
 	content: "\f158"; /* more compatibility*/
 }
 
+div.tiny-bulk-optimization table.whitebox tr.no-action button.toggle-row:before {
+	color: gray;
+	content: "\f158"; /* more compatibility*/
+}
+
 div.tiny-bulk-optimization table.whitebox tr.failed.is-expanded span.icon {
 	display: none;
 }
