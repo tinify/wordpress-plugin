@@ -164,7 +164,7 @@ function login( $driver ) {
 		$driver->findElement( WebDriverBy::id( 'loginform' ) )->submit();
 
 		$driver
-			->wait( 2 )
+			->wait( 5 )
 			->until(
 				WebDriverExpectedCondition::presenceOfElementLocated(
 					WebDriverBy::cssSelector( 'div.wrap h1, div.wrap h2' )
