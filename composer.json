@@ -1,5 +1,5 @@
 {
-  "name": "tinify/wordpress-plugin",
+  "name": "tinify/tiny-compress-images",
   "description": "Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG.",
   "license": "GPL-2.0+",
   "type": "wordpress-plugin",
