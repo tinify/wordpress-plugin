@@ -8,4 +8,5 @@ class Tiny_Config {
 	/* URL is only used by fopen driver. */
 	const URL = 'http://webservice/shrink';
 	const MONTHLY_FREE_COMPRESSIONS = 500;
+	const META_KEY = 'tiny_compress_images';
 }
