@@ -193,9 +193,10 @@ class Tiny_Image {
 			return;
 		}
 
-		if ( $this->settings->has_offload_s3_installed() ) {
-			$this->download_missing_image_sizes();
-		}
+		/* Integration tests need to be written before this can be enabled. */
+		// if ( $this->settings->has_offload_s3_installed() ) {
+		// 	$this->download_missing_image_sizes();
+		// }
 
 		$success = 0;
 		$failed = 0;
@@ -403,8 +404,7 @@ class Tiny_Image {
 						$this->statistics['initial_total_size'] += intval( $input['size'] );
 						if ( isset( $size->meta['output'] ) ) {
 							$output = $size->meta['output'];
-							if ( $size->modified() &&
-									 ! $this->settings->remove_local_files_setting_enabled() ) {
+							if ( $size->modified() ) {
 								$this->statistics['optimized_total_size'] += $size->filesize();
 								if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 									$this->statistics['available_unoptimized_sizes'] += 1;
@@ -423,9 +423,6 @@ class Tiny_Image {
 						if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 							$this->statistics['available_unoptimized_sizes'] += 1;
 						}
-					} elseif ( $this->settings->remove_local_files_setting_enabled() &&
-										 in_array( $size_name, $active_tinify_sizes, true ) ) {
-						$this->statistics['available_unoptimized_sizes'] += 1;
 					}
 				}
 			}
@@ -434,7 +431,8 @@ class Tiny_Image {
 		/*
 			When an image hasn't yet been optimized but only exists on S3, we still need to
 			know the total size of the image sizes for the bulk optimization tool.
-		*/
+			TODO: First write integration tests before enabling this again.
+
 		if (
 			0 === $this->statistics['initial_total_size'] &&
 			0 === $this->statistics['optimized_total_size'] &&
@@ -446,6 +444,7 @@ class Tiny_Image {
 				$this->statistics['optimized_total_size'] = $s3_data;
 			}
 		}
+		*/
 
 		return $this->statistics;
 	}
