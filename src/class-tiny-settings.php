@@ -322,6 +322,24 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return true;
 	}
 
+	public function old_offload_s3_version_installed() {
+		if (
+			function_exists( 'is_plugin_active' ) &&
+			is_plugin_active( self::$offload_s3_plugin ) &&
+			function_exists( 'get_plugin_data' )
+		) {
+			$metadata = get_plugin_data( WP_PLUGIN_DIR . '/' . self::$offload_s3_plugin );
+			$offload_s3_version_parts = explode( '.', $metadata['Version'] );
+			$major_version = intval( $offload_s3_version_parts[0] );
+			$minor_version = intval( $offload_s3_version_parts[1] );
+			if ( 0 === $major_version && $minor_version < 7 ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function remove_local_files_setting_enabled() {
 		/* Check if Offload S3 plugin is installed. */
 		if (
@@ -387,7 +405,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$this->render_setup_incomplete_notice();
 		$this->render_outdated_platform_notice();
 		$this->render_incompatible_plugins_notice();
-		$this->render_offload_s3_notice();
+		$this->render_offload_s3_notices();
 	}
 
 	public function render_setup_incomplete_notice() {
@@ -482,7 +500,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</div>';
 	}
 
-	public function render_offload_s3_notice() {
+	public function render_offload_s3_notices() {
 		if ( $this->remove_local_files_setting_enabled() &&
 				 'background' === $this->get_compression_timing() ) {
 			$message = esc_html__(
@@ -490,6 +508,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'tiny-compress-images'
 			);
 			$this->notices->show( 'offload-s3', $message, 'notice-error', false );
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
+		}
+
+		if ( $this->old_offload_s3_version_installed() &&
+				 'background' === $this->get_compression_timing() ) {
+			$message = esc_html__(
+				'Background compressions are not compatible with the version of WP Offload S3 you have installed. Please update to version 0.7.2 at least.',  // WPCS: Needed for proper translation.
+				'tiny-compress-images'
+			);
+			$this->notices->show( 'old-offload-s3-version', $message, 'notice-error', false );
 			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
 		}
 	}
@@ -523,7 +551,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$description,
 			'background',
 			$checked,
-			$this->remove_local_files_setting_enabled()
+			$this->remove_local_files_setting_enabled() || $this->old_offload_s3_version_installed()
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_enabled' );
@@ -755,10 +783,17 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $disabled ) {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
-			$message = esc_html_e(
-				'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
-				'tiny-compress-images'
-			);
+			if ( $this->old_offload_s3_version_installed() ) {
+				$message = esc_html_e(
+					'Background compressions are not compatible with the version of WP Offload S3 you have installed. Please update to version 0.7.2 at least.', // WPCS: Needed for proper translation.
+					'tiny-compress-images'
+				);
+			} elseif ( $this->remove_local_files_setting_enabled() ) {
+				$message = esc_html_e(
+					'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
+					'tiny-compress-images'
+				);
+			}
 			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
