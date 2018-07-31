@@ -527,21 +527,30 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function media_library_bulk_action() {
-
 		if ( empty( $_REQUEST['action'] ) || (
 				'tiny_bulk_action' != $_REQUEST['action'] &&
 				'tiny_bulk_action' != $_REQUEST['action2'] ) ) {
 			return;
 		}
-
 		if ( empty( $_REQUEST['media'] ) || ( ! $_REQUEST['media'] ) ) {
+			$_REQUEST['action'] = '';
 			return;
 		}
-
 		check_admin_referer( 'bulk-media' );
 		$ids = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
-		$page = $_REQUEST['paged'];
-		wp_redirect( admin_url( 'upload.php?mode=list&ids=' . $ids . '&paged=' . $page ) );
+		$location = 'upload.php?mode=list&ids=' . $ids;
+
+		if ( ! empty( $_REQUEST['paged'] ) ) {
+			$location = add_query_arg( 'paged', absint( $_REQUEST['paged'] ), $location );
+		}
+		if ( ! empty( $_REQUEST['s'] ) ) {
+			$location = add_query_arg( 's', $_REQUEST['s'], $location );
+		}
+		if ( ! empty( $_REQUEST['m'] ) ) {
+			$location = add_query_arg( 'm', $_REQUEST['m'], $location );
+		}
+
+		wp_redirect( admin_url( $location ) );
 		exit();
 	}
 
