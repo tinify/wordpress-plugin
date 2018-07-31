@@ -736,7 +736,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<div class="tiny-resize-available tiny-resize-resolution">';
 		echo '<span>';
 		echo wp_kses( __( '<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images' ), $strong );  // WPCS: Needed for proper translation.
-		echo ' ';
+		echo '<br>';
 		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong ); // WPCS: Needed for proper translation.
 		echo '</span>';
 		echo '<div class="tiny-resize-inputs">';

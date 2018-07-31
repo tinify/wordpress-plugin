@@ -42,7 +42,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				) ), $total['has_been_compressed'] );
 				?>
 			</span>
-			<br/>
+			<br>
 		<?php } ?>
 		<?php if ( $active['uncompressed'] > 0 ) { ?>
 			<span class="message">
@@ -51,7 +51,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes );
 				?>
 			</span>
-			<br />
+			<br>
 		<?php } ?>
 		<?php if ( $size_before - $size_after ) { ?>
 			<span class="message">
@@ -60,13 +60,13 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 );
 				?>
 			</span>
-			<br />
+			<br>
 		<?php } ?>
 		<?php if ( $error ) { ?>
 			<span class="message error_message">
 				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error, 'tiny-compress-images' ) ?>
 			</span>
-			<br/>
+			<br>
 		<?php } ?>
 		<a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_image->get_id() ?>">
 			<?php esc_html_e( 'Details', 'tiny-compress-images' ) ?>
