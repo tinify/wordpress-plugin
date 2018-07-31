@@ -17,10 +17,11 @@ Make your website faster by optimizing your JPEG and PNG images. This plugin aut
 = Features =
 
 * Automatically optimize new images on upload.
-* Optimize images in the background on upload.
+* Advanced background optimization to speed up your workflow.
 * Optimize individual images already in your media library.
 * Easy bulk optimization of your existing media library.
 * Resize large original images by setting a maximum width and/or height.
+* Display JPEG images more quickly with progressive JPEG encoding.
 * Preserve copyright metadata, creation date and GPS location in the original images.
 * Supports compression of animated PNG.
 * Select which thumbnail sizes of an image may be optimized.
@@ -128,21 +129,22 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 
 == Changelog ==
 = 3.0.0 =
-* Added option to compress images in the background to improve the speed of adding files to Wordpress.
-* Speed up bulk compressions by compressing more images simultaneously.
-* Show notice in the settings when using WP Offload S3 while having local images removed from the server.
-* Show notice whenever incompatible plugins are installed and activated.
-* No longer show incorrect free subscription limit whenever an account had multiple API keys with compressions.
-* Fallback to fopen whenever curl_exec is disabled.
+* Compress new images in the background to speed up your workflow.
+* Turbo-charged Bulk Optimization page with simultaneous image compression.
+* Improved memory usage for installations with extreme media libraries.
+* Detection of incompatible plugins.
+* Fallback to fopen whenever the curl_exec function is disabled.
+* Additional notices for WP Offload S3 users.
+* Several minor fixes and tweaks.
 
 = 2.2.6 =
 * Fixed bug in compression of file types other than JPEG and PNG that have a thumbnail generated automatically.
 
 = 2.2.5 =
-* Fixed bug in bulk optimization page that could sometimes cause it to stop.
+* Fixed bug in the Bulk Optimization page that sometimes caused it to stop.
 * Fixed a problem that would prevent dashboard widget from loading.
 * Tweaked styling of the dashboard widget for the latest version of WordPress.
-* Fixed a warning that sometimes occurred in the media library when certain plugins are used.
+* Fixed a warning in the media library when certain plugins are used.
 
 = 2.2.4 =
 * Fixed bug with drop-down menu in the Media Library.
