@@ -131,11 +131,10 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$plugin_name = esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
 
 		add_action( 'admin_notices',
-			create_function(
-				'',
-				"echo '<div class=\"$css\" data-name=\"$name\"><p>" .
-					$plugin_name . ": $message$add</div>';"
-			)
+			function() use ( $css, $name, $plugin_name, $message, $add ) {
+				echo '<div class="' . $css . '" data-name="' . $name . '"><p>' .
+					$plugin_name . ': ' . $message . $add . '</div>';
+			}
 		);
 	}
 
@@ -166,10 +165,9 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= '</div>';
 
 		add_action( 'admin_notices',
-			create_function(
-				'',
-				"echo '$notice';"
-			)
+			function() use ( $notice ) {
+				echo $notice;
+			}
 		);
 	}
 }
