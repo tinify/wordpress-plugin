@@ -27,7 +27,7 @@ Perform the following steps to make changes to the plugin page on wordpress.org:
 5. Visit https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images and add any missing translations.
 6. Checkout the latest tag of the Subversion repository (e.g. 2.2.6).
 7. Add the updated readme.txt and Commit the changes again.
-8. See the changes (almost immediately) on https://wordpress.org/plugins/tiny-compress-images/ 
+8. See the changes (almost immediately) on https://wordpress.org/plugins/tiny-compress-images/
 
 Perform the following steps to change the "Tested up to wordpress version" on wordpress.org:
 
