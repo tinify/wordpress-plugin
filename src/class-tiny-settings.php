@@ -948,7 +948,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$compressor->create_key( $_POST['email'], array(
 					'name' => $_POST['name'],
 					'identifier' => $identifier,
-					'link' => 'http://localhost',
+					'link' => $link,
 				) );
 
 				update_option( self::get_prefixed_name( 'api_key_pending' ), true );
