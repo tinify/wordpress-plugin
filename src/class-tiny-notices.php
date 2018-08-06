@@ -145,11 +145,14 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= '</h3>';
 		$notice .= '<p>';
 		$notice .= esc_html__(
-			'These plugins are incompatible and may cause unexpected results:',
+			'You have activated multiple image optimization plugins. This may lead to unexpected results. The following plugins were detected:', // WPCS: Needed for proper translation.
 			'tiny-compress-images'
 		);
 		$notice .= '</p>';
 		$notice .= '<table>';
+		$notice .= '<tr><td class="bullet">•</td><td class="name">';
+		$notice .= esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		$notice .= '</td><td></td></tr>';
 		foreach ( $incompatible_plugins as $name => $file ) {
 			$notice .= '<tr><td class="bullet">•</td><td class="name">';
 			$notice .= $name;
