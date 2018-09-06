@@ -1,0 +1,9 @@
+Note the following when making changes to the plugin:
+
+1. XML-RPC
+
+Wordpress can either be used via the web interface or through the official
+Wordpress apps for mobile devices. Wordpress uses XML-RPC internally to
+communicate between the app and the Wordpress admin. Make sure therefore
+that when developing functionality that is linked to functionality available
+in the mobile app that it also works over XML-RPC.

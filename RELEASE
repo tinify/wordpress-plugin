@@ -1,22 +1,23 @@
 Perform the following steps to release a new version of the plugin on wordpress.org:
 
-1. Update the version in tiny-compress-images.php and src/class-tiny-plugin.php
-2. Change the 'Stable tag' in readme.txt to the new release number.
-3. Add release notes to readme.txt.
-4. If you've changed the plugin to work with newer version of WordPress add that to the readme.txt as well.
-5. Commit and push to GitHub.
-6. Create a new tag in GitHub.
-7. Locally, checkout the new tag: `git checkout <tagged version>`.
-8. If not already done so, checkout the Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
-9. Run `svn update` when the Subversion repository already existed.
-10. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`. Make sure src/vendor/* is NOT ignored in SVN.
-11. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
-12. Manually copy the Git release to the local Subversion repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
-13. Add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
-14. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
-15. Commit the trunk to Subversion: `svn ci -m "<message>"`.
-16. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
-17. Visit https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images and add the missing translations.
+1. It might already be too late, but make sure you've read the NOTES.
+2. Update the version in tiny-compress-images.php and src/class-tiny-plugin.php
+3. Change the 'Stable tag' in readme.txt to the new release number.
+4. Add release notes to readme.txt.
+5. If you've changed the plugin to work with newer version of WordPress add that to the readme.txt as well.
+6. Commit and push to GitHub.
+7. Create a new tag in GitHub.
+8. Locally, checkout the new tag: `git checkout <tagged version>`.
+9. If not already done so, checkout the Subversion repository: `svn co http://plugins.svn.wordpress.org/tiny-compress-images`.
+10. Run `svn update` when the Subversion repository already existed.
+11. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`. Make sure src/vendor/* is NOT ignored in SVN.
+12. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
+13. Manually copy the Git release to the local Subversion repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
+14. Add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
+15. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
+16. Commit the trunk to Subversion: `svn ci -m "<message>"`.
+17. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
+18. Visit https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images and add the missing translations.
 
 Perform the following steps to make changes to the plugin page on wordpress.org:
 

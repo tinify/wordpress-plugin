@@ -130,7 +130,7 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 == Changelog ==
 = 3.0.1 =
 * Fixed bug that caused an error when registering a new account.
-* No longer use create_function, which is deprecated in PHP 7.2.
+* No longer use create_function, which is deprecated in PHP 7.2. The plugin no longer supports PHP 5.2.
 * Rephrased incompatible plugins notice to avoid confusion.
 
 = 3.0.0 =

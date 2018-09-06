@@ -61,6 +61,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
+		/* When touching any functionality linked to image compressions when
+			 uploading images make sure it also works with XML-RPC. See NOTES. */
 		add_filter( 'wp_ajax_nopriv_tiny_rpc',
 			$this->get_method( 'process_rpc_request' )
 		);
