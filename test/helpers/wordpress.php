@@ -53,6 +53,7 @@ class WordPressStubs {
 		$GLOBALS['wp'] = $this;
 		$this->vfs = $vfs;
 		$this->addMethod( 'add_action' );
+		$this->addMethod( 'do_action' );
 		$this->addMethod( 'add_filter' );
 		$this->addMethod( 'register_setting' );
 		$this->addMethod( 'add_settings_section' );

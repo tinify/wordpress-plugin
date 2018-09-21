@@ -284,6 +284,7 @@ class Tiny_Image {
 			$tiny_metadata[ $size_name ] = $size->meta;
 		}
 		update_post_meta( $this->id, Tiny_Config::META_KEY, $tiny_metadata );
+		do_action( 'updated_tiny_postmeta', $this->id, Tiny_Config::META_KEY, $tiny_metadata );
 	}
 
 	public function get_image_sizes() {
