@@ -140,6 +140,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
+		$this->tiny_compatibility();
+
 		add_thickbox();
 	}
 
@@ -165,6 +167,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			),
 		);
 		return array_merge( $additional, $current_links );
+	}
+
+	public function tiny_compatibility() {
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+			$tiny_wpml_compatibility = new Tiny_WPML();
+		}
 	}
 
 	public function compress_retina_image( $attachment_id, $path, $size_name ) {
