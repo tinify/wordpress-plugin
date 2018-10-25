@@ -367,7 +367,7 @@ class Tiny_Image {
 				if ( isset( $size->meta['error'] ) && isset( $size->meta['message'] ) ) {
 					if ( null === $last_timestamp || $last_timestamp < $size->meta['timestamp'] ) {
 						$last_timestamp = $size->meta['timestamp'];
-						$error_message = $size->meta['message'];
+						$error_message = mb_strimwidth( $size->meta['message'], 0 , 140, '...' );
 					}
 				}
 			}

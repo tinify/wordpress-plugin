@@ -89,6 +89,21 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->assertEquals( 'Could not download output', $this->subject->get_latest_error() );
 	}
 
+	public function test_get_latest_error_should_return_trimmed_message_if_message_is_huge() {
+		$this->subject->get_image_size()->add_tiny_meta_start( 'large' );
+		$this->subject->get_image_size()->add_tiny_meta_error( 
+			new Tiny_Exception(
+				'Request body has unknown keys DOCTYPE HTML PUBLIC 3.2 Final <html> <head> <title>Index</title> </head> <body> <h1>Index of page</h1> <ul><li> 4m planets super nova by netbaby.jpg</li> <li> 75006 lego planets jedi starfighter planet kamino.jpg</li> </body> </html>',
+				'OutputError'
+			),
+			'large'
+		);
+		$this->assertEquals( 
+			'Request body has unknown keys DOCTYPE HTML PUBLIC 3.2 Final <html> <head> <title>Index</title> </head> <body> <h1>Index of page</h1> <ul>...',
+			$this->subject->get_latest_error()
+		);
+	}
+
 	public function test_get_statistics() {
 		$active_sizes = $this->settings->get_sizes();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
