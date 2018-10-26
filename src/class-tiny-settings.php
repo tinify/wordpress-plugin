@@ -712,12 +712,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'strong' => array(),
 		);
 
-		echo '<p class="tiny-resize-unavailable" style="display: none">';
+		echo '<div class="tiny-resize-unavailable" style="display: none">';
 		esc_html_e(
 			'Enable compression of the original image size for more options.',
 			'tiny-compress-images'
 		);
-		echo '</p>';
+		echo '</div>';
 
 		$id = self::get_prefixed_name( 'resize_original_enabled' );
 		$name = self::get_prefixed_name( 'resize_original[enabled]' );

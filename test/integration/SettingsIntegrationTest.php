@@ -261,7 +261,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 			$elements[0]->getText()
 		);
 
-		$elements = $this->find_all( 'p.tiny-resize-unavailable' );
+		$elements = $this->find_all( 'div.tiny-resize-unavailable' );
 		$this->assertEquals(
 			'',
 			$elements[0]->getText()
@@ -277,7 +277,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 			$elements[0]->getText()
 		);
 
-		$elements = $this->find_all( 'p.tiny-resize-unavailable' );
+		$elements = $this->find_all( 'div.tiny-resize-unavailable' );
 		$this->assertEquals(
 			'Enable compression of the original image size for more options.',
 			$elements[0]->getText()

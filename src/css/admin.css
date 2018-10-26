@@ -142,18 +142,21 @@ div.tiny-account-status.wide div.update {
 	}
 }
 
-div.tiny-account-status.wide div.create input, div.tiny-account-status.wide div.update input {
+div.tiny-account-status.wide div.create input,
+div.tiny-account-status.wide div.update input {
 	width: 100%;
 	margin-bottom: 8px;
 }
 
-div.tiny-account-status.wide div.create button, div.tiny-account-status.wide div.update button {
+div.tiny-account-status.wide div.create button,
+div.tiny-account-status.wide div.update button {
 	width: 100%;
 	margin-top: 4px;
 	margin-bottom: 4px;
 }
 
-div.tiny-account-status.wide div.create button.loading, div.tiny-account-status.wide div.update button.loading {
+div.tiny-account-status.wide div.create button.loading,
+div.tiny-account-status.wide div.update button.loading {
 	background-image: url(../images/button-spinner.gif) !important;
 	background-size: 16px 16px !important;
 	background-position: 95% 50% !important;
@@ -161,7 +164,8 @@ div.tiny-account-status.wide div.create button.loading, div.tiny-account-status.
 }
 
 @media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
-	div.tiny-account-status.wide div.create button.loading, div.tiny-account-status.wide div.update button.loading {
+	div.tiny-account-status.wide div.create button.loading,
+	div.tiny-account-status.wide div.update button.loading {
 		background-image: url("../images/button-spinner-2x.gif") !important;
 	}
 }
@@ -187,10 +191,11 @@ table.tinify-settings p.intro {
 }
 
 table.tinify-settings div.sizes {
-	margin: 20px 0;
+	margin: 20px 0 5px;
 }
 
-table.tinify-settings input[type="checkbox"], table.tinify-settings input[type="radio"] {
+table.tinify-settings input[type="checkbox"],
+table.tinify-settings input[type="radio"] {
 	margin-right: 12px;
 }
 
@@ -212,7 +217,8 @@ p.tiny-radio span.description {
 	}
 }
 
-p.tiny-radio.disabled label, p.tiny-radio.disabled span.description {
+p.tiny-radio.disabled label,
+p.tiny-radio.disabled span.description {
 	opacity: 0.5;
 }
 
@@ -227,7 +233,7 @@ p.tiny-radio span {
 }
 
 div.tiny-resize-available {
-	margin-top: 10px;
+	margin-top: 5px;
 }
 
 div.tiny-resize-resolution {
