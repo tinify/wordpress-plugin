@@ -37,3 +37,31 @@ Perform the following steps to change the "Tested up to wordpress version" on wo
 3. Commit and push to GitHub.
 4. Checkout the latest tag of the Subversion repository (e.g. 2.2.6).
 5. Add the updated readme.txt and Commit the changes.
+
+Increase “Tested up to” Value for WordPress Plugin without making a new release:
+
+Step 1: Thoroughly test the plugin on the new version of wordpress.
+(Only proceed with these steps if all still works. If not, fix the issue and make a new release instead).
+
+Step 2: Get Your Subversion Repository URL
+This URL is available on the Developers tab of the plugin on wordpress.org in the Subversion Repository link.
+"check out the SVN repository"
+TinyPNG SVN link: https://plugins.svn.wordpress.org/tiny-compress-images/
+
+Step 3: Make a Local Copy of the Subversion Repo
+svn co https://plugins.svn.wordpress.org/tiny-compress-images/
+Navigate into your plugin directory with something like
+`cd tiny-compress-images`
+
+Step 4: Make a Local Copy of the Subversion Repo
+You should updated the “Tested up to” value in your latest tagged release.
+Look in tags/ and find the latest version.
+If you want to edit this from the command line, you can use:
+`nano tags/X.X.X/readme.txt`
+You can review the change by using `svn diff`
+
+Step 5: Push the changes back to wordpress.org
+You then upload the changes to live, include a message of the change.
+`svn ci -m "Tested up to bumped to XX"`
+You will be asked for the username and pasword.
+Use username TinyPNG with the password from the vault.
