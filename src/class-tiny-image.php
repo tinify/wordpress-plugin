@@ -223,6 +223,7 @@ class Tiny_Image {
 				$this->update_tiny_post_meta();
 			}
 		}
+		do_action( 'tiny_image_after_compression', $this->id, $success );
 		return array(
 			'success' => $success,
 			'failed' => $failed,
