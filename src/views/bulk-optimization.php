@@ -243,10 +243,10 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 			}
 			?>
 		</div>
-    <?php
-      require_once dirname( __FILE__ ) . '/bulk-optimization-upgrade-notice.php';
-    ?>
-  </div>
+		<?php
+			require_once dirname( __FILE__ ) . '/bulk-optimization-upgrade-notice.php';
+		?>
+	</div>
 	<script type="text/javascript">
 	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})'; ?>
 	</script>
