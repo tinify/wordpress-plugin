@@ -111,6 +111,7 @@ div.tiny-account-status div.upgrade {
 
 div.tiny-account-status div.upgrade p {
 	width: 400px;
+	margin-right: 20px;
 }
 
 @media only screen and (max-width: 800px) {

@@ -7,7 +7,7 @@
 			} else {
 				echo esc_html__( 'Your account is connected', 'tiny-compress-images' );
 				if ( ! defined( 'TINY_API_KEY' ) ) {
-					echo ' <a href="#" onclick="jQuery(\'div.tiny-account-status div.update\').toggle(); jQuery(\'div.tiny-account-status div.status\').toggle(); return false">';
+					echo ' <a href="#" id="change-key">';
 					echo esc_html__( '(change key)', 'tiny-compress-images' );
 					echo '</a>';
 				}
@@ -96,7 +96,7 @@
 
 		<p class="message"></p>
 
-		<p><a href="#" onclick="jQuery('div.tiny-account-status div.update').toggle(); jQuery('div.tiny-account-status div.status').toggle(); return false"><?php
+		<p><a href="#" id="cancel-change-key"><?php
 			echo esc_html__( 'Cancel' );
 		?></a></p>
 	</div><?php
