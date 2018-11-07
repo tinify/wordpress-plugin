@@ -9,6 +9,22 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		clear_uploads();
 	}
 
+	public function test_should_display_upgrade_button_for_free_accounts() {
+		$this->set_api_key( 'LIMIT123' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( 1, count( $this->find_all( 'a.upgrade-account' ) ) );
+	}
+
+	public function test_should_not_display_upgrade_button_for_paid_accounts() {
+		$this->set_api_key( 'PAID123' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( 0, count( $this->find_all( 'a.upgrade-account' ) ) );
+	}
+
 	public function test_summary_should_display_correct_values_for_empty_library() {
 		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
 

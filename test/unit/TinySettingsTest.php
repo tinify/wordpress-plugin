@@ -316,7 +316,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 	}
 
-	public function test_should_return_resize_options_with_invaled_width() {
+	public function test_should_return_resize_options_with_invalid_width() {
 		$this->wp->addOption(
 			'tinypng_resize_original',
 			array(
@@ -335,7 +335,7 @@ class Tiny_Settings_Test extends Tiny_TestCase {
 		);
 	}
 
-	public function test_should_return_resize_options_with_invaled_height() {
+	public function test_should_return_resize_options_with_invalid_height() {
 		$this->wp->addOption(
 			'tinypng_resize_original',
 			array(

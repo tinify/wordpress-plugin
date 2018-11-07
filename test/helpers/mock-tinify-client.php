@@ -22,6 +22,36 @@ class MockTinifyClient extends Tinify\Client {
 				);
 			}
 
+			if ( isset( $headers['compression-count-remaining'] ) ) {
+				\Tinify\Tinify::setRemainingCredits(
+					intval( $headers['compression-count-remaining'] )
+				);
+			} else {
+				\Tinify\Tinify::setRemainingCredits(
+					null
+				);
+			}
+
+			if ( isset( $headers['paying-state'] ) ) {
+				\Tinify\Tinify::setPayingState(
+					$headers['paying-state']
+				);
+			} else {
+				\Tinify\Tinify::setPayingState(
+					null
+				);
+			}
+
+			if ( isset( $headers['email-address'] ) ) {
+				\Tinify\Tinify::setEmailAddress(
+					$headers['email-address']
+				);
+			} else {
+				\Tinify\Tinify::setEmailAddress(
+					null
+				);
+			}
+
 			$isError = $status <= 199 || $status >= 300;
 			$isJson = true;
 
@@ -30,7 +60,11 @@ class MockTinifyClient extends Tinify\Client {
 			}
 
 			if ( $isError ) {
-				throw \Tinify\Exception::create( $body->message, $body->error, $status );
+				if ( $handler['body'] !== '{}' ) {
+					throw \Tinify\Exception::create( $body->message, $body->error, $status );
+				} else {
+					throw \Tinify\Exception::create( null, null, $status );
+				}
 			}
 
 			return (object) array(

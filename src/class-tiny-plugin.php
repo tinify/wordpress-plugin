@@ -612,7 +612,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 		$admin_colors = self::retrieve_admin_colors();
 
+		/* This makes sure that up to date information is retrieved from the API. */
+		$this->settings->get_compressor()->get_status();
+
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+		$remaining_credits = $this->settings->get_remaining_credits();
+		$is_on_free_plan = $this->settings->is_on_free_plan();
+		$email_address = $this->settings->get_email_address();
 
 		include( dirname( __FILE__ ) . '/views/bulk-optimization.php' );
 	}

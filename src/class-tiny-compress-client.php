@@ -50,20 +50,27 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		return \Tinify\getCompressionCount();
 	}
 
-	public function get_key() {
-		return \Tinify\getKey();
+	public function get_remaining_credits() {
+		return \Tinify\remainingCredits();
 	}
 
-	public function limit_reached() {
-		return 429 == $this->last_error_code;
+	public function get_paying_state() {
+		return \Tinify\payingState();
+	}
+
+	public function get_email_address() {
+		return \Tinify\emailAddress();
+	}
+
+	public function get_key() {
+		return \Tinify\getKey();
 	}
 
 	protected function validate() {
 		try {
 			$this->last_error_code = 0;
-			$this->set_request_options( \Tinify\Tinify::getClient() );
-
-			\Tinify\Tinify::getClient()->request( 'post', '/shrink' );
+			$this->set_request_options( \Tinify\Tinify::getClient( \Tinify\Tinify::ANONYMOUS ) );
+			\Tinify\Tinify::getClient()->request( 'get', '/keys/' . $this->get_key() );
 			return true;
 
 		} catch ( \Tinify\Exception $err ) {

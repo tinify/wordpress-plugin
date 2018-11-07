@@ -8,15 +8,28 @@ div.tiny-account-status {
 	box-sizing: border-box;
 	display: table-cell;
 	width: 500px;
-	padding: 22px 28px;
 	border: 1px solid #e1e1e1;
 	background-color: white;
 }
 
+
 div.tiny-account-status div.status {
 	box-sizing: border-box;
-	padding-left: 26px;
+	padding: 22px 28px 22px 56px;
 	position: relative;
+}
+
+div.tiny-account-status div.status-success {
+	padding-left: 28px;
+}
+
+div.tiny-account-status div.status-success p {
+	margin-bottom: 10px;
+}
+
+div.tiny-account-status div.status-success a {
+	text-decoration: none;
+	font-weight: 400;
 }
 
 div.tiny-account-status div.status:before {
@@ -31,30 +44,23 @@ div.tiny-account-status div.status:before {
 }
 
 div.tiny-account-status div.status-failure:before {
-	left: -6px;
-	top: -6px;
+	left: 20px;
+  top: 17px;
 	color: #d54e21;
 	content: "\f158";
 }
 
-div.tiny-account-status div.status-success:before {
-	left: -6px;
-	top: -6px;
-	color: #30d030;
-	content: "\f147";
-}
-
 div.tiny-account-status div.status-pending:before {
-	left: -6px;
-	top: -4px;
+	left: 20px;
+  top: 17px;
 	color: #0086ba;
 	font-size: 24px;
 	content: "\f466";
 }
 
 div.tiny-account-status div.status-loading:before {
-	left: -2px;
-	top: 0;
+	left: 26px;
+  top: 22px;
 	background: url("../images/spinner.gif") no-repeat center;
 	background-size: 20px 20px;
 	content: "";
@@ -92,6 +98,27 @@ div.tiny-account-status p.status {
 	font-weight: bold;
 }
 
+div.tiny-account-status div.upgrade {
+	display: flex;
+	padding: 22px 28px 16px;
+	background-color: #F5F9FA;
+}
+
+div.tiny-account-status div.upgrade p {
+	width: 400px;
+}
+
+div.tiny-account-status div.upgrade div.button-container {
+	display: inline-block;
+}
+
+div.tiny-account-status div.upgrade .button-primary {
+	height: 36px;
+	padding: 4px 12px;
+	text-shadow: none;
+	font-weight: bold;
+}
+
 div.tiny-account-status.wide {
 	width: auto;
 	max-width: 700px;
@@ -107,13 +134,14 @@ div.tiny-account-status div.failure p.message {
 
 div.tiny-account-status div.update {
 	width: 380px;
+	padding: 22px 28px;
 }
 
 div.tiny-account-status.wide div.create {
 	box-sizing: border-box;
 	display: table-cell;
 	width: 50%;
-	padding-right: 30px;
+	padding: 22px 28px;
 	border-right: 1px solid #e5e5e5;
 }
 
@@ -128,7 +156,6 @@ div.tiny-account-status.wide div.update {
 	div.tiny-account-status.wide div.create {
 		display: block;
 		width: auto;
-		padding-right: 0;
 		padding-bottom: 20px;
 		border-right: 0;
 		border-bottom: 1px solid #e5e5e5;
@@ -138,7 +165,6 @@ div.tiny-account-status.wide div.update {
 		display: block;
 		width: auto;
 		padding-top: 29px;
-		padding-left: 0;
 	}
 }
 

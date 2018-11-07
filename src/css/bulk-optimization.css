@@ -332,20 +332,29 @@ div.tiny-bulk-optimization table.whitebox tr.failed.is-expanded span.icon {
 }
 
 div.tiny-bulk-optimization div.upgrade-account-notice {
-  height: 176px;
-  background-color: #F5F9FA;
+	display: none;
+	padding: 22px 28px;
+	background-color: #F5F9FA;
+	text-align: center;
 }
 
-div.tiny-bulk-optimization div.upgrade-account-notice span {
-  font-weight: bold;
+div.tiny-bulk-optimization div.upgrade-account-notice div.introduction {
+	padding-bottom: 10px;
 }
 
-div.tiny-bulk-optimization button.upgrade-account {
-  height: 45.45px;
-  width: 209px;
-  font-size: 15px;
-  font-weight: bold;
-  border-radius: 3px;
-  background-color: #0085BA;
-  box-shadow: inset -1px 0 0 0 #006799, inset 1px 0 0 0 #006799, inset 0 1px 0 0 #0073AA, 0 3px 0 0 #006799;
+div.tiny-bulk-optimization div.upgrade-account-notice p {
+	margin: 5px 0;
+}
+
+div.tiny-bulk-optimization a.upgrade-account {
+	height: 45px;
+	margin-bottom: 10px;
+	padding: 10px 40px;
+	font-weight: bold;
+	font-size: 15px;
+	line-height: 20px;
+}
+
+div.tiny-bulk-optimization div.upgrade-account-notice p a {
+	color: rgba(64,68,79,0.5);
 }

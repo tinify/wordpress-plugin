@@ -63,6 +63,18 @@ class Client {
 				Tinify::setCompressionCount( intval( $headers['compression-count'] ) );
 			}
 
+			if ( isset( $headers["compression-count-remaining"] ) ) {
+				Tinify::setRemainingCredits( intval( $headers["compression-count-remaining"] ) );
+			}
+
+			if ( isset( $headers["paying-state"] ) ) {
+				Tinify::setPayingState( $headers["paying-state"] );
+			}
+
+			if ( isset( $headers["email-address"] ) ) {
+				Tinify::setEmailAddress( $headers["email-address"] );
+			}
+
 			$isJson = false;
 			if ( isset( $headers['content-type'] ) ) {
 				/* Parse JSON response bodies. */

@@ -844,11 +844,45 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->compressor->limit_reached();
 	}
 
+	public function get_remaining_credits() {
+		$field = self::get_prefixed_name( 'remaining_credits' );
+		return get_option( $field );
+	}
+
+	public function get_paying_state() {
+		$field = self::get_prefixed_name( 'paying_state' );
+		return get_option( $field );
+	}
+
+	public function is_on_free_plan() {
+		return self::get_paying_state() === 'free';
+	}
+
+	public function get_email_address() {
+		$field = self::get_prefixed_name( 'email_address' );
+		return get_option( $field );
+	}
+
 	public function after_compress_callback( $compressor ) {
 		$count = $compressor->get_compression_count();
 		if ( ! is_null( $count ) ) {
 			$field = self::get_prefixed_name( 'status' );
 			update_option( $field, $count );
+		}
+		$remaining_credits = $compressor->get_remaining_credits();
+		if ( ! is_null( $remaining_credits ) ) {
+			$field = self::get_prefixed_name( 'remaining_credits' );
+			update_option( $field, $remaining_credits );
+		}
+		$paying_state = $compressor->get_paying_state();
+		if ( ! is_null( $paying_state ) ) {
+			$field = self::get_prefixed_name( 'paying_state' );
+			update_option( $field, $paying_state );
+		}
+		$email_address = $compressor->get_email_address();
+		if ( ! is_null( $email_address ) ) {
+			$field = self::get_prefixed_name( 'email_address' );
+			update_option( $field, $email_address );
 		}
 		if ( $compressor->limit_reached() ) {
 			$link = '<a href="https://tinypng.com/dashboard/api" target="_blank">' .

@@ -244,9 +244,11 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 			?>
 		</div>
 		<?php
+		if ( $is_on_free_plan ) {
 			require_once dirname( __FILE__ ) . '/bulk-optimization-upgrade-notice.php';
+		}
 		?>
-	</div>
+  </div>
 	<script type="text/javascript">
 	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})'; ?>
 	</script>

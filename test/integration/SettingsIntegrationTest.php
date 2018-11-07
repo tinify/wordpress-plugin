@@ -48,13 +48,13 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$this->wait_for_text(
 			'div.tiny-account-status p.status',
-			'Your account is connected'
+			'Your account is connected (change key)'
 		);
 
 		$this->refresh();
 
 		$this->assertEquals(
-			'Your account is connected',
+			'Your account is connected (change key)',
 			$this->find( 'div.tiny-account-status p.status' )->getText()
 		);
 	}
@@ -82,18 +82,45 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$this->wait_for_text(
 			'div.tiny-account-status p.status',
-			'Your account is connected'
+			'Your account is connected (change key)'
 		);
 
-		$this->find_link( 'Change API key' )->click();
+		$this->find_link( '(change key)' )->click();
 
 		$this->find( '#tinypng_api_key' )->sendKeys( 'JPG123' );
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
 
 		$this->wait_for_text(
 			'div.tiny-account-status p.status',
-			'Your account is connected'
+			'Your account is connected (change key)'
 		);
+	}
+
+	public function test_settings_should_show_upgrade_notice() {
+		$this->find( '#tinypng_api_key' )->sendKeys( 'LIMIT123' );
+		$this->find( 'button[data-tiny-action=update-key]' )->click();
+
+		$this->wait_for_text(
+			'div.tiny-account-status p.status',
+			'Your account is connected (change key)'
+		);
+
+		$this->assertEquals(
+			'Upgrade account',
+			$this->find( 'a.upgrade-account' )->getText()
+		);
+	}
+
+	public function test_settings_should_not_show_upgrade_notice_for_paying_users() {
+		$this->find( '#tinypng_api_key' )->sendKeys( 'PAID123' );
+		$this->find( 'button[data-tiny-action=update-key]' )->click();
+
+		$this->wait_for_text(
+			'div.tiny-account-status p.status',
+			'Your account is connected (change key)'
+		);
+
+		$this->assertEquals( 0, count( $this->find_all( 'a.upgrade-account' ) ) );
 	}
 
 	public function test_settings_should_pre_fill_registration_form() {
