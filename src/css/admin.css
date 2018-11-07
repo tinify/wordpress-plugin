@@ -12,6 +12,11 @@ div.tiny-account-status {
 	background-color: white;
 }
 
+@media only screen and (max-width: 800px) {
+	div.tiny-account-status {
+		max-width: 100%;
+	}
+}
 
 div.tiny-account-status div.status {
 	box-sizing: border-box;
@@ -100,7 +105,7 @@ div.tiny-account-status p.status {
 
 div.tiny-account-status div.upgrade {
 	display: flex;
-	padding: 22px 28px 16px;
+	padding: 22px 28px;
 	background-color: #F5F9FA;
 }
 
@@ -108,15 +113,14 @@ div.tiny-account-status div.upgrade p {
 	width: 400px;
 }
 
-div.tiny-account-status div.upgrade div.button-container {
-	display: inline-block;
+@media only screen and (max-width: 800px) {
+	div.tiny-account-status div.upgrade p {
+		width: auto;
+	}
 }
 
-div.tiny-account-status div.upgrade .button-primary {
-	height: 36px;
-	padding: 4px 12px;
-	text-shadow: none;
-	font-weight: bold;
+div.tiny-account-status div.upgrade div.button-container {
+	display: inline-block;
 }
 
 div.tiny-account-status.wide {

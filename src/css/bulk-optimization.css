@@ -346,15 +346,6 @@ div.tiny-bulk-optimization div.upgrade-account-notice p {
 	margin: 5px 0;
 }
 
-div.tiny-bulk-optimization a.upgrade-account {
-	height: 45px;
-	margin-bottom: 10px;
-	padding: 10px 40px;
-	font-weight: bold;
-	font-size: 15px;
-	line-height: 20px;
-}
-
 div.tiny-bulk-optimization div.upgrade-account-notice p a {
 	color: rgba(64,68,79,0.5);
 }

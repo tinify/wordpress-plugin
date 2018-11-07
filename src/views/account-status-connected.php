@@ -109,7 +109,7 @@
 			); ?>
 			</p>
 			<div class="button-container">
-				<a href="https://tinypng.com/developers/upgrade?email_address=<?php echo self::get_email_address(); ?>" target="_blank" class="button button-primary upgrade-account">
+				<a href="https://tinypng.com/developers/upgrade?email_address=<?php echo self::get_email_address(); ?>" target="_blank" class="button button-primary button-hero upgrade-account">
 				<?php echo esc_html__( 'Upgrade account', 'tiny-compress-images' ); ?>
 				</a>
 			</div>
