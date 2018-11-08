@@ -35,6 +35,38 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals( 0, count( $this->find_all( '#hide-warning' ) ) );
 	}
 
+	public function test_should_show_bulk_optimization_button_after_dismissing_notice() {
+		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->find( '#hide-warning' )->click();
+
+		$this->assertEquals( true, $this->find( '#id-start' )->isDisplayed() );
+
+		$this->deleteCookie( 'hide_upgrade_notice' );
+	}
+
+	public function test_should_show_bulk_optimization_button_after_dismissing_notice_and_refreshing_page() {
+		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->find( '#hide-warning' )->click();
+
+		$this->refresh();
+
+		$this->assertEquals( true, $this->find( '#id-start' )->isDisplayed() );
+
+		$this->deleteCookie( 'hide_upgrade_notice' );
+	}
+
 	public function test_should_not_display_upgrade_button_for_paid_accounts() {
 		$this->set_api_key( 'PAID123' );
 
