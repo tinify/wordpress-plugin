@@ -9,12 +9,30 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		clear_uploads();
 	}
 
-	public function test_should_display_upgrade_button_for_free_accounts() {
-		$this->set_api_key( 'LIMIT123' );
+	public function test_should_display_upgrade_button_for_account_with_insufficient_credits() {
+		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
 
 		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
 
 		$this->assertEquals( 1, count( $this->find_all( 'a.upgrade-account' ) ) );
+		$this->assertEquals( 1, count( $this->find_all( '#hide-warning' ) ) );
+	}
+
+	public function test_should_not_display_dismiss_link_for_no_credits() {
+		$this->set_api_key( 'NOCREDITS123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( 1, count( $this->find_all( 'a.upgrade-account' ) ) );
+		$this->assertEquals( 0, count( $this->find_all( '#hide-warning' ) ) );
 	}
 
 	public function test_should_not_display_upgrade_button_for_paid_accounts() {

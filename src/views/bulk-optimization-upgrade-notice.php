@@ -12,19 +12,19 @@
 		?></p>
 		<p><?php
 		echo esc_html__(
-			'Upgrade your account now to start compressing your entire media library.',
+			'Upgrade your account now to compress your entire media library.',
 			'tiny-compress-images'
 		);
 		?></p>
 	</div>
-	<a href="https://tinypng.com/developers/upgrade?email_address=<?php echo $email_address; ?>" target="_blank" class="button button-primary button-hero upgrade-account">
+	<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo urlencode( $email_address ); ?>" target="_blank" class="button button-primary button-hero upgrade-account">
 		<?php echo esc_html__( 'Upgrade account', 'tiny-compress-images' ); ?>
-	</a>
+	</a><?php
+	if ( $remaining_credits > 0 ) { ?>
 	<p>
-		<a id="hide-warning" href="#"><?php
-		echo esc_html__(
-			'No thanks, continue anyway',
-			'tiny-compress-images'
-		);
-	?></a></p>
+		<a id="hide-warning" href="#">
+			<?php echo esc_html__( 'No thanks, continue anyway', 'tiny-compress-images' ); ?>
+		</a>
+	</p><?php
+	} ?>
 </div>

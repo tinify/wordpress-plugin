@@ -204,13 +204,8 @@
 
   jQuery('.tiny-bulk-optimization .upgrade-account-notice a#hide-warning').click(function() {
     jQuery('.tiny-bulk-optimization .upgrade-account-notice').hide();
-    var date = new Date();
-    /*
-      We set a cookie to store the user's preference to not show the warning for a max of 31 days.
-      Note that if the user has 0 remaining credits, the warning will be displayed nonetheless.
-    */
-    date.setTime(date.getTime() + (31*24*60*60*1000));
-    document.cookie = "hide_upgrade_notice=yes; expires=" + date.toUTCString()
+    jQuery('.tiny-bulk-optimization .optimize').children().show();
+    document.cookie = "hide_upgrade_notice=yes";
   });
 
   jQuery('div#bulk-optimization-actions input').click(function() {
@@ -258,18 +253,24 @@
     });
   }
 
-  function initUpgradeNotice() {
+  function initActions() {
     var remainingCredits = parseInt(jQuery('.tiny-bulk-optimization .upgrade-account-notice').attr("data-remaining-credits"));
     var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)hide_upgrade_notice\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    if (remainingCredits === 0 || !cookieValue) {
+    if (remainingCredits === 0) {
+      jQuery('.tiny-bulk-optimization .upgrade-account-notice').show();
+    } else if (cookieValue) {
+      jQuery('.tiny-bulk-optimization .upgrade-account-notice').remove();
+      jQuery('.tiny-bulk-optimization .optimize').children().show();
+    } else if (jQuery('.tiny-bulk-optimization .upgrade-account-notice').length > 0) {
       jQuery('.tiny-bulk-optimization .upgrade-account-notice').show();
     } else {
       jQuery('.tiny-bulk-optimization .upgrade-account-notice').remove();
+      jQuery('.tiny-bulk-optimization .optimize').children().show();
     }
   }
 
   attachToolTipEventHandlers();
-  initUpgradeNotice();
+  initActions();
 
   window.bulkOptimizationAutorun = startBulkOptimization;
   window.bulkOptimization = prepareBulkOptimization;
