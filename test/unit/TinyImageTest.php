@@ -8,7 +8,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 		$this->wp->createImagesFromJSON( $this->json( 'image_filesystem_data' ) );
 		$this->wp->setTinyMetadata( 1, $this->json( 'image_database_metadata' ) );
-		
+
 		$this->settings = new Tiny_Settings();
 		$this->subject = new Tiny_Image( $this->settings, 1, $this->json( '_wp_attachment_metadata' ) );
 	}
@@ -91,14 +91,14 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 	public function test_get_latest_error_should_return_trimmed_message_if_message_is_huge() {
 		$this->subject->get_image_size()->add_tiny_meta_start( 'large' );
-		$this->subject->get_image_size()->add_tiny_meta_error( 
+		$this->subject->get_image_size()->add_tiny_meta_error(
 			new Tiny_Exception(
 				'Request body has unknown keys DOCTYPE HTML PUBLIC 3.2 Final <html> <head> <title>Index</title> </head> <body> <h1>Index of page</h1> <ul><li> 4m planets super nova by netbaby.jpg</li> <li> 75006 lego planets jedi starfighter planet kamino.jpg</li> </body> </html>',
 				'OutputError'
 			),
 			'large'
 		);
-		$this->assertEquals( 
+		$this->assertEquals(
 			'Request body has unknown keys DOCTYPE HTML PUBLIC 3.2 Final <html> <head> <title>Index</title> </head> <body> <h1>Index of page</h1> <ul>...',
 			$this->subject->get_latest_error()
 		);
@@ -139,5 +139,23 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 	public function test_is_retina_for_non_retina_size_with_short_name() {
 		$this->assertEquals( false, Tiny_Image::is_retina( 'file' ) );
+	}
+
+	public function test_update_tiny_post_data_should_call_do_action() {
+		$this->wp->addOption( 'tinypng_api_key', 'test123' );
+		$this->wp->addOption( 'tinypng_sizes[0]', 'on' );
+		$this->wp->addOption( 'tinypng_sizes[large]', 'on' );
+		$this->wp->addOption( 'tinypng_sizes[post-thumbnail]', 'on' );
+
+		$this->wp->addImageSize( 'post-thumbnail', array( 'width' => 825, 'height' => 510 ) );
+		$this->wp->createImages();
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
+
+		$testmeta = $this->wp->getTestMetadata();
+		$tiny_image = new Tiny_Image( new Tiny_Settings(), 1, $testmeta );
+		$tiny_image->get_image_size()->add_tiny_meta_start();
+		$tiny_image->update_tiny_post_meta();
+
+		$this->assertEquals('updated_tiny_postmeta', $this->wp->getCalls( 'do_action' )[0][0]);
 	}
 }

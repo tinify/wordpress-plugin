@@ -71,6 +71,19 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		), $this->wp->getCalls( 'add_filter' ));
 	}
 
+	public function test_compress_should_call_do_action() {
+		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
+		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->withConsecutive(
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test.png' ) ),
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-large.png' ) ),
+			array( $this->equalTo( 'vfs://root/wp-content/uploads/14/01/test-post-thumbnail.png' ) )
+		)->will( $this->returnCallback( array( $this, 'success_compress' ) ) );
+		$this->subject->blocking_compress_on_upload( $this->wp->getTestMetadata(), 1 );
+
+		$last_do_action = $this->wp->getCalls( 'do_action' )[sizeof($this->wp->getCalls( 'do_action' ))-1][0];
+		$this->assertEquals('tiny_image_after_compression', $last_do_action);
+	}
+
 	public function test_compress_should_respect_settings() {
 		$this->wp->stub( 'get_post_mime_type', function( $i ) { return "image/png"; } );
 		$this->compressor->expects( $this->exactly( 3 ) )->method( 'compress_file' )->withConsecutive(
