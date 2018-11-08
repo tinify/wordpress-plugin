@@ -1,19 +1,21 @@
 <div class="tiny-account-status" id="tiny-account-status" data-state="complete">
 	<div class="status <?php echo $status->ok ? ( $status->pending ? 'status-pending' : 'status-success' ) : 'status-failure'; ?>">
-		<p class="status"><?php
+		<p class="status"><span><?php
 		if ( $status->ok ) {
 			if ( isset( $status->message ) ) {
 				echo esc_html( $status->message, 'tiny-compress-images' );
+				echo '</span>';
 			} else {
 				echo esc_html__( 'Your account is connected', 'tiny-compress-images' );
 				if ( ! defined( 'TINY_API_KEY' ) ) {
-					echo ' <a href="#" id="change-key">';
+					echo '</span><a href="#" id="change-key">';
 					echo esc_html__( '(change key)', 'tiny-compress-images' );
 					echo '</a>';
 				}
 			}
 		} else {
 			echo esc_html__( 'Connection unsuccessful', 'tiny-compress-images' );
+			echo '</span>';
 		}
 		?></p>
 		<p><?php

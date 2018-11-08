@@ -47,15 +47,15 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
 
 		$this->wait_for_text(
-			'div.tiny-account-status p.status',
-			'Your account is connected (change key)'
+			'div.tiny-account-status p.status span',
+			'Your account is connected'
 		);
 
 		$this->refresh();
 
 		$this->assertEquals(
-			'Your account is connected (change key)',
-			$this->find( 'div.tiny-account-status p.status' )->getText()
+			'Your account is connected',
+			$this->find( 'div.tiny-account-status p.status span' )->getText()
 		);
 	}
 
@@ -81,8 +81,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
 
 		$this->wait_for_text(
-			'div.tiny-account-status p.status',
-			'Your account is connected (change key)'
+			'div.tiny-account-status p.status span',
+			'Your account is connected'
 		);
 
 		$this->find_link( '(change key)' )->click();
@@ -91,8 +91,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
 
 		$this->wait_for_text(
-			'div.tiny-account-status p.status',
-			'Your account is connected (change key)'
+			'div.tiny-account-status p.status span',
+			'Your account is connected'
 		);
 	}
 
@@ -101,8 +101,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
 
 		$this->wait_for_text(
-			'div.tiny-account-status p.status',
-			'Your account is connected (change key)'
+			'div.tiny-account-status p.status span',
+			'Your account is connected'
 		);
 
 		$this->assertEquals(
@@ -116,8 +116,8 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
 
 		$this->wait_for_text(
-			'div.tiny-account-status p.status',
-			'Your account is connected (change key)'
+			'div.tiny-account-status p.status span',
+			'Your account is connected'
 		);
 
 		$this->assertEquals( 0, count( $this->find_all( 'a.upgrade-account' ) ) );
