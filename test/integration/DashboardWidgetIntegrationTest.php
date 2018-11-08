@@ -25,7 +25,6 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 		);
 	}
 
-
 	public function test_should_show_widget_without_optimized_images() {
 		$this->set_compression_timing( 'auto' );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );

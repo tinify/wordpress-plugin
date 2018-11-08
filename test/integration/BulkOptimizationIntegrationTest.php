@@ -37,6 +37,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_bulk_optimization_button_after_dismissing_notice() {
 		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+		$this->set_compression_timing( 'auto' );
 
 		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
@@ -52,6 +53,7 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_bulk_optimization_button_after_dismissing_notice_and_refreshing_page() {
 		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+		$this->set_compression_timing( 'auto' );
 
 		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
 		$this->upload_media( 'test/fixtures/input-example.jpg' );
