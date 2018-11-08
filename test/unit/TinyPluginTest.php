@@ -80,8 +80,12 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		)->will( $this->returnCallback( array( $this, 'success_compress' ) ) );
 		$this->subject->blocking_compress_on_upload( $this->wp->getTestMetadata(), 1 );
 
-		$last_do_action = $this->wp->getCalls( 'do_action' )[sizeof($this->wp->getCalls( 'do_action' ))-1][0];
-		$this->assertEquals('tiny_image_after_compression', $last_do_action);
+		$do_action_calls = array();
+		foreach ($this->wp->getCalls( 'do_action' ) as $action) {
+			array_push($do_action_calls, $action[0]);
+		}
+
+		$this->assertEquals('tiny_image_after_compression', $do_action_calls[sizeof($do_action_calls)-1]);
 	}
 
 	public function test_compress_should_respect_settings() {

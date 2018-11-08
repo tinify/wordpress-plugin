@@ -156,6 +156,11 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$tiny_image->get_image_size()->add_tiny_meta_start();
 		$tiny_image->update_tiny_post_meta();
 
-		$this->assertEquals('updated_tiny_postmeta', $this->wp->getCalls( 'do_action' )[0][0]);
+		$do_action_calls = array();
+		foreach ($this->wp->getCalls( 'do_action' ) as $action) {
+			array_push($do_action_calls, $action[0]);
+		}
+
+		$this->assertEquals(array('updated_tiny_postmeta'), $do_action_calls);
 	}
 }
