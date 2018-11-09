@@ -77,6 +77,8 @@ function mock_limit_reached_response() {
     header('HTTP/1.1 429 Too Many Requests');
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: 500");
+    header("Compression-Count-Remaining: 0");
+    header("Paying-State: free");
 
     $response = array(
         "error" => "Too many requests",

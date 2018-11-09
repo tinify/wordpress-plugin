@@ -54,8 +54,14 @@ abstract class Tiny_Compress {
 
 	public abstract function can_create_key();
 	public abstract function get_compression_count();
+	public abstract function get_remaining_credits();
+	public abstract function get_paying_state();
+	public abstract function get_email_address();
 	public abstract function get_key();
-	public abstract function limit_reached();
+
+	public function limit_reached() {
+		return $this->get_remaining_credits() === 0;
+	}
 
 	public function get_status() {
 		if ( $this->get_key() == null ) {
@@ -71,7 +77,7 @@ abstract class Tiny_Compress {
 		try {
 			$result = $this->validate();
 		} catch ( Tiny_Exception $err ) {
-			if ( $err->get_status() == 401 ) {
+			if ( $err->get_status() == 404 ) {
 				$message = 'The key that you have entered is not valid';
 			} else {
 				list( $message ) = explode( ' (HTTP', $err->getMessage(), 2 );

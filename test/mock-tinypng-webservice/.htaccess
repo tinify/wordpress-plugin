@@ -1,5 +1,6 @@
 RewriteEngine On
 RewriteRule ^keys$ keys.php [last]
+RewriteRule ^keys/.+$ keys.php [last]
 RewriteRule ^shrink$ shrink.php [last]
 RewriteRule ^output/.+$ output.php [last]
 RewriteRule ^reset$ reset.php [last]

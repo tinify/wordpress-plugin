@@ -61,6 +61,13 @@
     });
   }
 
+  function toggleChangeKey(event) {
+    jQuery('div.tiny-account-status div.update').toggle();
+    jQuery('div.tiny-account-status div.status').toggle();
+    jQuery('div.tiny-account-status div.upgrade').toggle();
+    return false;
+  }
+
   function submitKey(event) {
     event.preventDefault();
     jQuery(event.target).attr({disabled: true}).addClass('loading');
@@ -94,7 +101,7 @@
       },
       success: function(json) {
         var status = jQuery.parseJSON(json);
-        
+
         if (status.ok) {
           var target = jQuery('#tiny-account-status');
           if (target.length) {
@@ -244,6 +251,8 @@
 
     eventOn('click', '[data-tiny-action=create-key]', submitKey);
     eventOn('click', '[data-tiny-action=update-key]', submitKey);
+    eventOn('click', '#change-key', toggleChangeKey);
+    eventOn('click', '#cancel-change-key', toggleChangeKey);
 
     var target = jQuery('#tiny-account-status[data-state=pending]');
     if (target.length) {

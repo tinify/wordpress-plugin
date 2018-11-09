@@ -178,6 +178,7 @@ div.tiny-bulk-optimization div.optimize {
 }
 
 div.tiny-bulk-optimization div.optimize div.progressbar {
+	display: none;
 	position: relative;
 	height: 32px;
 	margin-bottom: 32px;
@@ -215,6 +216,10 @@ div.tiny-bulk-optimization div.optimize div.progressbar div.numbers {
 	position: relative;
 	z-index: 3;
 	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+div.tiny-bulk-optimization div.optimize div.optimization-buttons {
+	display: none;
 }
 
 div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-hero {
@@ -329,4 +334,24 @@ div.tiny-bulk-optimization table.whitebox tr.no-action button.toggle-row:before 
 
 div.tiny-bulk-optimization table.whitebox tr.failed.is-expanded span.icon {
 	display: none;
+}
+
+div.tiny-bulk-optimization div.upgrade-account-notice {
+	padding: 22px 28px;
+	background-color: #F5F9FA;
+	text-align: center;
+}
+
+div.tiny-bulk-optimization div.upgrade-account-notice div.introduction {
+	padding-bottom: 10px;
+}
+
+div.tiny-bulk-optimization div.upgrade-account-notice p {
+	margin: 5px 0;
+}
+
+div.tiny-bulk-optimization div.upgrade-account-notice p a {
+	display: block;
+	margin-top: 10px;
+	color: #858A93;
 }

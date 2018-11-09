@@ -24,15 +24,12 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 	}
 
 	public function test_get_status_should_return_success_status() {
-		$this->register( 'POST', '/shrink', array(
-			'status' => 400,
+		$this->register( 'GET', '/keys/api1234', array(
+			'status' => 200,
 			'headers' => array(
 				'content-type' => 'application/json',
 			),
-			'body' => json_encode(array(
-				'error' => 'Input missing',
-				'message' => 'No file provided',
-			)),
+			'body' => '{}',
 		));
 
 		$this->assertEquals(
@@ -55,15 +52,13 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 	}
 
 	public function test_get_status_should_return_limit_reached_status() {
-		$this->register( 'POST', '/shrink', array(
-			'status' => 429,
+		$this->register( 'GET', '/keys/api1234', array(
+			'status' => 200,
 			'headers' => array(
 				'content-type' => 'application/json',
+				'compression-count-remaining' => '0',
 			),
-			'body' => json_encode(array(
-				'error' => 'Too many requests',
-				'message' => 'Your monthly limit has been exceeded',
-			)),
+			'body' => '{}',
 		));
 
 		$this->assertEquals(
@@ -86,15 +81,12 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 	}
 
 	public function test_get_status_should_return_unauthorized_status() {
-		$this->register( 'POST', '/shrink', array(
-			'status' => 401,
+		$this->register( 'GET', '/keys/api1234', array(
+			'status' => 404,
 			'headers' => array(
 				'content-type' => 'application/json',
 			),
-			'body' => json_encode(array(
-				'error' => 'Unauthorized',
-				'message' => 'Credentials are invalid',
-			)),
+			'body' => '{}',
 		));
 
 		$this->assertEquals(

@@ -243,7 +243,12 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 			}
 			?>
 		</div>
-	</div>
+		<?php
+		if ( $is_on_free_plan && $stats['available-unoptimised-sizes'] > $remaining_credits ) {
+			require_once dirname( __FILE__ ) . '/bulk-optimization-upgrade-notice.php';
+		}
+		?>
+  </div>
 	<script type="text/javascript">
 	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})'; ?>
 	</script>

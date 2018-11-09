@@ -9,6 +9,74 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		clear_uploads();
 	}
 
+	public function test_should_display_upgrade_button_for_account_with_insufficient_credits() {
+		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( 1, count( $this->find_all( 'a.upgrade-account' ) ) );
+		$this->assertEquals( 1, count( $this->find_all( '#hide-warning' ) ) );
+	}
+
+	public function test_should_not_display_dismiss_link_for_no_credits() {
+		$this->set_api_key( 'NOCREDITS123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( 1, count( $this->find_all( 'a.upgrade-account' ) ) );
+		$this->assertEquals( 0, count( $this->find_all( '#hide-warning' ) ) );
+	}
+
+	public function test_should_show_bulk_optimization_button_after_dismissing_notice() {
+		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->find( '#hide-warning' )->click();
+
+		$this->assertEquals( true, $this->find( '#id-start' )->isDisplayed() );
+
+		$this->deleteCookie( 'hide_upgrade_notice' );
+	}
+
+	public function test_should_show_bulk_optimization_button_after_dismissing_notice_and_refreshing_page() {
+		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->find( '#hide-warning' )->click();
+
+		$this->refresh();
+
+		$this->assertEquals( true, $this->find( '#id-start' )->isDisplayed() );
+
+		$this->deleteCookie( 'hide_upgrade_notice' );
+	}
+
+	public function test_should_not_display_upgrade_button_for_paid_accounts() {
+		$this->set_api_key( 'PAID123' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( 0, count( $this->find_all( 'a.upgrade-account' ) ) );
+	}
+
 	public function test_summary_should_display_correct_values_for_empty_library() {
 		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
 
