@@ -178,7 +178,6 @@ div.tiny-bulk-optimization div.optimize {
 }
 
 div.tiny-bulk-optimization div.optimize div.progressbar {
-	display: none;
 	position: relative;
 	height: 32px;
 	margin-bottom: 32px;
@@ -216,10 +215,6 @@ div.tiny-bulk-optimization div.optimize div.progressbar div.numbers {
 	position: relative;
 	z-index: 3;
 	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-}
-
-div.tiny-bulk-optimization div.optimize div.optimization-buttons {
-	display: none;
 }
 
 div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-hero {

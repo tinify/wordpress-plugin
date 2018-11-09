@@ -41,10 +41,6 @@ abstract class IntegrationTestCase extends Tiny_TestCase {
 		}
 	}
 
-	protected function deleteCookie( $name ) {
-		self::$driver->manage()->deleteCookieNamed( $name );
-	}
-
 	protected function find( $selector, $base = null ) {
 		if ( ! $base ) {
 			$base = self::$driver;

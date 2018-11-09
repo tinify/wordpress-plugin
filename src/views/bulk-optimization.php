@@ -170,7 +170,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 												'a' => array(
 													'href' => array(),
 												),
-											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a href="https://tinypng.com/dashboard/api">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
+											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a target="_blank" href="https://tinypng.com/dashboard/api?type=upgrade&mail=' . urlencode( $email_address ) . '">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
 											?></p>
 										</div>
 									</div>
@@ -226,8 +226,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 				</div>
 			</div>
 		</div>
+		<?php $show_notice = $is_on_free_plan && $stats['available-unoptimised-sizes'] > $remaining_credits; ?>
 		<div class="optimize">
-			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0">
+			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0" style="<?php echo $show_notice ? 'display:none;' : '' ?>">
 				<div id="progress-size" class="progress">
 				</div>
 				<div class="numbers" >
@@ -244,7 +245,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 			?>
 		</div>
 		<?php
-		if ( $is_on_free_plan && $stats['available-unoptimised-sizes'] > $remaining_credits ) {
+		if ( $show_notice ) {
 			require_once dirname( __FILE__ ) . '/bulk-optimization-upgrade-notice.php';
 		}
 		?>

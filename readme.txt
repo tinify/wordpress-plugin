@@ -132,8 +132,8 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 = 3.1.0 =
 * Remaining free compressions shown in settings page.
 * Easier way to upgrade a free account.
-* Added a notice to the Bulk Optimization page for free accounts with not enough available free compressions.
 * WPML and WPML Media compatibility in collaboration with the authors of WPML. Make sure to upgrade WPML to version 4.1.
+* Added a notice to the Bulk Optimization page for free accounts with not enough available free compressions.
 * Added a new hook after compression of an image useful for CDN cache flushing.
 
 = 3.0.1 =

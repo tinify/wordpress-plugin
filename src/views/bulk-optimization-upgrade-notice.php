@@ -1,4 +1,4 @@
-<div class="upgrade-account-notice" data-remaining-credits="<?php echo $remaining_credits; ?>">
+<div class="upgrade-account-notice">
 	<div class="introduction">
 		<p><?php
 		$strong = array(

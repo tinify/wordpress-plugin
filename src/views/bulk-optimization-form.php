@@ -1,4 +1,4 @@
-<div id="bulk-optimization-actions" class="optimization-buttons">
+<div id="bulk-optimization-actions" class="optimization-buttons" style="<?php echo $show_notice ? 'display:none;' : '' ?>">
 	<?php
 	$button_start_visibility = ' visible';
 	$button_optimizing_visibility = '';

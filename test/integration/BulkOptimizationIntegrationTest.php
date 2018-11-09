@@ -47,11 +47,9 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		$this->find( '#hide-warning' )->click();
 
 		$this->assertEquals( true, $this->find( '#id-start' )->isDisplayed() );
-
-		$this->deleteCookie( 'hide_upgrade_notice' );
 	}
 
-	public function test_should_show_bulk_optimization_button_after_dismissing_notice_and_refreshing_page() {
+	public function test_should_show_notice_after_dismissing_notice_and_refreshing_page() {
 		$this->set_api_key( 'INSUFFICIENTCREDITS123' );
 		$this->set_compression_timing( 'auto' );
 
@@ -64,9 +62,9 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 
 		$this->refresh();
 
-		$this->assertEquals( true, $this->find( '#id-start' )->isDisplayed() );
-
-		$this->deleteCookie( 'hide_upgrade_notice' );
+		$this->assertEquals( false, $this->find( '#id-start' )->isDisplayed() );
+		$this->assertEquals( 1, count( $this->find_all( 'a.upgrade-account' ) ) );
+		$this->assertEquals( 1, count( $this->find_all( '#hide-warning' ) ) );
 	}
 
 	public function test_should_not_display_upgrade_button_for_paid_accounts() {
