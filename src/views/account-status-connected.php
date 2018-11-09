@@ -103,7 +103,8 @@
 			</p>
 			<div class="button-container">
 				<div class="box">
-					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo urlencode( self::get_email_address() ); ?>" target="_blank" class="button button-primary upgrade-account">
+					<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( self::get_email_address() ) ); ?>
+					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary upgrade-account">
 					<?php echo esc_html__( 'Upgrade account', 'tiny-compress-images' ); ?>
 					</a>
 				</div>

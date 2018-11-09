@@ -17,7 +17,8 @@
 		);
 		?></p>
 	</div>
-	<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo urlencode( $email_address ); ?>" target="_blank" class="button button-primary button-hero upgrade-account">
+	<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( $email_address ) ); ?>
+	<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary button-hero upgrade-account">
 		<?php echo esc_html__( 'Upgrade account', 'tiny-compress-images' ); ?>
 	</a><?php
 	if ( $remaining_credits > 0 ) { ?>
