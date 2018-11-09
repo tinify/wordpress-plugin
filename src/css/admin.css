@@ -74,14 +74,17 @@ div.tiny-account-status div.status-pending p.status span:after {
 	content: "\f466";
 }
 
-div.tiny-account-status div.status-success a {
+div.tiny-account-status p.status a {
 	text-decoration: none;
 	font-weight: 400;
 }
 
 div.tiny-account-status div.status-loading:before {
+	position: absolute;
 	left: 26px;
-  top: 22px;
+	top: 22px;
+	height: 20px;
+	width: 20px;
 	background: url("../images/spinner.gif") no-repeat center;
 	background-size: 20px 20px;
 	content: "";

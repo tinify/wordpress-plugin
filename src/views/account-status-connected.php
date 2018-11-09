@@ -9,13 +9,18 @@
 				echo esc_html__( 'Your account is connected', 'tiny-compress-images' );
 				if ( ! defined( 'TINY_API_KEY' ) ) {
 					echo '</span><a href="#" id="change-key">';
-					echo esc_html__( '(change key)', 'tiny-compress-images' );
+					echo esc_html__( 'change key', 'tiny-compress-images' );
 					echo '</a>';
 				}
 			}
 		} else {
 			echo esc_html__( 'Connection unsuccessful', 'tiny-compress-images' );
 			echo '</span>';
+			if ( ! defined( 'TINY_API_KEY' ) ) {
+				echo '<a href="#" id="change-key">';
+				echo esc_html__( 'change key', 'tiny-compress-images' );
+				echo '</a>';
+			}
 		}
 		?></p>
 		<p><?php

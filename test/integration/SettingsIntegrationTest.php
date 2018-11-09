@@ -85,7 +85,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 			'Your account is connected'
 		);
 
-		$this->find_link( '(change key)' )->click();
+		$this->find_link( 'change key' )->click();
 
 		$this->find( '#tinypng_api_key' )->sendKeys( 'JPG123' );
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
