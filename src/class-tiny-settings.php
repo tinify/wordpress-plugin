@@ -885,7 +885,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			update_option( $field, $email_address );
 		}
 		if ( $compressor->limit_reached() ) {
-			$url = "https://tinypng.com/dashboard/api?type=upgrade&mail=' . $email_address . '";
+			$url = "https://tinypng.com/dashboard/api?type=upgrade&mail=" . $email_address;
 			$link = '<a href="' . $url . '" target="_blank">' .
 				esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 
