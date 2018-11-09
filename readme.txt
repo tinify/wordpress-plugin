@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: optimize, compress, shrink, resize, faster, fit, scale, improve, images, picture, pictures, photo, photos, image, tinypng, tinyjpg, jpeg, jpg, png, lossy, jpegmini, crunch, minify, smush, save, bandwidth, website, speed, performance, panda, george, wordpress app, SEO, lossy, wp compress, sitespeed, shortpixel, kraken, PageRank, cheetaho, s3
 Requires at least: 3.4
 Tested up to: 5.0
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,9 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 
 == Changelog ==
 = 3.1.0 =
+* Remaining free compressions shown in settings page.
+* Easier way to upgrade a free account.
+* Added a notice to the Bulk Optimization page for free accounts with not enough available free compressions.
 * WPML and WPML Media compatibility in collaboration with the authors of WPML. Make sure to upgrade WPML to version 4.1.
 * Added a new hook after compression of an image useful for CDN cache flushing.
 
