@@ -351,5 +351,7 @@ div.tiny-bulk-optimization div.upgrade-account-notice p {
 }
 
 div.tiny-bulk-optimization div.upgrade-account-notice p a {
-	color: #40444f;
+	display: block;
+	margin-top: 10px;
+	color: #858A93;
 }
