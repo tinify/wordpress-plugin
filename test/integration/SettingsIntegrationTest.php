@@ -177,7 +177,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 		$this->find( 'button[data-tiny-action=create-key]' )->click();
 
 		$this->wait_for_text(
-			'div.tiny-account-status p.status',
+			'div.tiny-account-status p.status span',
 			'An email has been sent with a link to activate your account'
 		);
 
@@ -185,7 +185,25 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$this->assertEquals(
 			'An email has been sent with a link to activate your account',
-			$this->find( 'div.tiny-account-status p.status' )->getText()
+			$this->find( 'div.tiny-account-status p.status span' )->getText()
+		);
+	}
+
+	public function test_settings_should_allow_key_reset() {
+		$this->find( '#tinypng_api_key_name' )->clear()->sendKeys( 'John' );
+		$this->find( '#tinypng_api_key_email' )->clear()->sendKeys( 'john@example.com' );
+		$this->find( 'button[data-tiny-action=create-key]' )->click();
+
+		$this->wait_for_text(
+			'div.tiny-account-status p.status a',
+			'change key'
+		);
+
+		$this->refresh();
+
+		$this->wait_for_text(
+			'div.tiny-account-status p.status a',
+			'change key'
 		);
 	}
 
