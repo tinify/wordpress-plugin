@@ -1033,7 +1033,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public static function wr2x_active() {
-		return is_plugin_active( 'wp-retina-2x/wp-retina-2x.php' );
+		return function_exists( 'wr2x_get_retina' );
 	}
 
 	public function get_wr2x_option() {
