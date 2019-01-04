@@ -1,25 +1,25 @@
-#optimization-chart {
+div.tiny-optimization-chart {
 	float: left;
 	position: relative;
 	width: 50%;
 	text-align: center;
 }
 
-.ie8 #optimization-chart {
+.ie8 div.tiny-optimization-chart {
 	margin: 0;
 }
 
-#optimization-chart svg circle.main {
+div.tiny-optimization-chart svg circle.main {
 	fill: #ebebeb;
 	animation: shwoosh 2s ease;
 	transition: stroke-dasharray 1s ease;
 }
 
-#optimization-chart svg circle.inner {
+div.tiny-optimization-chart svg circle.inner {
 	fill: #fff;
 }
 
-#optimization-chart div.value {
+div.tiny-optimization-chart div.value {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -27,7 +27,7 @@
 	text-align: center;
 }
 
-#optimization-chart div.value div.percentage {
+div.tiny-optimization-chart div.value div.percentage {
 	width: 50%;
 	margin-left: auto;
 	margin-right: auto;
@@ -36,7 +36,7 @@
 	line-height: 1em;
 }
 
-#optimization-chart div.value div.label {
+div.tiny-optimization-chart div.value div.label {
 	width: 50%;
 	margin-left: auto;
 	margin-right: auto;
@@ -45,7 +45,7 @@
 }
 
 @media only screen and (max-width: 400px) {
-	div.tiny-bulk-optimization #optimization-chart {
+	div.tiny-bulk-optimization div.tiny-optimization-chart {
 		float: none;
 		width: 100%;
 	}

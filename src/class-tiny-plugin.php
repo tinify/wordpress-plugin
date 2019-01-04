@@ -194,7 +194,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		wp_enqueue_style( self::NAME . '_chart',
-			plugins_url( '/css/chart.css', __FILE__ ),
+			plugins_url( '/css/optimization-chart.css', __FILE__ ),
 			array(), self::version()
 		);
 
@@ -238,7 +238,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			);
 
 			wp_enqueue_style( self::NAME . '_chart',
-				plugins_url( '/css/chart.css', __FILE__ ),
+				plugins_url( '/css/optimization-chart.css', __FILE__ ),
 				array(), self::version()
 			);
 
@@ -625,7 +625,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function add_dashboard_widget() {
 		wp_enqueue_style( self::NAME . '_chart',
-			plugins_url( '/css/chart.css', __FILE__ ),
+			plugins_url( '/css/optimization-chart.css', __FILE__ ),
 			array(), self::version()
 		);
 

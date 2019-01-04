@@ -5,10 +5,10 @@
 div.tiny-bulk-optimization div.available div.tooltip span.dashicons {
 	color: <?php echo $admin_colors[3] ?>;
 }
-div.tiny-bulk-optimization div.savings div.chart div.value {
+div.tiny-bulk-optimization div.savings div.tiny-optimization-chart div.value {
 	color: <?php echo $admin_colors[2] ?>;
 }
-div.tiny-bulk-optimization div.savings div.chart svg circle.main {
+div.tiny-bulk-optimization div.savings div.tiny-optimization-chart svg circle.main {
 	stroke: <?php echo $admin_colors[2] ?>;
 }
 div.tiny-bulk-optimization div.savings table td.emphasize {
@@ -193,7 +193,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						<?php esc_html_e( 'Statistics based on all available JPEG and PNG images in your media library.', 'tiny-compress-images' ); ?>
 					</p>
 					<?php
-						require_once dirname( __FILE__ ) . '/bulk-optimization-chart.php';
+						require_once dirname( __FILE__ ) . '/optimization-chart.php';
 					?>
 					<div class="legend">
 						<table>

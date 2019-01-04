@@ -21,12 +21,12 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 ?>
 <style>
 
-#optimization-chart svg circle.main {
+div.tiny-optimization-chart svg circle.main {
 	stroke-width: <?php echo $chart['dash-stroke'] ?>;
 	stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size'] ?>;
 }
 
-#optimization-chart div.chart div.value {
+div.tiny-optimization-chart div.value {
 	min-width: <?php echo $chart['size'] ?>px;
 }
 
@@ -43,7 +43,7 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 
 </style>
 
-<div id="optimization-chart" class="chart" data-full-circle-size="<?php echo $chart['circle-size'] ?>" data-percentage-factor="<?php echo $chart['main-radius'] ?>" >
+<div id="optimization-chart" class="tiny-optimization-chart" data-full-circle-size="<?php echo $chart['circle-size'] ?>" data-percentage-factor="<?php echo $chart['main-radius'] ?>" >
 	<svg width="<?php echo $chart['size'] ?>" height="<?php echo $chart['size'] ?>">
 		<circle class="main" transform="rotate(-90, <?php echo $chart['center'] ?>, <?php echo $chart['center'] ?>)" r="<?php echo $chart['main-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>"/>
 		<circle class="inner" r="<?php echo $chart['inner-radius'] ?>" cx="<?php echo $chart['center'] ?>" cy="<?php echo $chart['center'] ?>" />
