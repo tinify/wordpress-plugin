@@ -40,7 +40,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 	}
 
 	private function init_compressor() {
@@ -61,54 +60,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
-	public function add_menu() {
-		add_options_page(
-			__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
-			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
-			'manage_options',
-			'tinify',
-			array( $this, 'add_options_to_page' )
-		);
-	}
-
-	public function admin_init() {
-		if ( current_user_can( 'manage_options' ) ) {
-			$this->render_notices();
-		}
-
+	public function ajax_init() {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
-			$this->notices->show(
-				'compressor_exception',
-				esc_html( $e->getMessage(), 'tiny-compress-images' ),
-				'error', false
-			);
 		}
-
-		/* Create link to new settings page from media settings page. */
-		add_settings_section( 'section_end', '',
-			$this->get_method( 'render_settings_link' ),
-			'media'
-		);
-
-		$field = self::get_prefixed_name( 'api_key' );
-		register_setting( 'tinify', $field );
-
-		$field = self::get_prefixed_name( 'api_key_pending' );
-		register_setting( 'tinify', $field );
-
-		$field = self::get_prefixed_name( 'compression_timing' );
-		register_setting( 'tinify', $field );
-
-		$field = self::get_prefixed_name( 'sizes' );
-		register_setting( 'tinify', $field );
-
-		$field = self::get_prefixed_name( 'resize_original' );
-		register_setting( 'tinify', $field );
-
-		$field = self::get_prefixed_name( 'preserve_data' );
-		register_setting( 'tinify', $field );
 
 		add_action(
 			'wp_ajax_tiny_image_sizes_notice',
@@ -128,6 +84,56 @@ class Tiny_Settings extends Tiny_WP_Base {
 		add_action(
 			'wp_ajax_tiny_settings_update_api_key',
 			$this->get_method( 'update_api_key' )
+		);
+	}
+
+	public function admin_init() {
+		try {
+			$this->init_compressor();
+		} catch ( Tiny_Exception $e ) {
+			$this->notices->show(
+				'compressor_exception',
+				esc_html( $e->getMessage(), 'tiny-compress-images' ),
+				'error', false
+			);
+		}
+
+		if ( current_user_can( 'manage_options' ) ) {
+			$this->render_notices();
+		}
+
+		$field = self::get_prefixed_name( 'api_key' );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'api_key_pending' );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'compression_timing' );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'sizes' );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'resize_original' );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'preserve_data' );
+		register_setting( 'tinify', $field );
+	}
+
+	public function admin_menu() {
+		/* Create link to new settings page from media settings page. */
+		add_settings_section( 'section_end', '',
+			$this->get_method( 'render_settings_link' ),
+			'media'
+		);
+
+		add_options_page(
+			__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
+			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
+			'manage_options',
+			'tinify',
+			array( $this, 'add_options_to_page' )
 		);
 	}
 

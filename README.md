@@ -36,6 +36,13 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Check if the code follows WordPress standard
 1. Run `bin/check-style` to make sure there are no errors.
 
+### Test XML-RPC code
+WordPress can either be used via the web interface or through the official
+WordPress apps for mobile devices. WordPress uses XML-RPC internally to
+communicate between the app and the WordPress admin. Make sure therefore
+that when developing functionality that is linked to functionality available
+in the mobile app that it also works over XML-RPC.
+
 ### Translating the plugin
 Language packs will be generated for the plugin once translations for a
 language are 100% filled in and approved.

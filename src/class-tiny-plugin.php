@@ -39,7 +39,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function __construct() {
 		parent::__construct();
-
 		$this->settings = new Tiny_Settings();
 	}
 
@@ -61,14 +60,36 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
-		/* When touching any functionality linked to image compressions when
-			 uploading images make sure it also works with XML-RPC. See NOTES. */
-		add_filter( 'wp_ajax_nopriv_tiny_rpc',
-			$this->get_method( 'process_rpc_request' )
-		);
-
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
+		);
+	}
+
+	public function ajax_init() {
+		add_filter( 'wp_ajax_tiny_async_optimize_upload_new_media',
+			$this->get_method( 'compress_on_upload' )
+		);
+
+		add_action( 'wp_ajax_tiny_compress_image_from_library',
+			$this->get_method( 'compress_image_from_library' )
+		);
+
+		add_action( 'wp_ajax_tiny_compress_image_for_bulk',
+			$this->get_method( 'compress_image_for_bulk' )
+		);
+
+		add_action( 'wp_ajax_tiny_get_optimization_statistics',
+			$this->get_method( 'ajax_optimization_statistics' )
+		);
+
+		add_action( 'wp_ajax_tiny_get_compression_status',
+			$this->get_method( 'ajax_compression_status' )
+		);
+
+		/* When touching any functionality linked to image compressions when
+			 uploading images make sure it also works with XML-RPC. See README. */
+		add_filter( 'wp_ajax_nopriv_tiny_rpc',
+			$this->get_method( 'process_rpc_request' )
 		);
 	}
 
@@ -100,26 +121,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'attachment_submitbox_misc_actions',
 			$this->get_method( 'show_media_info' )
-		);
-
-		add_filter( 'wp_ajax_tiny_async_optimize_upload_new_media',
-			$this->get_method( 'compress_on_upload' )
-		);
-
-		add_action( 'wp_ajax_tiny_compress_image_from_library',
-			$this->get_method( 'compress_image_from_library' )
-		);
-
-		add_action( 'wp_ajax_tiny_compress_image_for_bulk',
-			$this->get_method( 'compress_image_for_bulk' )
-		);
-
-		add_action( 'wp_ajax_tiny_get_optimization_statistics',
-			$this->get_method( 'ajax_optimization_statistics' )
-		);
-
-		add_action( 'wp_ajax_tiny_get_compression_status',
-			$this->get_method( 'ajax_compression_status' )
 		);
 
 		$plugin = plugin_basename(

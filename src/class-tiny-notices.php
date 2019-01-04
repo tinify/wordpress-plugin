@@ -30,8 +30,11 @@ class Tiny_Notices extends Tiny_WP_Base {
 		return self::get_prefixed_name( 'admin_notice_dismissals' );
 	}
 
-	public function admin_init() {
+	public function ajax_init() {
 		add_action( 'wp_ajax_tiny_dismiss_notice', $this->get_method( 'dismiss' ) );
+	}
+
+	public function admin_init() {
 		if ( current_user_can( 'manage_options' ) ) {
 			$this->show_stored();
 		}
