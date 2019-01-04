@@ -243,9 +243,7 @@
   case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage);
     break;
-  case 'options-media-php':
   case 'settings_page_tinify':
-  case 'settings_page_media': // Enhanced Media Library plugin
     changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]');
     changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]');
 
