@@ -22,6 +22,16 @@ class Tiny_Notices extends Tiny_WP_Base {
 	private $notices;
 	private $dismissals;
 
+	protected static $incompatible_plugins = array(
+		'CheetahO Image Optimizer' => 'cheetaho-image-optimizer/cheetaho.php',
+		'EWWW Image Optimizer' => 'ewww-image-optimizer/ewww-image-optimizer.php',
+		'Imagify' => 'imagify/imagify.php',
+		'Kraken Image Optimizer' => 'kraken-image-optimizer/kraken.php',
+		'ShortPixel Image Optimizer' => 'shortpixel-image-optimiser/wp-shortpixel.php',
+		'WP Smush' => 'wp-smushit/wp-smush.php',
+		'WP Smush Pro' => 'wp-smush-pro/wp-smush.php',
+	);
+
 	private static function get_option_key() {
 		return self::get_prefixed_name( 'admin_notices' );
 	}
@@ -37,6 +47,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 	public function admin_init() {
 		if ( current_user_can( 'manage_options' ) ) {
 			$this->show_stored();
+			$this->show_notices();
 		}
 	}
 
@@ -86,6 +97,11 @@ class Tiny_Notices extends Tiny_WP_Base {
 				$this->show( $name, $message );
 			}
 		}
+	}
+
+	public function show_notices() {
+		$this->incompatible_plugins_notice();
+		$this->outdated_platform_notice();
 	}
 
 	public function add( $name, $message ) {
@@ -141,7 +157,115 @@ class Tiny_Notices extends Tiny_WP_Base {
 		);
 	}
 
-	public function show_incompatible_plugins( $incompatible_plugins ) {
+	public function api_key_missing_notice() {
+		$notice_class = 'error';
+		$notice = esc_html__(
+			'Please register or provide an API key to start compressing images.',
+			'tiny-compress-images'
+		);
+		$link = sprintf(
+			'<a href="options-general.php?page=tinify">%s</a>', $notice
+		);
+		$this->show( 'setting', $link, $notice_class, false );
+	}
+
+	public function get_api_key_pending_notice() {
+		$notice_class = 'notice-warning';
+		$notice = esc_html__(
+			'Please activate your account to start compressing images.',
+			'tiny-compress-images'
+		);
+		$link = sprintf(
+			'<a href="options-general.php?page=tinify">%s</a>', $notice
+		);
+		$this->show( 'setting', $link, $notice_class, false );
+	}
+
+	public function add_limit_reached_notice( $email ) {
+		$encoded_email = str_replace( '%20', '%2B', rawurlencode( $email ) );
+		$url = 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email;
+		$link = '<a href="' . $url . '" target="_blank">' .
+			esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
+
+		$this->add('limit-reached',
+			esc_html__(
+				'You have reached your free limit this month.',
+				'tiny-compress-images'
+			) . ' ' .
+			sprintf(
+				/* translators: %s: link saying TinyPNG API account */
+				esc_html__(
+					'Upgrade your %s if you like to compress more images.',
+					'tiny-compress-images'
+				),
+				$link
+			)
+		);
+	}
+
+	public function outdated_platform_notice() {
+		if ( ! Tiny_PHP::client_supported() ) {
+			if ( ! Tiny_PHP::has_fully_supported_php() ) {
+				$details = 'PHP ' . PHP_VERSION;
+				if ( Tiny_PHP::curl_available() ) {
+					$curlinfo = curl_version();
+					$details .= ' ' . sprintf(
+						/* translators: %s: curl version */
+						esc_html__( 'with curl %s', 'tiny-compress-images' ), $curlinfo['version']
+					);
+				} else {
+					$details .= ' ' . esc_html__( 'without curl', 'tiny-compress-images' );
+				}
+				if ( Tiny_PHP::curl_exec_disabled() ) {
+					$details .= ' ' .
+						esc_html__( 'and curl_exec disabled', 'tiny-compress-images' );
+				}
+				$message = sprintf(
+					/* translators: %s: details of outdated platform */
+					esc_html__(
+						'You are using an outdated platform (%s).',
+						'tiny-compress-images'
+					), $details
+				);
+			} elseif ( ! Tiny_PHP::curl_available() ) {
+				$message = esc_html__(
+					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.', // WPCS: Needed for proper translation.
+					'tiny-compress-images'
+				);
+			} elseif ( Tiny_PHP::curl_exec_disabled() ) {
+				$message = esc_html__(
+					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.', // WPCS: Needed for proper translation.
+					'tiny-compress-images'
+				);
+			}
+			$this->show( 'deprecated', $message, 'notice-warning', false );
+		} // End if().
+	}
+
+	public function show_offload_s3_notice() {
+		$message = esc_html__(
+			'Removing files from the server is incompatible with background compressions. Images will still be automatically compressed, but no longer in the background.',  // WPCS: Needed for proper translation.
+			'tiny-compress-images'
+		);
+		$this->show( 'offload-s3', $message, 'notice-error', false );
+	}
+
+	public function old_offload_s3_version_notice() {
+		$message = esc_html__(
+			'Background compressions are not compatible with the version of WP Offload S3 you have installed. Please update to version 0.7.2 at least.',  // WPCS: Needed for proper translation.
+			'tiny-compress-images'
+		);
+		$this->show( 'old-offload-s3-version', $message, 'notice-error', false );
+	}
+
+	public function incompatible_plugins_notice() {
+		$incompatible_plugins = array_filter( self::$incompatible_plugins, 'is_plugin_active' );
+		if ( count( $incompatible_plugins ) > 0 ) {
+			$this->show_incompatible_plugins( $incompatible_plugins );
+		}
+	}
+
+	private function show_incompatible_plugins( $incompatible_plugins ) {
 		$notice = '<div class="error notice tiny-notice incompatible-plugins">';
 		$notice .= '<h3>';
 		$notice .= esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
