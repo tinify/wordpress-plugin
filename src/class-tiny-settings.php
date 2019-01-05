@@ -133,16 +133,20 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function image_sizes_notice() {
-		$this->render_size_checkboxes_description(
-			$_GET['image_sizes_selected'],
-			isset( $_GET['resize_original'] ),
-			isset( $_GET['compress_wr2x'] )
-		);
+		if ( current_user_can( 'manage_options' ) ) {
+			$this->render_size_checkboxes_description(
+				$_GET['image_sizes_selected'],
+				isset( $_GET['resize_original'] ),
+				isset( $_GET['compress_wr2x'] )
+			);
+		}
 		exit();
 	}
 
 	public function account_status() {
-		$this->render_account_status();
+		if ( current_user_can( 'manage_options' ) ) {
+			$this->render_account_status();
+		}
 		exit();
 	}
 
@@ -856,7 +860,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function create_api_key() {
 		$compressor = $this->get_compressor();
-		if ( $compressor->can_create_key() ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$status = (object) array(
+				'ok' => false,
+				'message' => 'This feature requires certain user capabilities',
+			);
+		} elseif ( $compressor->can_create_key() ) {
 			if ( ! isset( $_POST['name'] ) || ! $_POST['name'] ) {
 				$status = (object) array(
 					'ok' => false,
@@ -917,7 +926,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function update_api_key() {
 		$key = $_POST['key'];
-		if ( empty( $key ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$status = (object) array(
+				'ok' => false,
+				'message' => 'This feature requires certain user capabilities',
+			);
+		} elseif ( empty( $key ) ) {
 			/* Always save if key is blank, so the key can be deleted. */
 			$status = (object) array(
 				'ok' => true,

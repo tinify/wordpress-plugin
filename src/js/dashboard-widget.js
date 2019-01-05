@@ -54,11 +54,13 @@
 
   function renderWidget(data) {
     var stats = jQuery.parseJSON(data);
-    var savings = stats['display-percentage'];
-    var libraryOptimized = optimizedPercentage(stats);
-    renderContent(libraryOptimized, stats, savings);
-    renderChart(savings);
-    jQuery('#optimization-chart').show();
+    if (stats !== null) {
+      var savings = stats['display-percentage'];
+      var libraryOptimized = optimizedPercentage(stats);
+      renderContent(libraryOptimized, stats, savings);
+      renderChart(savings);
+      jQuery('#optimization-chart').show();
+    }
     jQuery('#widget-spinner').attr('class', 'hidden');
   }
 

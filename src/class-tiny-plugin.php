@@ -355,16 +355,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function compress_on_upload() {
-		$attachment_id = intval( $_POST['attachment_id'] );
-		$metadata = $_POST['metadata'];
-		if ( is_array( $metadata ) ) {
-			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
-			$result = $tiny_image->compress( $this->settings );
-			// The wp_update_attachment_metadata call is thrown because the
-			// dimensions of the original image can change. This will then
-			// trigger other plugins and can result in unexpected behaviour and
-			// further changes to the image. This may require another approach.
-			wp_update_attachment_metadata( $attachment_id, $tiny_image->get_wp_metadata() );
+		if ( current_user_can( 'upload_files' ) ) {
+			$attachment_id = intval( $_POST['attachment_id'] );
+			$metadata = $_POST['metadata'];
+			if ( is_array( $metadata ) ) {
+				$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
+				$result = $tiny_image->compress( $this->settings );
+				// The wp_update_attachment_metadata call is thrown because the
+				// dimensions of the original image can change. This will then
+				// trigger other plugins and can result in unexpected behaviour and
+				// further changes to the image. This may require another approach.
+				wp_update_attachment_metadata( $attachment_id, $tiny_image->get_wp_metadata() );
+			}
 		}
 		exit();
 	}
@@ -498,11 +500,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_optimization_statistics() {
-		if ( ! $this->check_ajax_referer() ) {
-			exit();
+		if ( $this->check_ajax_referer() && current_user_can( 'upload_files' ) ) {
+			$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+			echo json_encode( $stats );
 		}
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		echo json_encode( $stats );
 		exit();
 	}
 
@@ -510,7 +511,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( ! $this->check_ajax_referer() ) {
 			exit();
 		}
-
+		if ( ! current_user_can( 'upload_files' ) ) {
+			exit();
+		}
 		if ( empty( $_POST['id'] ) ) {
 			$message = esc_html__(
 				'Not a valid media file.',
