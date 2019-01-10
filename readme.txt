@@ -129,6 +129,13 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.2.0 =
+* Support for WP Retina 2x Pro.
+* More capability checks for extra security.
+* Less resource intensive AJAX requests.
+* Fixed CSS issues from Analytify plugin.
+* Removed legacy Enhanced Media Library compatibility.
+
 = 3.1.0 =
 * Remaining free compressions shown in settings page.
 * Easier way to upgrade a free account.
