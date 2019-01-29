@@ -26,8 +26,8 @@ Make your website faster by optimizing your JPEG and PNG images. This plugin aut
 * Supports compression of animated PNG.
 * Select which thumbnail sizes of an image may be optimized.
 * Multisite support with a single API key.
-* WPML compatible.
-* WooCommerce compatible.
+* [WPML](https://wpml.org/documentation/plugins-compatibility/optimize-wordpress-images-multilingual-sites/) compatible.
+* WooCommerce compatible (see below).
 * WP Retina 2x compatible.
 * WP Offload S3 compatible.
 * See your usage on the settings page and during bulk optimization.
@@ -47,11 +47,15 @@ Install this plugin and follow the instructions to set up your account. With a r
 
 = Optimizing all your images =
 
-You can optimize your existing JPEG and PNG images all at once by going to *Media > Bulk Optimization*. Clicking on the big button will start optimizing all unoptimized images in your media library.
+You can *bulk optimize* your existing JPEG and PNG images all at once by going to *Media > Bulk Optimization*. Clicking on the big button will start optimizing all unoptimized images in your media library.
 
 = Multisite support =
 
 The plugin is fully multisite compatible and you can set the API key for all sites by defining the key in your *wp-config.php* file. View the installation instructions for more information.
+
+= WooCommerce compatibility =
+
+This plugin is *fully compatible with WooCommerce*. However, we have discovered that WooCommerce may be trying to regenerate image attachment metadata over and over again on each page visit. If you are using WooCommerce please follow the tips from the [support section](https://wordpress.org/support/topic/woocommerce-conflict-25/). This may make your WooCommerce shop even faster than it was before.
 
 = Contact us =
 
