@@ -11,7 +11,7 @@ $email = trim( $user->user_email );
 		?></h4>
 
 		<p class="introduction" class="description"><?php
-			echo esc_html__(
+			esc_html_e(
 				'Provide your name and email address to start optimizing images.',
 				'tiny-compress-images'
 			);
@@ -26,13 +26,13 @@ $email = trim( $user->user_email );
 		<p class="message"></p>
 
 		<button class="button button-primary" data-tiny-action="create-key">
-			<?php echo esc_html__( 'Register Account', 'tiny-compress-images' ) ?>
+			<?php esc_html_e( 'Register Account', 'tiny-compress-images' ) ?>
 		</button>
 	</div>
 
 	<div class="update">
 		<h4><?php
-			echo esc_html__( 'Already have an account?', 'tiny-compress-images' );
+			esc_html_e( 'Already have an account?', 'tiny-compress-images' );
 		?></h4>
 
 		<p class="introduction"><?php
@@ -52,7 +52,7 @@ $email = trim( $user->user_email );
 		<p class="message"></p>
 
 		<button class="button button-primary" data-tiny-action="update-key">
-			<?php echo esc_html__( 'Save' ); ?>
+			<?php esc_html_e( 'Save' ); ?>
 		</button>
 	</div>
 </div>

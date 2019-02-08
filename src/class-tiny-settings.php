@@ -836,7 +836,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 					$status->ok = true;
 					$status->pending = true;
 					$status->message = (
-						'An email has been sent with a link to activate your account'
+						'An email has been sent to activate your account'
 					);
 				}
 			}

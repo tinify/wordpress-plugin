@@ -85,7 +85,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 			'Your account is connected'
 		);
 
-		$this->find_link( 'change key' )->click();
+		$this->find_link( 'Change API key' )->click();
 
 		$this->find( '#tinypng_api_key' )->sendKeys( 'JPG123' );
 		$this->find( 'button[data-tiny-action=update-key]' )->click();
@@ -178,13 +178,13 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$this->wait_for_text(
 			'div.tiny-account-status p.status span',
-			'An email has been sent with a link to activate your account'
+			'An email has been sent to activate your account'
 		);
 
 		$this->refresh();
 
 		$this->assertEquals(
-			'An email has been sent with a link to activate your account',
+			'An email has been sent to activate your account',
 			$this->find( 'div.tiny-account-status p.status span' )->getText()
 		);
 	}
@@ -196,14 +196,14 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 
 		$this->wait_for_text(
 			'div.tiny-account-status p.status a',
-			'change key'
+			'Change API key'
 		);
 
 		$this->refresh();
 
 		$this->wait_for_text(
 			'div.tiny-account-status p.status a',
-			'change key'
+			'Change API key'
 		);
 	}
 

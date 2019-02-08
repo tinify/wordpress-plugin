@@ -50,6 +50,6 @@ div.tiny-optimization-chart div.value {
 	</svg>
 	<div class="value">
 		<div class="percentage" id="savings-percentage"><span><?php echo $chart['percentage'] ?></span>%</div>
-		<div class="label" ><?php echo esc_html__( 'savings', 'tiny-compress-images' ); ?></div>
+		<div class="label" ><?php esc_html_e( 'savings', 'tiny-compress-images' ); ?></div>
 	</div>
 </div>
