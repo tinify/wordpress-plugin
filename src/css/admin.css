@@ -7,7 +7,7 @@ div.misc-pub-section.tiny-compress-images {
 div.tiny-account-status {
 	box-sizing: border-box;
 	display: table-cell;
-	width: 500px;
+	width: 570px;
 	border: 1px solid #e1e1e1;
 	background-color: white;
 }
@@ -20,8 +20,44 @@ div.tiny-account-status {
 
 div.tiny-account-status div.status {
 	box-sizing: border-box;
-	padding: 22px 28px 22px 56px;
+	padding: 22px 28px 14px 28px;
 	position: relative;
+}
+
+div.tiny-account-status h4 {
+	margin-top: 0;
+	margin-bottom: 9px;
+	line-height: 1.5;
+}
+
+div.tiny-account-status p {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+div.tiny-account-status button + p {
+	margin-top: 8px;
+}
+
+div.tiny-account-status p:first-child {
+	margin-bottom: 10px;
+}
+
+div.tiny-account-status p:last-child {
+	margin-bottom: 0;
+}
+
+div.tiny-account-status p.introduction {
+	margin-bottom: 12px;
+}
+
+div.tiny-account-status p.status {
+	font-weight: bold;
+}
+
+div.tiny-account-status p.status a {
+	text-decoration: none;
+	font-weight: normal;
 }
 
 div.tiny-account-status p.status span {
@@ -40,10 +76,29 @@ div.tiny-account-status p.status span:after {
 	font-style: normal;
 }
 
-div.tiny-account-status div.status-success,
-div.tiny-account-status div.status-failure,
-div.tiny-account-status div.status-pending {
-	padding-left: 28px;
+div.tiny-account-status div.status-loading {
+	padding-left: 56px;
+}
+
+div.tiny-account-status div.status-loading:before {
+	position: absolute;
+	left: 26px;
+	top: 22px;
+	height: 20px;
+	width: 20px;
+	background: url("../images/spinner.gif") no-repeat center;
+	background-size: 20px 20px;
+	content: "";
+}
+
+div.tiny-account-status div.status-loading  p {
+	margin-bottom: 10px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+	div.tiny-account-status div.status-loading:before {
+		background-image: url("../images/spinner-2x.gif");
+	}
 }
 
 div.tiny-account-status div.status-success p {
@@ -67,98 +122,61 @@ div.tiny-account-status div.status-failure p.status span:after {
 }
 
 div.tiny-account-status div.status-pending p.status span:after {
-	right: -24px;
-	top: -11px;
+	right: -26px;
+	top: -9px;
 	color: #0086ba;
 	font-size: 24px;
 	content: "\f466";
 }
 
-div.tiny-account-status p.status a {
-	text-decoration: none;
-	font-weight: 400;
+div.tiny-account-status div.status-pending p.status span {
+  margin-right: 38px;
 }
 
-div.tiny-account-status div.status-loading:before {
-	position: absolute;
-	left: 26px;
-	top: 22px;
-	height: 20px;
-	width: 20px;
-	background: url("../images/spinner.gif") no-repeat center;
-	background-size: 20px 20px;
-	content: "";
+div.tiny-account-status div.failure input {
+	border-color: #dc3232;
+	background-color: #fdf1f1;
 }
 
-@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
-	div.tiny-account-status div.status-loading:before {
-		background-image: url("../images/spinner-2x.gif");
-	}
+div.tiny-account-status div.failure p.message {
+	color: #dc3232;
 }
 
-div.tiny-account-status h4 {
-	margin-top: 0;
-	line-height: 1.5;
+div.tiny-account-status div.update {
+	padding: 22px 28px;
 }
 
-div.tiny-account-status p {
-	margin-top: 0;
-	margin-bottom: 4px;
-}
-
-div.tiny-account-status button + p {
-	margin-top: 8px;
-}
-
-div.tiny-account-status p:last-child {
-	margin-bottom: 0;
-}
-
-div.tiny-account-status p.introduction {
-	margin-bottom: 12px;
-}
-
-div.tiny-account-status p.status {
-	font-weight: bold;
+div.tiny-account-status div.update input {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 div.tiny-account-status div.upgrade {
-	display: flex;
 	padding: 22px 28px;
-	background-color: #F5F9FA;
+	background-color: #f5f9fa;
 }
 
 div.tiny-account-status div.upgrade p {
-	width: 400px;
-	margin-right: 20px;
-}
-
-@media only screen and (max-width: 800px) {
-	div.tiny-account-status div.upgrade p {
-		width: auto;
-	}
+	margin-bottom: 0;
 }
 
 div.tiny-account-status div.upgrade div.button-container {
-	display: inline-block;
+	float: right;
+	margin-left: 20px;
+	margin-bottom: 5px;
+}
+
+@media only screen and (max-width: 400px) {
+	div.tiny-account-status div.upgrade div.button-container {
+		float: none;
+		margin-left: 0;
+		margin-bottom: 10px;
+	}
 }
 
 div.tiny-account-status.wide {
 	width: auto;
 	max-width: 700px;
-}
-
-div.tiny-account-status div.failure input {
-	border: 1px solid #d54e21;
-}
-
-div.tiny-account-status div.failure p.message {
-	color: #d54e21;
-}
-
-div.tiny-account-status div.update {
-	width: 380px;
-	padding: 22px 28px;
 }
 
 div.tiny-account-status.wide div.create {
@@ -202,7 +220,7 @@ div.tiny-account-status.wide div.create button,
 div.tiny-account-status.wide div.update button {
 	width: 100%;
 	margin-top: 4px;
-	margin-bottom: 4px;
+	margin-bottom: 6px;
 }
 
 div.tiny-account-status.wide div.create button.loading,
