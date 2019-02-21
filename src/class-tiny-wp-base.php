@@ -57,11 +57,12 @@ abstract class Tiny_WP_Base {
 		add_action( 'init', $this->get_method( 'init' ) );
 		if ( self::is_xmlrpc_request() ) {
 			add_action( 'init', $this->get_method( 'xmlrpc_init' ) );
-		} elseif ( self::doing_ajax_request() ) {
-			add_action( 'admin_init', $this->get_method( 'ajax_init' ) );
 		} elseif ( is_admin() ) {
 			add_action( 'admin_init', $this->get_method( 'admin_init' ) );
 			add_action( 'admin_menu', $this->get_method( 'admin_menu' ) );
+			if ( self::doing_ajax_request() ) {
+				add_action( 'admin_init', $this->get_method( 'ajax_init' ) );
+			}
 		}
 	}
 
