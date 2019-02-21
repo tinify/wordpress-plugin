@@ -91,15 +91,15 @@
 				<div class="box">
 					<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( self::get_email_address() ) ); ?>
 					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary upgrade-account">
-					    <?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
+						<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 					</a>
 				</div>
 			</div>
 			<p>
-    			<?php esc_html_e(
-    				'Remove all limitations? Visit your TinyPNG dashboard to upgrade your account.',
-    				'tiny-compress-images'
-    			); ?>
+				<?php esc_html_e(
+					'Remove all limitations? Visit your TinyPNG dashboard to upgrade your account.',
+					'tiny-compress-images'
+				); ?>
 			</p>
 		</div>
 	<?php } ?>

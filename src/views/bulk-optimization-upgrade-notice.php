@@ -2,7 +2,9 @@
 	<div class="introduction">
 		<p>
 			<?php
-			$strong = array( 'strong' => array() );
+			$strong = array(
+				'strong' => array(),
+			);
 			/* translators: %s: number of remaining credits */
 			printf( wp_kses( __(
 				'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong> this month.', // WPCS: Needed for proper translation.
