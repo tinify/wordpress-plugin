@@ -25,6 +25,7 @@ function configure_wordpress_for_testing( $driver ) {
 		login( $driver );
 		clear_uploads( $driver );
 	} else {
+		create_uploads_folder();
 		setup_wordpress_language( $driver );
 		setup_wordpress_site( $driver );
 		set_siteurl( wordpress() );
@@ -37,6 +38,11 @@ function restore_wordpress() {
 	if ( is_wordpress_setup() ) {
 		set_siteurl( 'http://' . getenv( 'HOST' ) . ':' . getenv( 'WORDPRESS_PORT' ) );
 	}
+}
+
+function create_uploads_folder() {
+	shell_exec( 'docker-compose exec wordpress mkdir wp-content/uploads' );
+	shell_exec( 'docker-compose exec wordpress chown -R www-data:www-data wp-content/uploads' );
 }
 
 // Renamed this function to mysqldump_file without underscore
@@ -87,7 +93,7 @@ function clear_uploads() {
 	$statement = $db->prepare( "DELETE FROM wp_posts WHERE wp_posts.post_type = 'attachment'" );
 	$statement->execute();
 
-	shell_exec( 'docker-compose exec wordpress rm -rf wp-content/uploads' );
+	shell_exec( 'docker-compose exec wordpress rm -rf wp-content/uploads/*' );
 }
 
 function is_wordpress_setup() {
