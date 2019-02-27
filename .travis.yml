@@ -6,81 +6,82 @@ php:
 - 7.0
 - 7.1
 - 7.2
+- 7.3
 matrix:
   include:
   - dist: precise
     php: 5.3
     script: bin/unit-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=51 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=50 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=49 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=48 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=47 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=46 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=45 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=44 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=43 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=42 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=41 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=40 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=39 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=38 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=37 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=36 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=35 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
-    php: 7.0
+    php: 7.3
     env: WORDPRESS_VERSION=34 INTEGRATION_TESTS=true
     script: bin/integration-tests
 install:

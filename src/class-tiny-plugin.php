@@ -91,6 +91,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_filter( 'wp_ajax_nopriv_tiny_rpc',
 			$this->get_method( 'process_rpc_request' )
 		);
+
+		if ( $this->settings->compress_wr2x_images() ) {
+			add_action( 'wr2x_upload_retina',
+				$this->get_method( 'compress_original_retina_image' ),
+				10, 2
+			);
+
+			add_action( 'wr2x_retina_file_added',
+				$this->get_method( 'compress_retina_image' ),
+				10, 3
+			);
+
+			add_action( 'wr2x_retina_file_removed',
+				$this->get_method( 'remove_retina_image' ),
+				10, 2
+			);
+		}
 	}
 
 	public function admin_init() {
@@ -130,23 +147,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_filter( "plugin_action_links_$plugin",
 			$this->get_method( 'add_plugin_links' )
 		);
-
-		if ( $this->settings->compress_wr2x_images() ) {
-			add_action( 'wr2x_upload_retina',
-				$this->get_method( 'compress_original_retina_image' ),
-				10, 2
-			);
-
-			add_action( 'wr2x_retina_file_added',
-				$this->get_method( 'compress_retina_image' ),
-				10, 3
-			);
-
-			add_action( 'wr2x_retina_file_removed',
-				$this->get_method( 'remove_retina_image' ),
-				10, 2
-			);
-		}
 
 		$this->tiny_compatibility();
 

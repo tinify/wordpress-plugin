@@ -11,6 +11,7 @@ RUN curl -o wordpress.tar.gz -sSL https://wordpress.org/wordpress-${WORDPRESS_UP
   && echo "$WORDPRESS_SHA1 *wordpress.tar.gz" | sha1sum -c - \
   && tar -xzf wordpress.tar.gz -C /usr/src/ \
   && rm wordpress.tar.gz \
+  && mkdir /usr/src/wordpress/wp-content/uploads \
   && chown -R www-data:www-data /usr/src/wordpress
 
 ENTRYPOINT ["docker-entrypoint.sh"]
