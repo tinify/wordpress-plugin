@@ -9,7 +9,6 @@ services:
     - 80${WORDPRESS_VERSION}:80
     volumes:
     - .:/var/www/html/wp-content/plugins/tiny-compress-images
-    - ./config/uploads:/var/www/html/wp-content/uploads
     links:
     - mysql
     - phantomjs
