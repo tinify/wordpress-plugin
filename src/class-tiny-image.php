@@ -57,15 +57,17 @@ class Tiny_Image {
 			return;
 		}
 
-		$path_info = pathinfo( $this->wp_metadata['file'] );
-		$this->name = $path_info['basename'];
-
 		$upload_dir = wp_upload_dir();
 		$path_prefix = $upload_dir['basedir'] . '/';
+		$path_info = pathinfo( $this->wp_metadata['file'] );
 		if ( isset( $path_info['dirname'] ) ) {
 			$path_prefix .= $path_info['dirname'] . '/';
 		}
 
+		/* Do not use pathinfo for getting the filename.
+			 It doesn't work when the filename starts with a special character. */
+		$path_parts = explode( '/', $this->wp_metadata['file'] );
+		$this->name = end( $path_parts );
 		$filename = $path_prefix . $this->name;
 		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
 

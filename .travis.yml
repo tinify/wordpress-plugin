@@ -14,6 +14,14 @@ matrix:
     script: bin/unit-tests
   - dist: trusty
     php: 7.3
+    env: WORDPRESS_VERSION=53 INTEGRATION_TESTS=true
+    script: bin/integration-tests
+  - dist: trusty
+    php: 7.3
+    env: WORDPRESS_VERSION=52 INTEGRATION_TESTS=true
+    script: bin/integration-tests
+  - dist: trusty
+    php: 7.3
     env: WORDPRESS_VERSION=51 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty

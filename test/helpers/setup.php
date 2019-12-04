@@ -128,7 +128,11 @@ function setup_wordpress_site( $driver ) {
 	$driver->findElement( WebDriverBy::name( 'weblog_title' ) )->sendKeys( 'Wordpress test' );
 	$driver->findElement( WebDriverBy::name( 'user_name' ) )->clear()->sendKeys( 'admin' );
 	if ( wordpress_version() > 42 ) {
-		$driver->findElement( WebDriverBy::id( 'pass1-text' ) )->clear()->sendKeys( 'a' )->sendKeys( 'dmin' );
+		if ( wordpress_version() > 52 ) {
+			$driver->findElement( WebDriverBy::id( 'pass1' ) )->clear()->sendKeys( 'a' )->sendKeys( 'dmin' );
+		} else {
+ 			$driver->findElement( WebDriverBy::id( 'pass1-text' ) )->clear()->sendKeys( 'a' )->sendKeys( 'dmin' );
+		}
 
 		/* Confirm use of weak password if necessary. */
 		$confirm = $driver->findElement( WebDriverBy::name( 'pw_weak' ) );
