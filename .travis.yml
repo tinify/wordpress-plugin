@@ -8,14 +8,13 @@ php:
 - 7.1
 - 7.2
 - 7.3
-- 7.4
 matrix:
   include:
   - dist: precise
     php: 5.3
     script: bin/unit-tests
   - dist: trusty
-    php: 7.4
+    php: 7.3
     env: WORDPRESS_VERSION=53 INTEGRATION_TESTS=true
     script: bin/integration-tests
   - dist: trusty
