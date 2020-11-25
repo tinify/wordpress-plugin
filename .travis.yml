@@ -108,6 +108,7 @@ matrix:
 services:
   - docker
 install:
+- composer self-update --rollback
 - composer install
 - if [[ "$INTEGRATION_TESTS" == "true" ]]; then sudo service mysql stop; fi
 script:
