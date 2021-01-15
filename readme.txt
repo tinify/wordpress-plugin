@@ -29,7 +29,6 @@ Make your website faster by optimizing your JPEG and PNG images. This plugin aut
 * [WPML](https://wpml.org/documentation/plugins-compatibility/optimize-wordpress-images-multilingual-sites/) compatible.
 * WooCommerce compatible (see below).
 * WP Retina 2x compatible.
-* WP Offload S3 compatible.
 * See your usage on the settings page and during bulk optimization.
 * Color profiles are automatically translated to standard RGB color.
 * Convert CMYK to RGB to save more space and add compatibility.
