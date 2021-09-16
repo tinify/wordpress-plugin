@@ -1,7 +1,6 @@
 <div class="wrap">
 	<h1><?php esc_html_e( 'Compress JPEG & PNG images', 'tiny-compress-images' ) ?></h2>
-	<p><?php esc_html_e( 'Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG.', 'tiny-compress-images' ) ?></p>
-
+	<p><?php esc_html_e( 'Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.', 'tiny-compress-images' ) ?></p>
 	<div class="tiny-compress-images">
 		<span id="tiny-compress-images"></span>
 		<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" id="tinify-settings" method="post">

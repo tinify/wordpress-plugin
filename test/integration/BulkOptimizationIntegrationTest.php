@@ -92,6 +92,26 @@ class BulkOptimizationIntegrationTest extends IntegrationTestCase {
 		$this->assertEquals( '0 / 0 (100%)', $this->find( '#compression-progress-bar' )->getText() );
 	}
 
+	public function test_should_bulk_optimize_webp_images() {
+		$this->set_api_key( 'JPG123' );
+		$this->set_compression_timing( 'auto' );
+
+		$this->enable_compression_sizes( array() );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->enable_compression_sizes( array( '0' ) );
+		$this->upload_media( 'test/fixtures/input-example.webp' );
+
+		$this->enable_compression_sizes( array( '0', 'thumbnail', 'medium' ) );
+		$this->upload_media( 'test/fixtures/input-example.jpg' );
+
+		$this->visit( '/wp-admin/upload.php?page=tiny-bulk-optimization' );
+
+		$this->assertEquals( '3', $this->find( '#uploaded-images' )->getText() );
+		$this->assertEquals( '5', $this->find( '#optimizable-image-sizes' )->getText() );
+		$this->assertEquals( '4', $this->find( '#optimized-image-sizes' )->getText() );
+	}
+
 	public function test_summary_should_display_correct_values() {
 		$this->set_api_key( 'JPG123' );
 		$this->set_compression_timing( 'auto' );

@@ -2,7 +2,7 @@
 
 # Compress JPEG & PNG images for WordPress
 
-Make your website faster by optimizing your JPEG and PNG images.
+Make your website faster by optimizing your JPEG, PNG, and WebP images.
 
 This plugin automatically optimizes your images by integrating with the
 popular image compression services TinyJPG and TinyPNG. You can download the

@@ -83,7 +83,8 @@ class Tiny_Bulk_Optimization {
 				$wpdb->posts.post_type = 'attachment'
 				AND (
 					$wpdb->posts.post_mime_type = 'image/jpeg' OR
-					$wpdb->posts.post_mime_type = 'image/png'
+					$wpdb->posts.post_mime_type = 'image/png' OR
+					$wpdb->posts.post_mime_type = 'image/webp'
 				)
 				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
 			GROUP BY unique_attachment_name

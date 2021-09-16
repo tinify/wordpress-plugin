@@ -18,7 +18,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 <div class="panda"></div>
 <div class="grass"></div>
 <div class="description no-images">
-	<p><?php esc_html_e( 'You do not seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' ) ?></p>
+	<p><?php esc_html_e( 'You do not seem to have uploaded any JPEG, PNG or WebP images yet.', 'tiny-compress-images' ) ?></p>
 </div>
 <div class="description not-optimized">
 	<p>
@@ -42,7 +42,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 		printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
 		echo ' ';
 		/* translators: %s: number of optimizable sizes and number of uploaded images */
-		printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG and PNG images.', 'tiny-compress-images' ), '<span id="unoptimised-sizes"></span>', '<span id="uploaded-images"></span>' );
+		printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.', 'tiny-compress-images' ), '<span id="unoptimised-sizes"></span>', '<span id="uploaded-images"></span>' );
 		echo ' ';
 		/* translators: %s: bulk optimization link */
 		printf( wp_kses( __( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), array(

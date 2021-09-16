@@ -16,11 +16,11 @@ class DashboardWidgetIntegrationTest extends IntegrationTestCase {
 
 	public function test_should_show_widget_without_images() {
 		$element = $this->find(
-			'div.no-images-uploaded p'
+			'div.no-images p'
 		);
 
 		$this->assertEquals(
-			'You do not seem to have uploaded any JPEG or PNG images yet.',
+			'You do not seem to have uploaded any JPEG, PNG or WebP images yet.',
 			$element->getText()
 		);
 	}

@@ -49,7 +49,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimised-sizes'] ) {
 							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
 							echo ' ';
-							esc_html_e( 'You do not seem to have uploaded any JPEG or PNG images yet.', 'tiny-compress-images' );
+							esc_html_e( 'You do not seem to have uploaded any JPEG, PNG or WebP images yet.', 'tiny-compress-images' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
@@ -107,7 +107,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											<p>
 												<?php
 												/* translators: %1$s: number of sizes that can be optimised, %2$s number of images */
-												printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG and PNG images.',
+												printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.',
 												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images'] );
 												?>
 											</p>
@@ -190,7 +190,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 				<div class="inner">
 					<h3><?php esc_html_e( 'Total Savings', 'tiny-compress-images' ) ?></h3>
 					<p>
-						<?php esc_html_e( 'Statistics based on all available JPEG and PNG images in your media library.', 'tiny-compress-images' ); ?>
+						<?php esc_html_e( 'Statistics based on all available JPEG, PNG, and WebP images in your media library.', 'tiny-compress-images' ); ?>
 					</p>
 					<?php
 						require_once dirname( __FILE__ ) . '/optimization-chart.php';

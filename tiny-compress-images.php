@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Compress JPEG & PNG images
- * Description: Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG.
+ * Description: Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
  * Version: 3.2.1
  * Author: TinyPNG
  * Author URI: https://tinypng.com

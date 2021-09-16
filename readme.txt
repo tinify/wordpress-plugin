@@ -8,11 +8,11 @@ Stable tag: 3.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Speed up your website. Optimize your JPEG and PNG images automatically with TinyPNG.
+Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
 
 == Description ==
 
-Make your website faster by optimizing your JPEG and PNG images. This plugin automatically optimizes all your images by integrating with the popular image compression services TinyJPG and TinyPNG.
+Make your website faster by optimizing your JPEG, PNG, and WebP images. This plugin automatically optimizes all your images by integrating with the popular image compression services TinyJPG and TinyPNG.
 
 = Features =
 
@@ -46,7 +46,7 @@ Install this plugin and follow the instructions to set up your account. With a r
 
 = Optimizing all your images =
 
-You can *bulk optimize* your existing JPEG and PNG images all at once by going to *Media > Bulk Optimization*. Clicking on the big button will start optimizing all unoptimized images in your media library.
+You can *bulk optimize* your existing JPEG, PNG, and WebP images all at once by going to *Media > Bulk Optimization*. Clicking on the big button will start optimizing all unoptimized images in your media library.
 
 = Multisite support =
 
@@ -132,6 +132,10 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.3
+* Added functionality to accept WebP image format.
+* Fixed Wordpress setup for compatability with latest Wordpress version (5.8.1).
+
 = 3.2.1 =
 * Fixed bug that caused the original version of images that started with a special character to not be compressed.
 * Updated Wordpress compatibility.

@@ -15,6 +15,7 @@ services:
     - webservice
     environment:
       WORDPRESS_DB_NAME: wordpress_${WORDPRESS_VERSION}
+      WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: root
       WORDPRESS_HOST: http://localhost
 
@@ -26,6 +27,7 @@ services:
     - ./config/mysql:/etc/mysql/conf.d
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress_${WORDPRESS_VERSION}
 
   phantomjs:
     ports:

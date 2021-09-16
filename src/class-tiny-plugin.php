@@ -604,7 +604,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( $tiny_image->file_type_allowed() ) {
 			echo '<div class="misc-pub-section tiny-compress-images">';
 			echo '<h4>';
-			esc_html_e( 'JPEG and PNG optimization', 'tiny-compress-images' );
+			esc_html_e( 'JPEG, PNG, & WebP optimization', 'tiny-compress-images' );
 			echo '</h4>';
 			echo '<div class="tiny-ajax-container">';
 			$this->render_compress_details( $tiny_image );

@@ -87,7 +87,7 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->find_link( 'input-example' )->click();
 
 		$this->assertContains(
-			"JPEG and PNG optimization\n2 sizes to be compressed\nDetails\nCompress",
+			"JPEG, PNG, & WebP optimization\n2 sizes to be compressed\nDetails\nCompress",
 			$this->find( 'div.postbox-container div.tiny-compress-images' )->getText()
 		);
 	}
@@ -159,6 +159,22 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		$this->wait_for_text(
 			'div.tiny-compress-images',
 			'2 sizes compressed'
+		);
+	}
+
+	public function test_compress_button_in_edit_screen_should_compress_webp_images() {
+		if ( ! $this->has_postbox_container() ) { return; }
+		$this->set_compression_timing( 'auto' );
+		$this->upload_media( 'test/fixtures/input-example.webp' );
+		$this->set_api_key( 'JPG123' );
+		$this->enable_compression_sizes( array( 'medium', 'large', 'thumbnail' ) );
+
+		$this->find_link( 'input-example' )->click();
+		$this->find( 'div.tiny-compress-images button.tiny-compress' )->click();
+
+		$this->wait_for_text(
+			'div.tiny-compress-images',
+			'3 sizes compressed'
 		);
 	}
 
