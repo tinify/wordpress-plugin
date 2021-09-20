@@ -120,8 +120,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 
 		add_options_page(
-			__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
-			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
+			__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
+			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
 			'manage_options',
 			'tinify',
 			array( $this, 'add_options_to_page' )
@@ -412,7 +412,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function render_settings_moved() {
 		echo '<div class="tinify-settings"><h3>';
-		esc_html_e( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		esc_html_e( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' );
 		echo '</h3>';
 		$url = admin_url( 'options-general.php?page=tinify' );
 		$link = "<a href='" . $url . "'>";

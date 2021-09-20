@@ -147,7 +147,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		}
 
 		$css = implode( ' ', $css );
-		$plugin_name = esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		$plugin_name = esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' );
 
 		add_action( 'admin_notices',
 			function() use ( $css, $name, $plugin_name, $message, $add ) {
@@ -268,7 +268,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 	private function show_incompatible_plugins( $incompatible_plugins ) {
 		$notice = '<div class="error notice tiny-notice incompatible-plugins">';
 		$notice .= '<h3>';
-		$notice .= esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		$notice .= esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' );
 		$notice .= '</h3>';
 		$notice .= '<p>';
 		$notice .= esc_html__(
@@ -278,7 +278,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= '</p>';
 		$notice .= '<table>';
 		$notice .= '<tr><td class="bullet">•</td><td class="name">';
-		$notice .= esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' );
+		$notice .= esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' );
 		$notice .= '</td><td></td></tr>';
 		foreach ( $incompatible_plugins as $name => $file ) {
 			$notice .= '<tr><td class="bullet">•</td><td class="name">';

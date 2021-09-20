@@ -25,7 +25,7 @@ class SettingsIntegrationTest extends IntegrationTestCase {
 			return $heading->getText();
 		}, $this->find_all( 'h1' ) );
 
-		$this->assertContains( 'Compress JPEG & PNG images', $headings );
+		$this->assertContains( 'TinyPNG - JPEG, PNG & WebP image compression', $headings );
 	}
 
 	public function test_settings_should_show_notice_if_key_is_missing() {

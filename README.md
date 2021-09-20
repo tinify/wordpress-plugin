@@ -1,6 +1,6 @@
 [<img src="https://travis-ci.org/tinify/wordpress-plugin.svg?branch=master" alt="Build Status">](https://travis-ci.org/tinify/wordpress-plugin)
 
-# Compress JPEG & PNG images for WordPress
+# TinyPNG - JPEG, PNG & WebP image compression for WordPress
 
 Make your website faster by optimizing your JPEG, PNG, and WebP images.
 

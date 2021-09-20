@@ -668,7 +668,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
-			esc_html__( 'Compress JPEG & PNG images', 'tiny-compress-images' ),
+			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
 			$this->get_method( 'add_widget_view' )
 		);
 	}

@@ -22,7 +22,7 @@ class PluginIntegrationTest extends IntegrationTestCase {
 		);
 
 		$this->assertEquals(
-			'Compress JPEG & PNG images',
+			'TinyPNG - JPEG, PNG & WebP image compression',
 			$element->getText()
 		);
 	}
