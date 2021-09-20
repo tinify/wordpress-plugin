@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 3.4
 Tested up to: 5.8
-Stable tag: 3.2.1
+Stable tag: 3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -133,7 +133,7 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 
 == Changelog ==
 = 3.3
-* Added functionality to accept WebP image format.
+* Added functionality to accept WebP image format.src/class-tiny-plugin.php
 * Fixed Wordpress setup for compatability with latest Wordpress version (5.8.1).
 
 = 3.2.1 =
