@@ -132,9 +132,8 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
-= 3.3
-* Added functionality to accept WebP image format.src/class-tiny-plugin.php
-* Fixed Wordpress setup for compatability with latest Wordpress version (5.8.1).
+= 3.3 =
+* You can now optimise WebP images, in addition to JPEG and PNG.
 
 = 3.2.1 =
 * Fixed bug that caused the original version of images that started with a special character to not be compressed.
