@@ -1599,12 +1599,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinify/tinify-php.git",
-                "reference": "cb76e97b93ef7646c9a24a461687defe1a4d212e"
+                "reference": "cd15c07fa56ac71cf66d6b4720ab6a6d6493c940"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/cb76e97b93ef7646c9a24a461687defe1a4d212e",
-                "reference": "cb76e97b93ef7646c9a24a461687defe1a4d212e",
+                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/cd15c07fa56ac71cf66d6b4720ab6a6d6493c940",
+                "reference": "cd15c07fa56ac71cf66d6b4720ab6a6d6493c940",
                 "shasum": ""
             },
             "require": {
