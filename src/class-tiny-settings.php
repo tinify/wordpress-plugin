@@ -161,7 +161,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $this->compressor_init === false ) {
 			try {
 				$this->init_compressor();
-			} catch ( Tiny_Exception e ) {
+			} catch ( Tiny_Exception $e ) {
 				// Did not work. Fail silently, like in XMLRPC
 			}
 		}
