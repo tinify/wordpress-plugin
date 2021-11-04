@@ -24,6 +24,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	private $tinify_sizes;
 	private $compressor;
 	private $notices;
+	
+	// Make Tinify available from outside wp-admin
+	private $compressor_init = false;
 
 	protected static $offload_s3_plugin = 'amazon-s3-and-cloudfront/wordpress-s3.php';
 
@@ -37,6 +40,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$this->get_api_key(),
 			$this->get_method( 'after_compress_callback' )
 		);
+		
+		// We assume, we now have a compressor. If not, something else went wrong.
+		$this->compressor_init = true;
 	}
 
 	public function get_absolute_url() {
@@ -151,10 +157,25 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_compressor() {
+		// We check if we should have a compressor available, and if not, we create one.
+		if ( $this->compressor_init === false ) {
+			try {
+				$this->init_compressor();
+			} catch ( Tiny_Exception e ) {
+				// Did not work. Fail silently, like in XMLRPC
+			}
+		}
+		
 		return $this->compressor;
 	}
 
 	public function set_compressor( $compressor ) {
+		// If $compressor is not null, we use this one. Otherwise we try to init our own when the time comes.
+		if ( ! is_null( $compressor ) ) {
+			$this->compressor_init = true;
+		} else {
+			$this->compressor_init = false;
+		}
 		$this->compressor = $compressor;
 	}
 
