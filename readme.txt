@@ -113,7 +113,7 @@ A: When you remove the plugin all your optimized images will remain optimized.
 A: When you upload an image to your website, WordPress will create different sized versions of it (see *Settings > TinyPNG - JPEG, PNG & WebP image compression*). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
 
 = Q: Is there a file size limit? =
-A: A: Yes, but they are *very* generous! The maximum file size is 500MB and the maximum canvas size is 256MP (16000px by 16000px in any ratio).
+A: Yes, but they are *very* generous! The maximum file size is 500MB and the maximum canvas size is 256MP (16000px by 16000px in any ratio).
 
 = Q: Can I use the same API key on all my websites? =
 A: Yes, there are no limitations. You can add the same key everywhere.
