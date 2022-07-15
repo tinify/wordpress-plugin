@@ -286,6 +286,7 @@ class Tiny_Image {
 				if ( isset( $output['width'] ) && isset( $output['height'] ) ) {
 					$this->wp_metadata['width'] = $output['width'];
 					$this->wp_metadata['height'] = $output['height'];
+					$this->wp_metadata['filesize'] = $output['size'];
 				}
 			}
 		}
