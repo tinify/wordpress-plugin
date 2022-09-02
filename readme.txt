@@ -2,9 +2,9 @@
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
-Requires at least: 3.4
-Tested up to: 6.0.1
-Stable tag: 3.4
+Requires at least: 3.4.1
+Tested up to: 6.0.2
+Stable tag: 3.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -131,6 +131,9 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.4.1 =
+* Fixed a bug that sometimes prevented failing requests to the Tinify servers from being retried.
+
 = 3.4 =
 * Correct filesize metadata retrieval for compressed images in WordPress 6.
 * Updated WordPress compatibility.

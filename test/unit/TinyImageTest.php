@@ -30,6 +30,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 			'output' => array(
 				'width' => 200,
 				'height' => 100,
+				'size' => 100,
 			),
 		);
 		$tiny_image->get_image_size()->add_tiny_meta_start();
@@ -38,6 +39,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$tiny_image_metadata = $tiny_image->get_wp_metadata();
 		$this->assertEquals( 200, $tiny_image_metadata['width'] );
 		$this->assertEquals( 100, $tiny_image_metadata['height'] );
+		$this->assertEquals( 100, $tiny_image_metadata['filesize'] );
 	}
 
 	public function test_get_images_should_return_all_images() {
