@@ -30,5 +30,10 @@
   "scripts": {
     "post-install-cmd": "bin/post-install",
     "post-update-cmd": "bin/post-install"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }
