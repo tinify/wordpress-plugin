@@ -26,10 +26,10 @@ Perform the following steps to make changes to the plugin page on wordpress.org:
 1. Make the desired changes in the readme.txt file.
 2. Commit and push to GitHub.
 3. Checkout the trunk of the Subversion repository.
-4. Add the updated readme.txt and Commit the changes to the trunk.
+4. Add the updated readme.txt and commit the changes to the trunk.
 5. Visit https://translate.wordpress.org/projects/wp-plugins/tiny-compress-images and add any missing translations.
 6. Checkout the latest tag of the Subversion repository (e.g. 2.2.6).
-7. Add the updated readme.txt and Commit the changes again.
+7. Add the updated readme.txt and commit the changes again.
 8. See the changes (almost immediately) on https://wordpress.org/plugins/tiny-compress-images/
 
 Perform the following steps to change the "Tested up to wordpress version" on wordpress.org:

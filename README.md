@@ -23,15 +23,15 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 * MySQL client and admin tools.
 
 ### Running the plugin in WordPress
-1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 45`.
-2. Connect to Wordpress on port `80<version>` (e.g. port `8045`).
+1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 60`.
+2. Connect to Wordpress on port `80<version>` (e.g. port `8060`).
 
 ### Running the unit tests
 1. Run `bin/unit-tests <optional path to file>`.
 
 ### Running the integration tests
 1. Install Docker 1.12 and docker-compose.
-2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 45`.
+2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 60`.
 
 ### Check if the code follows WordPress standard
 1. Run `bin/check-style` to make sure there are no errors.
@@ -63,7 +63,7 @@ translations before publishing the new plugin release.
 
 ## License
 
-Copyright (C) 2015-2018 Tinify B.V.
+Copyright (C) 2015-2023 Tinify B.V.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
