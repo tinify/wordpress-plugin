@@ -108,7 +108,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				<tr class="<?php echo ( 0 == $i % 2 ) ? 'even' : 'odd' ?>">
 					<?php
 					echo '<td>';
-					echo '<span title="' . esc_html( basename( $size->filename ) ) . '">';
+					echo '<span title="' . esc_html( basename( (string) $size->filename ) ) . '">';
 					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
 					echo '</span>' . ' ';
 					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
