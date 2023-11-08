@@ -2,9 +2,9 @@
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
-Requires at least: 3.4.2
-Tested up to: 6.2.2
-Stable tag: 3.4.2
+Requires at least: 3.4
+Tested up to: 6.4
+Stable tag: 3.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,7 +57,7 @@ This plugin is *fully compatible with WooCommerce*. However, we have discovered 
 
 = Contact us =
 
-Got questions or feedback? Let us know! Contact us at support@tinypng.com or find us on [Twitter @tinypng](https://twitter.com/tinypng).
+Got questions or feedback? Let us know! Contact us at support@tinypng.com or find us on X: [@tinypng](https://twitter.com/tinypng).
 
 = Contributors =
 
@@ -131,6 +131,10 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.4.3 =
+* Removed more deprecated PHP syntax that was triggering a warning message.
+* Updated Wordpress compatibility
+
 = 3.4.2 =
 * Removed deprecated PHP syntax that was triggering a warning message.
 
@@ -284,5 +288,3 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 
 = 1.0.0 =
 * Initial version.
-
-:)
