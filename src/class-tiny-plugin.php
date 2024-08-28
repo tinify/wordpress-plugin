@@ -365,7 +365,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function compress_on_upload() {
-        if (isset($_POST['action']) && !wp_verify_nonce($_POST['_ajax_nonce'], 'new_media-' .  $_POST['attachment_id'])) {
+        if (!wp_verify_nonce($_POST['_ajax_nonce'], 'new_media-' .  $_POST['attachment_id'])) {
             exit;
         }
 		if ( current_user_can( 'upload_files' ) ) {

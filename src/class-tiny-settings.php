@@ -859,7 +859,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-        if (isset($_POST['action']) && !wp_verify_nonce($_POST['_nonce'], 'tiny-compress')) {
+        if (!$this->check_ajax_referer()) {
             exit;
         }
 		$compressor = $this->get_compressor();
@@ -929,7 +929,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function update_api_key() {
 		$key = $_POST['key'];
-        if (isset($_POST['action']) && !wp_verify_nonce($_POST['_nonce'], 'tiny-compress')) {
+        if (!$this->check_ajax_referer()) {
             exit;
         }
 		if ( ! current_user_can( 'manage_options' ) ) {
