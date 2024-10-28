@@ -11,6 +11,7 @@
 
 define('TINY_PNG_PLUGIN_VERSION', '3.4.4');
 
+require dirname( __FILE__ ) . '/src/compatibility/class-tiny-migration.php';
 require dirname( __FILE__ ) . '/src/config/class-tiny-config.php';
 require dirname( __FILE__ ) . '/src/class-tiny-php.php';
 require dirname( __FILE__ ) . '/src/class-tiny-wp-base.php';
