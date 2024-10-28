@@ -36,7 +36,7 @@ $email = trim( $user->user_email );
 		?></h4>
 
 		<p class="introduction"><?php
-			$link = sprintf( '<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
+			$link = sprintf( '<a href="https://tinypng.com/dashboard/api?utm_source=installation&utm_medium=wordpress-plugin" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			/* translators: %s: link saying API dashboard */
