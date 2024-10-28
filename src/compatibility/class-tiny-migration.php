@@ -33,7 +33,7 @@ class Tiny_Migration {
             ");
 
             foreach ($posts as $post) {
-                update_post_meta($post->post_id, '_tiny_compress_images', $post->meta_value);
+                update_post_meta($post->post_id, Tiny_Config::META_KEY, $post->meta_value);
 
                 delete_post_meta($post->post_id, 'tiny_compress_images');
             }
