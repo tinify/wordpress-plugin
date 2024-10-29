@@ -4,7 +4,7 @@
  * Description: Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
  * Version: 3.4.4
  * Author: TinyPNG
- * Author URI: https://tinypng.com?utm_source=installation&utm_medium=wordpress-plugin
+ * Author URI: https://tinypng.com
  * Text Domain: tiny-compress-images
  * License: GPLv2 or later
  */
