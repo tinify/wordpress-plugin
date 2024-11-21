@@ -9,5 +9,5 @@ class Tiny_Config {
 	const SHRINK_URL = 'https://api.tinify.com/shrink';
 	const KEYS_URL = 'https://api.tinify.com/keys';
 	const MONTHLY_FREE_COMPRESSIONS = 500;
-	const META_KEY = 'tiny_compress_images';
+	const META_KEY = '_tiny_compress_images';
 }
