@@ -181,6 +181,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 			$tiny_wpml_compatibility = new Tiny_WPML();
 		}
+
+		if (Tiny_AS3CF::is_active()) {
+			$tiny_as3cf = new Tiny_AS3CF();
+		}
 	}
 
 	public function compress_original_retina_image( $attachment_id, $path ) {
