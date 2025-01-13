@@ -638,7 +638,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	) {
 		echo '<div class="notice notice-warning inline"><p>';
 		echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
-		if (Tiny_AS3CF::is_active() && Tiny_AS3CF::remove_local_files_setting_enabled()) {
+		if ( Tiny_AS3CF::is_active() && Tiny_AS3CF::remove_local_files_setting_enabled() ) {
 			$message = esc_html_e(
 				'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
 				'tiny-compress-images'
@@ -647,7 +647,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 		echo '</p></div>';
 		echo '<p class="tiny-radio disabled">';
-		
+
 		$id = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
 		$label = esc_html( $label, 'tiny-compress-images' );
 		$desc = esc_html( $desc, 'tiny-compress-images' );
@@ -784,9 +784,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-        if (!$this->check_ajax_referer()) {
-            exit;
-        }
+		if ( ! $this->check_ajax_referer() ) {
+			exit;
+		}
 		$compressor = $this->get_compressor();
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
@@ -854,9 +854,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function update_api_key() {
 		$key = $_POST['key'];
-        if (!$this->check_ajax_referer()) {
-            exit;
-        }
+		if ( ! $this->check_ajax_referer() ) {
+			exit;
+		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok' => false,

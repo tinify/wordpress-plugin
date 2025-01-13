@@ -182,7 +182,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$tiny_wpml_compatibility = new Tiny_WPML();
 		}
 
-		if (Tiny_AS3CF::is_active()) {
+		if ( Tiny_AS3CF::is_active() ) {
 			$tiny_as3cf = new Tiny_AS3CF();
 		}
 	}
@@ -369,9 +369,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function compress_on_upload() {
-        if (!wp_verify_nonce($_POST['_ajax_nonce'], 'new_media-' .  $_POST['attachment_id'])) {
-            exit;
-        }
+		if ( ! wp_verify_nonce( $_POST['_ajax_nonce'], 'new_media-' . $_POST['attachment_id'] ) ) {
+			exit;
+		}
 		if ( current_user_can( 'upload_files' ) ) {
 			$attachment_id = intval( $_POST['attachment_id'] );
 			$metadata = $_POST['metadata'];
