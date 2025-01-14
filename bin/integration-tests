@@ -21,6 +21,8 @@ export MYSQL_PWD=root
 export WORDPRESS_DATABASE=wordpress_${WORDPRESS_VERSION}
 export WORDPRESS_PORT=80${WORDPRESS_VERSION}
 export WORDPRESS_URL=http://wordpress
+export WP_ENV_TESTS_PORT=80${WORDPRESS_VERSION}
+export WP_ENV_CORE=WordPress/Wordpress#6.7
 
 function wait_for_service_port {
   while ! curl -s localhost:$1 > /dev/null; do
@@ -29,14 +31,11 @@ function wait_for_service_port {
 }
 
 function prepare_test_config {
-  mv src/config/class-tiny-config.php src/config/class-tiny-config.php.bak
   mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
-  cp test/fixtures/class-tiny-config.php src/config/class-tiny-config.php
   cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
 }
 
 function restore_config {
-  mv src/config/class-tiny-config.php.bak src/config/class-tiny-config.php
   mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
 }
 
@@ -46,21 +45,18 @@ function start_services {
   else
     docker-compose up -d --build --force-recreate > /dev/null || { trap - EXIT; exit 1; }
   fi
+
+  wp-env start
 }
 
 function stop_services {
   docker-compose down
+  wp-env stop
 }
 
 function wait_for_services {
-  echo "Waiting for PhantomJS..."
-  wait_for_service_port 8910
-
   echo "Waiting for WordPress..."
   wait_for_service_port 80${WORDPRESS_VERSION}
-
-  echo "Waiting for MySQL..."
-  wait_for_service_port 3306
 }
 
 function setup {
@@ -79,4 +75,3 @@ function teardown {
 trap teardown EXIT
 setup
 
-vendor/bin/phpunit test/integration
