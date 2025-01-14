@@ -3,7 +3,7 @@
 namespace Tinify;
 
 class Client {
-	const API_ENDPOINT = 'http://webservice';
+	const API_ENDPOINT = 'http://localhost:8100';
 
 	private $options;
 
