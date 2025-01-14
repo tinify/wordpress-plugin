@@ -12,7 +12,7 @@ class Tiny_Helpers_Test extends Tiny_TestCase
     public function test_truncates_text_to_length()
     {
         $input_text = "Text to be truncated because it is long";
-        $expected_output = "Text to be truncated...";
+        $expected_output = "Text to be trunca...";
 
         $this->assertEquals($expected_output, Tiny_Helpers::truncate_text($input_text, 20));
     }

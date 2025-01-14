@@ -31,7 +31,7 @@ class Tiny_Helpers {
 	 */
 	public static function truncate_text( string $text, int $length ) {
 		if ( mb_strlen( $text ) > $length ) {
-			return mb_substr( $text, 0, $length ) . '...';
+			return mb_substr( $text, 0, $length - 3 ) . '...';
 		}
 		return $text;
 	}
