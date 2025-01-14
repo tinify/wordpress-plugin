@@ -18,22 +18,21 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Helpers
-{
-    /**
-     * truncate_text will truncate a string to a given length.
-     * When text is longer than the given length, the string will be truncated and
-     * the last characters will be replaced with an ellipsis.
-     *
-     * @param string $text the text
-     * @param integer $length the maximum length of the string
-     * @return string the truncated string
-     */
-    public static function truncate_text(string $text, int $length)
-    {
-        if (mb_strlen($text) > $length) {
-            return mb_substr($text, 0, $length) . '...';
-        }
-        return $text;
-    }
+class Tiny_Helpers {
+
+	/**
+	 * truncate_text will truncate a string to a given length.
+	 * When text is longer than the given length, the string will be truncated and
+	 * the last characters will be replaced with an ellipsis.
+	 *
+	 * @param string $text the text
+	 * @param integer $length the maximum length of the string
+	 * @return string the truncated string
+	 */
+	public static function truncate_text( string $text, int $length ) {
+		if ( mb_strlen( $text ) > $length ) {
+			return mb_substr( $text, 0, $length ) . '...';
+		}
+		return $text;
+	}
 }
