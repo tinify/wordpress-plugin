@@ -1,4 +1,4 @@
-[<img src="https://travis-ci.org/tinify/wordpress-plugin.svg?branch=master" alt="Build Status">](https://travis-ci.org/tinify/wordpress-plugin)
+[![Integration Tests](https://github.com/wcreateweb/wordpress-plugin/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/wcreateweb/wordpress-plugin/actions/workflows/integration-tests.yml)
 
 # TinyPNG - JPEG, PNG & WebP image compression for WordPress
 
