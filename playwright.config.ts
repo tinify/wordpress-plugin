@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:8889',
+    baseURL: `http://localhost:${process.env.WORDPRESS_PORT}`,
     trace: 'on-first-retry',
   },
   projects: [
