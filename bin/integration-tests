@@ -46,12 +46,12 @@ function start_services {
     docker-compose up -d --build --force-recreate > /dev/null || { trap - EXIT; exit 1; }
   fi
 
-  wp-env start
+  npx wp-env start
 }
 
 function stop_services {
   docker-compose down
-  wp-env stop
+  npx wp-env stop
 }
 
 function wait_for_services {
@@ -63,6 +63,7 @@ function setup {
   prepare_test_config
   start_services
   wait_for_services
+  npm run test:playwright
 }
 
 function teardown {
