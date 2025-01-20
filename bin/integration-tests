@@ -40,17 +40,16 @@ function restore_config {
 }
 
 function start_services {
-  if [ "${KEEP_ALIVE}" ]; then
-    docker-compose up -d --build > /dev/null || { trap - EXIT; exit 1; }
-  else
-    docker-compose up -d --build --force-recreate > /dev/null || { trap - EXIT; exit 1; }
-  fi
+  docker build -t mock-webservice -f config/Dockerfile-mock-webservice . || { trap - EXIT; exit 1; }
+  docker run -d -p 8100:80 -v $(pwd)/test/mock-tinypng-webservice:/var/www/html mock-webservice || { trap - EXIT; exit 1; }
 
   npx wp-env start
 }
 
 function stop_services {
-  docker-compose down
+  docker stop $(docker ps -q --filter "ancestor=mock-webservice") || { trap - EXIT; exit 1; }
+  docker rm $(docker ps -a -q --filter "ancestor=mock-webservice") || { trap - EXIT; exit 1; }
+
   npx wp-env stop
 }
 
