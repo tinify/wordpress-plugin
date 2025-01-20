@@ -9,6 +9,7 @@
     "test:playwright:debug": "wp-scripts test-playwright --debug"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1"
+    "@playwright/test": "^1.49.1",
+    "@wordpress/scripts": "^30.9.0"
   }
 }
