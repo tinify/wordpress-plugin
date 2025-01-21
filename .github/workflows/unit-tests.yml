@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Check and Test
 
 on:
   push:
@@ -9,12 +9,33 @@ on:
       - '**'
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        php: ['7.4', '8.1']
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          php: ${{ matrix.php }}
 
-      - name: PHPUnit tests
-        uses: php-actions/phpunit@v3
+      - name: PHPCS
+        run: ./bin/check-style
+
+  test:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        php: ['7.4', '8.1']
+    steps:
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          php: ${{ matrix.php }}
+
+      - name: PHPUnit
+        run: ./bin/unit-tests
