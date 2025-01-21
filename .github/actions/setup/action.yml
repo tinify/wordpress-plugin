@@ -18,6 +18,7 @@ runs:
           ${{ runner.os }}-composer-
 
     - name: Install Dependencies
+      shell: bash
       run: composer install --prefer-dist --no-progress --no-suggest
 
 inputs:
