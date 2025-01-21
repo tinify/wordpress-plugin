@@ -16,6 +16,9 @@ jobs:
       matrix:
         php: ['7.4', '8.1']
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Setup
         uses: ./.github/actions/setup
         with:
@@ -32,6 +35,9 @@ jobs:
       matrix:
         php: ['7.4', '8.1']
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Setup
         uses: ./.github/actions/setup
         with:

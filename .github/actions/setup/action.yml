@@ -3,9 +3,6 @@ description: Setup PHP environment, cache dependencies, and install dependencies
 runs:
   using: "composite"
   steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
@@ -22,7 +19,7 @@ runs:
 
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
-      
+
 inputs:
   php:
     description: PHP version
