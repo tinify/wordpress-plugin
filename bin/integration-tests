@@ -29,6 +29,7 @@ export WORDPRESS_PORT=80${WORDPRESS_VERSION}
 export WORDPRESS_URL=http://wordpress
 export WP_ENV_TESTS_PORT=80${WORDPRESS_VERSION}
 export WP_ENV_CORE=WordPress/Wordpress#${WORDPRESS_VERSION_FULL}
+export MOCK_PORT=8100
 
 function wait_for_service_port {
   while ! curl -s localhost:$1 > /dev/null; do
@@ -47,7 +48,7 @@ function restore_config {
 
 function start_services {
   docker build -t mock-webservice -f config/Dockerfile-mock-webservice . || { trap - EXIT; exit 1; }
-  docker run -d -p 8100:80 -v $(pwd)/test/mock-tinypng-webservice:/var/www/html mock-webservice || { trap - EXIT; exit 1; }
+  docker run -d --name tinify-mock-api -p ${MOCK_PORT}:80 -v $(pwd)/test/mock-tinypng-webservice:/var/www/html mock-webservice || { trap - EXIT; exit 1; }
 
   npx wp-env start
 }
