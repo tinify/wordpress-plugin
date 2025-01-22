@@ -17,8 +17,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Prerequisites
 * A working Docker 1.12+ and Docker Compose installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
-* PhantomJS 2.1 or greater (http://phantomjs.org).
-* MySQL client and admin tools.
+* Node LTS
 
 ### Running the plugin in WordPress
 1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 60`.
