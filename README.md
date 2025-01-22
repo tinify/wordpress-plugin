@@ -1,5 +1,3 @@
-[![Integration Tests](https://github.com/wcreateweb/wordpress-plugin/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/wcreateweb/wordpress-plugin/actions/workflows/integration-tests.yml)
-
 # TinyPNG - JPEG, PNG & WebP image compression for WordPress
 
 Make your website faster by optimizing your JPEG, PNG, and WebP images.
