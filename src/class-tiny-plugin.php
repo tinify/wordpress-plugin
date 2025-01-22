@@ -18,7 +18,7 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION = '3.4.3';
+	const VERSION = '3.4.5';
 	const MEDIA_COLUMN = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
