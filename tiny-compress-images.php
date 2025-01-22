@@ -2,7 +2,7 @@
 /**
  * Plugin Name: TinyPNG - JPEG, PNG & WebP image compression
  * Description: Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
- * Version: 3.4.4
+ * Version: 3.4.5
  * Author: TinyPNG
  * Author URI: https://tinypng.com
  * Text Domain: tiny-compress-images
