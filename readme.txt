@@ -131,6 +131,9 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.4.6 =
+* Error resolved where Tiny_Helpers was not available
+
 = 3.4.5 =
 * Error when mb_strimwidth is not available resolved
 
