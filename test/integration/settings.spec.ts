@@ -1,4 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
+import { setAPIKey } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -7,10 +8,8 @@ let page: Page;
 test.describe('settings', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
-    await page.goto('/wp-admin/options-general.php?page=tinify');
-
-    // Clear API Key
-    await page.locator('#tinypng_api_key').fill('');
+    
+    await setAPIKey(page, '');
 
     // Resize on background
     await page.locator('#tinypng_resize_original_enabled').uncheck();
@@ -110,6 +109,8 @@ test.describe('settings', () => {
 
     await page.reload();
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.getByText('Register new account')).toBeVisible();
   });
 
@@ -133,6 +134,8 @@ test.describe('settings', () => {
     await expect(page.getByText('An email has been sent to activate your account')).toBeVisible();
 
     await page.reload();
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.getByText('An email has been sent to activate your account')).toBeVisible();
   });
