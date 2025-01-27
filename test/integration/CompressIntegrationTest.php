@@ -9,22 +9,6 @@ class CompressIntegrationTest extends IntegrationTestCase {
 		clear_uploads();
 	}
 
-	public function test_compress_button_in_edit_screen_should_compress_images() {
-		if ( ! $this->has_postbox_container() ) { return; }
-		$this->set_compression_timing( 'auto' );
-		$this->upload_media( 'test/fixtures/input-example.jpg' );
-		$this->set_api_key( 'JPG123' );
-		$this->enable_compression_sizes( array( 'medium', 'large' ) );
-
-		$this->find_link( 'input-example' )->click();
-		$this->find( 'div.tiny-compress-images button.tiny-compress' )->click();
-
-		$this->wait_for_text(
-			'div.tiny-compress-images',
-			'2 sizes compressed'
-		);
-	}
-
 	public function test_compress_button_in_edit_screen_should_compress_webp_images() {
 		if ( ! $this->has_postbox_container() ) { return; }
 		$this->set_compression_timing( 'auto' );

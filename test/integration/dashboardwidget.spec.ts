@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { clearMediaLibrary, setAPIKey, setCompressionTiming, uploadMedia } from './utils';
+import { clearMediaLibrary, setAPIKey, setCompressionTiming, uploadMedia, enableCompressionSizes } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -9,6 +9,7 @@ test.describe('dashboardwidget', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     await setAPIKey(page, '');
+    await enableCompressionSizes(page, [], true); // enable all sizes
   });
 
   test.beforeEach(async () => {

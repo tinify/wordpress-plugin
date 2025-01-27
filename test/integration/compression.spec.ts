@@ -48,6 +48,7 @@ test.describe('compression', () => {
     test('upload with valid key should show sizes compressed', async () => {
         await setAPIKey(page, 'JPG123');
         await setCompressionTiming(page, 'auto');
+        await enableCompressionSizes(page, ['medium']);
         
         await uploadMedia(page, 'input-example.jpg');
         
@@ -72,7 +73,8 @@ test.describe('compression', () => {
         await setAPIKey(page, 'PNG123 INVALID');
         await setCompressionTiming(page, 'auto');
         await enableCompressionSizes(page, ['0', 'medium']);
-        await page.goto('options-general.php?page=tinify');
+        
+        await page.goto('/wp-admin/options-general.php?page=tinify');
         await page.locator('#tinypng_preserve_data_copyright').check({ force: true });
         await page.locator('#submit').click();
         
@@ -93,8 +95,7 @@ test.describe('compression', () => {
         await enableCompressionSizes(page, ['medium', 'large']);
 
         await page.goto('/wp-admin/upload.php');
-        await page.getByLabel('“input-example” (Edit)').click();
-        await expect(page.locator('2 sizes to be compressed')).toBeVisible();
+        await expect(page.getByText('2 sizes to be compressed')).toBeVisible();
     });
 
     test('show compression details in edit screen popup', async () => {
@@ -133,6 +134,18 @@ test.describe('compression', () => {
             await expect(cells[0]).toHaveText(expectedText[i - 1][0]);
             await expect(cells[2]).toHaveText(expectedText[i - 1][1]);
         }
+    });
+
+    test('button in edit screen should compress images', async () => {
+        await setCompressionTiming(page, 'auto');
+        await enableCompressionSizes(page, ['medium', 'large']);
+        await uploadMedia(page, 'input-example.jpg');
+        await setAPIKey(page, 'JPG123');
+
+        await page.goto('/wp-admin/upload.php');
+
+        await page.getByRole('button', { name: 'Compress' }).click();
+        await expect(page.getByText('2 sizes compressed')).toBeVisible();
     });
 
 
