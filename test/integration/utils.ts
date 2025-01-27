@@ -49,3 +49,32 @@ export async function setCompressionTiming(page: Page, timing: 'background' | 'a
   await page.locator(`#tinypng_compression_timing_${timing}`).check({ force: true });
   await page.locator('#submit').click();
 }
+
+
+type DefaultSizes = '0' | 'thumbnail' | 'medium' | 'medium_large' | 'large' | '1536x1536' | '2048x2048';
+/**
+ * @param  {Page} page the page context
+ * @param  {DefaultSizes[]} sizes the sizes to enable
+ * @param  {boolean=false} enableOtherSizes the state of other sizes not in the size list
+ */
+export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], enableOtherSizes: boolean = false) {
+  await page.goto('/wp-admin/options-general.php?page=tinify');
+
+  const allSizes = await page.locator('.sizes input[type="checkbox"]').all();
+  for (const size of allSizes) {
+    const sizeID = await size.getAttribute('id');
+    if (!sizeID) continue;
+
+    const sizeName = sizeID.split('tinypng_sizes_').pop();
+    if (!sizeName) continue;
+    
+  
+    if (enableOtherSizes || sizes.includes(sizeName as DefaultSizes)) {
+      await size.check({ force: true });
+    } else {
+      await size.uncheck({ force: true });
+    }
+  }
+
+  await page.locator('#submit').click();
+}

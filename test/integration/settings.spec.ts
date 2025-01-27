@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { setAPIKey } from './utils';
+import { enableCompressionSizes, setAPIKey } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -15,12 +15,7 @@ test.describe('settings', () => {
     await page.locator('#tinypng_resize_original_enabled').uncheck();
 
     // Enable all sizes
-    const sizes = await page.locator('.sizes input[type=checkbox]').all();
-    await Promise.all(
-      sizes.map(async (size) => {
-        await size.check({ force: true });
-      })
-    );
+    await enableCompressionSizes(page, [], true);
 
     await page.locator('#submit').click();
   });
@@ -165,12 +160,7 @@ test.describe('settings', () => {
   });
 
   test('store size settings', async () => {
-    const sizes = await page.locator('.sizes input[type=checkbox]').all();
-    await Promise.all(
-      sizes.map(async (size) => {
-        await size.uncheck({ force: true });
-      })
-    );
+    await enableCompressionSizes(page, []); // disable all sizes
 
     await page.locator('#submit').click();
 
@@ -183,10 +173,7 @@ test.describe('settings', () => {
   });
 
   test('show free compressions', async () => {
-    await page.locator('#tinypng_sizes_0').check();
-    await page.locator('#tinypng_sizes_thumbnail').check();
-    await page.locator('#tinypng_sizes_medium').check();
-    await page.locator('#tinypng_sizes_large').check();
+    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium', 'large']);
 
     await page.locator('#submit').click();
 
@@ -200,12 +187,7 @@ test.describe('settings', () => {
   });
 
   test('show no compressions', async () => {
-    const sizesDisabled = await page.locator('.sizes input[type=checkbox]').all();
-    await Promise.all(
-      sizesDisabled.map(async (size) => {
-        await size.uncheck({ force: true });
-      })
-    );
+    await enableCompressionSizes(page, []); // disable all sizes
     await page.locator('#submit').click();
 
     await expect(page.getByText('With these settings no images will be compressed.')).toBeVisible();
