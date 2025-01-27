@@ -40,6 +40,9 @@ function wait_for_service_port {
 function prepare_test_config {
   mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
   cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
+
+  mv src/config/class-tiny-config.php src/config/class-tiny-config.php.bak
+  cp test/fixtures/class-tiny-config.php src/config/class-tiny-config.php
 }
 
 function restore_config {
