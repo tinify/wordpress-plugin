@@ -126,7 +126,7 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
  * @returns {boolean} true when version is equal or higher
  */
 export async function isWPVersionOrHigher(page: Page, version: number) {
-  page.goto('/wp-admin/about.php')
+  page.goto('/wp-admin/index.php')
   const versionText = await page.locator('#wp-version').textContent();
   if (!versionText) throw Error('Could not find version text');
 
