@@ -2,8 +2,7 @@ import path from 'path';
 import { Page } from '@playwright/test';
 
 export async function uploadMedia(page: Page, file: string) {
-  await page.goto('/wp-admin/media-new.php');
-  await page.waitForLoadState('networkidle'); // ensure media library is loaded
+  await page.goto('/wp-admin/media-new.php?browser-uploader');
   const fileChooserPromise = page.waitForEvent('filechooser');
   await page.getByLabel('Upload').click();
   const fileChooser = await fileChooserPromise;
