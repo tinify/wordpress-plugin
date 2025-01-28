@@ -10,6 +10,7 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${process.env.WORDPRESS_PORT}`,
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
   projects: [
     {
