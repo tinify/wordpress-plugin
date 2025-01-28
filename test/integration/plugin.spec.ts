@@ -13,10 +13,10 @@ test.describe('plugin', () => {
   });
 
   test('includes settings link', async () => {
-    await expect(page.getByRole('link', { name: 'Settings', exact: true })).toBeVisible();
+    await expect(page.locator('#the-list').getByRole('link', { name: 'Settings' })).toBeVisible();
   });
 
   test('includes bulk optimization link', async () => {
-    await expect(page.getByLabel('Main content').getByRole('link', { name: 'Bulk Optimization', exact: true })).toBeVisible();
+    await expect(page.locator('#the-list').getByRole('link', { name: 'Bulk Optimization' })).toBeVisible();
   });
 });
