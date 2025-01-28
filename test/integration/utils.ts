@@ -119,3 +119,21 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
 
   await page.locator('#submit').click();
 }
+
+/**
+ * @param  {Page} page context
+ * @param  {number} version the required version, ex: 5.7
+ * @returns {boolean} true when version is equal or higher
+ */
+export async function isWPVersionOrHigher(page: Page, version: number) {
+  page.goto('/wp-admin/about.php')
+  const versionText = await page.locator('.wp-badge').first().textContent();
+  if (!versionText) throw Error('Could not find version text');
+
+  const match = versionText.match(/\d+(\.\d+)?/);
+  const parsedText = match ? parseFloat(match[0]) : null;
+
+  if (!parsedText) throw Error('Could not find version number');
+
+  return parsedText >= version;
+}

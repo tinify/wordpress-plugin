@@ -24,3 +24,5 @@ export WP_ENV_TESTS_PORT=80${WORDPRESS_VERSION}
 export WP_ENV_CORE=WordPress/Wordpress#${WORDPRESS_VERSION_FULL}
 
 npx wp-env start 
+
+echo "To stop, run: bin/stop-wordpress"

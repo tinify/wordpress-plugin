@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { clearMediaLibrary, enableCompressionSizes, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
+import { clearMediaLibrary, enableCompressionSizes, isWPVersionOrHigher, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -96,6 +96,10 @@ test.describe('bulkoptimization', () => {
     });
 
     test('bulk optimize webp images', async () => {
+        // https://make.wordpress.org/core/2021/06/07/wordpress-5-8-adds-webp-support/
+        const hasWebPsupport = await isWPVersionOrHigher(page, 5.7);
+        if (!hasWebPsupport) return;
+        
         await setAPIKey(page, 'JPG123');
         await setCompressionTiming(page, 'auto');
 

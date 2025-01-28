@@ -2,7 +2,7 @@
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
-Requires at least: 3.4
+Requires at least: 4.7
 Tested up to: 6.7
 Stable tag: 3.4.6
 License: GPLv2 or later
