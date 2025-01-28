@@ -171,14 +171,14 @@ test.describe('compression', () => {
 
         await page.goto('/wp-admin/upload.php');
         await page.getByLabel('“input-example” (Edit)').click();
-        await page.getByRole('button', { name: 'Compress' }).click();
-
-        await page.waitForLoadState('networkidle');
 
         await expect(page.getByText('1 size compressed')).toBeVisible();
         await expect(page.getByText('1 size to be compressed')).toBeVisible();
 
-        await page.getByRole('button', { name: 'Compress' }).click();
+        await page.waitForLoadState('networkidle'); 
+        
+        await page.getByRole('button', { name: 'Compress' }).click({ force: true });
+
         await expect(page.getByText('2 sizes compressed')).toBeVisible();
     });
 

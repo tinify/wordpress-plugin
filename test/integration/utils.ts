@@ -93,8 +93,8 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
 
   if (settings.resize) {
     await page.locator('#tinypng_resize_original_enabled').check({ force: true });
-    await page.locator('#tinypng_resize_original_width').pressSequentially(`${settings.width}`);
-    await page.locator('#tinypng_resize_original_height').pressSequentially(`${settings.height}`);
+    await page.fill('#tinypng_resize_original_width', `${settings.width}`);
+    await page.fill('#tinypng_resize_original_height', `${settings.height}`);
   } else {
     await page.locator('#tinypng_resize_original_enabled').uncheck({ force: true });
   }
