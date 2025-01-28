@@ -12,6 +12,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        wp-version: [47, 57, 63, 67]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,9 +24,17 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+          
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
 
       - name: Install dependencies
         run: npm ci
         
       - name: Run script
-        run: ./bin/integration-tests 63
+        run: ./bin/integration-tests ${{ wp-version }}
