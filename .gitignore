@@ -6,3 +6,10 @@ composer.phar
 /tmp/*
 !/tmp/.gitkeep
 /src/languages/
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+test/integration/.auth/user.json
+artifacts/

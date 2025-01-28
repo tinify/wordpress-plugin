@@ -1,0 +1,4 @@
+{
+    "plugins": [ "." ],
+    "phpVersion": "7.2"
+}

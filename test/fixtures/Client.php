@@ -3,7 +3,7 @@
 namespace Tinify;
 
 class Client {
-	const API_ENDPOINT = 'http://webservice';
+	const API_ENDPOINT = 'http://host.docker.internal:8100';
 
 	private $options;
 
