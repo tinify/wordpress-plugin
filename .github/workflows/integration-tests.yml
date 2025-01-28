@@ -53,3 +53,10 @@ jobs:
         
       - name: Run script
         run: ./bin/integration-tests ${{ matrix.wp-version }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
