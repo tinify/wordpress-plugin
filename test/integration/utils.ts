@@ -4,7 +4,7 @@ import { Page } from '@playwright/test';
 export async function uploadMedia(page: Page, file: string) {
   await page.goto('/wp-admin/media-new.php');
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('#async-upload').click();
+  await page.getByLabel('Upload').click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await page.locator('#html-upload').click();
