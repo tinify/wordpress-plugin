@@ -37,4 +37,4 @@ jobs:
         run: npm ci
         
       - name: Run script
-        run: ./bin/integration-tests ${{ wp-version }}
+        run: ./bin/integration-tests ${{ matrix.wp-version }}
