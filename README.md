@@ -28,7 +28,8 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 
 ### Running the integration tests
 1. Install Docker 1.12 and docker-compose.
-2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 60`.
+2. Install npm dependancies
+3. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 60`.
 
 ### Check if the code follows WordPress standard
 1. Run `bin/check-style` to make sure there are no errors.
