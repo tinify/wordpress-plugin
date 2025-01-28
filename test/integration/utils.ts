@@ -78,3 +78,44 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
 
   await page.locator('#submit').click();
 }
+
+type OriginalImageSettings = {
+  resize: boolean;
+  width?: number;
+  height?: number;
+  preserveDate: boolean;
+  preserveCopyright: boolean;
+  preserveGPS: boolean;
+}
+export async function setOriginalImage(page: Page, settings: OriginalImageSettings) {
+  await page.goto('/wp-admin/options-general.php?page=tinify');
+
+
+  if (settings.resize) {
+    await page.locator('#tinypng_resize_original_enabled').check({ force: true });
+    await page.locator('#tinypng_resize_original_width').pressSequentially(`${settings.width}`);
+    await page.locator('#tinypng_resize_original_height').pressSequentially(`${settings.height}`);
+  } else {
+    await page.locator('#tinypng_resize_original_enabled').uncheck({ force: true });
+  }
+
+  if (settings.preserveDate) {
+    await page.locator('#tinypng_preserve_data_creation').check({ force: true });
+  } else {
+    await page.locator('#tinypng_preserve_data_creation').uncheck({ force: true });
+  }
+
+  if (settings.preserveCopyright) {
+    page.locator('#tinypng_preserve_data_copyright').check({ force: true });
+  } else {
+    page.locator('#tinypng_preserve_data_copyright').uncheck({ force: true });
+  }
+
+  if (settings.preserveGPS) {
+    page.locator('#tinypng_preserve_data_location').check({ force: true });
+  } else {
+    page.locator('#tinypng_preserve_data_location').uncheck({ force: true });
+  }
+
+  await page.locator('#submit').click();
+}
