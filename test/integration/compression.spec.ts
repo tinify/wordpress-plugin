@@ -259,7 +259,9 @@ test.describe('compression', () => {
         await page.goto('/wp-admin/upload.php');
         await page.getByLabel('“input-example” (Edit)').click();
 
-        await expect(page.getByText('Dimensions: 300 by 200 pixels')).toBeVisible();
+        const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
+        const shouldMatch = /.*300\s*(x|×|by)\s*200.*/;
+        await expect(dimensionText?.trim()).toMatch(shouldMatch)
     });
     
     test('resize scale should display resized text in library', async () => {
@@ -302,7 +304,9 @@ test.describe('compression', () => {
         await page.goto('/wp-admin/upload.php');
         await page.getByLabel('“input-example” (Edit)').click();
 
-        await expect(page.getByText('Dimensions: 300 by 200 pixels')).toBeVisible();
+        const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
+        const shouldMatch = /.*300\s*(x|×|by)\s*200.*/;
+        await expect(dimensionText?.trim()).toMatch(shouldMatch)
     });
 
     test('superfluous resize should not display resized text in library', async () => {
@@ -347,7 +351,9 @@ test.describe('compression', () => {
         await page.goto('/wp-admin/upload.php');
         await page.getByLabel('“input-example” (Edit)').click();
 
-        await expect(page.getByText('Dimensions: 1080 by 720 pixels')).toBeVisible();
+        const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
+        const shouldMatch = /.*1080\s*(x|×|by)\s*720.*/;
+        await expect(dimensionText?.trim()).toMatch(shouldMatch);
     });
 
     test('resize disabled should not display resized text in library', async () => {
@@ -382,7 +388,9 @@ test.describe('compression', () => {
         await page.goto('/wp-admin/upload.php');
         await page.getByLabel('“input-example” (Edit)').click();
 
-        await expect(page.getByText('Dimensions: 1080 by 720')).toBeVisible();
+        const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
+        const shouldMatch = /.*1080\s*(x|×|by)\s*720.*/;
+        await expect(dimensionText?.trim()).toMatch(shouldMatch);
     });
 
     test('preserve copyright should not display modification in library', async () => {
