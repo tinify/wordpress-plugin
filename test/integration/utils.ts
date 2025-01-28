@@ -127,7 +127,7 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
  */
 export async function isWPVersionOrHigher(page: Page, version: number) {
   page.goto('/wp-admin/about.php')
-  const versionText = await page.locator('.wp-badge').first().textContent();
+  const versionText = await page.locator('#wp-version').textContent();
   if (!versionText) throw Error('Could not find version text');
 
   const match = versionText.match(/\d+(\.\d+)?/);
