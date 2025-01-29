@@ -408,7 +408,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$description,
 			'background',
 			$checked,
-			false,
+			false
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_enabled' );
@@ -636,24 +636,25 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$value,
 			$checked
 	) {
+		if ($value == 'background' && Tiny_AS3CF::is_active() && Tiny_AS3CF::remove_local_files_setting_enabled() ) {
 		echo '<div class="notice notice-warning inline"><p>';
 		echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
-		if ( Tiny_AS3CF::is_active() && Tiny_AS3CF::remove_local_files_setting_enabled() ) {
 			$message = esc_html_e(
 				'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
 				'tiny-compress-images'
 			);
 			echo $message;
+			echo '</p></div>';
+			echo '<p class="tiny-radio disabled">';
+		} else {
+			echo '<p class="tiny-radio">';
 		}
-		echo '</p></div>';
-		echo '<p class="tiny-radio disabled">';
 
 		$id = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
 		$label = esc_html( $label, 'tiny-compress-images' );
 		$desc = esc_html( $desc, 'tiny-compress-images' );
-		$disabled = ( $disabled ? ' disabled="disabled"' : '' );
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
-							'" value="' . $value . '" ' . $checked . ' ' . $disabled . '/>';
+							'" value="' . $value . '" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
 		echo '<br>';
 		echo '<span class="description">' . $desc . '</span>';

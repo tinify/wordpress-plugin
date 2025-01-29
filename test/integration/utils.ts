@@ -18,7 +18,7 @@ export async function clearMediaLibrary(page: Page) {
   }
   await page.locator('#cb-select-all-1').check({ force: true });
   await page.locator('#bulk-action-selector-top').selectOption('delete');
-  page.once('dialog', dialog => dialog.accept());
+  page.once('dialog', (dialog) => dialog.accept());
   await page.locator('#doaction').click();
 }
 
@@ -30,7 +30,6 @@ export async function setAPIKey(page: Page, key = '') {
   const isVisible = await changeAPIKey.isVisible();
   if (isVisible) {
     await changeAPIKey.click();
-    
   }
   await page.locator('#tinypng_api_key').fill(key);
 
@@ -50,7 +49,6 @@ export async function setCompressionTiming(page: Page, timing: 'background' | 'a
   await page.locator('#submit').click();
 }
 
-
 type DefaultSizes = '0' | 'thumbnail' | 'medium' | 'medium_large' | 'large' | '1536x1536' | '2048x2048';
 /**
  * @param  {Page} page the page context
@@ -67,8 +65,7 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
 
     const sizeName = sizeID.split('tinypng_sizes_').pop();
     if (!sizeName) continue;
-    
-  
+
     if (enableOtherSizes || sizes.includes(sizeName as DefaultSizes)) {
       await size.check({ force: true });
     } else {
@@ -86,15 +83,14 @@ type OriginalImageSettings = {
   preserveDate: boolean;
   preserveCopyright: boolean;
   preserveGPS: boolean;
-}
+};
 export async function setOriginalImage(page: Page, settings: OriginalImageSettings) {
   await page.goto('/wp-admin/options-general.php?page=tinify');
-
 
   if (settings.resize) {
     await page.locator('#tinypng_resize_original_enabled').check({ force: true });
     await page.fill('#tinypng_resize_original_width', settings.width?.toString() || '');
-    await page.fill('#tinypng_resize_original_height', settings.height?.toString() || ''); 
+    await page.fill('#tinypng_resize_original_height', settings.height?.toString() || '');
   } else {
     await page.locator('#tinypng_resize_original_enabled').uncheck({ force: true });
   }
@@ -126,7 +122,7 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
  * @returns {boolean} true when version is equal or higher
  */
 export async function isWPVersionOrHigher(page: Page, version: number) {
-  page.goto('/wp-admin/index.php')
+  page.goto('/wp-admin/index.php');
   const versionText = await page.locator('#wp-version').textContent();
   if (!versionText) throw Error('Could not find version text');
 
@@ -136,4 +132,23 @@ export async function isWPVersionOrHigher(page: Page, version: number) {
   if (!parsedText) throw Error('Could not find version number');
 
   return parsedText >= version;
+}
+/**
+ * @param  {Page} page context
+ * @param  {string} pluginSlug slug of the plugin, ex 'tiny-compress-images'
+ */
+export async function activatePlugin(page: Page, pluginSlug: string) {
+  await page.goto('/wp-admin/plugins.php');
+
+  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]');
+  if (!plugin) {
+    throw Error(`Plug-in ${pluginSlug} not found. Are you sure it is installed?`);
+  }
+
+  const className = await plugin.getAttribute('class');
+  if (className === 'active') {
+    return;
+  }
+
+  await plugin.getByLabel('Activate').click();
 }

@@ -50,10 +50,16 @@ function restore_config {
 }
 
 function start_services {
+
+  echo "Starting Mock API.."
   docker build -t mock-webservice -f config/Dockerfile-mock-webservice . || { trap - EXIT; exit 1; }
   docker run -d --name tinify-mock-api -p ${MOCK_PORT}:80 -v $(pwd)/test/mock-tinypng-webservice:/var/www/html mock-webservice || { trap - EXIT; exit 1; }
 
+  echo "Starting WordPress.."
   npx wp-env start
+
+  echo "Installing compatible plugins.."
+  npx wp-env run tests-cli wp plugin install amazon-s3-and-cloudfront
 }
 
 function stop_services {
