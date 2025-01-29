@@ -14,4 +14,4 @@ services:
     ports:
       - 8100:80
     volumes:
-      - ./mock-tinypng-webservice:/var/www/html
+      - ../test/mock-tinypng-webservice:/var/www/html
