@@ -1,6 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { activatePlugin, enableCompressionSizes, setAPIKey, setCompressionTiming } from './utils';
-import { onBucketSavedResponse, onKeySavedResponse, onStateCheck } from './data/as3cf';
+import { activatePlugin, enableCompressionSizes, setAPIKey, setCompressionTiming, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -12,36 +11,22 @@ test.describe('as3cf', () => {
 
     await activatePlugin(page, 'amazon-s3-and-cloudfront');
 
-    await page.goto('/wp-admin/options-general.php?page=amazon-s3-and-cloudfront#/storage/provider');
+    await page.goto('/wp-admin/options-general.php?page=amazon-s3-and-cloudfront');
 
-    await page.getByText('I understand the risks').click();
+    const isConfigured = await page.getByText('Storage provider is successfully connected and ready to offload new media.').isVisible();
+    if (!isConfigured) {
+      await page.getByText('Enter bucket name').click();
+      await page.getByPlaceholder('Enter bucket name…').fill('tinytest');
+      await page.getByRole('button', { name: 'Save Bucket Settings' }).click();
+      await page.waitForLoadState('networkidle');
+    }
 
-    await page.getByLabel('Access Key ID').fill('test_key_id');
-    await page.getByLabel('Secret Access Key').fill('test_secret_access_key');
-
-    // await page.route('*/**/index.php?rest_route=/wp-offload-media/v1/settings/', async (route) => {
-    //   await route.fulfill({ json: onKeySavedResponse });
-    // });
-    await page.getByRole('button', { name: 'Save & Continue' }).click();
-
-    await page.waitForLoadState('networkidle');
-
-    await page.getByText('Enter bucket name').click();
-
-    await page.getByPlaceholder('Enter bucket name…').fill('tinifytest');
-
-    // await page.route('*/**/index.php?rest_route=/wp-offload-media/v1/settings/', async (route) => {
-    //   await route.fulfill({ json: onBucketSavedResponse });
-    // });
-
-    // await page.route('*/**/index.php?rest_route=/wp-offload-media/v1/state/', async (route) => {
-    //   await route.fulfill({ json: onStateCheck });
-    // });
-
-    await page.getByRole('button', { name: 'Save Bucket Settings' }).click();
-    await page.waitForLoadState('networkidle');
-
-    await page.reload();
+    const cfgRemoveLocal = await page.locator('label').filter({ hasText: 'Remove Local Media' }).isChecked();
+    if (cfgRemoveLocal) {
+      // start with remove local media disabled
+      await  page.locator('label').filter({ hasText: 'Remove Local Media' }).uncheck({ force: true });
+      await page.getByRole('button', { name: 'Save Changes' }).click();
+    }
 
     await setAPIKey(page, 'JPG123');
     await enableCompressionSizes(page, [], true);
@@ -55,7 +40,7 @@ test.describe('as3cf', () => {
 
   test('does not show notification when local media is not preserved but timing is auto', async () => {
     await page.goto('/wp-admin/options-general.php?page=amazon-s3-and-cloudfront');
-    await page.locator('#remove-local-file').check({ force: true });
+    await page.getByLabel('Remove Local Media').check({ force: true });
 
     await page.getByRole('button', { name: 'Save Changes' }).click();
 
@@ -75,5 +60,17 @@ test.describe('as3cf', () => {
     await page.goto('/wp-admin/options-general.php?page=tinify');
 
     await expect(page.getByText('For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.')).toBeVisible();
+  });
+
+  test('compress image before offloading', async ({ page }) => {
+    await setCompressionTiming(page, 'auto');
+
+    await uploadMedia(page, 'input-example.jpg');
+  });
+
+  test('compress image asynchronously', async ({ page }) => {
+    await setCompressionTiming(page, 'background');
+
+    await uploadMedia(page, 'input-example.jpg');
   });
 });
