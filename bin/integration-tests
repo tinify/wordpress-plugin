@@ -50,10 +50,8 @@ function restore_config {
 }
 
 function start_services {
-
-  echo "Starting Mock API.."
-  docker build -t mock-webservice -f config/Dockerfile-mock-webservice . || { trap - EXIT; exit 1; }
-  docker run -d --name tinify-mock-api -p ${MOCK_PORT}:80 -v $(pwd)/test/mock-tinypng-webservice:/var/www/html mock-webservice || { trap - EXIT; exit 1; }
+  echo "Starting Mocks.."
+  docker compose -f config/mocks.docker-compose.yml up -d
 
   echo "Starting WordPress.."
   npx wp-env start
@@ -63,8 +61,7 @@ function start_services {
 }
 
 function stop_services {
-  docker stop $(docker ps -q --filter "ancestor=mock-webservice") || { trap - EXIT; exit 1; }
-  docker rm $(docker ps -a -q --filter "ancestor=mock-webservice") || { trap - EXIT; exit 1; }
+  docker compose -f config/mocks.docker-compose.yml down
 
   npx wp-env stop
 }
