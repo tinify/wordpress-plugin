@@ -152,3 +152,23 @@ export async function activatePlugin(page: Page, pluginSlug: string) {
 
   await plugin.getByLabel('Activate').click();
 }
+
+/**
+ * @param  {Page} page context
+ * @param  {string} pluginSlug slug of the plugin, ex 'tiny-compress-images'
+ */
+export async function deactivatePlugin(page: Page, pluginSlug: string) {
+  await page.goto('/wp-admin/plugins.php');
+
+  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]');
+  if (!plugin) {
+    throw Error(`Plug-in ${pluginSlug} not found. Are you sure it is installed?`);
+  }
+
+  const className = await plugin.getAttribute('class');
+  if (className !== 'active') {
+    return;
+  }
+
+  await plugin.getByLabel('Deactivate').click();
+}
