@@ -28,7 +28,6 @@ if [ -z "${WORDPRESS_VERSION}" ]; then
 
   ## WordPress version ex. "6.7"
   export WORDPRESS_VERSION_FULL="${WORDPRESS_VERSION:0:1}.${WORDPRESS_VERSION:1}"
-
 fi
 
 export MYSQL_PWD=root
