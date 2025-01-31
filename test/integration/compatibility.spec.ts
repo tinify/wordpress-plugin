@@ -72,27 +72,60 @@ test.describe('as3cf', () => {
     await setRemoveLocalMedia(page, false);
     await clearMediaLibrary(page);
     await setCompressionTiming(page, 'auto');
+    await enableCompressionSizes(page, ['0'], false);
 
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?mode=list');
     await page.getByLabel('“input-example” (Edit)').click();
 
-    await expect(page.locator('#attachment_url')).toContainText(TEST_BUCKETNAME);
-    await expect(page.getByText('5 sizes compressed')).toBeVisible();
+    const imageURL = await page.locator('#attachment_url').inputValue();
+    await expect(imageURL).toContain(TEST_BUCKETNAME);
+    await expect(page.getByText('1 size compressed')).toBeVisible(); 
   });
 
   test('compress image asynchronously', async ({ page }) => {
     await setRemoveLocalMedia(page, false);
     await clearMediaLibrary(page);
     await setCompressionTiming(page, 'background');
+    await enableCompressionSizes(page, ['0'], false);
 
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?mode=list');
     await page.getByLabel('“input-example” (Edit)').click();
 
-    expect(page.locator('#attachment_url')).toContainText(TEST_BUCKETNAME);
-    expect(page.getByText('5 sizes compressed')).toBeVisible();
+    const imageURL = await page.locator('#attachment_url').inputValue();
+    await expect(imageURL).toContain(TEST_BUCKETNAME);
+    await expect(page.getByText('1 size compressed')).toBeVisible(); 
+  });
+
+  test('compress images manually', async ({ page }) => {
+    await setRemoveLocalMedia(page, false);
+    await clearMediaLibrary(page);
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0'], false);
+
+    await uploadMedia(page, 'input-example.jpg');
+
+    await page.goto('/wp-admin/upload.php?mode=list');
+    await page.getByLabel('“input-example” (Edit)').click();
+
+    const imageURL = await page.locator('#attachment_url').inputValue();
+    await expect(imageURL).toContain(TEST_BUCKETNAME);
+    await expect(page.getByText('1 size to be compressed')).toBeVisible(); 
+  });
+  
+  test('does not show compression button if image is not available locally', async ({ page }) => {
+    // Currently, we cannot support compression of images that are not available locally.
+    await setRemoveLocalMedia(page, true);
+    await clearMediaLibrary(page);
+    await setCompressionTiming(page, 'manual');
+
+    await uploadMedia(page, 'input-example.jpg');
+
+    await page.goto('/wp-admin/upload.php?mode=list');
+
+    await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
   });
 });
