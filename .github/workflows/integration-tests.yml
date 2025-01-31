@@ -17,7 +17,7 @@ jobs:
         include:
           - { wp: 34, php: 53 }
           - { wp: 48, php: 56 }
-          - { wp: 48, php: 70 }
+          - { wp: 55, php: 56 }
           - { wp: 60, php: 74 }
           - { wp: 63, php: 74 }
           - { wp: 67, php: 74 }
