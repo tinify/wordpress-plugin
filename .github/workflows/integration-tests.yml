@@ -15,13 +15,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - { wp: 34, php: 53 }
-          - { wp: 48, php: 56 }
-          - { wp: 55, php: 56 }
-          - { wp: 60, php: 74 }
-          - { wp: 63, php: 74 }
-          - { wp: 67, php: 74 }
-          - { wp: 67, php: 80 }
+          - { wp: 4, php: 56 }
+          - { wp: 4, php: 70 } 
+          - { wp: 5, php: 73 }
+          - { wp: 6, php: 73 }
+          - { wp: 63, php: 80 }
           - { wp: 67, php: 82 }
     steps:
       - name: Checkout code
