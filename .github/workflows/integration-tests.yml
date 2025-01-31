@@ -14,7 +14,15 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        wp-version: [67]
+        include:
+          - { wp: 34, php: 5.3 }
+          - { wp: 48, php: 5.6 }
+          - { wp: 48, php: 7.0 }
+          - { wp: 60, php: 7.4 }
+          - { wp: 63, php: 7.4 }
+          - { wp: 67, php: 7.4 }
+          - { wp: 67, php: 8.0 }
+          - { wp: 67, php: 8.2 }
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,7 +60,7 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         
       - name: Run script
-        run: ./bin/integration-tests ${{ matrix.wp-version }}
+        run: ./bin/integration-tests ${{ matrix.wp }} ${{ matrix.php}}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
