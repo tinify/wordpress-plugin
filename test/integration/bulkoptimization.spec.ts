@@ -139,15 +139,18 @@ test.describe('bulkoptimization', () => {
         await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
         await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
 
-        const hasLargeImages = WPVersion >= 5.7;
-        if (hasLargeImages) {
-            await expect(page.locator('#unoptimized-library-size')).toHaveText('3.33 MB');
-            await expect(page.locator('#optimized-library-size')).toHaveText('2.66 MB');
-            await expect(page.locator('#savings-percentage')).toHaveText('20.2%');
-        } else {
+        if (WPVersion < 5.7) {
             await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
             await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
             await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
+        } else if (WPVersion < 6.3) { 
+            await expect(page.locator('#unoptimized-library-size')).toHaveText('2.84 MB');
+            await expect(page.locator('#optimized-library-size')).toHaveText('2.16 MB');
+            await expect(page.locator('#savings-percentage')).toHaveText('23.8%');
+        } else {
+            await expect(page.locator('#unoptimized-library-size')).toHaveText('3.33 MB');
+            await expect(page.locator('#optimized-library-size')).toHaveText('2.66 MB');
+            await expect(page.locator('#savings-percentage')).toHaveText('20.2%');
         }
         await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
     });
