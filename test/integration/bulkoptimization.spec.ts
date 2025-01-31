@@ -139,9 +139,16 @@ test.describe('bulkoptimization', () => {
         await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
         await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
 
-        await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
-        await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
-        await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
+        const hasLargeImages = WPVersion >= 5.7;
+        if (hasLargeImages) {
+            await expect(page.locator('#unoptimized-library-size')).toHaveText('3.33 MB');
+            await expect(page.locator('#optimized-library-size')).toHaveText('2.66 MB');
+            await expect(page.locator('#savings-percentage')).toHaveText('20.2%');
+        } else {
+            await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
+            await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
+            await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
+        }
         await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
     });
 

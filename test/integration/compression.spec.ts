@@ -6,6 +6,15 @@ test.describe.configure({ mode: 'serial' });
 let page: Page;
 let WPVersion = 0;
 
+function viewImage(page: Page, file: string) {
+  const selectByLabel = WPVersion >= 5.7;
+  if (selectByLabel) {
+    page.getByLabel(`“${file}” (Edit)`).click();
+  } else {
+    page.getByRole('cell', { name: file, exact: true }).getByRole('link').click();
+  }
+}
+
 test.describe('compression', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
@@ -107,7 +116,7 @@ test.describe('compression', () => {
 
     await uploadMedia(page, 'input-example.jpg');
 
-    await page.getByRole('cell', { name: 'input-example', exact: true }).getByRole('link').click();
+    await viewImage(page, 'input-example');
 
     // thickbox is used to show modal window so wait until it is loaded
     await page.waitForLoadState('networkidle');
@@ -170,7 +179,7 @@ test.describe('compression', () => {
     await enableCompressionSizes(page, ['medium', 'thumbnail']);
 
     await page.goto('/wp-admin/upload.php');
-    await page.getByRole('cell', { name: 'input-example', exact: true }).getByRole('link').click();
+    await viewImage(page, 'input-example');
 
     await expect(page.getByText('1 size compressed')).toBeVisible();
     await expect(page.getByText('1 size to be compressed')).toBeVisible();
@@ -259,7 +268,7 @@ test.describe('compression', () => {
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
-    await page.getByRole('cell', { name: 'input-example', exact: true }).getByRole('link').click();
+    await viewImage(page, 'input-example');
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*300\s*(x|×|by)\s*200.*/;
@@ -304,7 +313,7 @@ test.describe('compression', () => {
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
-    await page.getByRole('cell', { name: 'input-example', exact: true }).getByRole('link').click();
+    await viewImage(page, 'input-example');
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*300\s*(x|×|by)\s*200.*/;
@@ -351,7 +360,7 @@ test.describe('compression', () => {
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
-    await page.getByRole('cell', { name: 'input-example', exact: true }).getByRole('link').click();
+    await viewImage(page, 'input-example');
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*1080\s*(x|×|by)\s*720.*/;
@@ -388,7 +397,7 @@ test.describe('compression', () => {
     });
     await uploadMedia(page, 'input-example.jpg');
     await page.goto('/wp-admin/upload.php');
-    await page.getByRole('cell', { name: 'input-example', exact: true }).getByRole('link').click();
+    await viewImage(page, 'input-example');
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*1080\s*(x|×|by)\s*720.*/;
