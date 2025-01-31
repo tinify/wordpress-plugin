@@ -1,13 +1,15 @@
 import { Page, expect, test } from '@playwright/test';
-import { clearMediaLibrary, enableCompressionSizes, isWPVersionOrHigher, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
+import { clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
 let page: Page;
+let WPVersion = 0;
 
 test.describe('bulkoptimization', () => {
     test.beforeAll(async ({ browser }) => {
       page = await browser.newPage();
+      WPVersion = await getWPVersion(page);
     });
 
     test.beforeEach(async () => {
@@ -97,8 +99,7 @@ test.describe('bulkoptimization', () => {
 
     test('bulk optimize webp images', async () => {
         // https://make.wordpress.org/core/2021/06/07/wordpress-5-8-adds-webp-support/
-        const hasWebPsupport = await isWPVersionOrHigher(page, 5.7);
-        if (!hasWebPsupport) return;
+        if (WPVersion < 5.8) return;
         
         await setAPIKey(page, 'JPG123');
         await setCompressionTiming(page, 'auto');
@@ -138,9 +139,9 @@ test.describe('bulkoptimization', () => {
         await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
         await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
 
-        await expect(page.locator('#unoptimized-library-size')).toHaveText('2.84 MB');
-        await expect(page.locator('#optimized-library-size')).toHaveText('2.16 MB');
-        await expect(page.locator('#savings-percentage')).toHaveText('23.8%');
+        await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
+        await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
+        await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
         await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
     });
 

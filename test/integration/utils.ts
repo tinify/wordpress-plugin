@@ -118,11 +118,10 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
 
 /**
  * @param  {Page} page context
- * @param  {number} version the required version, ex: 5.7
- * @returns {boolean} true when version is equal or higher
+ * @returns {number} retrieves the current WordPress version
  */
-export async function isWPVersionOrHigher(page: Page, version: number) {
-  page.goto('/wp-admin/index.php');
+export async function getWPVersion(page: Page): Promise<number> {
+  await page.goto('/wp-admin/index.php');
 
   let wpVersionElement;
 
@@ -141,5 +140,5 @@ export async function isWPVersionOrHigher(page: Page, version: number) {
 
   if (!parsedText) throw Error('Could not find version number');
 
-  return parsedText >= version;
+  return parsedText;
 }
