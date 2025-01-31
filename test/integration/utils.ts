@@ -66,9 +66,12 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
     const sizeName = sizeID.split('tinypng_sizes_').pop();
     if (!sizeName) continue;
 
-    if (enableOtherSizes || sizes.includes(sizeName as DefaultSizes)) {
+    const shouldBeChecked = enableOtherSizes || sizes.includes(sizeName as DefaultSizes);
+    const isChecked = await size.isChecked();
+
+    if (shouldBeChecked && !isChecked) {
       await size.check({ force: true });
-    } else {
+    } else if (!shouldBeChecked && isChecked) {
       await size.uncheck({ force: true });
     }
   }
