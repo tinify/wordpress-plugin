@@ -1,6 +1,8 @@
 import path from 'path';
 import { Page } from '@playwright/test';
 
+export const BASE_URL = `http://localhost:${process.env.WORDPRESS_PORT}`;
+
 export async function uploadMedia(page: Page, file: string) {
   await page.goto('/wp-admin/media-new.php?browser-uploader');
   const fileChooserPromise = page.waitForEvent('filechooser');

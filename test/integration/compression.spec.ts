@@ -1,5 +1,7 @@
 import { Page, expect, test } from '@playwright/test';
-import { clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
+import fs from 'fs/promises';
+import path from 'path';
+import { BASE_URL, clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -454,5 +456,39 @@ test.describe('compression', () => {
     await page.goto('/wp-admin/upload.php');
 
     await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
+  });
+
+  test('compresses images upload via JSON API', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'auto');
+    await enableCompressionSizes(page, ['0', 'medium']);
+
+    const file = await fs.readFile(path.join(__dirname, '../fixtures/input-example.jpg'));
+    const response = await page.evaluate(
+      async (params) => {
+        const authResult = await fetch(`${params.baseURL}/wp-admin/admin-ajax.php?action=rest-nonce`);
+        const nonce = await authResult.text();
+
+        const blob = new Blob([new Uint8Array(params.file)], { type: 'image/jpeg' });
+
+        const mediaResponse = await fetch(`${params.baseURL}/wp-json/wp/v2/media`, {
+          method: 'POST',
+          headers: {
+            'X-WP-Nonce': nonce,
+            'Content-Disposition': 'attachment; filename="input-example.jpg"',
+          },
+          body: blob,
+        });
+        const jsonResponse = await mediaResponse.json();
+        return jsonResponse;
+      },
+      {
+        file: Array.from(file),
+        baseURL: BASE_URL,
+      }
+    );
+
+    await page.goto(`/wp-admin/post.php?post=${response.id}&action=edit`);
+    await expect(page.getByText('2 sizes compressed')).toBeVisible();
   });
 });
