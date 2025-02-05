@@ -1,5 +1,3 @@
-[<img src="https://travis-ci.org/tinify/wordpress-plugin.svg?branch=master" alt="Build Status">](https://travis-ci.org/tinify/wordpress-plugin)
-
 # TinyPNG - JPEG, PNG & WebP image compression for WordPress
 
 Make your website faster by optimizing your JPEG, PNG, and WebP images.
@@ -19,19 +17,19 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Prerequisites
 * A working Docker 1.12+ and Docker Compose installation (https://docs.docker.com/installation/).
 * Composer (https://getcomposer.org/download/).
-* PhantomJS 2.1 or greater (http://phantomjs.org).
-* MySQL client and admin tools.
+* Node LTS
 
 ### Running the plugin in WordPress
-1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 60`.
-2. Connect to Wordpress on port `80<version>` (e.g. port `8060`).
+1. Run `bin/run-wordpress <wordpress version> <php version>`. E.g. `bin/run-wordpress 60 73`.
+2. Connect to Wordpress on port `80<wordpress version>` (e.g. port `8060`).
 
 ### Running the unit tests
 1. Run `bin/unit-tests <optional path to file>`.
 
 ### Running the integration tests
 1. Install Docker 1.12 and docker-compose.
-2. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 60`.
+2. Install npm dependancies
+3. Run `bin/integration-tests <wordpress version> <php version>`. E.g. `bin/integration-tests 60 80`.
 
 ### Check if the code follows WordPress standard
 1. Run `bin/check-style` to make sure there are no errors.

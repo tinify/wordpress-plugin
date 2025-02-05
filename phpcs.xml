@@ -20,6 +20,6 @@
   <exclude-pattern>src/css</exclude-pattern>
   <exclude-pattern>src/data</exclude-pattern>
   <exclude-pattern>src/js</exclude-pattern>
-  <exclude-pattern>src/vendor</exclude-pattern>
+  <exclude-pattern>vendor</exclude-pattern>
   <exclude-pattern>test/</exclude-pattern>
 </ruleset>

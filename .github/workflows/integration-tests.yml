@@ -1,0 +1,69 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        include:
+          - { wp: 40, php: 56 }
+          - { wp: 40, php: 70 }
+          - { wp: 57, php: 73 }
+          - { wp: 60, php: 73 }
+          - { wp: 63, php: 80 }
+          - { wp: 67, php: 82 }
+          - { wp: 67, php: 83 }
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+
+      - name: Cache Playwright
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        
+      - name: Run script
+        run: ./bin/integration-tests ${{ matrix.wp }} ${{ matrix.php}}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ matrix.wp }}-${{ matrix.php }}
+          path: playwright-report/
+          retention-days: 30
