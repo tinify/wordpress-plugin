@@ -3,12 +3,14 @@ ob_start();
 
 require_once 'common.php';
 
+const HOST = 'http://host.docker.internal:8100';
+
 function mock_png_response() {
     global $session;
 
     $session['Compression-Count'] += 1;
     header('HTTP/1.1 201 Created');
-    header("Location: http://webservice/output/example.png");
+    header("Location: " . HOST . "/output/example.png");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
     header("Image-Width: 720");
@@ -26,7 +28,7 @@ function mock_jpg_response() {
 
     $session['Compression-Count'] += 1;
     header('HTTP/1.1 201 Created');
-    header("Location: http://webservice/output/example.jpg");
+    header("Location: " . HOST . "/output/example.jpg");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
     header("Image-Width: 200");
@@ -44,7 +46,7 @@ function mock_preserve_jpg_copyright_response() {
 
     $session['Compression-Count'] += 1;
     header('HTTP/1.1 201 Created');
-    header("Location: http://webservice/output/copyright.jpg");
+    header("Location: " . HOST . "/output/copyright.jpg");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
     header("Image-Width: 330");
@@ -92,7 +94,7 @@ function mock_invalid_json_response() {
 
     $session['Compression-Count'] += 1;
     header('HTTP/1.1 201 Created');
-    header("Location: http://webservice/output/example.png");
+    header("Location: " . HOST . "/output/example.png");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
     return '{invalid: json}';
