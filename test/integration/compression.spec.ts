@@ -459,7 +459,7 @@ test.describe('compression', () => {
   });
 
   // This is failing as images stay uncompressed
-  test.skip('compresses images upload via JSON API', async () => {
+  test('compresses images upload via JSON API', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'medium']);
