@@ -1,6 +1,8 @@
 import path from 'path';
 import { Page } from '@playwright/test';
 
+export const BASE_URL = `http://localhost:${process.env.WORDPRESS_PORT}`;
+
 export async function uploadMedia(page: Page, file: string) {
   await page.goto('/wp-admin/media-new.php?browser-uploader');
   const fileChooserPromise = page.waitForEvent('filechooser');
@@ -66,9 +68,12 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
     const sizeName = sizeID.split('tinypng_sizes_').pop();
     if (!sizeName) continue;
 
-    if (enableOtherSizes || sizes.includes(sizeName as DefaultSizes)) {
+    const shouldBeChecked = enableOtherSizes || sizes.includes(sizeName as DefaultSizes);
+    const isChecked = await size.isChecked();
+
+    if (shouldBeChecked && !isChecked) {
       await size.check({ force: true });
-    } else {
+    } else if (!shouldBeChecked && isChecked) {
       await size.uncheck({ force: true });
     }
   }
@@ -118,12 +123,21 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
 
 /**
  * @param  {Page} page context
- * @param  {number} version the required version, ex: 5.7
- * @returns {boolean} true when version is equal or higher
+ * @returns {number} retrieves the current WordPress version
  */
-export async function isWPVersionOrHigher(page: Page, version: number) {
-  page.goto('/wp-admin/index.php');
-  const versionText = await page.locator('#wp-version').textContent();
+export async function getWPVersion(page: Page): Promise<number> {
+  await page.goto('/wp-admin/index.php');
+
+  let wpVersionElement;
+
+  let isModernWP = await page.locator('#wp-version').isVisible();
+  if (isModernWP) {
+    wpVersionElement = await page.locator('#wp-version');
+  } else {
+    wpVersionElement = await page.locator('#wp-version-message');
+  }
+
+  const versionText = await wpVersionElement.textContent();
   if (!versionText) throw Error('Could not find version text');
 
   const match = versionText.match(/\d+(\.\d+)?/);
@@ -131,8 +145,9 @@ export async function isWPVersionOrHigher(page: Page, version: number) {
 
   if (!parsedText) throw Error('Could not find version number');
 
-  return parsedText >= version;
+  return parsedText;
 }
+
 /**
  * @param  {Page} page context
  * @param  {string} pluginSlug slug of the plugin, ex 'tiny-compress-images'

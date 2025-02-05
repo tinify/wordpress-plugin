@@ -20,8 +20,8 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 * Node LTS
 
 ### Running the plugin in WordPress
-1. Run `bin/run-wordpress <version>`. E.g. `bin/run-wordpress 60`.
-2. Connect to Wordpress on port `80<version>` (e.g. port `8060`).
+1. Run `bin/run-wordpress <wordpress version> <php version>`. E.g. `bin/run-wordpress 60 73`.
+2. Connect to Wordpress on port `80<wordpress version>` (e.g. port `8060`).
 
 ### Running the unit tests
 1. Run `bin/unit-tests <optional path to file>`.
@@ -29,7 +29,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 ### Running the integration tests
 1. Install Docker 1.12 and docker-compose.
 2. Install npm dependancies
-3. Run `bin/integration-tests <version>`. E.g. `bin/integration-tests 60`.
+3. Run `bin/integration-tests <wordpress version> <php version>`. E.g. `bin/integration-tests 60 80`.
 
 ### Check if the code follows WordPress standard
 1. Run `bin/check-style` to make sure there are no errors.

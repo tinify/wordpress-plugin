@@ -3,7 +3,7 @@ name: Integration Tests
 on:
   push:
     branches:
-      - '**'
+      - 'master'
   pull_request:
     branches:
       - '**'
@@ -14,7 +14,14 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        wp-version: [67]
+        include:
+          - { wp: 40, php: 56 }
+          - { wp: 40, php: 70 }
+          - { wp: 57, php: 73 }
+          - { wp: 60, php: 73 }
+          - { wp: 63, php: 80 }
+          - { wp: 67, php: 82 }
+          - { wp: 67, php: 83 }
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,11 +59,11 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         
       - name: Run script
-        run: ./bin/integration-tests ${{ matrix.wp-version }}
+        run: ./bin/integration-tests ${{ matrix.wp }} ${{ matrix.php}}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.wp }}-${{ matrix.php }}
           path: playwright-report/
           retention-days: 30

@@ -1,6 +1,5 @@
 {
   "plugins": ["."],
-  "phpVersion": "7.2",
   "config": {
     "AWS_ENDPOINT": "http://host.docker.internal:4566",
     "AWS_USE_PATH_STYLE_ENDPOINT": "true",

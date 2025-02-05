@@ -32,7 +32,7 @@ class Tiny_Helpers {
 	 * @param integer $length the maximum length of the string
 	 * @return string the truncated string
 	 */
-	public static function truncate_text( string $text, int $length ) {
+	public static function truncate_text( $text, $length ) {
 		if ( mb_strlen( $text ) > $length ) {
 			return mb_substr( $text, 0, $length - 3 ) . '...';
 		}
