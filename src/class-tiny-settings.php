@@ -859,9 +859,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-        if (!$this->check_ajax_referer()) {
-            exit;
-        }
+		if ( ! $this->check_ajax_referer() ) {
+			exit;
+		}
 		$compressor = $this->get_compressor();
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
@@ -929,9 +929,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function update_api_key() {
 		$key = $_POST['key'];
-        if (!$this->check_ajax_referer()) {
-            exit;
-        }
+		if ( ! $this->check_ajax_referer() ) {
+			exit;
+		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok' => false,
