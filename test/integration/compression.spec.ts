@@ -476,7 +476,7 @@ test.describe('compression', () => {
 
         const blob = new Blob([new Uint8Array(params.file)], { type: 'image/jpeg' });
 
-        const mediaResponse = await fetch(`${params.baseURL}/wp-json/wp/v2/media`, {
+        const mediaResponse = await fetch(`${params.baseURL}?rest_route=/wp/v2/media`, {
           method: 'POST',
           headers: {
             'X-WP-Nonce': nonce,
