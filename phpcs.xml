@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <ruleset>
-  <config name="installed_paths" value="vendor/wp-coding-standards/wpcs"/>
+  <config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
 
-  <rule ref="WordPress-Core"/>
+  <rule ref="WordPress-Core" />
   <rule ref="Generic.Files.LineLength">
     <properties>
-      <property name="lineLimit" value="100"/>
-      <property name="absoluteLineLimit" value="100"/>
+      <property name="lineLimit" value="100" />
+      <property name="absoluteLineLimit" value="100" />
+      <property name="ignoreComments" value="true" />
     </properties>
     <exclude-pattern>src/views</exclude-pattern>
   </rule>
@@ -14,7 +15,6 @@
     <severity>0</severity>
   </rule>
 
-  <file>tiny-compress-images.php</file>
   <file>src</file>
   <file>test</file>
   <exclude-pattern>src/css</exclude-pattern>
