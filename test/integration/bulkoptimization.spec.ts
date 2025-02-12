@@ -143,6 +143,10 @@ test.describe('bulkoptimization', () => {
       await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
       await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
       await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
+    } else if (WPVersion < 6.0) {
+      await expect(page.locator('#unoptimized-library-size')).toHaveText('3.57 MB');
+      await expect(page.locator('#optimized-library-size')).toHaveText('2.90 MB');
+      await expect(page.locator('#savings-percentage')).toHaveText('18.9%');
     } else {
       await expect(page.locator('#unoptimized-library-size')).toHaveText('2.84 MB');
       await expect(page.locator('#optimized-library-size')).toHaveText('2.16 MB');
