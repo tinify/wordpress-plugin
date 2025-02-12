@@ -458,8 +458,12 @@ test.describe('compression', () => {
     await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
   });
 
-  // This is failing as images stay uncompressed
   test('compresses images upload via JSON API', async () => {
+    if (WPVersion < 4.7) {
+      // Content REST API was introduced in 4.7
+      return;
+    }
+
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'medium']);
