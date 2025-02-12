@@ -14,6 +14,7 @@ class Tiny_WP_Base_Test extends Tiny_TestCase {
 	public function test_should_add_init_hooks() {
 		$this->assertEquals(array(
 				array( 'init', array( $this->subject, 'init' ) ),
+				array( 'rest_api_init', array( $this->subject, 'rest_init' ) ),
 				array( 'admin_init', array( $this->subject, 'admin_init' ) ),
 				array( 'admin_menu', array( $this->subject, 'admin_menu' ) ),
 			),

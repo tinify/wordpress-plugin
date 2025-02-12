@@ -14,12 +14,15 @@ class Tiny_Settings_Ajax_Test extends Tiny_TestCase {
 	public function test_ajax_init_should_add_actions() {
 		$this->assertEquals(array(
 				array( 'init', array( $this->subject, 'init' ) ),
+				array( 'rest_api_init', array( $this->subject, 'rest_init' ) ),
 				array( 'admin_init', array( $this->subject, 'admin_init' ) ),
 				array( 'admin_menu', array( $this->subject, 'admin_menu' ) ),
 				array( 'init', array( $this->notices, 'init' ) ),
+				array( 'rest_api_init', array( $this->notices, 'rest_init' ) ),
 				array( 'admin_init', array( $this->notices, 'admin_init' ) ),
 				array( 'admin_menu', array( $this->notices, 'admin_menu' ) ),
 				array( 'init', array( $this->notices, 'init' ) ),
+				array( 'rest_api_init', array( $this->notices, 'rest_init' ) ),
 				array( 'admin_init', array( $this->notices, 'admin_init' ) ),
 				array( 'admin_menu', array( $this->notices, 'admin_menu' ) ),
 				array( 'wp_ajax_tiny_image_sizes_notice', array( $this->subject, 'image_sizes_notice' ) ),
