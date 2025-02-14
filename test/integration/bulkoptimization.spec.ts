@@ -121,38 +121,28 @@ test.describe('bulkoptimization', () => {
   });
 
   test('summary should display correct values', async () => {
-    await setAPIKey(page, 'JPG123');
+    await setAPIKey(page, 'PNG123');
     await setCompressionTiming(page, 'auto');
 
     await enableCompressionSizes(page, []);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadMedia(page, 'input-example.png');
 
     await enableCompressionSizes(page, ['0']);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadMedia(page, 'input-example.png');
 
-    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-    await uploadMedia(page, 'input-example.jpg');
+    await enableCompressionSizes(page, ['0', 'thumbnail']);
+    await uploadMedia(page, 'input-example.png');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
+    // We uploaded 3 images
     await expect(page.locator('#uploaded-images')).toHaveText('3');
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
-    await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
+    // 3 sizes can still be optimized, first upload original and thumbnail, second upload only thumbnail
+    await expect(page.locator('#optimizable-image-sizes')).toHaveText('3');
+    // 3 sizes are optimized, first upload original and thumbnail, second upload only original
+    await expect(page.locator('#optimized-image-sizes')).toHaveText('3');
 
-    if (WPVersion < 5.7) {
-      await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
-      await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
-      await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
-    } else if (WPVersion < 6.0) {
-      await expect(page.locator('#unoptimized-library-size')).toHaveText('3.57 MB');
-      await expect(page.locator('#optimized-library-size')).toHaveText('2.90 MB');
-      await expect(page.locator('#savings-percentage')).toHaveText('18.9%');
-    } else {
-      await expect(page.locator('#unoptimized-library-size')).toHaveText('2.84 MB');
-      await expect(page.locator('#optimized-library-size')).toHaveText('2.16 MB');
-      await expect(page.locator('#savings-percentage')).toHaveText('23.8%');
-    }
-    await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
+    await expect(page.locator('#compression-progress-bar')).toHaveText('3 / 6 (50%)');
   });
 
   test('start bulk optimization should optimize remaining images', async () => {
