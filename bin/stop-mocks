@@ -1,4 +1,9 @@
 #!/bin/bash
 
+echo "Putting back configuration files..."
+mv src/config/class-tiny-config.php.bak src/config/class-tiny-config.php
+mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
+
+echo "Shutting down containers..."
 docker stop $(docker ps -q --filter "ancestor=mock-webservice")
 docker rm $(docker ps -a -q --filter "ancestor=mock-webservice")

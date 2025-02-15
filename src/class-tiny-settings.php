@@ -77,6 +77,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 	}
 
+	public function rest_init() {
+		try {
+			$this->init_compressor();
+		} catch ( Tiny_Exception $e ) {
+		}
+	}
+
 	public function admin_init() {
 		try {
 			$this->init_compressor();

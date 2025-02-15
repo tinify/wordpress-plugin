@@ -14,7 +14,7 @@ export async function uploadMedia(page: Page, file: string) {
 
 export async function clearMediaLibrary(page: Page) {
   await page.goto('/wp-admin/upload.php?mode=list');
-  const hasNoFiles = await page.getByText('No media files found.').isVisible();
+  const hasNoFiles = await page.getByText('No media').isVisible();
   if (hasNoFiles) {
     return;
   }

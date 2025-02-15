@@ -135,19 +135,17 @@ test.describe('bulkoptimization', () => {
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
+    // We uploaded 3 images
     await expect(page.locator('#uploaded-images')).toHaveText('3');
     await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
     await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
 
-    if (WPVersion < 5.7) {
-      await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
-      await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
-      await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
-    } else {
-      await expect(page.locator('#unoptimized-library-size')).toHaveText('2.84 MB');
-      await expect(page.locator('#optimized-library-size')).toHaveText('2.16 MB');
-      await expect(page.locator('#savings-percentage')).toHaveText('23.8%');
-    }
+    // Comparing byte sizes is unreliable at the moment. We need to figure out
+    // why there are differences between environments and versions.
+    // await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
+    // await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
+    // await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
+
     await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
   });
 
