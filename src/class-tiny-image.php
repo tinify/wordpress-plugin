@@ -171,38 +171,10 @@ class Tiny_Image {
 		return get_post_mime_type( $this->id );
 	}
 
-	public function download_missing_image_sizes() {
-		global $as3cf;
-
-		if ( ! $as3cf || ! $as3cf->is_plugin_setup() ) {
-			error_log( 'offload s3 plugin not configured..' );
-			return;
-		}
-
-		$s3_data = get_post_meta( $this->id, 'amazonS3_info', true );
-		if ( ! $s3_data ) {
-			return;
-		}
-
-		$path = dirname( $s3_data['key'] );
-
-		foreach ( $this->sizes as $size_name => $size ) {
-			$local_file_path = get_home_path() . $s3_data['key'];
-
-			$s3_data['key'] = wp_normalize_path( $path . '/' . basename( $size->filename ) );
-			$as3cf->plugin_compat->copy_s3_file_to_server( $s3_data, $size->filename );
-		}
-	}
-
 	public function compress() {
 		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
 		}
-
-		/* Integration tests need to be written before this can be enabled. */
-		// if ( $this->settings->has_offload_s3_installed() ) {
-		// 	$this->download_missing_image_sizes();
-		// }
 
 		$success = 0;
 		$failed = 0;
@@ -446,24 +418,6 @@ class Tiny_Image {
 				}
 			}
 		}// End foreach().
-
-		/*
-			When an image hasn't yet been optimized but only exists on S3, we still need to
-			know the total size of the image sizes for the bulk optimization tool.
-			TODO: First write integration tests before enabling this again.
-
-		if (
-			0 === $this->statistics['initial_total_size'] &&
-			0 === $this->statistics['optimized_total_size'] &&
-			$this->settings->has_offload_s3_installed()
-		) {
-			$s3_data = get_post_meta( $this->id, 'wpos3_filesize_total', true );
-			if ( $s3_data ) {
-				$this->statistics['initial_total_size'] = $s3_data;
-				$this->statistics['optimized_total_size'] = $s3_data;
-			}
-		}
-		*/
 
 		return $this->statistics;
 	}
