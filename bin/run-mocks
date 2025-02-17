@@ -2,9 +2,12 @@
 
 port="$1"
 
-MOCK_PORT=${port:-8100}
+docker compose -f config/mocks.docker-compose.yml up -d
 
-docker build -t mock-webservice -f config/Dockerfile-mock-webservice .
-docker run -d --name tinify-mock-api -p ${MOCK_PORT}:80 -v $(pwd)/test/mock-tinypng-webservice:/var/www/html mock-webservice
+mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
+cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
+
+mv src/config/class-tiny-config.php src/config/class-tiny-config.php.bak
+cp test/fixtures/class-tiny-config.php src/config/class-tiny-config.php
 
 echo "To stop, run: bin/stop-mocks"

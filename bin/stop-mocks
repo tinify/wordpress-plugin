@@ -1,4 +1,8 @@
 #!/bin/bash
 
-docker stop $(docker ps -q --filter "ancestor=mock-webservice")
-docker rm $(docker ps -a -q --filter "ancestor=mock-webservice")
+echo "Restoring config.."
+mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
+mv src/config/class-tiny-config.php.bak src/config/class-tiny-config.php
+
+echo "Shutting down mocks.."
+docker compose -f config/mocks.docker-compose.yml down

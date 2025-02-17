@@ -34,4 +34,7 @@ export WP_ENV_PHP_VERSION=${PHP_VERSION_FULL}
 
 npx wp-env start 
 
+echo "Installing compatible plugins.."
+npx wp-env run tests-cli wp plugin install amazon-s3-and-cloudfront
+
 echo "To stop, run: bin/stop-wordpress"

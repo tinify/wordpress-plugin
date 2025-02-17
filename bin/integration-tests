@@ -56,6 +56,7 @@ function prepare_test_config {
 
 function restore_config {
   mv src/vendor/tinify/Tinify/Client.php.bak src/vendor/tinify/Tinify/Client.php
+  mv src/config/class-tiny-config.php.bak src/config/class-tiny-config.php
 }
 
 function start_services {
