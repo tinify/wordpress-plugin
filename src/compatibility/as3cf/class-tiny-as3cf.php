@@ -20,13 +20,6 @@ class Tiny_AS3CF
 	private $tiny_settings;
 
 	/**
-	 * Tinify is configured to automatically compress images
-	 *
-	 * @var boolean
-	 */
-	private $tiny_autocompress = false;
-
-	/**
 	 * Checks wether the lite version is active
 	 */
 	public static function lite_is_active()
@@ -72,20 +65,6 @@ class Tiny_AS3CF
 	public function add_hooks()
 	{
 		add_action('as3cf_pre_upload_object', array($this, 'as3cf_before_offload'), 10, 2);
-		// add_action('tiny_image_after_compression', array($this, 'as3cf_upload'), 10, 2);
-	}
-
-	/**
-	 * handler for 'tiny_image_after_compression' action
-	 *
-	 * @see Tiny_Image->compress()
-	 *
-	 * @param int $attachment_id The attachment ID.
-	 * @param bool $success True if the image was successfully compressed.
-	 */
-	public function as3cf_upload($attachment_id, $success)
-	{
-		// $this->compression_done = true;
 	}
 
 	/**
