@@ -55,6 +55,8 @@ abstract class Tiny_WP_Base {
 
 	public function __construct() {
 		add_action( 'init', $this->get_method( 'init' ) );
+		add_action( 'rest_api_init', $this->get_method( 'rest_init' ) );
+
 		if ( self::is_xmlrpc_request() ) {
 			add_action( 'init', $this->get_method( 'xmlrpc_init' ) );
 		} elseif ( self::doing_ajax_request() ) {
@@ -94,5 +96,8 @@ abstract class Tiny_WP_Base {
 	}
 
 	public function admin_menu() {
+	}
+
+	public function rest_init() {
 	}
 }

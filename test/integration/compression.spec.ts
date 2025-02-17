@@ -458,8 +458,12 @@ test.describe('compression', () => {
     await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
   });
 
-  // This is failing as images stay uncompressed
-  test.skip('compresses images upload via JSON API', async () => {
+  test('compresses images upload via JSON API', async () => {
+    if (WPVersion < 4.7) {
+      // Content REST API was introduced in 4.7
+      return;
+    }
+
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'medium']);
@@ -472,7 +476,7 @@ test.describe('compression', () => {
 
         const blob = new Blob([new Uint8Array(params.file)], { type: 'image/jpeg' });
 
-        const mediaResponse = await fetch(`${params.baseURL}/wp-json/wp/v2/media`, {
+        const mediaResponse = await fetch(`${params.baseURL}?rest_route=/wp/v2/media`, {
           method: 'POST',
           headers: {
             'X-WP-Nonce': nonce,
