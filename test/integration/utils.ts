@@ -176,7 +176,7 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
   await page.goto('/wp-admin/plugins.php');
 
   const pluginInstalled = await page.isVisible('tr[data-slug="' + pluginSlug + '"]');
-  if (pluginInstalled) {
+  if (!pluginInstalled) {
     return;
   }
 
