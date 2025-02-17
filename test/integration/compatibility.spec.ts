@@ -19,9 +19,15 @@ async function setRemoveLocalMedia(page: Page, enabled: boolean) {
     return;
   }
 
-  await page.locator('label[for="remove-local-file"]').click();
-  await page.getByRole('button', { name: 'Save Changes' }).click({ force: true });
-  await page.waitForLoadState('networkidle'); //async save
+  await Promise.all([
+    page.waitForResponse((resp) => resp.url().includes('/wp-offload-media/v1/state/') && resp.status() === 200),
+    page.locator('label[for="remove-local-file"]').click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse((resp) => resp.url().includes('/wp-offload-media/v1/settings/') && resp.status() === 200),
+    page.getByRole('button', { name: 'Save Changes' }).click({ force: true })
+  ]);
 }
 
 test.describe('as3cf', () => {
@@ -53,6 +59,7 @@ test.describe('as3cf', () => {
 
     await setAPIKey(page, 'JPG123');
     await enableCompressionSizes(page, [], true);
+    await setCompressionTiming(page, 'auto');
   });
 
   test.afterAll(async () => {
@@ -69,6 +76,7 @@ test.describe('as3cf', () => {
   });
 
   test('shows notification when local media is not preserved', async () => {
+    await setCompressionTiming(page, 'background');
     await setRemoveLocalMedia(page, true);
 
     await page.goto('/wp-admin/options-general.php?page=tinify');
