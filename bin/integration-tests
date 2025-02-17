@@ -73,7 +73,7 @@ function start_services {
 function stop_services {
   docker compose -f config/mocks.docker-compose.yml down
 
-  npx wp-env stop
+  npx wp-env destroy
 }
 
 function wait_for_services {

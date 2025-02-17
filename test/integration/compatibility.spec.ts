@@ -1,9 +1,10 @@
 import { Page, expect, test } from '@playwright/test';
-import { activatePlugin, clearMediaLibrary, deactivatePlugin, enableCompressionSizes, setAPIKey, setCompressionTiming, uploadMedia } from './utils';
+import { activatePlugin, clearMediaLibrary, deactivatePlugin, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
 const TEST_BUCKETNAME = 'tinytest';
+let WPVersion = 0;
 
 async function setRemoveLocalMedia(page: Page, enabled: boolean) {
   await page.goto('/wp-admin/options-general.php?page=amazon-s3-and-cloudfront');
@@ -28,6 +29,13 @@ test.describe('as3cf', () => {
 
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
+    WPVersion = await getWPVersion(page);
+
+    if (WPVersion < 5.5) {
+      // Skipping test as it WP Offload does not support WordPress < 5.5
+      test.skip();
+      return;
+    }
 
     await activatePlugin(page, 'amazon-s3-and-cloudfront');
 
@@ -81,7 +89,7 @@ test.describe('as3cf', () => {
 
     const imageURL = await page.locator('#attachment_url').inputValue();
     await expect(imageURL).toContain(TEST_BUCKETNAME);
-    await expect(page.getByText('1 size compressed')).toBeVisible(); 
+    await expect(page.getByText('1 size compressed')).toBeVisible();
   });
 
   test('compress image asynchronously', async ({ page }) => {
@@ -97,7 +105,7 @@ test.describe('as3cf', () => {
 
     const imageURL = await page.locator('#attachment_url').inputValue();
     await expect(imageURL).toContain(TEST_BUCKETNAME);
-    await expect(page.getByText('1 size compressed')).toBeVisible(); 
+    await expect(page.getByText('1 size compressed')).toBeVisible();
   });
 
   test('compress images manually', async ({ page }) => {
@@ -113,9 +121,9 @@ test.describe('as3cf', () => {
 
     const imageURL = await page.locator('#attachment_url').inputValue();
     await expect(imageURL).toContain(TEST_BUCKETNAME);
-    await expect(page.getByText('1 size to be compressed')).toBeVisible(); 
+    await expect(page.getByText('1 size to be compressed')).toBeVisible();
   });
-  
+
   test('does not show compression button if image is not available locally', async ({ page }) => {
     // Currently, we cannot support compression of images that are not available locally.
     await setRemoveLocalMedia(page, true);

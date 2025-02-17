@@ -175,13 +175,15 @@ export async function activatePlugin(page: Page, pluginSlug: string) {
 export async function deactivatePlugin(page: Page, pluginSlug: string) {
   await page.goto('/wp-admin/plugins.php');
 
-  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]');
-  if (!plugin) {
-    throw Error(`Plug-in ${pluginSlug} not found. Are you sure it is installed?`);
+  const pluginInstalled = await page.isVisible('tr[data-slug="' + pluginSlug + '"]');
+  if (pluginInstalled) {
+    return;
   }
 
+  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]');
   const className = await plugin.getAttribute('class');
-  if (className !== 'active') {
+  const pluginActivated = className === 'active';
+  if (!pluginActivated) {
     return;
   }
 
