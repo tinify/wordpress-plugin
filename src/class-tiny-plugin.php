@@ -183,7 +183,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 
 		if ( Tiny_AS3CF::is_active() ) {
-			$tiny_as3cf = new Tiny_AS3CF($this->settings);
+			$tiny_as3cf = new Tiny_AS3CF( $this->settings );
 		}
 	}
 
