@@ -645,7 +645,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	) {
 		$as3cf_local_files_present = Tiny_AS3CF::is_active()
 			&& Tiny_AS3CF::remove_local_files_setting_enabled();
-		if ( 'background' == $value && $as3cf_local_files_present && $checked) {
+		if ( 'background' == $value && $as3cf_local_files_present && $checked ) {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
 			$message = esc_html_e(
