@@ -11,6 +11,8 @@ services:
       - 4566:4566
   tinify-mock-api:
     image: mock-webservice
+    build:
+      dockerfile: ./Dockerfile-mock-webservice
     ports:
       - 8100:80
     volumes:
