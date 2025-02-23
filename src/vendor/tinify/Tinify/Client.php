@@ -34,7 +34,6 @@ class Client {
         $userAgent = join(" ", array_filter(array(self::userAgent(), $appIdentifier)));
 
         $this->options = array(
-            CURLOPT_BINARYTRANSFER => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_USERPWD => $key ? ("api:" . $key) : NULL,
@@ -114,7 +113,7 @@ class Client {
                 $headers = self::parseHeaders(substr($response, 0, $headerSize));
                 $responseBody = substr($response, $headerSize);
 
-                if (isset($headers["compression-count"])) {
+                if ( isset($headers["compression-count"] ) ) {
                     Tinify::setCompressionCount(intval($headers["compression-count"]));
                 }
 
@@ -124,6 +123,17 @@ class Client {
 
                 if ( isset( $headers["paying-state"] ) ) {
                     Tinify::setPayingState( $headers["paying-state"] );
+                }
+
+                $details = json_decode($responseBody);
+                if (!$details) {
+                    $message = sprintf("Error while parsing response: %s (#%d)",
+                        PHP_VERSION_ID >= 50500 ? json_last_error_msg() : "Error",
+                        json_last_error());
+                    $details = (object) array(
+                        "message" => $message,
+                        "error" => "ParseError"
+                    );
                 }
 
                 if ( isset( $headers["email-address"] ) ) {
