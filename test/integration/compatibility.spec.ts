@@ -23,7 +23,7 @@ async function setRemoveLocalMedia(page: Page, enabled: boolean) {
     page.waitForResponse((resp) => resp.url().includes('/wp-offload-media/v1/state/') && resp.status() === 200),
     page.locator('label[for="remove-local-file"]').click(),
   ]);
-
+  
   await Promise.all([
     page.waitForResponse((resp) => resp.url().includes('/wp-offload-media/v1/settings/') && resp.status() === 200),
     page.getByRole('button', { name: 'Save Changes' }).click({ force: true })
@@ -32,27 +32,29 @@ async function setRemoveLocalMedia(page: Page, enabled: boolean) {
 
 test.describe('as3cf', () => {
   let page: Page;
-
+  
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     WPVersion = await getWPVersion(page);
-
+    
     if (WPVersion < 5.5) {
       // Skipping test as it WP Offload does not support WordPress < 5.5
       test.skip();
       return;
     }
-
+    
     await activatePlugin(page, 'amazon-s3-and-cloudfront');
-
+    
     await page.goto('/wp-admin/options-general.php?page=amazon-s3-and-cloudfront');
-
+    
     const isConfigured = await page.getByText('Storage provider is successfully connected and ready to offload new media.').isVisible();
     if (!isConfigured) {
       await page.getByText('Enter bucket name').click();
       await page.getByPlaceholder('Enter bucket name…').fill(TEST_BUCKETNAME);
-      await page.getByRole('button', { name: 'Save Bucket Settings' }).click();
-      await page.waitForLoadState('networkidle');
+      await Promise.all([
+        page.waitForResponse((resp) => resp.url().includes('/wp-offload-media/v1/settings/') && resp.status() === 200),
+        page.getByRole('button', { name: 'Save Bucket Settings' }).click(),
+      ]);
     }
 
     await setRemoveLocalMedia(page, false);
