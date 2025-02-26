@@ -25,8 +25,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 	private $compressor;
 	private $notices;
 
-	protected static $offload_s3_plugin = 'amazon-s3-and-cloudfront/wordpress-s3.php';
-
 	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
@@ -97,7 +95,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		if ( current_user_can( 'manage_options' ) ) {
 			$this->setup_incomplete_checks();
-			$this->offload_s3_checks();
 		}
 
 		$field = self::get_prefixed_name( 'api_key' );
@@ -315,57 +312,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $this->get_compression_timing() === 'background';
 	}
 
-	public function has_offload_s3_installed() {
-		if (
-			! function_exists( 'is_plugin_active' ) ||
-			! is_plugin_active( self::$offload_s3_plugin )
-		) {
-			return false;
-		}
-		$setting = get_option( 'tantan_wordpress_s3' );
-		if ( ! is_array( $setting ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public function old_offload_s3_version_installed() {
-		if (
-			function_exists( 'is_plugin_active' ) &&
-			is_plugin_active( self::$offload_s3_plugin ) &&
-			function_exists( 'get_plugin_data' )
-		) {
-			$metadata = get_plugin_data( WP_PLUGIN_DIR . '/' . self::$offload_s3_plugin );
-			$offload_s3_version_parts = explode( '.', $metadata['Version'] );
-			$major_version = intval( $offload_s3_version_parts[0] );
-			$minor_version = intval( $offload_s3_version_parts[1] );
-			if ( 0 === $major_version && $minor_version < 7 ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public function remove_local_files_setting_enabled() {
-		/* Check if Offload S3 plugin is installed. */
-		if (
-			! function_exists( 'is_plugin_active' ) ||
-			! is_plugin_active( self::$offload_s3_plugin )
-		) {
-			return false;
-		}
-		$setting = get_option( 'tantan_wordpress_s3' );
-		if ( ! is_array( $setting ) ) {
-			return false;
-		}
-		/* Check if Offload S3 is configured to remove local files. */
-		return ( $this->has_offload_s3_installed() &&
-						 array_key_exists( 'remove-local-file', $setting ) &&
-						 '1' === $setting['remove-local-file'] );
-	}
-
 	public function get_preserve_enabled( $name ) {
 		$setting = get_option( self::get_prefixed_name( 'preserve_data' ) );
 		return isset( $setting[ $name ] ) && 'on' === $setting[ $name ];
@@ -440,19 +386,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</div>';
 	}
 
-	private function offload_s3_checks() {
-		if ( $this->remove_local_files_setting_enabled() &&
-				 'background' === $this->get_compression_timing() ) {
-			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
-			$this->notices->show_offload_s3_notice();
-		}
-		if ( $this->old_offload_s3_version_installed() &&
-				 'background' === $this->get_compression_timing() ) {
-			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
-			$this->notices->old_offload_s3_version_notice();
-		}
-	}
-
 	public function render_compression_timing_settings() {
 		$heading = esc_html__(
 			'When should new images be compressed?',
@@ -482,7 +415,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$description,
 			'background',
 			$checked,
-			$this->remove_local_files_setting_enabled() || $this->old_offload_s3_version_installed()
+			false
 		);
 
 		$id = self::get_prefixed_name( 'auto_compress_enabled' );
@@ -708,34 +641,29 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$desc,
 			$value,
-			$checked,
-			$disabled
+			$checked
 	) {
-		if ( $disabled ) {
+		$as3cf_local_files_present = Tiny_AS3CF::is_active()
+			&& Tiny_AS3CF::remove_local_files_setting_enabled();
+		if ( 'background' == $value && $as3cf_local_files_present && $checked ) {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
-			if ( $this->old_offload_s3_version_installed() ) {
-				$message = esc_html_e(
-					'Background compressions are not compatible with the version of WP Offload S3 you have installed. Please update to version 0.7.2 at least.', // WPCS: Needed for proper translation.
-					'tiny-compress-images'
-				);
-			} elseif ( $this->remove_local_files_setting_enabled() ) {
-				$message = esc_html_e(
-					'For background compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
-					'tiny-compress-images'
-				);
-			}
+			$message = esc_html_e(
+				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
+				'tiny-compress-images'
+			);
+			echo $message;
 			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
 			echo '<p class="tiny-radio">';
 		}
+
 		$id = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
 		$label = esc_html( $label, 'tiny-compress-images' );
 		$desc = esc_html( $desc, 'tiny-compress-images' );
-		$disabled = ( $disabled ? ' disabled="disabled"' : '' );
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
-							'" value="' . $value . '" ' . $checked . ' ' . $disabled . '/>';
+							'" value="' . $value . '" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
 		echo '<br>';
 		echo '<span class="description">' . $desc . '</span>';

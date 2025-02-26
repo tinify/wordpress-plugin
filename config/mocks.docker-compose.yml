@@ -1,0 +1,19 @@
+version: "3"
+
+name: tinify-mocks
+
+services:
+  localstack:
+    image: localstack/localstack
+    volumes:
+      - "./localstack-init.sh:/etc/localstack/init/ready.d/init-aws.sh"
+    ports:
+      - 4566:4566
+  tinify-mock-api:
+    image: mock-webservice
+    build:
+      dockerfile: ./Dockerfile-mock-webservice
+    ports:
+      - 8100:80
+    volumes:
+      - ../test/mock-tinypng-webservice:/var/www/html

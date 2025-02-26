@@ -21,7 +21,6 @@ test.describe('compression', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     WPVersion = await getWPVersion(page);
-    await setAPIKey(page, '');
   });
 
   test.beforeEach(async () => {
@@ -29,6 +28,8 @@ test.describe('compression', () => {
   });
 
   test('upload without key should show error', async () => {
+    await setAPIKey(page, '');
+    await setCompressionTiming(page, 'auto');
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
