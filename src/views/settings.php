@@ -37,6 +37,21 @@
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Conversion', 'tiny-compress-images' ) ?></th>
+						<td>
+							<h4><?php esc_html_e( 'Convert files to different formats', 'tiny-compress-images' ) ?></h4>
+							<p class="intro">
+								<?php
+								esc_html_e(
+									'Automatically convert your images to modern, optimized formats like WebP or AVIF.',
+									'tiny-compress-images'
+								)
+								?>
+							</p>
+							<?php $this->render_format_conversion(); ?>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'Original image', 'tiny-compress-images' ) ?></th>
 						<td>
 							<?php $this->render_resize() ?>

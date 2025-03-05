@@ -253,7 +253,7 @@ table.tinify-settings p.intro {
 	color: #777777;
 }
 
-table.tinify-settings div.sizes {
+table.tinify-settings div.sizes, table.tinify-settings div.conversion-options {
 	margin: 20px 0 5px;
 }
 
@@ -270,7 +270,7 @@ p.tiny-radio  {
 	margin-right: 12px;
 }
 
-p.tiny-radio span.description {
+p.tiny-radio span.description, p.tiny-check span.description {
 	display: inline-block;
 }
 
@@ -289,7 +289,7 @@ p.tiny-radio label {
 	font-weight: bold;
 }
 
-p.tiny-radio span {
+p.tiny-radio span, p.tiny-check span.description {
 	margin-left: 28px;
 	color: #777777;
 	line-height: 30px;
