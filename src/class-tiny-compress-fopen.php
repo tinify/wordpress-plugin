@@ -19,6 +19,7 @@
 */
 
 class Tiny_Compress_Fopen extends Tiny_Compress {
+
 	private $last_error_code = 0;
 	private $compression_count;
 	private $remaining_credits;
@@ -82,7 +83,28 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts ) {
+	protected function convert( $output_url, $convert_opts ) {
+		$params = $this->request_options('POST', array(
+			'convert' => array(
+				'type' => array('image/webp', 'image/avif'),
+			),
+		));
+		list($output, $headers, $status_code) = $this->request( $params, $output_url );
+
+		if ( is_string( $output ) && 0 == strlen( $output ) ) {
+			throw new Tiny_Exception(
+				'Could not download output',
+				'Tinify\Exception'
+			);
+		}
+
+		$meta = array(
+			'type' => $headers['content-type'],
+		);
+		return array( $output, $meta );
+	}
+
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
@@ -106,7 +128,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			);
 		}
 
-		$params = $this->output_request_options( $resize_opts, $preserve_opts );
+		$params = $this->output_request_options( $resize_opts, $preserve_opts, $convert_opts );
 		list($output, $headers, $status_code) = $this->request( $params, $output_url );
 
 		if ( $status_code >= 400 && is_array( $output ) && isset( $output['error'] ) ) {
@@ -188,8 +210,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$response = stream_get_contents( $request );
 		fclose( $request );
 
-		if ( isset( $headers['content-type'] ) &&
-			substr( 'application/json' == $headers['content-type'], 0, 16 ) ) {
+		if (
+			isset( $headers['content-type'] ) &&
+			substr( 'application/json' == $headers['content-type'], 0, 16 )
+		) {
 			$response = $this->decode( $response );
 		}
 
@@ -221,11 +245,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return array(
 			'http' => array(
 				'method' => $method,
-				'header' => array_merge( $headers, array(
+				'header' => array_merge($headers, array(
 					'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
 					'User-Agent: ' . self::identifier(),
 					'Content-Type: multipart/form-data',
-				) ),
+				)),
 				'content' => $body,
 				'follow_location' => 0,
 				'max_redirects' => 1, // Necessary for PHP 5.2
@@ -238,7 +262,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		);
 	}
 
-	private function output_request_options( $resize_opts, $preserve_opts ) {
+	private function output_request_options( $resize_opts, $preserve_opts, $convert_opts ) {
 		$body = array();
 
 		if ( $preserve_opts ) {
@@ -247,6 +271,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		if ( $resize_opts ) {
 			$body['resize'] = $resize_opts;
+		}
+
+		if ( $convert_opts ) {
+			$body['convert'] = $convert_opts;
 		}
 
 		if ( $resize_opts || $preserve_opts ) {

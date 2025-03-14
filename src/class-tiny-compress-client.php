@@ -29,6 +29,7 @@ if ( ! defined( '\Tinify\VERSION' ) ) {
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
+
 	private $last_error_code = 0;
 	private $last_message = '';
 	private $proxy;
@@ -72,7 +73,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$this->set_request_options( \Tinify\Tinify::getClient( \Tinify\Tinify::ANONYMOUS ) );
 			\Tinify\Tinify::getClient()->request( 'get', '/keys/' . $this->get_key() );
 			return true;
-
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
@@ -88,7 +88,37 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts ) {
+	protected function convert( $input, $convert_opts ) {
+		try {
+			$this->last_error_code = 0;
+			$this->set_request_options( \Tinify\Tinify::getClient() );
+
+			$source = \Tinify\fromBuffer( $input );
+
+			$source = $source->convert(array(
+				'type' => array( 'image/avif', 'image/webp' ),
+			));
+
+			$result = $source->result();
+
+			$meta = array(
+				'type' => $result->mediaType(),
+			);
+
+			$buffer = $result->toBuffer();
+			return array( $buffer, $meta );
+		} catch ( \Tinify\Exception $err ) {
+			$this->last_error_code = $err->status;
+
+			throw new Tiny_Exception(
+				$err->getMessage(),
+				get_class( $err ),
+				$err->status
+			);
+		}
+	}
+
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
@@ -101,6 +131,14 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			if ( $preserve_opts ) {
 				$source = $source->preserve( $preserve_opts );
+			}
+
+			if ( isset( $convert_opts['replace'] ) && $convert_opts['replace'] && isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
+				$source = $source->convert(
+					array(
+						'type' => array( 'image/avif', 'image/webp' ),
+					)
+				);
 			}
 
 			$result = $source->result();
@@ -121,7 +159,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			$buffer = $result->toBuffer();
 			return array( $buffer, $meta );
-
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
@@ -130,7 +167,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				get_class( $err ),
 				$err->status
 			);
-		}// End try().
+		} // End try().
 	}
 
 	public function create_key( $email, $options ) {
