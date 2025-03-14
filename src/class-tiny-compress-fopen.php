@@ -86,7 +86,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	protected function convert( $output_url, $convert_opts ) {
 		$params = $this->request_options('POST', array(
 			'convert' => array(
-				'type' => array('image/webp', 'image/avif'),
+				'type' => array( 'image/webp', 'image/avif' ),
 			),
 		));
 		list($output, $headers, $status_code) = $this->request( $params, $output_url );

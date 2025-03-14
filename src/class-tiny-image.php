@@ -189,8 +189,9 @@ class Tiny_Image {
 				$this->update_tiny_post_meta();
 				$resize = $this->settings->get_resize_options( $size_name );
 				$preserve = $this->settings->get_preserve_options( $size_name );
+				$convert_opts = $this->settings->get_conversion_options();
 				try {
-					$response = $compressor->compress_file( $size->filename, $resize, $preserve );
+					$response = $compressor->compress_file( $size->filename, $resize, $preserve, $convert_opts );
 					$size->add_tiny_meta( $response );
 					$success++;
 				} catch ( Tiny_Exception $e ) {

@@ -17,8 +17,8 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-class Tiny_Settings extends Tiny_WP_Base
-{
+class Tiny_Settings extends Tiny_WP_Base {
+
 
 	const DUMMY_SIZE = '_tiny_dummy';
 
@@ -27,259 +27,239 @@ class Tiny_Settings extends Tiny_WP_Base
 	private $compressor;
 	private $notices;
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
 	}
 
-	private function init_compressor()
-	{
+	private function init_compressor() {
 		$this->compressor = Tiny_Compress::create(
 			$this->get_api_key(),
-			$this->get_method('after_compress_callback')
+			$this->get_method( 'after_compress_callback' )
 		);
 	}
 
-	public function get_absolute_url()
-	{
-		return get_admin_url(null, 'options-general.php?page=tinify');
+	public function get_absolute_url() {
+		return get_admin_url( null, 'options-general.php?page=tinify' );
 	}
 
-	public function xmlrpc_init()
-	{
+	public function xmlrpc_init() {
 		try {
 			$this->init_compressor();
-		} catch (Tiny_Exception $e) {
+		} catch ( Tiny_Exception $e ) {
 		}
 	}
 
-	public function ajax_init()
-	{
+	public function ajax_init() {
 		try {
 			$this->init_compressor();
-		} catch (Tiny_Exception $e) {
+		} catch ( Tiny_Exception $e ) {
 		}
 
 		add_action(
 			'wp_ajax_tiny_image_sizes_notice',
-			$this->get_method('image_sizes_notice')
+			$this->get_method( 'image_sizes_notice' )
 		);
 
 		add_action(
 			'wp_ajax_tiny_account_status',
-			$this->get_method('account_status')
+			$this->get_method( 'account_status' )
 		);
 
 		add_action(
 			'wp_ajax_tiny_settings_create_api_key',
-			$this->get_method('create_api_key')
+			$this->get_method( 'create_api_key' )
 		);
 
 		add_action(
 			'wp_ajax_tiny_settings_update_api_key',
-			$this->get_method('update_api_key')
+			$this->get_method( 'update_api_key' )
 		);
 	}
 
-	public function rest_init()
-	{
+	public function rest_init() {
 		try {
 			$this->init_compressor();
-		} catch (Tiny_Exception $e) {
+		} catch ( Tiny_Exception $e ) {
 		}
 	}
 
-	public function admin_init()
-	{
+	public function admin_init() {
 		try {
 			$this->init_compressor();
-		} catch (Tiny_Exception $e) {
+		} catch ( Tiny_Exception $e ) {
 			$this->notices->show(
 				'compressor_exception',
-				esc_html($e->getMessage(), 'tiny-compress-images'),
+				esc_html( $e->getMessage(), 'tiny-compress-images' ),
 				'error',
 				false
 			);
 		}
 
-		if (current_user_can('manage_options')) {
+		if ( current_user_can( 'manage_options' ) ) {
 			$this->setup_incomplete_checks();
 		}
 
-		$field = self::get_prefixed_name('api_key');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'api_key' );
+		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name('api_key_pending');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'api_key_pending' );
+		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name('compression_timing');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'compression_timing' );
+		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name('sizes');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'sizes' );
+		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name('resize_original');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'resize_original' );
+		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name('preserve_data');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'preserve_data' );
+		register_setting( 'tinify', $field );
 
-		$field = self::get_prefixed_name('convert_format');
-		register_setting('tinify', $field);
+		$field = self::get_prefixed_name( 'convert_format' );
+		register_setting( 'tinify', $field );
 	}
 
-	public function admin_menu()
-	{
+	public function admin_menu() {
 		/* Create link to new settings page from media settings page. */
 		add_settings_section(
 			'section_end',
 			'',
-			$this->get_method('render_settings_moved'),
+			$this->get_method( 'render_settings_moved' ),
 			'media'
 		);
 
 		add_options_page(
-			__('TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images'),
-			esc_html__('TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images'),
+			__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
+			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
 			'manage_options',
 			'tinify',
-			array($this, 'add_options_to_page')
+			array( $this, 'add_options_to_page' )
 		);
 	}
 
-	public function add_options_to_page()
-	{
-		include(dirname(__FILE__) . '/views/settings.php');
+	public function add_options_to_page() {
+		include( dirname( __FILE__ ) . '/views/settings.php' );
 	}
 
-	public function image_sizes_notice()
-	{
-		if (current_user_can('manage_options')) {
+	public function image_sizes_notice() {
+		if ( current_user_can( 'manage_options' ) ) {
 			$this->render_size_checkboxes_description(
 				$_GET['image_sizes_selected'],
-				isset($_GET['resize_original']),
-				isset($_GET['compress_wr2x'])
+				isset( $_GET['resize_original'] ),
+				isset( $_GET['compress_wr2x'] )
 			);
 		}
 		exit();
 	}
 
-	public function account_status()
-	{
-		if (current_user_can('manage_options')) {
+	public function account_status() {
+		if ( current_user_can( 'manage_options' ) ) {
 			$this->render_account_status();
 		}
 		exit();
 	}
 
-	public function get_compressor()
-	{
+	public function get_compressor() {
 		return $this->compressor;
 	}
 
-	public function set_compressor($compressor)
-	{
+	public function set_compressor( $compressor ) {
 		$this->compressor = $compressor;
 	}
 
-	public function get_status()
-	{
-		return intval(get_option(self::get_prefixed_name('status')));
+	public function get_status() {
+		return intval( get_option( self::get_prefixed_name( 'status' ) ) );
 	}
 
-	public function disabled_required_functions()
-	{
-		$required_functions = array('curl_exec');
+	public function disabled_required_functions() {
+		$required_functions = array( 'curl_exec' );
 		$disabled_required_functions = array();
-		$disabled_functions = explode(',', ini_get('disable_functions'));
+		$disabled_functions = explode( ',', ini_get( 'disable_functions' ) );
 
-		foreach ($required_functions as $required_function) {
-			if (in_array($required_function, $disabled_functions)) {
-				array_push($disabled_required_functions, $required_function);
+		foreach ( $required_functions as $required_function ) {
+			if ( in_array( $required_function, $disabled_functions ) ) {
+				array_push( $disabled_required_functions, $required_function );
 			}
 		}
 
 		return $disabled_required_functions;
 	}
 
-	protected function get_api_key()
-	{
-		if (defined('TINY_API_KEY')) {
+	protected function get_api_key() {
+		if ( defined( 'TINY_API_KEY' ) ) {
 			return TINY_API_KEY;
 		} else {
-			return get_option(self::get_prefixed_name('api_key'));
+			return get_option( self::get_prefixed_name( 'api_key' ) );
 		}
 	}
 
-	protected function get_api_key_pending()
-	{
-		if (defined('TINY_API_KEY')) {
+	protected function get_api_key_pending() {
+		if ( defined( 'TINY_API_KEY' ) ) {
 			return false;
 		} else {
-			return get_option(self::get_prefixed_name('api_key_pending'));
+			return get_option( self::get_prefixed_name( 'api_key_pending' ) );
 		}
 	}
 
-	protected function clear_api_key_pending()
-	{
-		delete_option(self::get_prefixed_name('api_key_pending'));
+	protected function clear_api_key_pending() {
+		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
 	}
 
-	protected static function get_intermediate_size($size)
-	{
+	protected static function get_intermediate_size( $size ) {
 		/* Inspired by
 		http://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes */
 		global $_wp_additional_image_sizes;
 
-		$width  = get_option($size . '_size_w');
-		$height = get_option($size . '_size_h');
+		$width  = get_option( $size . '_size_w' );
+		$height = get_option( $size . '_size_h' );
 
 		/* Note: dimensions might be 0 to indicate no limit. */
-		if ($width || $height) {
-			return array($width, $height);
+		if ( $width || $height ) {
+			return array( $width, $height );
 		}
 
-		if (isset($_wp_additional_image_sizes[$size])) {
-			$sizes = $_wp_additional_image_sizes[$size];
+		if ( isset( $_wp_additional_image_sizes[ $size ] ) ) {
+			$sizes = $_wp_additional_image_sizes[ $size ];
 			return array(
-				isset($sizes['width']) ? $sizes['width'] : null,
-				isset($sizes['height']) ? $sizes['height'] : null,
+				isset( $sizes['width'] ) ? $sizes['width'] : null,
+				isset( $sizes['height'] ) ? $sizes['height'] : null,
 			);
 		}
-		return array(null, null);
+		return array( null, null );
 	}
 
-	public function get_sizes()
-	{
-		if (is_array($this->sizes)) {
+	public function get_sizes() {
+		if ( is_array( $this->sizes ) ) {
 			return $this->sizes;
 		}
 
-		$setting = get_option(self::get_prefixed_name('sizes'));
+		$setting = get_option( self::get_prefixed_name( 'sizes' ) );
 
 		$size = Tiny_Image::ORIGINAL;
 		$this->sizes = array(
 			$size => array(
 				'width' => null,
 				'height' => null,
-				'tinify' => ! is_array($setting) ||
-					(isset($setting[$size]) && 'on' === $setting[$size]),
+				'tinify' => ! is_array( $setting ) ||
+					(isset( $setting[ $size ] ) && 'on' === $setting[ $size ]),
 			),
 		);
 
-		foreach (get_intermediate_image_sizes() as $size) {
-			if (self::DUMMY_SIZE === $size) {
+		foreach ( get_intermediate_image_sizes() as $size ) {
+			if ( self::DUMMY_SIZE === $size ) {
 				continue;
 			}
 
-			list($width, $height) = self::get_intermediate_size($size);
-			if ($width || $height) {
-				$this->sizes[$size] = array(
+			list($width, $height) = self::get_intermediate_size( $size );
+			if ( $width || $height ) {
+				$this->sizes[ $size ] = array(
 					'width' => $width,
 					'height' => $height,
-					'tinify' => ! is_array($setting) ||
-						(isset($setting[$size]) && 'on' === $setting[$size]),
+					'tinify' => ! is_array( $setting ) ||
+						(isset( $setting[ $size ] ) && 'on' === $setting[ $size ]),
 				);
 			}
 		}
@@ -287,156 +267,140 @@ class Tiny_Settings extends Tiny_WP_Base
 		return $this->sizes;
 	}
 
-	public function get_active_tinify_sizes()
-	{
-		if (is_array($this->tinify_sizes)) {
+	public function get_active_tinify_sizes() {
+		if ( is_array( $this->tinify_sizes ) ) {
 			return $this->tinify_sizes;
 		}
 
 		$this->tinify_sizes = array();
-		foreach ($this->get_sizes() as $size => $values) {
-			if ($values['tinify']) {
+		foreach ( $this->get_sizes() as $size => $values ) {
+			if ( $values['tinify'] ) {
 				$this->tinify_sizes[] = $size;
 			}
 		}
 		return $this->tinify_sizes;
 	}
 
-	public function new_plugin_install()
-	{
+	public function new_plugin_install() {
 		/* We merely have to check whether a newly added setting is already stored. */
-		$compression_timing = get_option(self::get_prefixed_name('compression_timing'));
+		$compression_timing = get_option( self::get_prefixed_name( 'compression_timing' ) );
 		return ! $compression_timing;
 	}
 
-	public function get_resize_enabled()
-	{
+	public function get_resize_enabled() {
 		/* This only applies if the original is being resized. */
 		$sizes = $this->get_sizes();
-		if (! $sizes[Tiny_Image::ORIGINAL]['tinify']) {
+		if ( ! $sizes[ Tiny_Image::ORIGINAL ]['tinify'] ) {
 			return false;
 		}
 
-		$setting = get_option(self::get_prefixed_name('resize_original'));
-		return isset($setting['enabled']) && 'on' === $setting['enabled'];
+		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
+		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
 	}
 
-	public function get_compression_timing()
-	{
-		$setting = get_option(self::get_prefixed_name('compression_timing'));
-		if (isset($setting) && $setting) {
+	public function get_compression_timing() {
+		$setting = get_option( self::get_prefixed_name( 'compression_timing' ) );
+		if ( isset( $setting ) && $setting ) {
 			return $setting;
-		} elseif ($this->new_plugin_install()) {
-			update_option(self::get_prefixed_name('compression_timing'), 'background');
+		} elseif ( $this->new_plugin_install() ) {
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'background' );
 			return 'background';
 		} else {
-			update_option(self::get_prefixed_name('compression_timing'), 'auto');
+			update_option( self::get_prefixed_name( 'compression_timing' ), 'auto' );
 			return 'auto';
 		}
 	}
 
-	public function auto_compress_enabled()
-	{
+	public function auto_compress_enabled() {
 		return 	$this->get_compression_timing() === 'auto' ||
 			$this->get_compression_timing() === 'background';
 	}
 
-	public function background_compress_enabled()
-	{
+	public function background_compress_enabled() {
 		return $this->get_compression_timing() === 'background';
 	}
 
-	public function get_preserve_enabled($name)
-	{
-		$setting = get_option(self::get_prefixed_name('preserve_data'));
-		return isset($setting[$name]) && 'on' === $setting[$name];
+	public function get_preserve_enabled( $name ) {
+		$setting = get_option( self::get_prefixed_name( 'preserve_data' ) );
+		return isset( $setting[ $name ] ) && 'on' === $setting[ $name ];
 	}
 
-	public function get_preserve_options($size_name)
-	{
-		if (! Tiny_Image::is_original($size_name)) {
+	public function get_preserve_options( $size_name ) {
+		if ( ! Tiny_Image::is_original( $size_name ) ) {
 			return false;
 		}
 		$options = array();
-		$settings = get_option(self::get_prefixed_name('preserve_data'));
-		if ($settings) {
-			$keys = array_keys($settings);
-			foreach ($keys as &$key) {
-				if ('on' === $settings[$key]) {
-					array_push($options, $key);
+		$settings = get_option( self::get_prefixed_name( 'preserve_data' ) );
+		if ( $settings ) {
+			$keys = array_keys( $settings );
+			foreach ( $keys as &$key ) {
+				if ( 'on' === $settings[ $key ] ) {
+					array_push( $options, $key );
 				}
 			}
 		}
 		return $options;
 	}
 
-	public function get_resize_options($size_name)
-	{
-		if (! Tiny_Image::is_original($size_name)) {
+	public function get_resize_options( $size_name ) {
+		if ( ! Tiny_Image::is_original( $size_name ) ) {
 			return false;
 		}
-		if (! $this->get_resize_enabled()) {
+		if ( ! $this->get_resize_enabled() ) {
 			return false;
 		}
-		$setting = get_option(self::get_prefixed_name('resize_original'));
-		$width = intval($setting['width']);
-		$height = intval($setting['height']);
+		$setting = get_option( self::get_prefixed_name( 'resize_original' ) );
+		$width = intval( $setting['width'] );
+		$height = intval( $setting['height'] );
 		$method = $width > 0 && $height > 0 ? 'fit' : 'scale';
 		$options['method'] = $method;
-		if ($width > 0) {
+		if ( $width > 0 ) {
 			$options['width'] = $width;
 		}
-		if ($height > 0) {
+		if ( $height > 0 ) {
 			$options['height'] = $height;
 		}
-		return sizeof($options) >= 2 ? $options : false;
+		return sizeof( $options ) >= 2 ? $options : false;
 	}
 
 	/**
 	 * Retrieves the configured settings for conversion.
-	 * 
-	 * @return array{string} the file formats to which to convert to, ex ['image/avif', 'image/webp']
+	 *
+	 * @return array{convert: bool, replace: bool} The conversion options.
 	 */
-	public function get_conversion_options()
-	{
-		$setting_convert_format = get_option(self::get_prefixed_name('convert_format'));
-		$convert_to = array();
+	public function get_conversion_options() {
+		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
+		$convert_to = array(
+			'convert' => false,
+			'replace' => false,
+		);
 
-		$convert_to_avif = $setting_convert_format['avif'] == 'on' ? true : false;
-		if ($convert_to_avif) {
-			$convert_to[] = 'image/avif';
-		}
-
-		$convert_to_webp = $setting_convert_format['webp'] == 'on' ? true : false;
-		if ($convert_to_webp) {
-			$convert_to[] = 'image/webp';
-		}
+		$convert_to['convert'] = $setting_convert_format['convert'] == 'on' ? true : false;
+		$convert_to['replace'] = $setting_convert_format['replace'] == 'on' ? true : false;
 
 		return $convert_to;
 	}
 
-	private function setup_incomplete_checks()
-	{
-		if (! $this->get_api_key()) {
+	private function setup_incomplete_checks() {
+		if ( ! $this->get_api_key() ) {
 			$this->notices->api_key_missing_notice();
-		} elseif ($this->get_api_key_pending()) {
+		} elseif ( $this->get_api_key_pending() ) {
 			$this->notices->get_api_key_pending_notice();
 		}
 	}
 
-	public function render_settings_moved()
-	{
+	public function render_settings_moved() {
 		echo '<div class="tinify-settings"><h3>';
-		esc_html_e('TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images');
+		esc_html_e( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' );
 		echo '</h3>';
-		$url = admin_url('options-general.php?page=tinify');
+		$url = admin_url( 'options-general.php?page=tinify' );
 		$link = "<a href='" . $url . "'>";
-		$link .= esc_html__('settings', 'tiny-compress-images');
+		$link .= esc_html__( 'settings', 'tiny-compress-images' );
 		$link .= '</a>';
 		printf(
 			wp_kses(
 				/* translators: %s: link saying settings */
-				__('The %s have moved.', 'tiny-compress-images'),
+				__( 'The %s have moved.', 'tiny-compress-images' ),
 				array(
 					'a' => array(
 						'href' => array(),
@@ -448,8 +412,7 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '</div>';
 	}
 
-	public function render_compression_timing_settings()
-	{
+	public function render_compression_timing_settings() {
 		$heading = esc_html__(
 			'When should new images be compressed?',
 			'tiny-compress-images'
@@ -457,10 +420,10 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '<h4>' . $heading . '</h4>';
 		echo '<div class="optimization-options">';
 
-		$name = self::get_prefixed_name('compression_timing');
+		$name = self::get_prefixed_name( 'compression_timing' );
 		$compression_timing = $this->get_compression_timing();
 
-		$id = self::get_prefixed_name('background_compress_enabled');
+		$id = self::get_prefixed_name( 'background_compress_enabled' );
 		$checked = ('background' === $compression_timing ? ' checked="checked"' : '');
 
 		$label = esc_html__(
@@ -481,7 +444,7 @@ class Tiny_Settings extends Tiny_WP_Base
 			false
 		);
 
-		$id = self::get_prefixed_name('auto_compress_enabled');
+		$id = self::get_prefixed_name( 'auto_compress_enabled' );
 		$checked = ('auto' === $compression_timing ? ' checked="checked"' : '');
 
 		$label = esc_html__(
@@ -502,7 +465,7 @@ class Tiny_Settings extends Tiny_WP_Base
 			false
 		);
 
-		$id = self::get_prefixed_name('auto_compress_disabled');
+		$id = self::get_prefixed_name( 'auto_compress_disabled' );
 		$checked = ('manual' === $compression_timing ? ' checked="checked"' : '');
 
 		$label = esc_html__(
@@ -526,22 +489,21 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '</div>';
 	}
 
-	public function render_sizes()
-	{
+	public function render_sizes() {
 		echo '<input type="hidden" name="' .
-			self::get_prefixed_name('sizes[' . self::DUMMY_SIZE . ']') . '" value="on"/>';
+			self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' ) . '" value="on"/>';
 
-		foreach ($this->get_sizes() as $size => $option) {
-			$this->render_size_checkboxes($size, $option);
+		foreach ( $this->get_sizes() as $size => $option ) {
+			$this->render_size_checkboxes( $size, $option );
 		}
-		if (self::wr2x_active()) {
-			$this->render_size_checkboxes('wr2x', $this->get_wr2x_option());
+		if ( self::wr2x_active() ) {
+			$this->render_size_checkboxes( 'wr2x', $this->get_wr2x_option() );
 		}
 		echo '<br>';
 		echo '<div id="tiny-image-sizes-notice">';
 
 		$this->render_size_checkboxes_description(
-			count(self::get_active_tinify_sizes()),
+			count( self::get_active_tinify_sizes() ),
 			self::get_resize_enabled(),
 			self::compress_wr2x_images()
 		);
@@ -549,31 +511,30 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '</div>';
 	}
 
-	private function render_size_checkboxes($size, $option)
-	{
-		$id = self::get_prefixed_name("sizes_$size");
-		$name = self::get_prefixed_name('sizes[' . $size . ']');
+	private function render_size_checkboxes( $size, $option ) {
+		$id = self::get_prefixed_name( "sizes_$size" );
+		$name = self::get_prefixed_name( 'sizes[' . $size . ']' );
 		$checked = ($option['tinify'] ? ' checked="checked"' : '');
-		if (Tiny_Image::is_original($size)) {
-			$label = esc_html__('Original image', 'tiny-compress-images') . ' (' .
+		if ( Tiny_Image::is_original( $size ) ) {
+			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
 				esc_html__(
 					'overwritten by compressed image',
 					'tiny-compress-images'
 				) . ')';
-		} elseif (Tiny_Image::is_retina($size)) {
-			$label = esc_html__('WP Retina 2x sizes', 'tiny-compress-images');
+		} elseif ( Tiny_Image::is_retina( $size ) ) {
+			$label = esc_html__( 'WP Retina 2x sizes', 'tiny-compress-images' );
 		} else {
 			$width = $option['width'];
-			if (! $width) {
+			if ( ! $width ) {
 				$width = '?';
 			}
 
 			$height = $option['height'];
-			if (! $height) {
+			if ( ! $height ) {
 				$height = '?';
 			}
 
-			$label = esc_html(ucfirst(str_replace('_', ' ', $size)))
+			$label = esc_html( ucfirst( str_replace( '_', ' ', $size ) ) )
 				. ' - ' . $width . 'x' . $height;
 		}
 		echo '<p>';
@@ -595,14 +556,14 @@ class Tiny_Settings extends Tiny_WP_Base
 		);
 		echo '</p>';
 		echo '<p>';
-		if ($resize_original_enabled) {
+		if ( $resize_original_enabled ) {
 			$active_sizes_count++;
 		}
-		if ($compress_wr2x) {
+		if ( $compress_wr2x ) {
 			$active_sizes_count *= 2;
 		}
 
-		if ($active_sizes_count < 1) {
+		if ( $active_sizes_count < 1 ) {
 			esc_html_e(
 				'With these settings no images will be compressed.',
 				'tiny-compress-images'
@@ -622,7 +583,7 @@ class Tiny_Settings extends Tiny_WP_Base
 				'tiny-compress-images'
 			), $strong), $free_images_per_month);
 
-			if (self::wr2x_active()) {
+			if ( self::wr2x_active() ) {
 				echo '</p>';
 				echo '<p>';
 				esc_html_e(
@@ -639,8 +600,7 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '</p>';
 	}
 
-	public function render_resize()
-	{
+	public function render_resize() {
 		$strong = array(
 			'strong' => array(),
 		);
@@ -652,8 +612,8 @@ class Tiny_Settings extends Tiny_WP_Base
 		);
 		echo '</div>';
 
-		$id = self::get_prefixed_name('resize_original_enabled');
-		$name = self::get_prefixed_name('resize_original[enabled]');
+		$id = self::get_prefixed_name( 'resize_original_enabled' );
+		$name = self::get_prefixed_name( 'resize_original[enabled]' );
 		$checked = ($this->get_resize_enabled() ? ' checked="checked"' : '');
 
 		$label = esc_html__(
@@ -668,15 +628,15 @@ class Tiny_Settings extends Tiny_WP_Base
 
 		echo '<div class="tiny-resize-available tiny-resize-resolution">';
 		echo '<span>';
-		echo wp_kses(__('<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images'), $strong);  // WPCS: Needed for proper translation.
+		echo wp_kses( __( '<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images' ), $strong );  // WPCS: Needed for proper translation.
 		echo '<br>';
-		echo wp_kses(__('Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images'), $strong); // WPCS: Needed for proper translation.
+		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong ); // WPCS: Needed for proper translation.
 		echo '</span>';
 		echo '<div class="tiny-resize-inputs">';
-		printf('%s: ', esc_html__('Max Width'));
-		$this->render_resize_input('width');
-		printf('%s: ', esc_html__('Max Height'));
-		$this->render_resize_input('height');
+		printf( '%s: ', esc_html__( 'Max Width' ) );
+		$this->render_resize_input( 'width' );
+		printf( '%s: ', esc_html__( 'Max Height' ) );
+		$this->render_resize_input( 'height' );
 		echo '</div></div></div>';
 
 		$this->render_preserve_input(
@@ -701,7 +661,7 @@ class Tiny_Settings extends Tiny_WP_Base
 				'Preserve GPS location in the original image',
 				'tiny-compress-images'
 			) . ' ' .
-				esc_html__('(JPEG only)', 'tiny-compress-images')
+				esc_html__( '(JPEG only)', 'tiny-compress-images' )
 		);
 	}
 
@@ -714,9 +674,9 @@ class Tiny_Settings extends Tiny_WP_Base
 	) {
 		$as3cf_local_files_present = Tiny_AS3CF::is_active()
 			&& Tiny_AS3CF::remove_local_files_setting_enabled();
-		if ('background' == $value && $as3cf_local_files_present && $checked) {
+		if ( 'background' == $value && $as3cf_local_files_present && $checked ) {
 			echo '<div class="notice notice-warning inline"><p>';
-			echo '<strong>' . esc_html__('Warning', 'tiny-compress-images') . '</strong> — ';
+			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
 			$message = esc_html_e(
 				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
 				'tiny-compress-images'
@@ -728,9 +688,9 @@ class Tiny_Settings extends Tiny_WP_Base
 			echo '<p class="tiny-radio">';
 		}
 
-		$id = sprintf(self::get_prefixed_name('compression_timing_%s'), $value);
-		$label = esc_html($label, 'tiny-compress-images');
-		$desc = esc_html($desc, 'tiny-compress-images');
+		$id = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
+		$label = esc_html( $label, 'tiny-compress-images' );
+		$desc = esc_html( $desc, 'tiny-compress-images' );
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
 			'" value="' . $value . '" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
@@ -740,13 +700,12 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '</p>';
 	}
 
-	public function render_preserve_input($name, $description)
-	{
+	public function render_preserve_input( $name, $description ) {
 		echo '<p class="tiny-preserve">';
-		$id = sprintf(self::get_prefixed_name('preserve_data_%s'), $name);
-		$field = sprintf(self::get_prefixed_name('preserve_data[%s]'), $name);
-		$checked = ($this->get_preserve_enabled($name) ? ' checked="checked"' : '');
-		$label = esc_html($description, 'tiny-compress-images');
+		$id = sprintf( self::get_prefixed_name( 'preserve_data_%s' ), $name );
+		$field = sprintf( self::get_prefixed_name( 'preserve_data[%s]' ), $name );
+		$checked = ($this->get_preserve_enabled( $name ) ? ' checked="checked"' : '');
+		$label = esc_html( $description, 'tiny-compress-images' );
 		echo '<input type="checkbox" id="' . $id . '" name="' . $field .
 			'" value="on" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
@@ -754,99 +713,90 @@ class Tiny_Settings extends Tiny_WP_Base
 		echo '</p>';
 	}
 
-	public function render_resize_input($name)
-	{
-		$id = sprintf(self::get_prefixed_name('resize_original_%s'), $name);
-		$field = sprintf(self::get_prefixed_name('resize_original[%s]'), $name);
-		$settings = get_option(self::get_prefixed_name('resize_original'));
-		$value = isset($settings[$name]) ? $settings[$name] : '2048';
+	public function render_resize_input( $name ) {
+		$id = sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name );
+		$field = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
+		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
+		$value = isset( $settings[ $name ] ) ? $settings[ $name ] : '2048';
 		echo '<input type="number" id="' . $id . '" name="' . $field .
 			'" value="' . $value . '" size="5" />';
 	}
 
-	public function get_compression_count()
-	{
-		$field = self::get_prefixed_name('status');
-		return get_option($field);
+	public function get_compression_count() {
+		$field = self::get_prefixed_name( 'status' );
+		return get_option( $field );
 	}
 
-	public function limit_reached()
-	{
+	public function limit_reached() {
 		$this->compressor->get_compression_count();
 		return $this->compressor->limit_reached();
 	}
 
-	public function get_remaining_credits()
-	{
-		$field = self::get_prefixed_name('remaining_credits');
-		return get_option($field);
+	public function get_remaining_credits() {
+		$field = self::get_prefixed_name( 'remaining_credits' );
+		return get_option( $field );
 	}
 
-	public function get_paying_state()
-	{
-		$field = self::get_prefixed_name('paying_state');
-		return get_option($field);
+	public function get_paying_state() {
+		$field = self::get_prefixed_name( 'paying_state' );
+		return get_option( $field );
 	}
 
-	public function is_on_free_plan()
-	{
+	public function is_on_free_plan() {
 		return self::get_paying_state() === 'free';
 	}
 
-	public function get_email_address()
-	{
-		$field = self::get_prefixed_name('email_address');
-		return get_option($field);
+	public function get_email_address() {
+		$field = self::get_prefixed_name( 'email_address' );
+		return get_option( $field );
 	}
 
-	public function after_compress_callback($compressor)
-	{
+	public function after_compress_callback( $compressor ) {
 		$count = $compressor->get_compression_count();
-		if (! is_null($count)) {
-			$field = self::get_prefixed_name('status');
-			update_option($field, $count);
+		if ( ! is_null( $count ) ) {
+			$field = self::get_prefixed_name( 'status' );
+			update_option( $field, $count );
 		}
 		$remaining_credits = $compressor->get_remaining_credits();
-		if (! is_null($remaining_credits)) {
-			$field = self::get_prefixed_name('remaining_credits');
-			update_option($field, $remaining_credits);
+		if ( ! is_null( $remaining_credits ) ) {
+			$field = self::get_prefixed_name( 'remaining_credits' );
+			update_option( $field, $remaining_credits );
 		}
 		$paying_state = $compressor->get_paying_state();
-		if (! is_null($paying_state)) {
-			$field = self::get_prefixed_name('paying_state');
-			update_option($field, $paying_state);
+		if ( ! is_null( $paying_state ) ) {
+			$field = self::get_prefixed_name( 'paying_state' );
+			update_option( $field, $paying_state );
 		}
 		$email_address = $compressor->get_email_address();
-		if (! is_null($email_address)) {
-			$field = self::get_prefixed_name('email_address');
-			update_option($field, $email_address);
+		if ( ! is_null( $email_address ) ) {
+			$field = self::get_prefixed_name( 'email_address' );
+			update_option( $field, $email_address );
 		}
-		if ($compressor->limit_reached()) {
-			$this->notices->add_limit_reached_notice($email_address);
+		if ( $compressor->limit_reached() ) {
+			$this->notices->add_limit_reached_notice( $email_address );
 		} else {
-			$this->notices->remove('limit-reached');
+			$this->notices->remove( 'limit-reached' );
 		}
 	}
 
-	public function render_account_status()
-	{
+	public function render_account_status() {
 		$key = $this->get_api_key();
-		if (empty($key)) {
+		if ( empty( $key ) ) {
 			$compressor = $this->get_compressor();
-			if ($compressor->can_create_key()) {
-				include(dirname(__FILE__) . '/views/account-status-create-advanced.php');
+			if ( $compressor->can_create_key() ) {
+				include( dirname( __FILE__ ) . '/views/account-status-create-advanced.php' );
 			} else {
-				include(dirname(__FILE__) . '/views/account-status-create-simple.php');
+				include( dirname( __FILE__ ) . '/views/account-status-create-simple.php' );
 			}
 		} else {
 			$status = $this->compressor->get_status();
 			$status->pending = false;
-			if ($status->ok) {
-				if ($this->get_api_key_pending()) {
+			if ( $status->ok ) {
+				if ( $this->get_api_key_pending() ) {
 					$this->clear_api_key_pending();
 				}
 			} else {
-				if ($this->get_api_key_pending()) {
+				if ( $this->get_api_key_pending() ) {
 					$status->ok = true;
 					$status->pending = true;
 					$status->message = (
@@ -854,38 +804,36 @@ class Tiny_Settings extends Tiny_WP_Base
 					);
 				}
 			}
-			include(dirname(__FILE__) . '/views/account-status-connected.php');
+			include( dirname( __FILE__ ) . '/views/account-status-connected.php' );
 		}
 	}
 
-	public function render_pending_status()
-	{
+	public function render_pending_status() {
 		$key = $this->get_api_key();
-		if (empty($key)) {
+		if ( empty( $key ) ) {
 			$compressor = $this->get_compressor();
-			if ($compressor->can_create_key()) {
-				include(dirname(__FILE__) . '/views/account-status-create-advanced.php');
+			if ( $compressor->can_create_key() ) {
+				include( dirname( __FILE__ ) . '/views/account-status-create-advanced.php' );
 			} else {
-				include(dirname(__FILE__) . '/views/account-status-create-simple.php');
+				include( dirname( __FILE__ ) . '/views/account-status-create-simple.php' );
 			}
 		} else {
-			include(dirname(__FILE__) . '/views/account-status-loading.php');
+			include( dirname( __FILE__ ) . '/views/account-status-loading.php' );
 		}
 	}
 
-	public function create_api_key()
-	{
-		if (! $this->check_ajax_referer()) {
+	public function create_api_key() {
+		if ( ! $this->check_ajax_referer() ) {
 			exit;
 		}
 		$compressor = $this->get_compressor();
-		if (! current_user_can('manage_options')) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok' => false,
 				'message' => 'This feature requires certain user capabilities',
 			);
-		} elseif ($compressor->can_create_key()) {
-			if (! isset($_POST['name']) || ! $_POST['name']) {
+		} elseif ( $compressor->can_create_key() ) {
+			if ( ! isset( $_POST['name'] ) || ! $_POST['name'] ) {
 				$status = (object) array(
 					'ok' => false,
 					'message' => __(
@@ -893,11 +841,11 @@ class Tiny_Settings extends Tiny_WP_Base
 						'tiny-compress-images'
 					),
 				);
-				echo json_encode($status);
+				echo json_encode( $status );
 				exit();
 			}
 
-			if (! isset($_POST['email']) || ! $_POST['email']) {
+			if ( ! isset( $_POST['email'] ) || ! $_POST['email'] ) {
 				$status = (object) array(
 					'ok' => false,
 					'message' => __(
@@ -905,12 +853,12 @@ class Tiny_Settings extends Tiny_WP_Base
 						'tiny-compress-images'
 					),
 				);
-				echo json_encode($status);
+				echo json_encode( $status );
 				exit();
 			}
 
 			try {
-				$site = str_replace(array('http://', 'https://'), '', get_bloginfo('url'));
+				$site = str_replace( array( 'http://', 'https://' ), '', get_bloginfo( 'url' ) );
 				$identifier = 'WordPress plugin for ' . $site;
 				$link = $this->get_absolute_url();
 				$compressor->create_key($_POST['email'], array(
@@ -919,16 +867,16 @@ class Tiny_Settings extends Tiny_WP_Base
 					'link' => $link,
 				));
 
-				update_option(self::get_prefixed_name('api_key_pending'), true);
-				update_option(self::get_prefixed_name('api_key'), $compressor->get_key());
-				update_option(self::get_prefixed_name('status'), 0);
+				update_option( self::get_prefixed_name( 'api_key_pending' ), true );
+				update_option( self::get_prefixed_name( 'api_key' ), $compressor->get_key() );
+				update_option( self::get_prefixed_name( 'status' ), 0 );
 
 				$status = (object) array(
 					'ok' => true,
 					'message' => null,
 				);
-			} catch (Tiny_Exception $err) {
-				list($message) = explode(' (HTTP', $err->getMessage(), 2);
+			} catch ( Tiny_Exception $err ) {
+				list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
 				$status = (object) array(
 					'ok' => false,
 					'message' => $message,
@@ -941,90 +889,84 @@ class Tiny_Settings extends Tiny_WP_Base
 			);
 		} // End if().
 
-		echo json_encode($status);
+		echo json_encode( $status );
 		exit();
 	}
 
-	public function update_api_key()
-	{
+	public function update_api_key() {
 		$key = $_POST['key'];
-		if (! $this->check_ajax_referer()) {
+		if ( ! $this->check_ajax_referer() ) {
 			exit;
 		}
-		if (! current_user_can('manage_options')) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok' => false,
 				'message' => 'This feature requires certain user capabilities',
 			);
-		} elseif (empty($key)) {
+		} elseif ( empty( $key ) ) {
 			/* Always save if key is blank, so the key can be deleted. */
 			$status = (object) array(
 				'ok' => true,
 				'message' => null,
 			);
 		} else {
-			$status = Tiny_Compress::create($key)->get_status();
+			$status = Tiny_Compress::create( $key )->get_status();
 		}
-		if ($status->ok) {
-			update_option(self::get_prefixed_name('api_key_pending'), false);
-			update_option(self::get_prefixed_name('api_key'), $key);
+		if ( $status->ok ) {
+			update_option( self::get_prefixed_name( 'api_key_pending' ), false );
+			update_option( self::get_prefixed_name( 'api_key' ), $key );
 		}
-		echo json_encode($status);
+		echo json_encode( $status );
 		exit();
 	}
 
-	public static function wr2x_active()
-	{
-		return function_exists('wr2x_get_retina');
+	public static function wr2x_active() {
+		return function_exists( 'wr2x_get_retina' );
 	}
 
-	public function get_wr2x_option()
-	{
-		$setting = get_option(self::get_prefixed_name('sizes'));
+	public function get_wr2x_option() {
+		$setting = get_option( self::get_prefixed_name( 'sizes' ) );
 		return array(
 			'width' => null,
 			'height' => null,
-			'tinify' => (isset($setting['wr2x']) && 'on' === $setting['wr2x']),
+			'tinify' => (isset( $setting['wr2x'] ) && 'on' === $setting['wr2x']),
 		);
 	}
 
-	public function compress_wr2x_images()
-	{
+	public function compress_wr2x_images() {
 		$option = $this->get_wr2x_option();
 		return self::wr2x_active() && $option['tinify'];
 	}
 
 
-	public function render_format_conversion()
-	{
+	public function render_format_conversion() {
 		echo '<div class="conversion-options">';
 
-		$convert_to_avif_id = self::get_prefixed_name('convert_format');
-		$convert_to_avif_name = self::get_prefixed_name('convert_format[avif]');
-		$convert_to_avif_checked = $this->get_convert_format_option('avif') ? ' checked="checked"' : '';
+		$convert_to_avif_id = self::get_prefixed_name( 'convert_format' );
+		$convert_to_avif_name = self::get_prefixed_name( 'convert_format[avif]' );
+		$convert_to_avif_checked = $this->get_convert_format_option( 'avif' ) ? ' checked="checked"' : '';
 
 		echo '<p class="tiny-check">';
 		echo '<input type="checkbox" id="' . $convert_to_avif_id . '" name="' . $convert_to_avif_name . '" value="on"' . $convert_to_avif_checked . '/>';
-		echo '<label for="' . $convert_to_avif_id . '">' . esc_html__('Convert images to AVIF', 'tiny-compress-images') . '</label>';
-		echo '<br><span class="description">' . esc_html__('AVIF offers the best compression but has limited browser support.', 'tiny-compress-images') . '</span>';
+		echo '<label for="' . $convert_to_avif_id . '">' . esc_html__( 'Convert images to AVIF', 'tiny-compress-images' ) . '</label>';
+		echo '<br><span class="description">' . esc_html__( 'AVIF offers the best compression but has limited browser support.', 'tiny-compress-images' ) . '</span>';
 		echo '</p>';
 
-		$convert_to_webp_id = self::get_prefixed_name('convert_to_webp');
-		$convert_to_webp_name = self::get_prefixed_name('convert_format[webp]');
-		$convert_to_webp_checked = $this->get_convert_format_option('webp') ? ' checked="checked"' : '';
+		$convert_to_webp_id = self::get_prefixed_name( 'convert_to_webp' );
+		$convert_to_webp_name = self::get_prefixed_name( 'convert_format[webp]' );
+		$convert_to_webp_checked = $this->get_convert_format_option( 'webp' ) ? ' checked="checked"' : '';
 
 		echo '<p class="tiny-check">';
 		echo '<input type="checkbox" id="' . $convert_to_webp_id . '" name="' . $convert_to_webp_name . '" value="on"' . $convert_to_webp_checked . '/>';
-		echo '<label for="' . $convert_to_webp_id . '">' . esc_html__('Convert images to WebP', 'tiny-compress-images') . '</label>';
-		echo '<br><span class="description">' . esc_html__('WebP supports transparency and has good browser compatibility.', 'tiny-compress-images') . '</span>';
+		echo '<label for="' . $convert_to_webp_id . '">' . esc_html__( 'Convert images to WebP', 'tiny-compress-images' ) . '</label>';
+		echo '<br><span class="description">' . esc_html__( 'WebP supports transparency and has good browser compatibility.', 'tiny-compress-images' ) . '</span>';
 		echo '</p>';
 
 		echo '</div>';
 	}
 
-	private  function get_convert_format_option($option)
-	{
-		$setting = get_option(self::get_prefixed_name('convert_format'));
-		return isset($setting[$option]) && 'on' === $setting[$option];
+	private  function get_convert_format_option( $option ) {
+		$setting = get_option( self::get_prefixed_name( 'convert_format' ) );
+		return isset( $setting[ $option ] ) && 'on' === $setting[ $option ];
 	}
 }
