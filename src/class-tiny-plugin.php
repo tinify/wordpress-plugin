@@ -40,6 +40,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
+		new Tiny_Picture();
 	}
 
 	public function set_compressor( $compressor ) {
