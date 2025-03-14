@@ -38,4 +38,32 @@ class Tiny_Helpers {
 		}
 		return $text;
 	}
+
+	/**
+	 * Will replace the file extension with the specified format.
+	 * 
+	 * @param string $format The format to replace the extension with. Currently supports 'image/avif' or 'image/webp'
+	 * @param string $file The full path to replace the extension in, ex /home/user/image.png
+	 * 
+	 * @return string The full path to the file with the new extension, ex /home/user/image.avif
+	 */
+	public static function replace_file_extension($format, $file)
+	{
+		$path_parts = pathinfo($file);
+
+		$extension = $path_parts['extension'];
+		if ($format == 'image/avif') {
+			$extension = 'avif';
+		}
+
+		if ($format == 'image/webp') {
+			$extension = 'webp';
+		}
+
+		$dirname = $path_parts['dirname'];
+		$filename = $path_parts['filename'];
+
+		// Handle directory separator properly
+		return $dirname . ($dirname === '' ? '' : DIRECTORY_SEPARATOR) . $filename . '.' . $extension;
+	}
 }
