@@ -942,24 +942,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_format_conversion() {
 		echo '<div class="conversion-options">';
 
-		$convert_to_avif_id = self::get_prefixed_name( 'convert_format' );
-		$convert_to_avif_name = self::get_prefixed_name( 'convert_format[avif]' );
-		$convert_to_avif_checked = $this->get_convert_format_option( 'avif' ) ? ' checked="checked"' : '';
+		$convertopts_convert = self::get_prefixed_name( 'convert_format[convert]' );
+		$convertopts_convert_checked = $this->get_convert_format_option( 'convert' ) ? ' checked="checked"' : '';
 
 		echo '<p class="tiny-check">';
-		echo '<input type="checkbox" id="' . $convert_to_avif_id . '" name="' . $convert_to_avif_name . '" value="on"' . $convert_to_avif_checked . '/>';
-		echo '<label for="' . $convert_to_avif_id . '">' . esc_html__( 'Convert images to AVIF', 'tiny-compress-images' ) . '</label>';
-		echo '<br><span class="description">' . esc_html__( 'AVIF offers the best compression but has limited browser support.', 'tiny-compress-images' ) . '</span>';
+		echo '<input type="checkbox" id="' . $convertopts_convert . '" name="' . $convertopts_convert . '" value="on"' . $convertopts_convert_checked . '/>';
+		echo '<label for="' . $convertopts_convert . '">' . esc_html__( 'Convert images to optimized formats', 'tiny-compress-images' ) . '</label>';
 		echo '</p>';
 
-		$convert_to_webp_id = self::get_prefixed_name( 'convert_to_webp' );
-		$convert_to_webp_name = self::get_prefixed_name( 'convert_format[webp]' );
-		$convert_to_webp_checked = $this->get_convert_format_option( 'webp' ) ? ' checked="checked"' : '';
-
+		$convertopts_replace = self::get_prefixed_name( 'convert_format[replace]' );
+		$convertopts_replace_checked = $this->get_convert_format_option( 'replace' ) ? ' checked="checked"' : '';
 		echo '<p class="tiny-check">';
-		echo '<input type="checkbox" id="' . $convert_to_webp_id . '" name="' . $convert_to_webp_name . '" value="on"' . $convert_to_webp_checked . '/>';
-		echo '<label for="' . $convert_to_webp_id . '">' . esc_html__( 'Convert images to WebP', 'tiny-compress-images' ) . '</label>';
-		echo '<br><span class="description">' . esc_html__( 'WebP supports transparency and has good browser compatibility.', 'tiny-compress-images' ) . '</span>';
+		echo '<input type="checkbox" id="' . $convertopts_replace . '" name="' . $convertopts_replace . '" value="on"' . $convertopts_replace_checked . '/>';
+		echo '<label for="' . $convertopts_replace . '">' . esc_html__( 'Replace original image with converted image', 'tiny-compress-images' ) . '</label>';
 		echo '</p>';
 
 		echo '</div>';
