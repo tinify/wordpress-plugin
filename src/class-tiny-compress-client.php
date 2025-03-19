@@ -103,6 +103,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			$meta = array(
 				'type' => $result->mediaType(),
+				'size' => $result->size(),
 			);
 
 			$buffer = $result->toBuffer();
@@ -133,7 +134,9 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				$source = $source->preserve( $preserve_opts );
 			}
 
-			if ( isset( $convert_opts['replace'] ) && $convert_opts['replace'] && isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
+			$should_convert = isset( $convert_opts['convert'] ) && $convert_opts['convert'];
+			$replace_original = isset( $convert_opts['replace'] ) && $convert_opts['replace'];
+			if ( $should_convert && $replace_original) {
 				$source = $source->convert(
 					array(
 						'type' => array( 'image/avif', 'image/webp' ),
@@ -154,6 +157,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 					'width' => $result->width(),
 					'height' => $result->height(),
 					'ratio' => round( $result->size() / strlen( $input ), 4 ),
+					'converted' => $should_convert && $replace_original,
 				),
 			);
 
