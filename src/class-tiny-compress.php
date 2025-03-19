@@ -132,7 +132,7 @@ abstract class Tiny_Compress {
 			throw new Tiny_Exception( $e->getMessage(), 'FileError' );
 		}
 
-		if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
+		if ( !$details['output']['converted'] && isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
 			try {
 				list($convert_output, $convert_details) = $this->convert( $output, $convert_opts );
 				$filepath_new = Tiny_Helpers::replace_file_extension( $convert_details['type'], $file );
@@ -140,6 +140,7 @@ abstract class Tiny_Compress {
 				$details['output']['converted'] = true;
 				$details['output']['converted_location'] = $filepath_new;
 				$details['output']['converted_format'] = $convert_details['type'];
+				$details['output']['converted_size'] = $convert_details['size'];
 			} catch ( Tiny_Exception $e ) {
 				$details['output']['converted'] = false;
 				$details['output']['converted_errors'] = $e->get_message();
