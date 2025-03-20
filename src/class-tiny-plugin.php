@@ -61,6 +61,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
+		add_action( 'delete_attachment', $this->get_method('clean_attachment'), 10, 2);
+
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
@@ -716,5 +718,21 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$user = wp_get_current_user();
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
+	}
+
+	/**
+	 * Will clean up converted files (if any) when the original is deleted
+	 *
+	 * Hooked to the `delete_attachment` action.
+	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
+	 * 
+	 * @param [int] $post_id
+	 * @param [mixed] $post
+	 * 
+	 * @return void
+	 */
+	function clean_attachment($post_id, $post) {
+ 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
+		$tiny_image->delete_converted_image();
 	}
 }

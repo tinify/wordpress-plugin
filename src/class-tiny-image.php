@@ -215,6 +215,13 @@ class Tiny_Image {
 		);
 	}
 
+	public function delete_converted_image() {
+		$sizes = $this->get_image_sizes();
+		foreach ( $sizes as $size ) {
+			$size->delete_converted_image();
+		}
+	}
+
 	public function compress_retina( $size_name, $path ) {
 		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;

@@ -18,7 +18,8 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Helpers {
+class Tiny_Helpers
+{
 
 	/**
 	 * truncate_text will truncate a string to a given length.
@@ -32,9 +33,10 @@ class Tiny_Helpers {
 	 * @param integer $length the maximum length of the string
 	 * @return string the truncated string
 	 */
-	public static function truncate_text( $text, $length ) {
-		if ( mb_strlen( $text ) > $length ) {
-			return mb_substr( $text, 0, $length - 3 ) . '...';
+	public static function truncate_text($text, $length)
+	{
+		if (mb_strlen($text) > $length) {
+			return mb_substr($text, 0, $length - 3) . '...';
 		}
 		return $text;
 	}
@@ -47,15 +49,21 @@ class Tiny_Helpers {
 	 *
 	 * @return string The full path to the file with the new extension, ex /home/user/image.avif
 	 */
-	public static function replace_file_extension( $format, $file ) {
-		$path_parts = pathinfo( $file );
+	public static function replace_file_extension($format, $file)
+	{
+		$path_parts = pathinfo($file);
+
+		if (!isset($path_parts['extension'])) {
+			// When file has no extension, we can't replace  
+			return $file;
+		}
 
 		$extension = $path_parts['extension'];
-		if ( $format == 'image/avif' ) {
+		if ($format == Tiny_Config::CONVERSION_AVIF) {
 			$extension = 'avif';
 		}
 
-		if ( $format == 'image/webp' ) {
+		if ($format == Tiny_Config::CONVERSION_WEBP) {
 			$extension = 'webp';
 		}
 
