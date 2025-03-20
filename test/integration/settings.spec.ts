@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { enableCompressionSizes, setAPIKey } from './utils';
+import { enableCompressionSizes, setAPIKey, setConversionSettings } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -212,5 +212,15 @@ test.describe('settings', () => {
     await expect(page.locator('#tinypng_resize_original_enabled')).toBeChecked();
     await expect(page.locator('#tinypng_resize_original_width')).toHaveValue('234');
     await expect(page.locator('#tinypng_resize_original_height')).toHaveValue('345');
+  });
+
+  test('will store conversion settings', async () => {
+    await setConversionSettings(page, {
+      replace: true,
+      convert: true,
+    });
+
+    await expect(page.locator('#tinypng_conversion_replace')).toBeChecked();
+    await expect(page.locator('#tinypng_conversion_convert')).toBeChecked();
   });
 });
