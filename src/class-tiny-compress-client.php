@@ -139,7 +139,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			if ( $should_convert && $replace_original ) {
 				$source = $source->convert(
 					array(
-						'type' => array( 'image/avif', 'image/webp' ),
+						'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
 					)
 				);
 			}
