@@ -25,7 +25,9 @@ test.describe('conversion', () => {
     await page.close();
   });
 
-  test('will add the optimized format to the original image', async () => {});
+  test('will add the optimized format to the original image', async () => {
+    
+  });
 
   test('will replace the original image with the optimized image', async () => {
     await uploadMedia(page, 'input-example.jpg');

@@ -56,8 +56,8 @@ function mock_webp_response()
     header("Image-Height: 150");
 
     $response = array(
-        "input" => array("size" => 15391, "type" => "image/webp"),
-        "output" => array("size" => 13910, "type" => "image/jpeg", "ratio" => 0.904)
+        "input" => array("size" => 15391, "type" => "image/png"),
+        "output" => array("size" => 11023, "type" => "image/webp", "ratio" => 0.2304)
     );
     return json_encode($response);
 }
@@ -67,15 +67,15 @@ function mock_avif_response()
 
     $session['Compression-Count'] += 1;
     header('HTTP/1.1 201 Created');
-    header("Location: " . HOST . "/output/example.webp");
+    header("Location: " . HOST . "/output/example.avif");
     header("Content-Type: application/json; charset=utf-8");
     header("Compression-Count: {$session['Compression-Count']}");
-    header("Image-Width: 200");
-    header("Image-Height: 150");
+    header("Image-Width: 1080");
+    header("Image-Height: 720");
 
     $response = array(
-        "input" => array("size" => 15391, "type" => "image/webp"),
-        "output" => array("size" => 13910, "type" => "image/jpeg", "ratio" => 0.904)
+        "input" => array("size" => 641206, "type" => "image/jpeg"),
+        "output" => array("size" => 101549, "type" => "image/avif", "ratio" => 0.1584)
     );
     return json_encode($response);
 }
