@@ -109,13 +109,13 @@ class Tiny_Image_Size {
 
 	public function conversion_text() {
 		$converted = $this->meta['output']['converted'];
-		if (!$converted) {
+		if ( ! $converted ) {
 			return 'Not converted';
 		}
 
-		$converted_replaced_original = !isset($this->meta['output']['converted_format']);
+		$converted_replaced_original = ! isset( $this->meta['output']['converted_format'] );
 		$conversion_size = $this->meta['output']['converted_size'];
-		$conversion_text = $converted_replaced_original ? esc_html__('replaced original', 'tiny-compress-images') : $this->meta['output']['converted_format'] . ' (' . size_format($conversion_size, 1) . ')';
+		$conversion_text = $converted_replaced_original ? esc_html__( 'replaced original', 'tiny-compress-images' ) : $this->meta['output']['converted_format'] . ' (' . size_format( $conversion_size, 1 ) . ')';
 		return $conversion_text;
 	}
 

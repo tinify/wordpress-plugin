@@ -136,7 +136,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			$should_convert = isset( $convert_opts['convert'] ) && $convert_opts['convert'];
 			$replace_original = isset( $convert_opts['replace'] ) && $convert_opts['replace'];
-			if ( $should_convert && $replace_original) {
+			if ( $should_convert && $replace_original ) {
 				$source = $source->convert(
 					array(
 						'type' => array( 'image/avif', 'image/webp' ),
