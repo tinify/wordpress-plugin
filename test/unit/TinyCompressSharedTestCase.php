@@ -1,30 +1,35 @@
 <?php
 
-require_once dirname( __FILE__ ) . '/TinyTestCase.php';
+require_once dirname(__FILE__) . '/TinyTestCase.php';
 
-abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
-	public function set_up() {
+abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
+{
+	public function set_up()
+	{
 		parent::set_up();
 		$this->after_compress_called = false;
 		$after_compress_called = &$this->after_compress_called;
-		$callback = function( $compressor ) use ( &$after_compress_called ) {
+		$callback = function ($compressor) use (&$after_compress_called) {
 			$after_compress_called = true;
 		};
-		$this->compressor = Tiny_Compress::create( 'api1234', $callback );
+		$this->compressor = Tiny_Compress::create('api1234', $callback);
 	}
 
-	protected abstract function register( $method, $url, $details );
+	protected abstract function register($method, $url, $details);
 
-	public function test_should_return_client_compressor() {
-		$this->assertInstanceOf( 'Tiny_Compress', $this->compressor );
+	public function test_should_return_client_compressor()
+	{
+		$this->assertInstanceOf('Tiny_Compress', $this->compressor);
 	}
 
-	public function test_get_key_should_return_key() {
-		$this->assertSame( 'api1234', $this->compressor->get_key() );
+	public function test_get_key_should_return_key()
+	{
+		$this->assertSame('api1234', $this->compressor->get_key());
 	}
 
-	public function test_get_status_should_return_success_status() {
-		$this->register( 'GET', '/keys/api1234', array(
+	public function test_get_status_should_return_success_status()
+	{
+		$this->register('GET', '/keys/api1234', array(
 			'status' => 200,
 			'headers' => array(
 				'content-type' => 'application/json',
@@ -51,8 +56,9 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function test_get_status_should_return_limit_reached_status() {
-		$this->register( 'GET', '/keys/api1234', array(
+	public function test_get_status_should_return_limit_reached_status()
+	{
+		$this->register('GET', '/keys/api1234', array(
 			'status' => 200,
 			'headers' => array(
 				'content-type' => 'application/json',
@@ -80,8 +86,9 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function test_get_status_should_return_unauthorized_status() {
-		$this->register( 'GET', '/keys/api1234', array(
+	public function test_get_status_should_return_unauthorized_status()
+	{
+		$this->register('GET', '/keys/api1234', array(
 			'status' => 404,
 			'headers' => array(
 				'content-type' => 'application/json',
@@ -108,8 +115,9 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function test_compress_file_should_save_compressed_file() {
-		$this->register( 'POST', '/shrink', array(
+	public function test_compress_file_should_save_compressed_file()
+	{
+		$this->register('POST', '/shrink', array(
 			'status' => 201,
 			'headers' => array(
 				'location' => 'https://api.tinify.com/output/compressed.png',
@@ -129,10 +137,10 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			'body' => 'optimized',
 		);
 
-		$this->register( 'GET', '/output/compressed.png', $handler );
-		$this->register( 'POST', '/output/compressed.png', $handler );
+		$this->register('GET', '/output/compressed.png', $handler);
+		$this->register('POST', '/output/compressed.png', $handler);
 
-		file_put_contents( $this->vfs->url() . '/image.png', 'unoptimized' );
+		file_put_contents($this->vfs->url() . '/image.png', 'unoptimized');
 
 		$this->assertEquals(
 			array(
@@ -145,10 +153,11 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 					'type' => 'image/png',
 					'width' => 10,
 					'height' => 15,
-					'ratio' => round( 9 / 11, 4 ),
+					'ratio' => round(9 / 11, 4),
+					'converted' => false,
 				),
 			),
-			$this->compressor->compress_file( $this->vfs->url() . '/image.png' )
+			$this->compressor->compress_file($this->vfs->url() . '/image.png')
 		);
 
 		$this->assertEquals(
@@ -162,8 +171,9 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function test_compress_file_should_save_resized_file() {
-		$this->register( 'POST', '/shrink', array(
+	public function test_compress_file_should_save_resized_file()
+	{
+		$this->register('POST', '/shrink', array(
 			'status' => 201,
 			'headers' => array(
 				'location' => 'https://api.tinify.com/output/compressed.png',
@@ -183,11 +193,11 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			'body' => 'small',
 		);
 
-		$this->register( 'GET', '/output/compressed.png', $handler );
-		$this->register( 'POST', '/output/compressed.png', $handler );
+		$this->register('GET', '/output/compressed.png', $handler);
+		$this->register('POST', '/output/compressed.png', $handler);
 
-		$img = file_get_contents( 'test/fixtures/input-example.jpg' );
-		file_put_contents( $this->vfs->url() . '/image.png', $img );
+		$img = file_get_contents('test/fixtures/input-example.jpg');
+		file_put_contents($this->vfs->url() . '/image.png', $img);
 
 		$resize = array(
 			'width' => 9,
@@ -205,11 +215,12 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 					'type' => 'image/png',
 					'width' => 6,
 					'height' => 9,
-					'ratio' => round( 5 / 641206, 4 ),
+					'ratio' => round(5 / 641206, 4),
 					'resized' => true,
+					'converted' => false,
 				),
 			),
-			$this->compressor->compress_file( $this->vfs->url() . '/image.png', $resize )
+			$this->compressor->compress_file($this->vfs->url() . '/image.png', $resize)
 		);
 
 		$this->assertEquals(
@@ -223,8 +234,9 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 		);
 	}
 
-	public function test_compress_file_should_return_unauthorized_status() {
-		$this->register( 'POST', '/shrink', array(
+	public function test_compress_file_should_return_unauthorized_status()
+	{
+		$this->register('POST', '/shrink', array(
 			'status' => 401,
 			'headers' => array(
 				'content-type' => 'application/json',
@@ -235,12 +247,12 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			)),
 		));
 
-		file_put_contents( $this->vfs->url() . '/image.png', 'unoptimized' );
+		file_put_contents($this->vfs->url() . '/image.png', 'unoptimized');
 
 		$exception = null;
 		try {
-			$this->compressor->compress_file( $this->vfs->url() . '/image.png' );
-		} catch ( Exception $err ) {
+			$this->compressor->compress_file($this->vfs->url() . '/image.png');
+		} catch (Exception $err) {
 			$exception = $err;
 		}
 
@@ -254,16 +266,18 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			$this->after_compress_called
 		);
 
-		$this->setExpectedException( 'Tiny_Exception' );
+		$this->setExpectedException('Tiny_Exception');
 		throw $exception;
 	}
 
-	public function test_get_compression_count_should_return_null_before_compresion() {
-		$this->assertSame( null, $this->compressor->get_compression_count() );
+	public function test_get_compression_count_should_return_null_before_compresion()
+	{
+		$this->assertSame(null, $this->compressor->get_compression_count());
 	}
 
-	public function test_get_compression_count_should_return_count() {
-		$this->register( 'POST', '/shrink', array(
+	public function test_get_compression_count_should_return_count()
+	{
+		$this->register('POST', '/shrink', array(
 			'status' => 201,
 			'headers' => array(
 				'location' => 'https://api.tinify.com/output/compressed.png',
@@ -285,12 +299,44 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			'body' => 'optimized',
 		);
 
-		$this->register( 'GET', '/output/compressed.png', $handler );
-		$this->register( 'POST', '/output/compressed.png', $handler );
+		$this->register('GET', '/output/compressed.png', $handler);
+		$this->register('POST', '/output/compressed.png', $handler);
 
-		file_put_contents( $this->vfs->url() . '/image.png', 'unoptimized' );
-		$this->compressor->compress_file( $this->vfs->url() . '/image.png' );
+		file_put_contents($this->vfs->url() . '/image.png', 'unoptimized');
+		$this->compressor->compress_file($this->vfs->url() . '/image.png');
 
-		$this->assertSame( 12, $this->compressor->get_compression_count() );
+		$this->assertSame(12, $this->compressor->get_compression_count());
+	}
+
+	public function test_should_convert_when_replace_and_convert_true()
+	{
+		// Arrange
+		$this->register('POST', '/shrink', array(
+			'status' => 201,
+			'headers' => array(
+				'location' => 'https://api.tinify.com/output/compressed.avif',
+				'content-type' => 'application/json',
+				'compression-count' => 12,
+			),
+			'body' => '{}',
+		));
+		$uncompressed_img = file_get_contents('test/fixtures/input-example.jpg');
+		file_put_contents($this->vfs->url() . '/image.png', $uncompressed_img);
+
+		// Act
+		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.png', array(), array(), array('convert' => true, 'replace' => true));
+
+		// Assert
+		$expected_output = array(
+			'input' => array(
+				'size' => 641206,
+				'type' => 'image/png',
+			),
+			'output' => array(
+				'type' => 'image/avif',
+				'converted' => true,
+			),
+		);
+		$this->assertEquals($expected_output, $test_output);
 	}
 }
