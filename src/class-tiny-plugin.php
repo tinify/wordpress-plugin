@@ -61,7 +61,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
-		add_action( 'delete_attachment', $this->get_method('clean_attachment'), 10, 2);
+		add_action( 'delete_attachment', $this->get_method( 'clean_attachment' ), 10, 2 );
 
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
@@ -725,14 +725,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *
 	 * Hooked to the `delete_attachment` action.
 	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
-	 * 
+	 *
 	 * @param [int] $post_id
 	 * @param [mixed] $post
-	 * 
+	 *
 	 * @return void
 	 */
-	function clean_attachment($post_id, $post) {
- 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
+	function clean_attachment( $post_id, $post ) {
+		 $tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
 	}
 }

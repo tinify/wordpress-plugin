@@ -370,13 +370,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 */
 	public function get_conversion_options() {
 		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
-		$convert_to = array(
-			'convert' => false,
-			'replace' => false,
-		);
 
-		$convert_to['convert'] = $setting_convert_format['convert'] == 'on' ? true : false;
-		$convert_to['replace'] = $setting_convert_format['replace'] == 'on' ? true : false;
+		$should_convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
+		$should_replace = isset( $setting_convert_format['replace'] ) && $setting_convert_format['replace'] == 'on';
+
+		$convert_to = array(
+			'convert' => $should_convert,
+			'replace' => $should_convert && $should_replace,
+		);
 
 		return $convert_to;
 	}
@@ -945,12 +946,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$convertopts_convert = self::get_prefixed_name( 'convert_format[convert]' );
 		$convertopts_convert_id = self::get_prefixed_name( 'conversion_convert' );
 		$convertopts_convert_checked = $this->get_convert_format_option( 'convert' ) ? ' checked="checked"' : '';
-		
+
 		echo '<p class="tiny-check">';
 		echo '<input type="checkbox" id="' . $convertopts_convert_id . '" name="' . $convertopts_convert . '" value="on"' . $convertopts_convert_checked . '/>';
 		echo '<label for="' . $convertopts_convert_id . '">' . esc_html__( 'Convert images to optimized formats', 'tiny-compress-images' ) . '</label>';
 		echo '</p>';
-		
+
 		$convertopts_replace = self::get_prefixed_name( 'convert_format[replace]' );
 		$convertopts_replace_id = self::get_prefixed_name( 'conversion_replace' );
 		$convertopts_replace_checked = $this->get_convert_format_option( 'replace' ) ? ' checked="checked"' : '';
