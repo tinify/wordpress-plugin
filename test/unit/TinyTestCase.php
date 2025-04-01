@@ -7,6 +7,7 @@ require_once dirname( __FILE__ ) . '/../../src/config/class-tiny-config.php';
 require_once 'vendor/autoload.php';
 
 use org\bovigo\vfs\vfsStream;
+use \PHPUnit\Framework\TestCase;
 
 function plugin_autoloader( $class ) {
 	$file = dirname( __FILE__ ) . '/../../src/class-' .
@@ -34,24 +35,24 @@ class Tiny_PHP {
 	}
 }
 
-abstract class Tiny_TestCase extends PHPUnit_Framework_TestCase {
+abstract class Tiny_TestCase extends TestCase {
 	protected $wp;
 	protected $vfs;
 
 	// @codingStandardsIgnoreStart
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		static::set_up_before_class();
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		static::tear_down_after_class();
 	}
 
-	protected function setUp() {
+	protected function setUp(): void {
 		$this->set_up();
 	}
 
-	protected function tearDown() {
+	protected function tearDown(): void {
 		$this->tear_down();
 	}
 
