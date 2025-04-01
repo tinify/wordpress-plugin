@@ -254,7 +254,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			$this->after_compress_called
 		);
 
-		$this->setExpectedException( 'Tiny_Exception' );
+		$this->expectException( 'Tiny_Exception' );
 		throw $exception;
 	}
 
