@@ -3,6 +3,9 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 class Tiny_Settings_Ajax_Test extends Tiny_TestCase {
+	protected $subject;
+	protected $notices;
+	
 	public function set_up() {
 		parent::set_up();
 		$this->subject = new Tiny_Settings();

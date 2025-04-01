@@ -3,6 +3,9 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 class Tiny_Image_Empty_Test extends Tiny_TestCase {
+	protected $settings;
+	protected $subject;
+	
 	public function set_up() {
 		parent::set_up();
 

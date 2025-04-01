@@ -6,6 +6,9 @@ use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;
 
 class Tiny_Plugin_Test extends Tiny_TestCase {
+	protected $subject;
+	protected $compressor;
+	
 	public function set_up() {
 		parent::set_up();
 		$this->subject = new Tiny_Plugin();

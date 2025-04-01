@@ -7,6 +7,8 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 	public $position = 0;
 
 	protected $data = array();
+	protected $mocked_body;
+	protected $mocked_status;
 
 	public static function clear() {
 		self::$handlers = array();

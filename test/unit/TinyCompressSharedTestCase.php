@@ -3,6 +3,9 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
+	protected $compressor;
+	protected $after_compress_called;
+	
 	public function set_up() {
 		parent::set_up();
 		$this->after_compress_called = false;
