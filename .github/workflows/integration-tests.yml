@@ -64,7 +64,7 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           shell: bash
-          command: ./bin/run-mocks ${{ matrix.wp }} ${{ matrix.php}}
+          command: ./bin/run-wordpress ${{ matrix.wp }} ${{ matrix.php}}
 
       - name: Start Mocks
         run: ./bin/run-mocks 8100
