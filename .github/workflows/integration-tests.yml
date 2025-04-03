@@ -3,7 +3,7 @@ name: Integration Tests
 on:
   push:
     branches:
-      - 'master'
+      - '**'
   pull_request:
     branches:
       - '**'
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      
+
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
@@ -57,9 +57,22 @@ jobs:
 
       - run: npx playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        
-      - name: Run script
-        run: ./bin/integration-tests ${{ matrix.wp }} ${{ matrix.php}}
+
+      - name: Start WordPress
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          command: ./bin/run-wordpress ${{ matrix.wp }} ${{ matrix.php}}
+
+      - name: Start Mocks
+        run: ./bin/run-mocks 8100
+
+      - name: Run integration tests
+        run: npm run test:playwright
+        env:
+          WORDPRESS_PORT: 80${{ matrix.wp }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

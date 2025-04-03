@@ -115,6 +115,8 @@ class WordPressStubs {
 			return array_merge( array( 'thumbnail', 'medium', 'medium_large', 'large' ), array_keys( $GLOBALS['_wp_additional_image_sizes'] ) );
 		} elseif ( 'get_plugin_data' === $method ) {
 			return array( 'Version' => '1.7.2' );
+		} elseif ( 'plugin_basename' === $method ) {
+			return 'tiny-compress-images';
 		} elseif ( 'wp_upload_dir' === $method ) {
 			return array( 'basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR );
 		} elseif ( 'is_admin' === $method ) {

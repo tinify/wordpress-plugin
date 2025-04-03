@@ -9,7 +9,7 @@ class Tiny_Compress_No_Client_Test extends Tiny_TestCase {
 	}
 
 	public function test_should_throw_error_when_curl_and_fopen_unavailable() {
-		$this->setExpectedException( 'Tiny_Exception' );
+		$this->expectException( 'Tiny_Exception' );
 		Tiny_Compress::create( 'api1234' );
 	}
 }
