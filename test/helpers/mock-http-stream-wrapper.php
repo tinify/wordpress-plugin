@@ -7,6 +7,8 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 	public $position = 0;
 
 	protected $data = array();
+	protected $mocked_body;
+	protected $mocked_status;
 
 	public static function clear() {
 		self::$handlers = array();
@@ -23,30 +25,30 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 
 	/* IteratorAggregate */
 
-	public function getIterator() {
+	public function getIterator(): Traversable {
 		return new ArrayIterator( $this->data );
 	}
 
 	/* ArrayAccess */
 
-	public function offsetExists( $offset ) {
+	public function offsetExists( $offset ): bool {
 		return array_key_exists( $offset, $this->data );
 	}
 
-	public function offsetGet( $offset ) {
+	public function offsetGet( $offset ): mixed {
 		return $this->data[ $offset ];
 	}
 
-	public function offsetSet( $offset, $value ) {
+	public function offsetSet( $offset, $value ): void {
 		$this->data[ $offset ] = $value;
 	}
 
-	public function offsetUnset( $offset ) {
+	public function offsetUnset( $offset ): void {
 		unset( $this->data[ $offset ] );
 	}
 
 	/* Countable */
-	public function count() {
+	public function count(): int {
 		return count( $this->data );
 	}
 

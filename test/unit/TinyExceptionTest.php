@@ -14,12 +14,12 @@ class Tiny_Exception_Test extends Tiny_TestCase {
 	}
 
 	public function test_constructor_throws_if_message_is_not_a_string() {
-		$this->setExpectedException( 'InvalidArgumentException' );
+		$this->expectException( 'InvalidArgumentException' );
 		new Tiny_Exception( 404, 'ErrorType' );
 	}
 
 	public function test_constructor_throws_if_error_is_not_a_string() {
-		$this->setExpectedException( 'InvalidArgumentException' );
+		$this->expectException( 'InvalidArgumentException' );
 		new Tiny_Exception( 'Message', new Exception( 'err' ) );
 	}
 }

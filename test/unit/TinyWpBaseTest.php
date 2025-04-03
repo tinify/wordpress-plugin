@@ -6,6 +6,8 @@ class Tiny_Test_Base extends Tiny_WP_Base {
 }
 
 class Tiny_WP_Base_Test extends Tiny_TestCase {
+	protected $subject;
+	
 	public function set_up() {
 		parent::set_up();
 		$this->subject = new Tiny_Test_Base();

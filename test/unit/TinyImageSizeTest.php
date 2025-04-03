@@ -3,6 +3,12 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 class Tiny_Image_Size_Test extends Tiny_TestCase {
+	protected $original;
+	protected $thumbnail;
+	protected $small;
+	protected $medium;
+	protected $large;
+
 	public function set_up() {
 		parent::set_up();
 

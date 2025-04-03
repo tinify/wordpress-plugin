@@ -1,6 +1,8 @@
 <?php
 
 class MockTinifyClient extends Tinify\Client {
+	protected $handlers;
+
 	function __construct( $key = null, $appIdentifier = null ) {
 		parent::__construct( $key, $appIdentifier );
 		$this->handlers = array();
