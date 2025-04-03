@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      
+
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
@@ -57,9 +57,17 @@ jobs:
 
       - run: npx playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        
-      - name: Run script
-        run: ./bin/integration-tests ${{ matrix.wp }} ${{ matrix.php}}
+
+      - name: Setup test environment
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          command: ./bin/setup-integration-tests ${{ matrix.wp }} ${{ matrix.php}}
+
+      - name: Run integration tests
+        run: npm run test:playwright
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
