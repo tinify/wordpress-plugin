@@ -37,6 +37,6 @@ npx wp-env start || exit 1
 echo "Installing compatible plugins.."
 
 ## use http until wp-env support certs
-npx wp-env run tests-cli wp plugin install --insecure --activate --force http://downloads.wordpress.org/plugin/amazon-s3-and-cloudfront.3.2.11.zip || exit 1
+npx wp-env run tests-cli wp plugin install --activate --force http://downloads.wordpress.org/plugin/amazon-s3-and-cloudfront.3.2.11.zip || exit 1
 
 echo "To stop, run: bin/stop-wordpress"
