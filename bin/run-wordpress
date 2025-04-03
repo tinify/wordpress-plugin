@@ -32,9 +32,9 @@ export WP_ENV_TESTS_PORT=80${WORDPRESS_VERSION}
 export WP_ENV_CORE=WordPress/Wordpress#${WORDPRESS_VERSION_FULL}
 export WP_ENV_PHP_VERSION=${PHP_VERSION_FULL}
 
-npx wp-env start 
+npx wp-env start || exit 1
 
 echo "Installing compatible plugins.."
-npx wp-env run tests-cli wp plugin install amazon-s3-and-cloudfront
+npx wp-env run tests-cli wp plugin install amazon-s3-and-cloudfront || exit 1
 
 echo "To stop, run: bin/stop-wordpress"
