@@ -145,11 +145,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			}
 
 			$result = $source->result();
-
 			$meta = array(
 				'input' => array(
 					'size' => strlen( $input ),
-					'type' => $result->mediaType(),
+					'type' => Tiny_Helpers::get_mimetype( $input ),
 				),
 				'output' => array(
 					'size' => $result->size(),

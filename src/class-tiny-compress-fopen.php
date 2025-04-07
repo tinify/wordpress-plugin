@@ -159,7 +159,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$meta = array(
 			'input' => array(
 				'size' => strlen( $input ),
-				'type' => $headers['content-type'],
+				'type' => Tiny_Helpers::get_mimetype( $input ),
 			),
 			'output' => array(
 				'size' => strlen( $output ),
@@ -173,7 +173,6 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		return array( $output, $meta );
 	}
-
 	private function request( $params, $url = Tiny_Config::SHRINK_URL ) {
 		$context = stream_context_create( $params );
 		$request = fopen( $url, 'rb', false, $context );
