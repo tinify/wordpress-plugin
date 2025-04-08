@@ -106,10 +106,10 @@ class Tiny_Image_Size {
 	/**
 	 * Images can be converted into optimized formats.
 	 *
-	 * @return boolean true if the image has been converted
+	 * @return array The converted image details
 	 */
 	public function converted() {
-		return $this->meta['output']['converted'];
+		return $this->meta['output']['convert'];
 	}
 
 	/**
@@ -118,7 +118,7 @@ class Tiny_Image_Size {
 	 * @return boolean true if the image has a optimized alternative format
 	 */
 	public function converted_image_exists() {
-		return isset( $this->meta['output']['converted_location'] ) && file_exists( $this->meta['output']['converted_location'] );
+		return isset( $this->meta['output']['convert'] ) && file_exists( $this->meta['output']['convert']['path'] );
 	}
 
 	public function conversion_text() {
@@ -171,7 +171,7 @@ class Tiny_Image_Size {
 
 	public function delete_converted_image() {
 		if ( $this->converted_image_exists() ) {
-			unlink( $this->meta['output']['converted_location'] );
+			unlink( $this->meta['output']['convert']['path'] );
 		}
 	}
 
