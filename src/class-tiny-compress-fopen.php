@@ -99,8 +99,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'Tinify\Exception'
 			);
 		}
-		
-		$output_params = $this->output_request_options(null, null, null);
+
+		$output_params = $this->output_request_options( null, null, null );
 		list($output, $headers, $status_code) = $this->request( $output_params, $output_url );
 		if ( is_string( $output ) && 0 == strlen( $output ) ) {
 			throw new Tiny_Exception(

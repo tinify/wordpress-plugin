@@ -131,21 +131,21 @@ abstract class Tiny_Compress {
 		}
 
 		if (
-			isset($convert_opts['convert']) && $convert_opts['convert'] &&
-			isset($convert_opts['replace']) && $convert_opts['replace'] === false
+			isset( $convert_opts['convert'] ) && $convert_opts['convert'] &&
+			isset( $convert_opts['replace'] ) && $convert_opts['replace'] === false
 		) {
 			try {
-				list($convert_output, $convert_details) = $this->convert($output, $convert_opts);
-				$converted_filepath = Tiny_Helpers::replace_file_extension($convert_details['type'], $file);
-				file_put_contents($converted_filepath, $convert_output);
-		
+				list($convert_output, $convert_details) = $this->convert( $output, $convert_opts );
+				$converted_filepath = Tiny_Helpers::replace_file_extension( $convert_details['type'], $file );
+				file_put_contents( $converted_filepath, $convert_output );
+
 				$details['output']['convert'] = [
 					'type' => $convert_details['type'],
 					'size' => $convert_details['size'],
 					'path' => $converted_filepath,
 				];
-				
-			} catch (Tiny_Exception $e) {
+
+			} catch ( Tiny_Exception $e ) {
 				$details['output']['converted_errors'] = $e->get_message();
 			}
 		}
