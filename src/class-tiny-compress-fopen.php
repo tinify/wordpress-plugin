@@ -84,14 +84,24 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function convert( $output_url, $convert_opts ) {
+	protected function convert( $input, $convert_opts ) {
 		$params = $this->request_options('POST', array(
 			'convert' => array(
 				'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
 			),
 		));
-		list($output, $headers, $status_code) = $this->request( $params, $output_url );
+		list($details, $headers, $status_code) = $this->request( $params );
 
+		$output_url = isset( $headers['location'] ) ? $headers['location'] : null;
+		if ( null === $output_url ) {
+			throw new Tiny_Exception(
+				'Could not find output location',
+				'Tinify\Exception'
+			);
+		}
+		
+		$output_params = $this->output_request_options(null, null, null);
+		list($output, $headers, $status_code) = $this->request( $output_params, $output_url );
 		if ( is_string( $output ) && 0 == strlen( $output ) ) {
 			throw new Tiny_Exception(
 				'Could not download output',
@@ -167,7 +177,6 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'width' => intval( $headers['image-width'] ),
 				'height' => intval( $headers['image-height'] ),
 				'ratio' => round( strlen( $output ) / strlen( $input ), 4 ),
-				'converted' => $should_convert && $replace_original,
 			),
 		);
 
