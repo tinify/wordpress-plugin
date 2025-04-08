@@ -15,10 +15,6 @@ test.describe('conversion', () => {
     await setAPIKey(page, 'AVIF123');
     await enableCompressionSizes(page, [], true);
     await setCompressionTiming(page, 'auto');
-    await setConversionSettings(page, {
-      replace: false,
-      convert: true,
-    })
   });
 
   test.afterAll(async () => {
@@ -26,12 +22,21 @@ test.describe('conversion', () => {
   });
 
   test('will add the optimized format to the original image', async () => {
+    await setConversionSettings(page, {
+      replace: false,
+      convert: true,
+    });
+    await uploadMedia(page, 'input-example.jpg');
     
+    await clearMediaLibrary(page);
   });
 
   test('will replace the original image with the optimized image', async () => {
+    await setConversionSettings(page, {
+      replace: true,
+      convert: true,
+    });
     await uploadMedia(page, 'input-example.jpg');
-
   });
 
   test('will display the optimized image on a page', async () => {});

@@ -214,6 +214,14 @@ test.describe('settings', () => {
     await expect(page.locator('#tinypng_resize_original_height')).toHaveValue('345');
   });
 
+  test('will not convert by default', async () => {
+
+  });
+
+  test('cannot have replace true while convert is false', async () => {
+
+  })
+
   test('will store conversion settings', async () => {
     await setConversionSettings(page, {
       replace: true,
