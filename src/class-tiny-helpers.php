@@ -18,7 +18,8 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Helpers {
+class Tiny_Helpers
+{
 
 
 
@@ -34,9 +35,10 @@ class Tiny_Helpers {
 	 * @param integer $length the maximum length of the string
 	 * @return string the truncated string
 	 */
-	public static function truncate_text( $text, $length ) {
-		if ( mb_strlen( $text ) > $length ) {
-			return mb_substr( $text, 0, $length - 3 ) . '...';
+	public static function truncate_text($text, $length)
+	{
+		if (mb_strlen($text) > $length) {
+			return mb_substr($text, 0, $length - 3) . '...';
 		}
 		return $text;
 	}
@@ -49,21 +51,18 @@ class Tiny_Helpers {
 	 *
 	 * @return string The full path to the file with the new extension, ex /home/user/image.avif
 	 */
-	public static function replace_file_extension( $format, $file ) {
-		$path_parts = pathinfo( $file );
+	public static function replace_file_extension($format, $file)
+	{
+		$path_parts = pathinfo($file);
 
-		if ( ! isset( $path_parts['extension'] ) ) {
+		if (! isset($path_parts['extension'])) {
 			// When file has no extension, we can't replace
 			return $file;
 		}
 
 		$extension = $path_parts['extension'];
-		if ( $format == Tiny_Config::CONVERSION_AVIF ) {
-			$extension = 'avif';
-		}
-
-		if ( $format == Tiny_Config::CONVERSION_WEBP ) {
-			$extension = 'webp';
+		if ($format == 'avif' || $format == 'webp') {
+			$extension = $format;
 		}
 
 		$dirname = $path_parts['dirname'];
@@ -81,13 +80,14 @@ class Tiny_Helpers {
 	 * @param string $input The file contents
 	 * @return string The mimetype of the file
 	 */
-	public static function get_mimetype( $input ) {
-		if ( class_exists( 'finfo' ) ) {
-			$finfo = new finfo( FILEINFO_MIME_TYPE );
-			$mime = $finfo->buffer( $input );
+	public static function get_mimetype($input)
+	{
+		if (class_exists('finfo')) {
+			$finfo = new finfo(FILEINFO_MIME_TYPE);
+			$mime = $finfo->buffer($input);
 			return $mime;
 		} else {
-			throw new Exception( 'finfo extension is not available.' );
+			throw new Exception('finfo extension is not available.');
 		}
 	}
 }
