@@ -21,6 +21,7 @@
 class Tiny_Picture {
 
 
+
 	public function __construct() {
 		$this->init();
 	}
@@ -90,6 +91,7 @@ class Tiny_Picture {
 
 class Tiny_Picture_Element {
 
+
 	/**
 	 * The raw HTML img element as a string
 	 * @var string
@@ -153,29 +155,42 @@ class Tiny_Picture_Element {
 		return $result;
 	}
 
-	private function get_formatted_source( $imgsrcs, $format ) {
-		$upload_dir = wp_upload_dir();
+	private function get_local_path( $url ) {
+		$wp_upload_dir = wp_upload_dir();
+		$local_path = parse_url( $url, PHP_URL_PATH );
+		$format_path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $local_path );
+		return $format_path;
+	}
 
-			$formatted_src_set = array();
+	private function get_formatted_source( $imgsrcs, $format ) {
+		$formatted_src_set = array();
 		foreach ( $imgsrcs as $imgsrc ) {
 			$format_url = Tiny_Helpers::replace_file_extension( $format, $imgsrc['path'] );
-			$format_path = str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $format_url );
-			if ( file_exists( $format_path ) ) {
+			$local_path = $this->get_local_path( $format_url );
+			$exists_local = file_exists( $local_path );
+			if ( $exists_local ) {
 				$formatted_src_set[] = $format_url . ' ' . $imgsrc['size'];
 			}
 		}
 
 		if ( empty( $formatted_src_set ) ) {
-			// no avif sources found
+			// no alternative sources found
 			return '';
 		}
 
 		$source_set = implode( ', ', $formatted_src_set );
-		return '<source type="' . $format . '" srcset="' . $source_set . '">';
+		$trimmed_source_set = trim( $source_set );
+		return '<source type="' . $format . '" srcset="' . $trimmed_source_set . '">';
 	}
 
 	public function get_picture_element() {
 		$srcsets = $this->get_image_srcsets();
+
+		$avif = $this->get_formatted_source( $srcsets, 'image/avif' );
+		$webp = $this->get_formatted_source( $srcsets, 'image/webp' );
+		if ( empty( $avif ) && empty( $webp ) ) {
+			return $this->img_element;
+		}
 
 		$picture = '<picture>';
 		$picture .= $this->get_formatted_source( $srcsets, 'image/avif' );
