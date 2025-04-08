@@ -2,11 +2,13 @@
 
 require_once dirname(__FILE__) . '/TinyTestCase.php';
 
-abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
+abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
+{
 	protected $compressor;
 	protected $after_compress_called;
-	
-	public function set_up() {
+
+	public function set_up()
+	{
 		parent::set_up();
 		$this->after_compress_called = false;
 		$after_compress_called = &$this->after_compress_called;
@@ -156,7 +158,6 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 					'width' => 10,
 					'height' => 15,
 					'ratio' => round(9 / 15391, 4),
-					'converted' => false,
 				),
 			),
 			$this->compressor->compress_file($this->vfs->url() . '/image.png')
@@ -219,7 +220,6 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 					'height' => 9,
 					'ratio' => round(5 / 15391, 4),
 					'resized' => true,
-					'converted' => false,
 				),
 			),
 			$this->compressor->compress_file($this->vfs->url() . '/image.png', $resize)
@@ -268,7 +268,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			$this->after_compress_called
 		);
 
-		$this->expectException( 'Tiny_Exception' );
+		$this->expectException('Tiny_Exception');
 		throw $exception;
 	}
 
@@ -340,10 +340,16 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			'body' => 'optimized',
 		));
 
+		/**
+		 * should actually register another "shrink" request
+		 * but register can only register one handler per key
+		 * shrink will first do the regular shrink request
+		 * and then do a shrink convert request
+		 */
+
 		$uncompressed_img = file_get_contents('test/fixtures/input-example.jpg');
 		file_put_contents($this->vfs->url() . '/image.jpg', $uncompressed_img);
 
-		// Act
 		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array('convert' => true, 'replace' => true));
 
 		$expected_output = array(
@@ -353,15 +359,102 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase {
 			),
 			'output' => array(
 				'type' => 'image/avif',
-				'converted' => true,
 				'size' => 9,
 				'width' => 10,
 				'height' => 15,
-				'ratio' => 0,
+				'ratio' => 0.0,
 			),
 		);
 		// Should do one request where input is a png and the output is an avif
 		$this->assertEquals($expected_output, $test_output);
-	
+	}
+
+
+	public function test_should_compress_and_convert_when_replace_is_false_and_convert_is_true()
+	{
+		$uncompressed_img = file_get_contents('test/fixtures/input-example.jpg');
+		file_put_contents($this->vfs->url() . '/image.jpg', $uncompressed_img);
+		$this->register('POST', '/shrink', array(
+			'status' => 201,
+			'headers' => array(
+				'location' => 'https://api.tinify.com/output/compressed.jpg',
+				'content-type' => 'application/json',
+				'compression-count' => 12,
+			),
+			'body' => '{
+				"input": {
+					"type": "image/jpeg"
+				},
+				"output": {
+					"type": "image/jpeg"
+				}
+			}',
+		));
+		$this->register('POST', '/shrink', array(
+			'status' => 201,
+			'headers' => array(
+				'location' => 'https://api.tinify.com/output/compressed.avif',
+				'content-type' => 'application/json',
+				'compression-count' => 12,
+			),
+			'body' => '{
+				"input": {
+					"type": "image/jpeg"
+				},
+				"output": {
+					"type": "image/avif"
+				}
+			}',
+		));
+
+		$compressed_jpg = file_get_contents('test/mock-tinypng-webservice/output-example.jpg');
+		file_put_contents($this->vfs->url() . '/compressed.jpg', $compressed_jpg);
+		$this->register('GET', '/output/compressed.jpg', array(
+			'status' => 200,
+			'headers' => array(
+				'content-type' => 'image/jpeg',
+				'content-length' => 151021,
+				'image-width' => 10,
+				'image-height' => 15,
+				'compression-count' => 12,
+			),
+			'body' => $compressed_jpg,
+		));
+
+		$compressed_avif = file_get_contents('test/mock-tinypng-webservice/output-example.avif');
+		$this->register('GET', '/output/compressed.avif', array(
+			'status' => 200,
+			'headers' => array(
+				'content-type' => 'image/avif',
+				'content-length' => 11618,
+				'image-width' => 10,
+				'image-height' => 15,
+				'compression-count' => 12,
+			),
+			'body' => $compressed_avif,
+		));
+
+		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array('convert' => true, 'replace' => false));
+
+		$expected_output = array(
+			'input' => array(
+				'size' => 641206,
+				'type' => 'image/jpeg',
+			),
+			'output' => array(
+				'type' => 'image/jpeg',
+				'size' => strlen($compressed_jpg),
+				'width' => 10,
+				'height' => 15,
+				'ratio' => 0.2355,
+				'convert' => array(
+					'type' => 'image/avif',
+					'size' => strlen($compressed_avif),
+					'path' => 'vfs://root/image.avif',
+				),
+			),
+		);
+		// Should do one request where input is a png and the output is an avif
+		$this->assertEquals($expected_output, $test_output);
 	}
 }
