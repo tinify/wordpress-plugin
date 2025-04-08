@@ -156,7 +156,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 					'width' => $result->width(),
 					'height' => $result->height(),
 					'ratio' => round( $result->size() / strlen( $input ), 4 ),
-					'converted' => $should_convert && $replace_original,
 				),
 			);
 
