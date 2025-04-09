@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 4.0
 Tested up to: 6.7
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,9 @@ A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and clic
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.5.1 =
+* Will only check local file removal if AS3CF is active
+
 = 3.5.0 =
 * Support files uploaded through the WordPress REST API
 * Removed notification on WooCommerce incompatibility
