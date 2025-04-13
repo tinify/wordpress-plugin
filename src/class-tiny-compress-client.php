@@ -119,7 +119,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
@@ -132,16 +132,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			if ( $preserve_opts ) {
 				$source = $source->preserve( $preserve_opts );
-			}
-
-			$should_convert = isset( $convert_opts['convert'] ) && $convert_opts['convert'];
-			$replace_original = isset( $convert_opts['replace'] ) && $convert_opts['replace'];
-			if ( $should_convert && $replace_original ) {
-				$source = $source->convert(
-					array(
-						'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
-					)
-				);
 			}
 
 			$result = $source->result();

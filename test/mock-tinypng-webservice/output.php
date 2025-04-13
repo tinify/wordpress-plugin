@@ -23,6 +23,10 @@ if (!is_null($api_key)) {
     if ($resize->method) {
         $file = "output-resized.$ext";
     }
+    if ($data->convert) {
+        $file = "output-converted.avif";
+        $mime = "image/avif";
+    }
 }
 
 if (strpos($api_key, 'GATEWAYTIMEOUT') !== false) {

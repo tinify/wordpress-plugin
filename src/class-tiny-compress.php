@@ -116,8 +116,7 @@ abstract class Tiny_Compress {
 			list($output, $details) = $this->compress(
 				$file_data,
 				$resize_opts,
-				$preserve_opts,
-				$convert_opts,
+				$preserve_opts
 			);
 		} catch ( Tiny_Exception $err ) {
 			$this->call_after_compress_callback();
@@ -130,10 +129,7 @@ abstract class Tiny_Compress {
 			throw new Tiny_Exception( $e->getMessage(), 'FileError' );
 		}
 
-		if (
-			isset( $convert_opts['convert'] ) && $convert_opts['convert'] &&
-			isset( $convert_opts['replace'] ) && $convert_opts['replace'] === false
-		) {
+		if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
 			try {
 				list($convert_output, $convert_details) = $this->convert( $output, $convert_opts );
 				$converted_filepath = Tiny_Helpers::replace_file_extension( $convert_details['type'], $file );
@@ -160,7 +156,7 @@ abstract class Tiny_Compress {
 	}
 
 	protected abstract function validate();
-	protected abstract function compress( $input, $resize_options, $preserve_options, $convert_options);
+	protected abstract function compress( $input, $resize_options, $preserve_options );
 	protected abstract function convert( $input, $convert_options);
 
 	protected static function identifier() {

@@ -21,6 +21,7 @@
 class Tiny_Compress_Fopen extends Tiny_Compress {
 
 
+
 	private $last_error_code = 0;
 	private $compression_count;
 	private $remaining_credits;
@@ -100,7 +101,14 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			);
 		}
 
-		$output_params = $this->output_request_options( null, null, null );
+		$body = array(
+			'convert' => array(
+				'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
+			),
+		);
+
+		$output_params = $this->request_options( 'POST', json_encode( $body ), array( 'Content-Type: application/json' ) );
+
 		list($output, $headers, $status_code) = $this->request( $output_params, $output_url );
 		if ( is_string( $output ) && 0 == strlen( $output ) ) {
 			throw new Tiny_Exception(
@@ -116,7 +124,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return array( $output, $meta );
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts ) {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
@@ -140,9 +148,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			);
 		}
 
-		$should_convert = isset( $convert_opts['convert'] ) && $convert_opts['convert'];
-		$replace_original = isset( $convert_opts['replace'] ) && $convert_opts['replace'];
-		$params = $this->output_request_options( $resize_opts, $preserve_opts, $should_convert && $replace_original );
+		$params = $this->output_request_options( $resize_opts, $preserve_opts );
 		list($output, $headers, $status_code) = $this->request( $params, $output_url );
 
 		if ( $status_code >= 400 && is_array( $output ) && isset( $output['error'] ) ) {
@@ -275,7 +281,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		);
 	}
 
-	private function output_request_options( $resize_opts, $preserve_opts, $convert ) {
+	private function output_request_options( $resize_opts, $preserve_opts ) {
 		$body = array();
 
 		if ( $preserve_opts ) {

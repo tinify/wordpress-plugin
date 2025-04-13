@@ -162,10 +162,10 @@ class Tiny_Picture_Element {
 		return $format_path;
 	}
 
-	private function get_formatted_source( $imgsrcs, $format ) {
+	private function get_formatted_source( $imgsrcs, $mimetype ) {
 		$formatted_src_set = array();
 		foreach ( $imgsrcs as $imgsrc ) {
-			$format_url = Tiny_Helpers::replace_file_extension( $format, $imgsrc['path'] );
+			$format_url = Tiny_Helpers::replace_file_extension( $mimetype, $imgsrc['path'] );
 			$local_path = $this->get_local_path( $format_url );
 			$exists_local = file_exists( $local_path );
 			if ( $exists_local ) {
@@ -180,7 +180,7 @@ class Tiny_Picture_Element {
 
 		$source_set = implode( ', ', $formatted_src_set );
 		$trimmed_source_set = trim( $source_set );
-		return '<source type="' . $format . '" srcset="' . $trimmed_source_set . '">';
+		return '<source type="' . $mimetype . '" srcset="' . $trimmed_source_set . '">';
 	}
 
 	public function get_picture_element() {

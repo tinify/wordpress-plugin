@@ -109,7 +109,7 @@ class Tiny_Image_Size {
 	 * @return array The converted image details
 	 */
 	public function converted() {
-		return $this->meta['output']['convert'];
+		return isset( $this->meta['output'] ) && isset( $this->meta['output']['convert'] );
 	}
 
 	/**
@@ -118,15 +118,14 @@ class Tiny_Image_Size {
 	 * @return boolean true if the image has a optimized alternative format
 	 */
 	public function converted_image_exists() {
-		return isset( $this->meta['output']['convert'] ) && file_exists( $this->meta['output']['convert']['path'] );
+		return isset($this->meta['output']) && isset( $this->meta['output']['convert'] ) && file_exists( $this->meta['output']['convert']['path'] );
 	}
 
 	public function conversion_text() {
 		if ( ! $this->converted() ) {
 			return esc_html__( 'Not converted', 'tiny-compress-images' );
 		}
-
-		$conversion_text = ! $this->converted_image_exists() ? esc_html__( 'replaced original', 'tiny-compress-images' ) : $this->meta['output']['converted_format'] . ' (' . size_format( $this->meta['output']['converted_size'], 1 ) . ')';
+		$conversion_text = $this->meta['output']['convert']['type'] . ' (' . size_format( $this->meta['output']['convert']['size'], 1 ) . ')';
 		return $conversion_text;
 	}
 

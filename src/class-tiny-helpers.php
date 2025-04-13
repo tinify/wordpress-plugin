@@ -18,8 +18,8 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Helpers
-{
+class Tiny_Helpers {
+
 
 
 
@@ -35,34 +35,34 @@ class Tiny_Helpers
 	 * @param integer $length the maximum length of the string
 	 * @return string the truncated string
 	 */
-	public static function truncate_text($text, $length)
-	{
-		if (mb_strlen($text) > $length) {
-			return mb_substr($text, 0, $length - 3) . '...';
+	public static function truncate_text( $text, $length ) {
+		if ( mb_strlen( $text ) > $length ) {
+			return mb_substr( $text, 0, $length - 3 ) . '...';
 		}
 		return $text;
 	}
 
 	/**
-	 * Will replace the file extension with the specified format.
+	 * Will replace the file extension with the specified mimetype.
 	 *
-	 * @param string $format The format to replace the extension with. Currently supports 'image/avif' or 'image/webp'
-	 * @param string $file The full path to replace the extension in, ex /home/user/image.png
+	 * @param string $mimetype The format to replace the extension with. Currently supports 'image/avif' or 'image/webp'
+	 * @param string $filepath The full path to replace the extension in, ex /home/user/image.png
 	 *
 	 * @return string The full path to the file with the new extension, ex /home/user/image.avif
 	 */
-	public static function replace_file_extension($format, $file)
-	{
-		$path_parts = pathinfo($file);
+	public static function replace_file_extension( $mimetype, $filepath ) {
+		$path_parts = pathinfo( $filepath );
 
-		if (! isset($path_parts['extension'])) {
+		if ( ! isset( $path_parts['extension'] ) ) {
 			// When file has no extension, we can't replace
-			return $file;
+			return $filepath;
 		}
 
 		$extension = $path_parts['extension'];
-		if ($format == 'avif' || $format == 'webp') {
-			$extension = $format;
+		$extension = self::mimetype_to_extension( $mimetype );
+		if ( null === $extension ) {
+			// When file has an unsupported extension, we can't replace
+			return $filepath;
 		}
 
 		$dirname = $path_parts['dirname'];
@@ -70,6 +70,21 @@ class Tiny_Helpers
 
 		// Handle directory separator properly
 		return $dirname . ($dirname === '' ? '' : DIRECTORY_SEPARATOR) . $filename . '.' . $extension;
+	}
+
+	private static function mimetype_to_extension( $mimetype ) {
+		switch ( $mimetype ) {
+			case 'image/jpeg':
+				return 'jpg';
+			case 'image/png':
+				return 'png';
+			case 'image/webp':
+				return 'webp';
+			case 'image/avif':
+				return 'avif';
+			default:
+				return null;
+		}
 	}
 
 	/**
@@ -80,14 +95,13 @@ class Tiny_Helpers
 	 * @param string $input The file contents
 	 * @return string The mimetype of the file
 	 */
-	public static function get_mimetype($input)
-	{
-		if (class_exists('finfo')) {
-			$finfo = new finfo(FILEINFO_MIME_TYPE);
-			$mime = $finfo->buffer($input);
+	public static function get_mimetype( $input ) {
+		if ( class_exists( 'finfo' ) ) {
+			$finfo = new finfo( FILEINFO_MIME_TYPE );
+			$mime = $finfo->buffer( $input );
 			return $mime;
 		} else {
-			throw new Exception('finfo extension is not available.');
+			throw new Exception( 'finfo extension is not available.' );
 		}
 	}
 }

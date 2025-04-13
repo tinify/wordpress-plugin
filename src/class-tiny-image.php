@@ -409,8 +409,7 @@ class Tiny_Image {
 									$this->statistics['available_unoptimized_sizes'] += 1;
 								}
 							} else {
-								$this->statistics['optimized_total_size']
-									+= intval( $output['size'] );
+								$this->statistics['optimized_total_size'] += intval( $output['size'] );
 								$this->statistics['image_sizes_optimized'] += 1;
 							}
 						} else {
