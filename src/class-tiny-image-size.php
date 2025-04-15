@@ -118,7 +118,7 @@ class Tiny_Image_Size {
 	 * @return boolean true if the image has a optimized alternative format
 	 */
 	public function converted_image_exists() {
-		return isset($this->meta['output']) && isset( $this->meta['output']['convert'] ) && file_exists( $this->meta['output']['convert']['path'] );
+		return isset( $this->meta['output'] ) && isset( $this->meta['output']['convert'] ) && file_exists( $this->meta['output']['convert']['path'] );
 	}
 
 	public function conversion_text() {
