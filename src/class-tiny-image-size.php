@@ -104,21 +104,24 @@ class Tiny_Image_Size {
 	}
 
 	/**
-	 * Images can be converted into optimized formats.
+	 * Checks wether the image has been processed for conversion.
 	 *
-	 * @return array The converted image details
+	 * @return bool true if image is processed for conversion
 	 */
 	public function converted() {
 		return isset( $this->meta['output'] ) && isset( $this->meta['output']['convert'] );
 	}
 
 	/**
-	 * Image that is converted and the original has not been replaced.
+	 * Checks if the converted image size exists
 	 *
-	 * @return boolean true if the image has a optimized alternative format
+	 * @return boolean true if the image size has a optimized alternative format
 	 */
 	public function converted_image_exists() {
-		return isset( $this->meta['output'] ) && isset( $this->meta['output']['convert'] ) && file_exists( $this->meta['output']['convert']['path'] );
+		if ( ! $this->converted() ) {
+			return false;
+		}
+		return file_exists( $this->meta['output']['convert']['path'] );
 	}
 
 	public function conversion_text() {
