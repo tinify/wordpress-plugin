@@ -28,7 +28,6 @@ test.describe('conversion', () => {
   test('will add the optimized format to the original image', async () => {
     // JPG123 will ensure mock service returns a jpeg on /shrink
     await setConversionSettings(page, {
-      replace: false,
       convert: true,
     });
     await uploadMedia(page, 'input-example.jpg');
