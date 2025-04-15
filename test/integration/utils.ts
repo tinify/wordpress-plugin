@@ -10,6 +10,8 @@ export async function uploadMedia(page: Page, file: string) {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await page.locator('#html-upload').click();
+  const imageURL = await page.getByLabel('Download').getAttribute('href');
+  return imageURL;
 }
 
 export async function clearMediaLibrary(page: Page) {
@@ -198,4 +200,37 @@ export async function setConversionSettings(page: Page, settings: { convert: boo
   }
 
   await page.locator('#submit').click();
+}
+
+interface NewPostOptions {
+  title?: string;
+  content: string;
+  excerpt?: string;
+}
+export async function newPost(page: Page, options: NewPostOptions, WPVersion: number): Promise<string> {
+  const query = new URLSearchParams();
+  const { title, content, excerpt } = options;
+
+  if (title) {
+    query.set('post_title', title);
+  }
+  if (excerpt) {
+    query.set('excerpt', excerpt);
+  }
+
+  await page.goto('/wp-admin/post-new.php?' + query.toString());
+
+  if (WPVersion > 5) {
+    await page.evaluate((contentHtml) => {
+      wp.data.dispatch('core/editor').resetBlocks([]);
+      wp.data.dispatch('core/editor').insertBlocks(wp.blocks.parse(contentHtml));
+    }, content);
+    await page.getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByLabel('Editor publish').getByRole('link', { name: 'View Post' }).click();
+  } else {
+    // TODO:...
+  }
+
+  return page.url();
 }

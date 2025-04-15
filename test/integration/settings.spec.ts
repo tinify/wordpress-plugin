@@ -8,7 +8,7 @@ let page: Page;
 test.describe('settings', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
-    
+
     await setAPIKey(page, '');
 
     // Resize on background
@@ -16,6 +16,10 @@ test.describe('settings', () => {
 
     // Enable all sizes
     await enableCompressionSizes(page, [], true);
+
+    await setConversionSettings(page, {
+      convert: false,
+    });
 
     await page.locator('#submit').click();
   });
@@ -215,20 +219,14 @@ test.describe('settings', () => {
   });
 
   test('will not convert by default', async () => {
-
+    await expect(page.locator('#tinypng_conversion_convert')).not.toBeChecked();
   });
-
-  test('cannot have replace true while convert is false', async () => {
-
-  })
 
   test('will store conversion settings', async () => {
     await setConversionSettings(page, {
-      replace: true,
       convert: true,
     });
 
-    await expect(page.locator('#tinypng_conversion_replace')).toBeChecked();
     await expect(page.locator('#tinypng_conversion_convert')).toBeChecked();
   });
 });
