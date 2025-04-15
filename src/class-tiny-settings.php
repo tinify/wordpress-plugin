@@ -366,17 +366,15 @@ class Tiny_Settings extends Tiny_WP_Base {
 	/**
 	 * Retrieves the configured settings for conversion.
 	 *
-	 * @return array{convert: bool, replace: bool} The conversion options.
+	 * @return array{ convert: bool } The conversion options.
 	 */
 	public function get_conversion_options() {
 		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
 
-		$should_convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
-		$should_replace = isset( $setting_convert_format['replace'] ) && $setting_convert_format['replace'] == 'on';
+		$convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
 
 		$convert_to = array(
-			'convert' => $should_convert,
-			'replace' => $should_convert && $should_replace,
+			'convert' => $convert,
 		);
 
 		return $convert_to;
