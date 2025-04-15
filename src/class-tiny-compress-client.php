@@ -88,7 +88,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function convert( $input, $convert_opts ) {
+	protected function convert( $input ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
