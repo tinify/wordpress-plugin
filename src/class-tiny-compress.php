@@ -131,7 +131,7 @@ abstract class Tiny_Compress {
 
 		if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
 			try {
-				list($convert_output, $convert_details) = $this->convert( $output, $convert_opts );
+				list($convert_output, $convert_details) = $this->convert( $output );
 				$converted_filepath = Tiny_Helpers::replace_file_extension( $convert_details['type'], $file );
 				file_put_contents( $converted_filepath, $convert_output );
 
@@ -157,7 +157,7 @@ abstract class Tiny_Compress {
 
 	protected abstract function validate();
 	protected abstract function compress( $input, $resize_options, $preserve_options );
-	protected abstract function convert( $input, $convert_options);
+	protected abstract function convert( $input );
 
 	protected static function identifier() {
 		return 'WordPress/' . Tiny_Plugin::wp_version() . ' Plugin/' . Tiny_Plugin::version();

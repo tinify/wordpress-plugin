@@ -85,7 +85,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function convert( $input, $convert_opts ) {
+	protected function convert( $input ) {
 		$params = $this->request_options('POST', array(
 			'convert' => array(
 				'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
@@ -290,12 +290,6 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		if ( $resize_opts ) {
 			$body['resize'] = $resize_opts;
-		}
-
-		if ( $convert ) {
-			$body['convert'] = array(
-				'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
-			);
 		}
 
 		if ( $resize_opts || $preserve_opts ) {
