@@ -952,14 +952,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<label for="' . $convertopts_convert_id . '">' . esc_html__( 'Convert images to optimized formats', 'tiny-compress-images' ) . '</label>';
 		echo '</p>';
 
-		$convertopts_replace = self::get_prefixed_name( 'convert_format[replace]' );
-		$convertopts_replace_id = self::get_prefixed_name( 'conversion_replace' );
-		$convertopts_replace_checked = $this->get_convert_format_option( 'replace' ) ? ' checked="checked"' : '';
-		echo '<p class="tiny-check">';
-		echo '<input type="checkbox" id="' . $convertopts_replace_id . '" name="' . $convertopts_replace . '" value="on"' . $convertopts_replace_checked . '/>';
-		echo '<label for="' . $convertopts_replace_id . '">' . esc_html__( 'Replace original image with converted image', 'tiny-compress-images' ) . '</label>';
-		echo '</p>';
-
 		echo '</div>';
 	}
 
