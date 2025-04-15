@@ -47,30 +47,6 @@ test.describe('conversion', () => {
     expect(cells[4]).toContainText('image/avif (99.2 KB)');
   });
 
-  test('will replace the original image with the optimized image', async () => {
-    // JPG123 will ensure mock service returns a jpeg on /shrink
-    await setConversionSettings(page, {
-      replace: false,
-      convert: true,
-    });
-    await uploadMedia(page, 'input-example.jpg');
-
-    await page.goto('/wp-admin/upload.php');
-
-    const imgElement = await page.getByRole('figure').locator('img');
-    await expect(imgElement).toBeVisible();
-
-    // thickbox is used to show modal window so wait until it is loaded
-    await page.waitForLoadState('networkidle');
-    await page.getByRole('link', { name: 'Details' }).click();
-
-    const tableRows = await page.locator('.tiny-compression-details tr').all();
-    const origialRow = tableRows[1];
-    const cells = await origialRow.locator('td').all();
-    expect(cells[2]).toContainText('99.2');
-    expect(cells[4]).toContainText('replaced original');
-  });
-
   test('will display the optimized image on a page', async () => {
     await uploadMedia(page, 'input-example.jpg');
     

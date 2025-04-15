@@ -190,12 +190,8 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
   await plugin.getByLabel('Deactivate').click();
 }
 
-export async function setConversionSettings(page: Page, settings: { replace: boolean; convert: boolean }) {
+export async function setConversionSettings(page: Page, settings: { convert: boolean }) {
   await page.goto('/wp-admin/options-general.php?page=tinify');
-
-  if (settings.replace) {
-    await page.locator('#tinypng_conversion_replace').check({ force: true });
-  }
 
   if (settings.convert) {
     await page.locator('#tinypng_conversion_convert').check({ force: true });
