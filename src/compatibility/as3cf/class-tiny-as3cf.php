@@ -52,7 +52,13 @@ class Tiny_AS3CF {
 	}
 
 	public static function remove_local_files_setting_enabled() {
+		if ( ! Tiny_AS3CF::is_active() ) {
+			return false;
+		}
 		$settings = get_option( 'tantan_wordpress_s3' );
+		if ( ! is_array( $settings ) ) {
+			return false;
+		}
 		return array_key_exists( 'remove-local-file', $settings ) && $settings['remove-local-file'];
 	}
 
