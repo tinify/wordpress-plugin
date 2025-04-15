@@ -732,7 +732,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * @return void
 	 */
 	function clean_attachment( $post_id, $post ) {
-		 $tiny_image = new Tiny_Image( $this->settings, $post_id );
+		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
 	}
 }

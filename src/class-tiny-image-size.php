@@ -171,7 +171,7 @@ class Tiny_Image_Size {
 		return $this->_duplicate_of_size;
 	}
 
-	public function delete_converted_image() {
+	public function delete_converted_image_size() {
 		if ( $this->converted_image_exists() ) {
 			unlink( $this->meta['output']['convert']['path'] );
 		}

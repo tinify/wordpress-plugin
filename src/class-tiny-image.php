@@ -218,7 +218,7 @@ class Tiny_Image {
 	public function delete_converted_image() {
 		$sizes = $this->get_image_sizes();
 		foreach ( $sizes as $size ) {
-			$size->delete_converted_image();
+			$size->delete_converted_image_size();
 		}
 	}
 
