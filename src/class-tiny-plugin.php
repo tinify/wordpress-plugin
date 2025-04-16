@@ -633,9 +633,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_bulk_optimization_page() {
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$images_to_convert = $stats['available-unoptimised-sizes'];
+
+		$conversion_enabled = $this->settings->get_conversion_enabled();
+		if ($conversion_enabled) {
+			$images_to_convert *= 2;
+		}
 		$estimated_costs = Tiny_Compress::estimate_cost(
-			$stats['available-unoptimised-sizes'],
-			$this->settings->get_compression_count()
+			$images_to_convert,
+			$this->settings->get_compression_count(),
 		);
 		$admin_colors = self::retrieve_admin_colors();
 

@@ -374,10 +374,23 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
 
 		$convert_to = array(
-			'convert' => $convert,
+			'convert' => $this->get_conversion_enabled(),
 		);
 
 		return $convert_to;
+	}
+
+	/**
+	 * Checks wether converting to optimized file format is enabled
+	 *
+	 * @return bool true if conversion is enabled, false otherwise
+	 */
+	public function get_conversion_enabled() {
+		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
+
+		$convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
+
+		return $convert;
 	}
 
 	private function setup_incomplete_checks() {
@@ -504,7 +517,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$this->render_size_checkboxes_description(
 			count( self::get_active_tinify_sizes() ),
 			self::get_resize_enabled(),
-			self::compress_wr2x_images()
+			self::compress_wr2x_images(),
+			self::get_conversion_enabled(),
 		);
 
 		echo '</div>';
@@ -546,7 +560,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function render_size_checkboxes_description(
 		$active_sizes_count,
 		$resize_original_enabled,
-		$compress_wr2x
+		$compress_wr2x,
+		$conversion_enabled,
 	) {
 		echo '<p>';
 		esc_html_e(
@@ -559,6 +574,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$active_sizes_count++;
 		}
 		if ( $compress_wr2x ) {
+			$active_sizes_count *= 2;
+		}
+
+		if ( $conversion_enabled ) {
 			$active_sizes_count *= 2;
 		}
 
@@ -947,7 +966,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		echo '<p class="tiny-check">';
 		echo '<input type="checkbox" id="' . $convertopts_convert_id . '" name="' . $convertopts_convert . '" value="on"' . $convertopts_convert_checked . '/>';
-		echo '<label for="' . $convertopts_convert_id . '">' . esc_html__( 'Convert images to optimized formats', 'tiny-compress-images' ) . '</label>';
+		echo '<label for="' . $convertopts_convert_id . '">' . esc_html__( 'Generate optimized image formats', 'tiny-compress-images' ) . '</label>';
+		echo '<span class="description">' . wp_kses(__( 'Creating an optimized image will take <strong>1 additional compression</strong> for each image size.', 'tiny-compress-images' ), array('strong' => array())) . '</span>'; // WPCS: Needed for proper translation.
 		echo '</p>';
 
 		echo '</div>';
