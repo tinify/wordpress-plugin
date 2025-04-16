@@ -21,7 +21,7 @@ jobs:
           - { wp: 60, php: 73 }
           - { wp: 63, php: 80 }
           - { wp: 67, php: 82 }
-          - { wp: 67, php: 83 }
+          - { wp: 68, php: 83 }
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
