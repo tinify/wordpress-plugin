@@ -43,7 +43,7 @@
 							<p class="intro">
 								<?php
 								esc_html_e(
-									'Automatically convert your images to modern, optimized formats like WebP or AVIF.',
+									'Generate additional optimized formats like WebP or AVIF.',
 									'tiny-compress-images'
 								)
 								?>

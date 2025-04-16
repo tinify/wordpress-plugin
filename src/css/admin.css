@@ -271,7 +271,7 @@ p.tiny-radio  {
 }
 
 p.tiny-radio span.description, p.tiny-check span.description {
-	display: inline-block;
+	display: block;
 }
 
 @media only screen and (max-width: 782px) {
