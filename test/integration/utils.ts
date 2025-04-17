@@ -230,6 +230,10 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
   
   await page.goto('/wp-admin/post-new.php?' + query.toString() + '#content-html');
   if (WPVersion > 5) {
+    const welcomeGuideExists = await page.getByLabel('Close', { exact: true }).isVisible(); 
+    if (welcomeGuideExists) {
+      await page.getByLabel('Close', { exact: true }).click();
+    }
     await page.evaluate((contentHtml) => {
       wp.data.dispatch('core/editor').resetBlocks([]);
       wp.data.dispatch('core/editor').insertBlocks(wp.blocks.parse(contentHtml));
