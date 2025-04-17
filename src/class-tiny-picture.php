@@ -20,15 +20,7 @@
 */
 class Tiny_Picture
 {
-
-
-
-	public function __construct()
-	{
-		$this->init();
-	}
-
-	private function init()
+	public static function init()
 	{
 		if (is_admin() || is_customize_preview()) {
 			return;
@@ -43,21 +35,21 @@ class Tiny_Picture
 		}
 
 		add_action('template_redirect', function () {
-			ob_start([$this, 'replace_img_with_picture_tag']);
+			ob_start([self::class, 'replace_img_with_picture_tag']);
 		}, 1000);
 	}
 
-	public function replace_img_with_picture_tag($content)
+	public static function replace_img_with_picture_tag($content)
 	{
-		$images = $this->filter_images($content);
+		$images = Tiny_Picture::filter_images($content);
 
 		foreach ($images as $image) {
-			$content = $this->replace_image($content, $image);
+			$content = Tiny_Picture::replace_image($content, $image);
 		}
 		return $content;
 	}
 
-	private function replace_image($content, $image)
+	private static function replace_image($content, $image)
 	{
 		$content = str_replace($image->img_element, $image->get_picture_element(), $content);
 		return $content;
@@ -68,7 +60,7 @@ class Tiny_Picture
 	 *
 	 * @return Tiny_Image[]
 	 */
-	private function filter_images($content)
+	private static function filter_images($content)
 	{
 		if (preg_match('/(?=<body).*<\/body>/is', $content, $body)) {
 			$content = $body[0];
@@ -111,8 +103,9 @@ class Tiny_Picture_Element
 	 */
 	private $img_element_node;
 
-	private $base_url;
 	private $base_dir;
+	
+	private $site_url;
 
 	public function __construct($img_element)
 	{
@@ -121,9 +114,8 @@ class Tiny_Picture_Element
 		$dom->loadHTML($img_element);
 		$this->img_element_node = $dom->getElementsByTagName('img')->item(0);
 
-		$wp_upload_dir = wp_upload_dir();
-		$this->base_url = $wp_upload_dir['baseurl'];
-		$this->base_dir = $wp_upload_dir['basedir'];
+		$this->base_dir = get_home_path();
+		$this->site_url = get_site_url();
 	}
 
 	/**
@@ -174,15 +166,17 @@ class Tiny_Picture_Element
 	private function get_local_path($url)
 	{
 		if ( strpos( $url, 'http' ) === 0 ) {
-			if ( strpos( $url, $this->base_url ) !== 0 ) {
+			if ( strpos( $url, $this->site_url ) !== 0 ) {
+				// url is not the current site
 				return false;
 			}
-		} else {
-			$url = $this->base_url . ltrim( $url, '/' );
+
+			// trim site url from url;
+			$url = str_replace( $this->site_url, '', $url );
 		}
-	
-		// Convert to local path
-		return str_replace( $this->base_url, $this->base_dir, $url );
+		$url = $this->base_dir . $url;
+
+		return $url;
 	}
 
 	private function get_formatted_source($imgsrcs, $mimetype)
