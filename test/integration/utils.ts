@@ -10,7 +10,14 @@ export async function uploadMedia(page: Page, file: string) {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await page.locator('#html-upload').click();
-  const imageURL = await page.getByLabel('Download').getAttribute('href');
+
+  const rowID = await page.locator('table.wp-list-table tbody > tr').first().getAttribute('id');
+  if (!rowID) throw Error('Could not find row ID');
+
+  const attachmentID = rowID.split('-')[1];
+  await page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`);
+
+  const imageURL = await page.locator('input[name="attachment_url"]').inputValue();
   return imageURL;
 }
 
@@ -197,6 +204,8 @@ export async function setConversionSettings(page: Page, settings: { convert: boo
 
   if (settings.convert) {
     await page.locator('#tinypng_conversion_convert').check({ force: true });
+  } else {
+    await page.locator('#tinypng_conversion_convert').uncheck({ force: true });
   }
 
   await page.locator('#submit').click();
