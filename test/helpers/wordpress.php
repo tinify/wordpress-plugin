@@ -70,6 +70,8 @@ class WordPressStubs {
 		$this->addMethod( 'get_post_mime_type' );
 		$this->addMethod( 'get_plugin_data' );
 		$this->addMethod( 'wp_upload_dir' );
+		$this->addMethod( 'get_home_path' );
+		$this->addMethod( 'get_site_url' );
 		$this->addMethod( 'plugin_basename' );
 		$this->addMethod( 'is_multisite' );
 		$this->addMethod( 'current_user_can' );
@@ -119,6 +121,10 @@ class WordPressStubs {
 			return 'tiny-compress-images';
 		} elseif ( 'wp_upload_dir' === $method ) {
 			return array( 'basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR );
+		} elseif ( 'get_home_path' === $method ) {
+			return $this->vfs->url();
+		} elseif ( 'get_site_url' === $method ) {
+			return 'https://www.tinifytest.com';
 		} elseif ( 'is_admin' === $method ) {
 			return true;
 		} elseif ( $this->stubs[ $method ] ) {
