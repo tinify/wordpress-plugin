@@ -561,7 +561,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$active_sizes_count,
 		$resize_original_enabled,
 		$compress_wr2x,
-		$conversion_enabled,
+		$conversion_enabled
 	) {
 		echo '<p>';
 		esc_html_e(
