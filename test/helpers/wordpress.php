@@ -77,6 +77,7 @@ class WordPressStubs {
 		$this->addMethod( 'current_user_can' );
 		$this->addMethod( 'wp_get_attachment_metadata' );
 		$this->addMethod( 'is_admin' );
+		$this->addMethod( 'is_plugin_active' );
 		$this->defaults();
 		$this->create_filesystem();
 	}
