@@ -227,8 +227,8 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
     query.set('excerpt', excerpt);
   }
 
-  await page.goto('/wp-admin/post-new.php?' + query.toString());
-
+  
+  await page.goto('/wp-admin/post-new.php?' + query.toString() + '#content-html');
   if (WPVersion > 5) {
     await page.evaluate((contentHtml) => {
       wp.data.dispatch('core/editor').resetBlocks([]);
@@ -238,7 +238,11 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
     await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
     await page.getByLabel('Editor publish').getByRole('link', { name: 'View Post' }).click();
   } else {
-    // TODO:...
+    await page.locator('#content-html').click();
+    await page.locator('#content').fill(content);
+    await page.locator('#publish').click();    
+    await page.getByRole('link', { name: 'View Post', }).first().click();
+
   }
 
   return page.url();

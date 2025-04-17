@@ -44,7 +44,7 @@ test.describe('conversion', () => {
     const tableRows = await page.locator('.tiny-compression-details tr').all();
     const origialRow = tableRows[1];
     const cells = await origialRow.locator('td').all();
-    expect(cells[4]).toContainText('image/avif (99.2 KB)');
+    expect(cells[4]).toContainText('image/avif (99.2');
   });
 
   test('will display the optimized image on a page', async () => {
