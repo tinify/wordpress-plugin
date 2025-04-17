@@ -128,7 +128,8 @@ class Tiny_Image_Size {
 		if ( ! $this->converted() ) {
 			return esc_html__( 'Not converted', 'tiny-compress-images' );
 		}
-		$conversion_text = $this->meta['output']['convert']['type'] . ' (' . size_format( $this->meta['output']['convert']['size'], 1 ) . ')';
+		$conversion_text = $this->meta['output']['convert']['type'] . ' (' .
+			size_format( $this->meta['output']['convert']['size'], 1 ) . ')';
 		return $conversion_text;
 	}
 

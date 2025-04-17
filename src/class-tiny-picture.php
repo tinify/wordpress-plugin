@@ -19,23 +19,23 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 class Tiny_Picture {
-    /** @var string */
-    private static $base_dir;
+	/** @var string */
+	private static $base_dir;
 
-    /** @var array */
-    private static $allowed_domains = array();
+	/** @var array */
+	private static $allowed_domains = array();
 
-    /**
-     * Initialize the plugin.
-     *
-     * @param string $base_dir       Absolute path (e.g. ABSPATH)
-     * @param array  $domains        List of allowed domain URLs
-     */
-    public static function init( $base_dir = ABSPATH, $domains = array() ) {
-        // normalize and store as statics
-        self::$base_dir        = $base_dir;
-        self::$allowed_domains = $domains;
-		
+	/**
+	 * Initialize the plugin.
+	 *
+	 * @param string $base_dir       Absolute path (e.g. ABSPATH)
+	 * @param array  $domains        List of allowed domain URLs
+	 */
+	public static function init( $base_dir = ABSPATH, $domains = array() ) {
+		// normalize and store as statics
+		self::$base_dir        = $base_dir;
+		self::$allowed_domains = $domains;
+
 		if ( is_admin() || is_customize_preview() ) {
 			return;
 		}
@@ -49,8 +49,8 @@ class Tiny_Picture {
 		}
 
 		add_action( 'template_redirect', function() {
-            ob_start( array( __CLASS__, 'replace_img_with_picture_tag' ), 1000 );
-        });
+			ob_start( array( __CLASS__, 'replace_img_with_picture_tag' ), 1000 );
+		});
 	}
 
 	public static function replace_img_with_picture_tag( $content ) {
