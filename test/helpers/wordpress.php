@@ -121,8 +121,6 @@ class WordPressStubs {
 			return 'tiny-compress-images';
 		} elseif ( 'wp_upload_dir' === $method ) {
 			return array( 'basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR );
-		} elseif ( 'get_site_url' === $method ) {
-			return 'https://www.tinifytest.com';
 		} elseif ( 'is_admin' === $method ) {
 			return true;
 		} elseif ( $this->stubs[ $method ] ) {
