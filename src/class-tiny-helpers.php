@@ -52,25 +52,31 @@ class Tiny_Helpers {
 	 * @return string The full path to the file with the new extension, ex /home/user/image.avif
 	 */
 	public static function replace_file_extension( $mimetype, $filepath ) {
-		$path_parts = pathinfo( $filepath );
+		$parts = pathinfo( $filepath );
 
-		if ( ! isset( $path_parts['extension'] ) ) {
-			// When file has no extension, we can't replace
+		if ( ! isset( $parts['extension'] ) ) {
 			return $filepath;
 		}
 
-		$extension = $path_parts['extension'];
-		$extension = self::mimetype_to_extension( $mimetype );
-		if ( null === $extension ) {
-			// When file has an unsupported extension, we can't replace
+		$extension_new = self::mimetype_to_extension( $mimetype );
+		if ( null === $extension_new ) {
 			return $filepath;
 		}
 
-		$dirname = $path_parts['dirname'];
-		$filename = $path_parts['filename'];
+		$dir      = $parts['dirname'];
+		$name     = $parts['filename'];
+		$sep      = DIRECTORY_SEPARATOR;
 
-		// Handle directory separator properly
-		return $dirname . ($dirname === '' ? '' : DIRECTORY_SEPARATOR) . $filename . '.' . $extension;
+		if ( '.' === $dir ) {
+			return $name . '.' . $extension_new;
+		}
+
+		if ( $dir === $sep ) {
+			return $sep . $name . '.' . $extension_new;
+		}
+
+		$dir = rtrim( $dir, '/\\' );
+		return $dir . $sep . $name . '.' . $extension_new;
 	}
 
 	private static function mimetype_to_extension( $mimetype ) {

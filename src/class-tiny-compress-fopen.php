@@ -101,7 +101,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			);
 		}
 
-		$output_params = $this->request_options( 'GET', null, array( 'Content-Type: application/json' ) );
+		$output_params = $this->request_options(
+			'GET',
+			null,
+			array( 'Content-Type: application/json' )
+		);
 
 		list($output, $headers, $status_code) = $this->request( $output_params, $output_url );
 		if ( is_string( $output ) && 0 == strlen( $output ) ) {

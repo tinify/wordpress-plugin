@@ -47,4 +47,67 @@ class Tiny_Helpers_Test extends Tiny_TestCase
 
         $this->assertEquals($expected_output, Tiny_Helpers::replace_file_extension("image/webp", $input_file));
     }
+
+    public function test_returns_original_if_no_extension()
+{
+    $input  = '/home/user/image';               // no “.ext”
+    $output = Tiny_Helpers::replace_file_extension('image/webp', $input);
+    $this->assertEquals($input, $output);
+}
+
+public function test_returns_original_if_unsupported_mimetype()
+{
+    $input  = '/home/user/image.png';
+    $output = Tiny_Helpers::replace_file_extension('application/pdf', $input);
+    $this->assertEquals($input, $output);
+}
+
+public function test_strips_url_fragment_alone()
+{
+    $input    = '/home/user/image.png#section2';
+    $expected = '/home/user/image.avif';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/avif', $input));
+}
+
+public function test_strips_both_query_and_fragment()
+{
+    $input    = '/home/user/image.png?v=123#top';
+    $expected = '/home/user/image.webp';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/webp', $input));
+}
+
+public function test_multiple_dots_in_filename()
+{
+    $input    = '/home/user/archive.tar.gz';
+    $expected = '/home/user/archive.tar.avif';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/avif', $input));
+}
+
+public function test_double_backslash_paths()
+{
+    $input    = 'C:\\images\\photo.png?foo=bar';
+    $expected = 'C:\\images\\photo.webp';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/webp', $input));
+}
+
+public function test_filename_only_in_current_dir()
+{
+    $input    = 'image.png';
+    $expected = 'image.avif';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/avif', $input));
+}
+
+public function test_root_directory_file()
+{
+    $input    = '/image.png';
+    $expected = '/image.webp';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/webp', $input));
+}
+
+public function test_uppercase_extension_and_mimetype_case_insensitive()
+{
+    $input    = '/home/user/PICTURE.PNG';
+    $expected = '/home/user/PICTURE.avif';
+    $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/avif', $input));
+}
 }

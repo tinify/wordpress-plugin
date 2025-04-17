@@ -191,7 +191,12 @@ class Tiny_Image {
 				$preserve = $this->settings->get_preserve_options( $size_name );
 				$convert_opts = $this->settings->get_conversion_options();
 				try {
-					$response = $compressor->compress_file( $size->filename, $resize, $preserve, $convert_opts );
+					$response = $compressor->compress_file(
+						$size->filename,
+						$resize,
+						$preserve,
+						$convert_opts
+					);
 					$size->add_tiny_meta( $response );
 					$success++;
 				} catch ( Tiny_Exception $e ) {
@@ -398,26 +403,28 @@ class Tiny_Image {
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				if ( array_key_exists( $size_name, $active_sizes ) ) {
+					$file_size = $size->filesize();
 					if ( isset( $size->meta['input'] ) ) {
 						$input = $size->meta['input'];
 						$this->statistics['initial_total_size'] += intval( $input['size'] );
 						if ( isset( $size->meta['output'] ) ) {
 							$output = $size->meta['output'];
 							if ( $size->modified() ) {
-								$this->statistics['optimized_total_size'] += $size->filesize();
+								$this->statistics['optimized_total_size'] += $file_size;
 								if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 									$this->statistics['available_unoptimized_sizes'] += 1;
 								}
 							} else {
-								$this->statistics['optimized_total_size'] += intval( $output['size'] );
+								$output_size = intval( $output['size'] );
+								$this->statistics['optimized_total_size'] += $output_size;
 								$this->statistics['image_sizes_optimized'] += 1;
 							}
 						} else {
 							$this->statistics['optimized_total_size'] += intval( $input['size'] );
 						}
 					} elseif ( $size->exists() ) {
-						$this->statistics['initial_total_size'] += $size->filesize();
-						$this->statistics['optimized_total_size'] += $size->filesize();
+						$this->statistics['initial_total_size'] += $file_size;
+						$this->statistics['optimized_total_size'] += $file_size;
 						if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 							$this->statistics['available_unoptimized_sizes'] += 1;
 						}

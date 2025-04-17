@@ -175,20 +175,20 @@ class Tiny_Picture_Element {
 
 	private function get_local_path( $url ) {
 		if ( strpos( $url, 'http' ) === 0 ) {
-			$matchedDomain = null;
+			$matched_domain = null;
 
 			foreach ( $this->allowed_domains as $domain ) {
 				if ( strpos( $url, $domain ) === 0 ) {
-					$matchedDomain = $domain;
+					$matched_domain = $domain;
 					break;
 				}
 			}
 
-			if ( $matchedDomain === null ) {
+			if ( null === $matched_domain ) {
 				return '';
 			}
 
-			$url = substr( $url, strlen( $matchedDomain ) );
+			$url = substr( $url, strlen( $matched_domain ) );
 		}
 		$url = $this->base_dir . $url;
 
