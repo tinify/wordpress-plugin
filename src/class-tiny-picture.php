@@ -20,6 +20,7 @@
 */
 class Tiny_Picture {
 
+
 	public static function init() {
 		if ( is_admin() || is_customize_preview() ) {
 			return;
@@ -71,7 +72,7 @@ class Tiny_Picture {
 		}
 
 		$images = array_map(function ( $img ) {
-			return new Tiny_Picture_Element( $img );
+			return new Tiny_Picture_Element( $img, ABSPATH, array( get_site_url() ) );
 		}, $matches[0]);
 		$images = array_filter( $images );
 
@@ -84,6 +85,7 @@ class Tiny_Picture {
 }
 
 class Tiny_Picture_Element {
+
 
 
 
@@ -101,16 +103,16 @@ class Tiny_Picture_Element {
 
 	private $base_dir;
 
-	private $site_url;
+	private $allowed_domains;
 
-	public function __construct( $img_element ) {
+	public function __construct( $img_element, $base_dir, $domains ) {
 		$this->img_element = $img_element;
 		$dom = new \DOMDocument();
 		$dom->loadHTML( $img_element );
 		$this->img_element_node = $dom->getElementsByTagName( 'img' )->item( 0 );
 
-		$this->base_dir = get_home_path();
-		$this->site_url = get_site_url();
+		$this->base_dir = $base_dir;
+		$this->allowed_domains = $domains;
 	}
 
 	/**
@@ -159,13 +161,20 @@ class Tiny_Picture_Element {
 
 	private function get_local_path( $url ) {
 		if ( strpos( $url, 'http' ) === 0 ) {
-			if ( strpos( $url, $this->site_url ) !== 0 ) {
-				// url is not the current site
-				return false;
+			$matchedDomain = null;
+
+			foreach ( $this->allowed_domains as $domain ) {
+				if ( strpos( $url, $domain ) === 0 ) {
+					$matchedDomain = $domain;
+					break;
+				}
 			}
 
-			// trim site url from url;
-			$url = str_replace( $this->site_url, '', $url );
+			if ( $matchedDomain === null ) {
+				return '';
+			}
+
+			$url = substr( $url, strlen( $matchedDomain ) );
 		}
 		$url = $this->base_dir . $url;
 
