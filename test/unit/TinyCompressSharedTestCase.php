@@ -310,67 +310,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 		$this->assertSame(12, $this->compressor->get_compression_count());
 	}
 
-	public function test_should_convert_when_replace_and_convert_true()
-	{
-		$this->register('POST', '/shrink', array(
-			'status' => 201,
-			'headers' => array(
-				'location' => 'https://api.tinify.com/output/compressed.avif',
-				'content-type' => 'application/json',
-				'compression-count' => 12,
-			),
-			'body' => '{
-				"input": {
-					"type": "image/jpeg"
-				},
-				"output": {
-					"type": "image/avif"
-				}
-			}',
-		));
-		$this->register('GET', '/output/compressed.avif', array(
-			'status' => 200,
-			'headers' => array(
-				'content-type' => 'image/avif',
-				'content-length' => 9,
-				'image-width' => 10,
-				'image-height' => 15,
-				'compression-count' => 12,
-			),
-			'body' => 'optimized',
-		));
-
-		/**
-		 * should actually register another "shrink" request
-		 * but register can only register one handler per key
-		 * shrink will first do the regular shrink request
-		 * and then do a shrink convert request
-		 */
-
-		$uncompressed_img = file_get_contents('test/fixtures/input-example.jpg');
-		file_put_contents($this->vfs->url() . '/image.jpg', $uncompressed_img);
-
-		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array('convert' => true, 'replace' => true));
-
-		$expected_output = array(
-			'input' => array(
-				'size' => 641206,
-				'type' => 'image/jpeg',
-			),
-			'output' => array(
-				'type' => 'image/avif',
-				'size' => 9,
-				'width' => 10,
-				'height' => 15,
-				'ratio' => 0.0,
-			),
-		);
-		// Should do one request where input is a png and the output is an avif
-		$this->assertEquals($expected_output, $test_output);
-	}
-
-
-	public function test_should_compress_and_convert_when_replace_is_false_and_convert_is_true()
+	public function test_should_compress_and_convert_when_convert_is_true()
 	{
 		$uncompressed_img = file_get_contents('test/fixtures/input-example.jpg');
 		file_put_contents($this->vfs->url() . '/image.jpg', $uncompressed_img);
