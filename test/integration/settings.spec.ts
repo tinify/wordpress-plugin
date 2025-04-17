@@ -185,7 +185,7 @@ test.describe('settings', () => {
   });
 
   test('update free compressions', async () => {
-    await page.locator('#tinypng_sizes_medium').uncheck();
+    await enableCompressionSizes(page, ['0', 'thumbnail', 'large'], false);
 
     await expect(page.getByText('With these settings you can compress at least 166 images for free each month.')).toBeVisible();
   });
