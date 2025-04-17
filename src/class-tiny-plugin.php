@@ -40,7 +40,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
-		if ($this->settings->get_conversion_enabled()) {
+		if ( $this->settings->get_conversion_enabled() ) {
 			Tiny_Picture::init();
 		}
 	}
@@ -638,7 +638,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$images_to_convert = $stats['available-unoptimised-sizes'];
 
 		$conversion_enabled = $this->settings->get_conversion_enabled();
-		if ($conversion_enabled) {
+		if ( $conversion_enabled ) {
 			$images_to_convert *= 2;
 		}
 		$estimated_costs = Tiny_Compress::estimate_cost(

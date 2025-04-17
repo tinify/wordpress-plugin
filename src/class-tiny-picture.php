@@ -18,40 +18,37 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-class Tiny_Picture
-{
-	public static function init()
-	{
-		if (is_admin() || is_customize_preview()) {
+class Tiny_Picture {
+
+	public static function init() {
+		if ( is_admin() || is_customize_preview() ) {
 			return;
 		}
 
-		if (defined('DOING_AJAX') && DOING_AJAX) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			return;
 		}
 
-		if (defined('DOING_CRON') && DOING_CRON) {
+		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 			return;
 		}
 
 		add_action('template_redirect', function () {
-			ob_start([self::class, 'replace_img_with_picture_tag']);
+			ob_start( [ self::class, 'replace_img_with_picture_tag' ] );
 		}, 1000);
 	}
 
-	public static function replace_img_with_picture_tag($content)
-	{
-		$images = Tiny_Picture::filter_images($content);
+	public static function replace_img_with_picture_tag( $content ) {
+		$images = Tiny_Picture::filter_images( $content );
 
-		foreach ($images as $image) {
-			$content = Tiny_Picture::replace_image($content, $image);
+		foreach ( $images as $image ) {
+			$content = Tiny_Picture::replace_image( $content, $image );
 		}
 		return $content;
 	}
 
-	private static function replace_image($content, $image)
-	{
-		$content = str_replace($image->img_element, $image->get_picture_element(), $content);
+	private static function replace_image( $content, $image ) {
+		$content = str_replace( $image->img_element, $image->get_picture_element(), $content );
 		return $content;
 	}
 
@@ -60,26 +57,25 @@ class Tiny_Picture
 	 *
 	 * @return Tiny_Image[]
 	 */
-	private static function filter_images($content)
-	{
-		if (preg_match('/(?=<body).*<\/body>/is', $content, $body)) {
+	private static function filter_images( $content ) {
+		if ( preg_match( '/(?=<body).*<\/body>/is', $content, $body ) ) {
 			$content = $body[0];
 		}
 
-		$content = preg_replace('/<!--(.*)-->/Uis', '', $content);
+		$content = preg_replace( '/<!--(.*)-->/Uis', '', $content );
 
-		$content = preg_replace('#<noscript(.*?)>(.*?)</noscript>#is', '', $content);
+		$content = preg_replace( '#<noscript(.*?)>(.*?)</noscript>#is', '', $content );
 
-		if (! preg_match_all('/<img\s.*>/isU', $content, $matches)) {
+		if ( ! preg_match_all( '/<img\s.*>/isU', $content, $matches ) ) {
 			return array();
 		}
 
-		$images = array_map(function ($img) {
-			return new Tiny_Picture_Element($img);
+		$images = array_map(function ( $img ) {
+			return new Tiny_Picture_Element( $img );
 		}, $matches[0]);
-		$images = array_filter($images);
+		$images = array_filter( $images );
 
-		if (! $images || ! is_array($images)) {
+		if ( ! $images || ! is_array( $images ) ) {
 			return array();
 		}
 
@@ -87,8 +83,8 @@ class Tiny_Picture
 	}
 }
 
-class Tiny_Picture_Element
-{
+class Tiny_Picture_Element {
+
 
 
 	/**
@@ -104,15 +100,14 @@ class Tiny_Picture_Element
 	private $img_element_node;
 
 	private $base_dir;
-	
+
 	private $site_url;
 
-	public function __construct($img_element)
-	{
+	public function __construct( $img_element ) {
 		$this->img_element = $img_element;
 		$dom = new \DOMDocument();
-		$dom->loadHTML($img_element);
-		$this->img_element_node = $dom->getElementsByTagName('img')->item(0);
+		$dom->loadHTML( $img_element );
+		$this->img_element_node = $dom->getElementsByTagName( 'img' )->item( 0 );
 
 		$this->base_dir = get_home_path();
 		$this->site_url = get_site_url();
@@ -123,29 +118,28 @@ class Tiny_Picture_Element
 	 *
 	 * @return array{path: string, size: string}[] The image sources
 	 */
-	private function get_image_srcsets()
-	{
+	private function get_image_srcsets() {
 		$result = array();
-		$srcset = $this->img_element_node->getAttribute('srcset');
+		$srcset = $this->img_element_node->getAttribute( 'srcset' );
 
-		if ($srcset) {
+		if ( $srcset ) {
 			// Split the srcset by commas to get individual entries
-			$srcset_entries = explode(',', $srcset);
+			$srcset_entries = explode( ',', $srcset );
 
-			foreach ($srcset_entries as $entry) {
+			foreach ( $srcset_entries as $entry ) {
 				// Trim whitespace
-				$entry = trim($entry);
+				$entry = trim( $entry );
 
 				// Split by whitespace to separate path and size descriptor
-				$parts = preg_split('/\s+/', $entry, 2);
+				$parts = preg_split( '/\s+/', $entry, 2 );
 
-				if (count($parts) === 2) {
+				if ( count( $parts ) === 2 ) {
 					// We have both path and size
 					$result[] = array(
 						'path' => $parts[0],
 						'size' => $parts[1],
 					);
-				} elseif (count($parts) === 1) {
+				} elseif ( count( $parts ) === 1 ) {
 					// We only have a path (unusual in srcset)
 					$result[] = array(
 						'path' => $parts[0],
@@ -153,18 +147,17 @@ class Tiny_Picture_Element
 					);
 				}
 			}
-		} elseif ($this->img_element_node->hasAttribute('src')) {
+		} elseif ( $this->img_element_node->hasAttribute( 'src' ) ) {
 			// No srcset, but we have a src attribute
 			$result[] = array(
-				'path' => $this->img_element_node->getAttribute('src'),
+				'path' => $this->img_element_node->getAttribute( 'src' ),
 				'size' => '',
 			);
 		}
 		return $result;
 	}
 
-	private function get_local_path($url)
-	{
+	private function get_local_path( $url ) {
 		if ( strpos( $url, 'http' ) === 0 ) {
 			if ( strpos( $url, $this->site_url ) !== 0 ) {
 				// url is not the current site
@@ -179,44 +172,42 @@ class Tiny_Picture_Element
 		return $url;
 	}
 
-	private function get_formatted_source($imgsrcs, $mimetype)
-	{
+	private function get_formatted_source( $imgsrcs, $mimetype ) {
 		$formatted_src_set = array();
-		foreach ($imgsrcs as $imgsrc) {
-			$format_url = Tiny_Helpers::replace_file_extension($mimetype, $imgsrc['path']);
-			$local_path = $this->get_local_path($format_url);
-			if (empty($local_path)) {
+		foreach ( $imgsrcs as $imgsrc ) {
+			$format_url = Tiny_Helpers::replace_file_extension( $mimetype, $imgsrc['path'] );
+			$local_path = $this->get_local_path( $format_url );
+			if ( empty( $local_path ) ) {
 				continue;
 			}
-			$exists_local = file_exists($local_path);
-			if ($exists_local) {
+			$exists_local = file_exists( $local_path );
+			if ( $exists_local ) {
 				$formatted_src_set[] = $format_url . ' ' . $imgsrc['size'];
 			}
 		}
 
-		if (empty($formatted_src_set)) {
+		if ( empty( $formatted_src_set ) ) {
 			// no alternative sources found
 			return '';
 		}
 
-		$source_set = implode(', ', $formatted_src_set);
-		$trimmed_source_set = trim($source_set);
+		$source_set = implode( ', ', $formatted_src_set );
+		$trimmed_source_set = trim( $source_set );
 		return '<source type="' . $mimetype . '" srcset="' . $trimmed_source_set . '">';
 	}
 
-	public function get_picture_element()
-	{
+	public function get_picture_element() {
 		$srcsets = $this->get_image_srcsets();
 
-		$avif = $this->get_formatted_source($srcsets, 'image/avif');
-		$webp = $this->get_formatted_source($srcsets, 'image/webp');
-		if (empty($avif) && empty($webp)) {
+		$avif = $this->get_formatted_source( $srcsets, 'image/avif' );
+		$webp = $this->get_formatted_source( $srcsets, 'image/webp' );
+		if ( empty( $avif ) && empty( $webp ) ) {
 			return $this->img_element;
 		}
 
 		$picture = '<picture>';
-		$picture .= $this->get_formatted_source($srcsets, 'image/avif');
-		$picture .= $this->get_formatted_source($srcsets, 'image/webp');
+		$picture .= $this->get_formatted_source( $srcsets, 'image/avif' );
+		$picture .= $this->get_formatted_source( $srcsets, 'image/webp' );
 		$picture .= $this->img_element;
 
 		$picture .= '</picture>';
