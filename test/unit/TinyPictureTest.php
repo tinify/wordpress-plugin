@@ -8,7 +8,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
     {
         parent::set_up();
 
-        Tiny_Picture::init( $this->vfs->url(), array( 'www.tinifytest.com' ) );
+        Tiny_Picture::init( $this->vfs->url(), array( 'https://www.tinifytest.com' ) );
     }
 
     /**
