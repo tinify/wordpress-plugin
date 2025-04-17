@@ -1,13 +1,15 @@
 {
-  "name": "@tinify/wordpress-plugin",
+  "name": "tinify-wordpress-plugin",
   "version": "1.0.0",
   "description": "TinyPNG - JPEG, PNG & WebP image compression",
   "main": "index.js",
   "scripts": {
     "test:playwright": "wp-scripts test-playwright",
     "test:playwright:help": "wp-scripts test-playwright --help",
-    "test:playwright:debug": "wp-scripts test-playwright --debug"
+    "test:playwright:debug": "wp-scripts test-playwright --debug",
+    "zip": "wp-scripts plugin-zip"
   },
+  "files": [ "src", "README.md", "readme.txt", "tiny-compress-images.php" ],
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@wordpress/env": "^10.16.0",
