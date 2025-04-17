@@ -643,7 +643,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		$estimated_costs = Tiny_Compress::estimate_cost(
 			$images_to_convert,
-			$this->settings->get_compression_count(),
+			$this->settings->get_compression_count()
 		);
 		$admin_colors = self::retrieve_admin_colors();
 

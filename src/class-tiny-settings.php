@@ -518,7 +518,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			count( self::get_active_tinify_sizes() ),
 			self::get_resize_enabled(),
 			self::compress_wr2x_images(),
-			self::get_conversion_enabled(),
+			self::get_conversion_enabled()
 		);
 
 		echo '</div>';
