@@ -179,8 +179,8 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			<strong>
 				<?php
 				if ( $size_before - $size_after ) {
-					/* translators: %1$.0f%%: savings percentage, %2$s: total file size savings */
 					printf(
+						/* translators: %1$.0f%%: savings percentage, %2$s: total file size savings */
 						esc_html__( 'Total savings %1$.0f%% (%2$s)', 'tiny-compress-images' ),
 						(1 - $size_after / floatval( $size_before )) * 100,
 						size_format( $size_before - $size_after, 1 )

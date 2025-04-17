@@ -93,7 +93,12 @@ abstract class Tiny_Compress {
 		);
 	}
 
-	public function compress_file( $file, $resize_opts = array(), $preserve_opts = array(), $convert_opts = array() ) {
+	public function compress_file(
+		$file,
+		$resize_opts = array(),
+		$preserve_opts = array(),
+		$convert_opts = array()
+	) {
 		if ( $this->get_key() == null ) {
 			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
 		}
@@ -132,7 +137,10 @@ abstract class Tiny_Compress {
 		if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
 			try {
 				list($convert_output, $convert_details) = $this->convert( $output );
-				$converted_filepath = Tiny_Helpers::replace_file_extension( $convert_details['type'], $file );
+				$converted_filepath = Tiny_Helpers::replace_file_extension(
+					$convert_details['type'],
+					$file
+				);
 				file_put_contents( $converted_filepath, $convert_output );
 
 				$details['output']['convert'] = [

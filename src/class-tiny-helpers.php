@@ -45,7 +45,7 @@ class Tiny_Helpers {
 	/**
 	 * Will replace the file extension with the specified mimetype.
 	 *
-	 * @param string $mimetype The format to replace the extension with. 
+	 * @param string $mimetype The format to replace the extension with.
 	 * Currently supports 'image/avif' or 'image/webp'
 	 * @param string $filepath The full path to replace the extension in, ex /home/user/image.png
 	 *

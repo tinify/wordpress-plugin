@@ -371,7 +371,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function get_conversion_options() {
 		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
 
-		$convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
+		$convert = isset( $setting_convert_format['convert'] ) &&
+			'on' == $setting_convert_format['convert'];
 
 		$convert_to = array(
 			'convert' => $this->get_conversion_enabled(),
@@ -388,7 +389,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function get_conversion_enabled() {
 		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
 
-		$convert = isset( $setting_convert_format['convert'] ) && $setting_convert_format['convert'] == 'on';
+		$convert = isset( $setting_convert_format['convert'] ) &&
+			'on' == $setting_convert_format['convert'];
 
 		return $convert;
 	}
@@ -962,14 +964,24 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$convertopts_convert = self::get_prefixed_name( 'convert_format[convert]' );
 		$convertopts_convert_id = self::get_prefixed_name( 'conversion_convert' );
-		$convertopts_convert_checked = $this->get_convert_format_option( 'convert' ) ? ' checked="checked"' : '';
+		$convertopts_convert_checked = $this->get_convert_format_option( 'convert' ) ?
+			' checked="checked"' : '';
 
-		echo '<p class="tiny-check">';
-		echo '<input type="checkbox" id="' . $convertopts_convert_id . '" name="' . $convertopts_convert . '" value="on"' . $convertopts_convert_checked . '/>';
-		echo '<label for="' . $convertopts_convert_id . '">' . esc_html__( 'Generate optimized image formats', 'tiny-compress-images' ) . '</label>';
-		echo '<span class="description">' . wp_kses( __( 'Creating an optimized image will take <strong>1 additional compression</strong> for each image size.', 'tiny-compress-images' ), array(
+		$description = wp_kses( __( 
+			'Creating an optimized image will take 
+			<strong>1 additional compression</strong> for each image size.', 
+			'tiny-compress-images' ), 
+			array(
 			'strong' => array(),
-		) ) . '</span>'; // WPCS: Needed for proper translation.
+		) );
+		echo '<p class="tiny-check">';
+		echo '<input type="checkbox" id="' . $convertopts_convert_id . '" ';
+		echo 'name="' . $convertopts_convert . '" ';
+		echo 'value="on"' . $convertopts_convert_checked . '/>';
+		echo '<label for="' . $convertopts_convert_id . '">' .
+			esc_html__( 'Generate optimized image formats', 'tiny-compress-images' ) . 
+			'</label>';
+		echo '<span class="description">' . $description. '</span>';
 		echo '</p>';
 
 		echo '</div>';
