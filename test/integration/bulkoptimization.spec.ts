@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setOriginalImage, uploadMedia } from './utils';
+import { clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setConversionSettings, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -10,6 +10,9 @@ test.describe('bulkoptimization', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     WPVersion = await getWPVersion(page);
+    await setConversionSettings(page, {
+      convert: false,
+    });
   });
 
   test.beforeEach(async () => {

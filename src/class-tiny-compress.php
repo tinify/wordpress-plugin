@@ -19,6 +19,7 @@
 */
 
 abstract class Tiny_Compress {
+
 	const KEY_MISSING = 'Register an account or provide an API key first';
 	const FILE_MISSING = 'File does not exist';
 	const WRITE_ERROR = 'No permission to write to file';
@@ -43,7 +44,7 @@ abstract class Tiny_Compress {
 	public static function estimate_cost( $compressions, $usage ) {
 		return round(
 			self::compression_cost( $compressions + $usage ) -
-			self::compression_cost( $usage ),
+				self::compression_cost( $usage ),
 			2
 		);
 	}
@@ -80,7 +81,7 @@ abstract class Tiny_Compress {
 			if ( $err->get_status() == 404 ) {
 				$message = 'The key that you have entered is not valid';
 			} else {
-				list( $message ) = explode( ' (HTTP', $err->getMessage(), 2 );
+				list($message) = explode( ' (HTTP', $err->getMessage(), 2 );
 			}
 		}
 
@@ -92,7 +93,12 @@ abstract class Tiny_Compress {
 		);
 	}
 
-	public function compress_file( $file, $resize_opts = array(), $preserve_opts = array() ) {
+	public function compress_file(
+		$file,
+		$resize_opts = array(),
+		$preserve_opts = array(),
+		$convert_opts = array()
+	) {
 		if ( $this->get_key() == null ) {
 			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
 		}
@@ -110,8 +116,10 @@ abstract class Tiny_Compress {
 		}
 
 		try {
-			list( $output, $details ) = $this->compress(
-				file_get_contents( $file ),
+			$file_data = file_get_contents( $file );
+
+			list($output, $details) = $this->compress(
+				$file_data,
 				$resize_opts,
 				$preserve_opts
 			);
@@ -120,18 +128,44 @@ abstract class Tiny_Compress {
 			throw $err;
 		}
 
-		$this->call_after_compress_callback();
-		file_put_contents( $file, $output );
+		try {
+			file_put_contents( $file, $output );
+		} catch ( Exception $e ) {
+			throw new Tiny_Exception( $e->getMessage(), 'FileError' );
+		}
+
+		if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] ) {
+			try {
+				list($convert_output, $convert_details) = $this->convert( $output );
+				$converted_filepath = Tiny_Helpers::replace_file_extension(
+					$convert_details['type'],
+					$file
+				);
+				file_put_contents( $converted_filepath, $convert_output );
+
+				$details['output']['convert'] = [
+					'type' => $convert_details['type'],
+					'size' => $convert_details['size'],
+					'path' => $converted_filepath,
+				];
+
+			} catch ( Tiny_Exception $e ) {
+				$details['output']['converted_errors'] = $e->get_message();
+			}
+		}
 
 		if ( $resize_opts ) {
 			$details['output']['resized'] = true;
 		}
+
+		$this->call_after_compress_callback();
 
 		return $details;
 	}
 
 	protected abstract function validate();
 	protected abstract function compress( $input, $resize_options, $preserve_options );
+	protected abstract function convert( $input );
 
 	protected static function identifier() {
 		return 'WordPress/' . Tiny_Plugin::wp_version() . ' Plugin/' . Tiny_Plugin::version();
@@ -150,7 +184,7 @@ abstract class Tiny_Compress {
 
 		list($width, $height) = getimagesize( $file );
 
-		return ( $width > $resize_options['width'] || $height > $resize_options['height'] );
+		return ($width > $resize_options['width'] || $height > $resize_options['height']);
 	}
 
 	private static function compression_cost( $total ) {

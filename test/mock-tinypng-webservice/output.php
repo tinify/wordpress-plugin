@@ -3,10 +3,14 @@ ob_start();
 
 require_once 'common.php';
 
-if (preg_match('#output/.+[.](png|jpg)$#', $_SERVER['REQUEST_URI'], $match)) {
+if (preg_match('#output/.+[.](png|jpg|webp|avif)$#i', $_SERVER['REQUEST_URI'], $match)) {
     $file = str_replace('/', '-', $match[0]);
-    $ext = $match[1];
-    $mime = $match[1] == 'jpg' ? 'image/jpeg' : "image/$ext";
+    $ext = strtolower($match[1]);
+    if ($ext == 'jpg' || $ext == 'jpeg') {
+        $mime = 'image/jpeg';
+    } else {
+        $mime = "image/$ext";
+    }
 } else {
     $file = null;
 }
@@ -18,6 +22,10 @@ if (!is_null($api_key)) {
     $resize = $data->resize;
     if ($resize->method) {
         $file = "output-resized.$ext";
+    }
+    if ($data->convert) {
+        $file = "output-converted.avif";
+        $mime = "image/avif";
     }
 }
 

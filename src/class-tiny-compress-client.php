@@ -29,6 +29,7 @@ if ( ! defined( '\Tinify\VERSION' ) ) {
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
+
 	private $last_error_code = 0;
 	private $last_message = '';
 	private $proxy;
@@ -72,13 +73,43 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$this->set_request_options( \Tinify\Tinify::getClient( \Tinify\Tinify::ANONYMOUS ) );
 			\Tinify\Tinify::getClient()->request( 'get', '/keys/' . $this->get_key() );
 			return true;
-
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
 			if ( 429 == $err->status || 400 == $err->status ) {
 				return true;
 			}
+
+			throw new Tiny_Exception(
+				$err->getMessage(),
+				get_class( $err ),
+				$err->status
+			);
+		}
+	}
+
+	protected function convert( $input ) {
+		try {
+			$this->last_error_code = 0;
+			$this->set_request_options( \Tinify\Tinify::getClient() );
+
+			$source = \Tinify\fromBuffer( $input );
+
+			$source = $source->convert(array(
+				'type' => array( 'image/avif', 'image/webp' ),
+			));
+
+			$result = $source->result();
+
+			$meta = array(
+				'type' => $result->mediaType(),
+				'size' => $result->size(),
+			);
+
+			$buffer = $result->toBuffer();
+			return array( $buffer, $meta );
+		} catch ( \Tinify\Exception $err ) {
+			$this->last_error_code = $err->status;
 
 			throw new Tiny_Exception(
 				$err->getMessage(),
@@ -104,11 +135,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			}
 
 			$result = $source->result();
-
 			$meta = array(
 				'input' => array(
 					'size' => strlen( $input ),
-					'type' => $result->mediaType(),
+					'type' => Tiny_Helpers::get_mimetype( $input ),
 				),
 				'output' => array(
 					'size' => $result->size(),
@@ -121,7 +151,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 			$buffer = $result->toBuffer();
 			return array( $buffer, $meta );
-
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
@@ -130,7 +159,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				get_class( $err ),
 				$err->status
 			);
-		}// End try().
+		} // End try().
 	}
 
 	public function create_key( $email, $options ) {

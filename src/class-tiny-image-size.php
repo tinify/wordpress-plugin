@@ -103,6 +103,36 @@ class Tiny_Image_Size {
 		return $this->has_been_compressed() && ! $this->exists();
 	}
 
+	/**
+	 * Checks wether the image has been processed for conversion.
+	 *
+	 * @return bool true if image is processed for conversion
+	 */
+	public function converted() {
+		return isset( $this->meta['output'] ) && isset( $this->meta['output']['convert'] );
+	}
+
+	/**
+	 * Checks if the converted image size exists
+	 *
+	 * @return boolean true if the image size has a optimized alternative format
+	 */
+	public function converted_image_exists() {
+		if ( ! $this->converted() ) {
+			return false;
+		}
+		return file_exists( $this->meta['output']['convert']['path'] );
+	}
+
+	public function conversion_text() {
+		if ( ! $this->converted() ) {
+			return esc_html__( 'Not converted', 'tiny-compress-images' );
+		}
+		$conversion_text = $this->meta['output']['convert']['type'] . ' (' .
+			size_format( $this->meta['output']['convert']['size'], 1 ) . ')';
+		return $conversion_text;
+	}
+
 	public function compressed() {
 		return $this->still_exists() && $this->same_size();
 	}
@@ -140,6 +170,12 @@ class Tiny_Image_Size {
 
 	public function duplicate_of_size() {
 		return $this->_duplicate_of_size;
+	}
+
+	public function delete_converted_image_size() {
+		if ( $this->converted_image_exists() ) {
+			unlink( $this->meta['output']['convert']['path'] );
+		}
 	}
 
 	private function recently_started() {

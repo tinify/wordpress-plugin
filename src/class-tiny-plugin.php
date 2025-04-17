@@ -40,6 +40,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
+		if ( $this->settings->get_conversion_enabled() ) {
+			Tiny_Picture::init( ABSPATH, array( get_site_url() ) );
+		}
 	}
 
 	public function set_compressor( $compressor ) {
@@ -59,6 +62,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'process_attachment' ),
 			10, 2
 		);
+
+		add_action( 'delete_attachment', $this->get_method( 'clean_attachment' ), 10, 2 );
 
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
@@ -630,8 +635,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_bulk_optimization_page() {
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$images_to_convert = $stats['available-unoptimised-sizes'];
+
+		$conversion_enabled = $this->settings->get_conversion_enabled();
+		if ( $conversion_enabled ) {
+			$images_to_convert *= 2;
+		}
 		$estimated_costs = Tiny_Compress::estimate_cost(
-			$stats['available-unoptimised-sizes'],
+			$images_to_convert,
 			$this->settings->get_compression_count()
 		);
 		$admin_colors = self::retrieve_admin_colors();
@@ -715,5 +726,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$user = wp_get_current_user();
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
+	}
+
+	/**
+	 * Will clean up converted files (if any) when the original is deleted
+	 *
+	 * Hooked to the `delete_attachment` action.
+	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
+	 *
+	 * @param [int] $post_id
+	 *
+	 * @return void
+	 */
+	function clean_attachment( $post_id ) {
+		$tiny_image = new Tiny_Image( $this->settings, $post_id );
+		$tiny_image->delete_converted_image();
 	}
 }
