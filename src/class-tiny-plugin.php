@@ -735,11 +735,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
 	 *
 	 * @param [int] $post_id
-	 * @param [mixed] $post
 	 *
 	 * @return void
 	 */
-	function clean_attachment( $post_id, $post ) {
+	function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
 	}
