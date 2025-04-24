@@ -387,12 +387,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 * @return bool true if conversion is enabled, false otherwise
 	 */
 	public function get_conversion_enabled() {
-		$setting_convert_format = get_option( self::get_prefixed_name( 'convert_format' ) );
+		$conver_state = self::get_convert_format_option('convert');
 
-		$convert = isset( $setting_convert_format['convert'] ) &&
-			'on' == $setting_convert_format['convert'];
-
-		return $convert;
+		return $conver_state === 'on';
 	}
 
 	private function setup_incomplete_checks() {
@@ -964,7 +961,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$convertopts_convert = self::get_prefixed_name( 'convert_format[convert]' );
 		$convertopts_convert_id = self::get_prefixed_name( 'conversion_convert' );
-		$convertopts_convert_checked = $this->get_convert_format_option( 'convert' ) ?
+		$convertopts_convert_checked = $this->get_conversion_enabled() ?
 			' checked="checked"' : '';
 
 		$description = __(
@@ -989,8 +986,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</div>';
 	}
 
-	private  function get_convert_format_option( $option ) {
+	private static function get_convert_format_option( $option ) {
 		$setting = get_option( self::get_prefixed_name( 'convert_format' ) );
-		return isset( $setting[ $option ] ) && 'on' === $setting[ $option ];
+		if (isset( $setting[ $option ] ) && $setting[$option]) {
+			return $setting[$option];
+		}
+		return null;
 	}
 }
