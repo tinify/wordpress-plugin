@@ -88,38 +88,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function convert( $input ) {
-		try {
-			$this->last_error_code = 0;
-			$this->set_request_options( \Tinify\Tinify::getClient() );
-
-			$source = \Tinify\fromBuffer( $input );
-
-			$source = $source->convert(array(
-				'type' => array( 'image/avif', 'image/webp' ),
-			));
-
-			$result = $source->result();
-
-			$meta = array(
-				'type' => $result->mediaType(),
-				'size' => $result->size(),
-			);
-
-			$buffer = $result->toBuffer();
-			return array( $buffer, $meta );
-		} catch ( \Tinify\Exception $err ) {
-			$this->last_error_code = $err->status;
-
-			throw new Tiny_Exception(
-				$err->getMessage(),
-				get_class( $err ),
-				$err->status
-			);
-		}
-	}
-
-	protected function compress( $input, $resize_opts, $preserve_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
@@ -134,23 +103,39 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				$source = $source->preserve( $preserve_opts );
 			}
 
-			$result = $source->result();
+			$compress_result = $source->result();
 			$meta = array(
 				'input' => array(
 					'size' => strlen( $input ),
 					'type' => Tiny_Helpers::get_mimetype( $input ),
 				),
 				'output' => array(
-					'size' => $result->size(),
-					'type' => $result->mediaType(),
-					'width' => $result->width(),
-					'height' => $result->height(),
-					'ratio' => round( $result->size() / strlen( $input ), 4 ),
+					'size' => $compress_result->size(),
+					'type' => $compress_result->mediaType(),
+					'width' => $compress_result->width(),
+					'height' => $compress_result->height(),
+					'ratio' => round( $compress_result->size() / strlen( $input ), 4 ),
 				),
 			);
 
-			$buffer = $result->toBuffer();
-			return array( $buffer, $meta );
+			$buffer = $compress_result->toBuffer();
+			$result = array( $buffer, $meta );
+
+			if ( isset($convert_opts['convert']) && $convert_opts['convert'] === true ) {
+				$convert_to = array( 'image/avif', 'image/webp' );
+				$convert_source = $source->convert( array(
+					'type' => $convert_to,
+				) );
+				$convert_result = $convert_source->result();
+				$meta['convert'] = array(
+					'type' => $convert_result->mediaType(),
+					'size' => $convert_result->size(),
+				);
+				$convert_buffer = $convert_result->toBuffer();
+				$result = array( $buffer, $meta, $convert_buffer );
+			}
+			
+			return $result;
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 

@@ -85,44 +85,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function convert( $input ) {
-		$params = $this->request_options('POST', array(
-			'convert' => array(
-				'type' => Tiny_Config::CONVERSION_FORMAT_OPTIONS,
-			),
-		));
-		list($details, $headers, $status_code) = $this->request( $params );
-
-		$output_url = isset( $headers['location'] ) ? $headers['location'] : null;
-		if ( null === $output_url ) {
-			throw new Tiny_Exception(
-				'Could not find output location',
-				'Tinify\Exception'
-			);
-		}
-
-		$output_params = $this->request_options(
-			'GET',
-			null,
-			array( 'Content-Type: application/json' )
-		);
-
-		list($output, $headers, $status_code) = $this->request( $output_params, $output_url );
-		if ( is_string( $output ) && 0 == strlen( $output ) ) {
-			throw new Tiny_Exception(
-				'Could not download output',
-				'Tinify\Exception'
-			);
-		}
-
-		$meta = array(
-			'type' => $headers['content-type'],
-			'size' => strlen( $output ),
-		);
-		return array( $output, $meta );
-	}
-
-	protected function compress( $input, $resize_opts, $preserve_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
@@ -184,7 +147,30 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			),
 		);
 
-		return array( $output, $meta );
+		$result = array( $output, $meta );
+
+		if ( isset($convert_opts['convert']) && $convert_opts['convert'] === true ) {
+			$convert_to = array( 'image/avif', 'image/webp' );
+			$convert_params = $this->request_options(
+				'POST',
+				array(
+					'convert' => array(
+						'type' => $convert_to,
+					),
+				),
+				array( 'Content-Type: application/json' )
+			);
+	
+			list($convert_output, $convert_headers) = $this->request( $convert_params, $output_url );
+			$meta['convert'] = array(
+				'type' => $convert_headers['content-type'],
+				'size' => strlen( $convert_output ),
+			);
+			$result[] = $convert_output;
+			
+		}
+		
+		return $result;
 	}
 	private function request( $params, $url = Tiny_Config::SHRINK_URL ) {
 		$context = stream_context_create( $params );
