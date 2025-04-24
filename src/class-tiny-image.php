@@ -399,6 +399,8 @@ class Tiny_Image {
 		$this->statistics['optimized_total_size'] = 0;
 		$this->statistics['image_sizes_optimized'] = 0;
 		$this->statistics['available_unoptimized_sizes'] = 0;
+		$this->statistics['image_sizes_converted'] = 0;
+		$this->statistics['available_unconverted_sizes'] = 0;
 
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
@@ -429,6 +431,12 @@ class Tiny_Image {
 							$this->statistics['available_unoptimized_sizes'] += 1;
 						}
 					}
+
+					if ( $size->has_been_converted() ) {
+						$this->statistics['image_sizes_converted'] += 1;
+					} else {
+						$this->statistics['available_unconverted_sizes'] += 1;
+					}
 				}
 			}
 		}// End foreach().
@@ -442,5 +450,9 @@ class Tiny_Image {
 
 	public static function is_retina( $size ) {
 		return strrpos( $size, 'wr2x' ) === strlen( $size ) - strlen( 'wr2x' );
+	}
+
+	public function can_be_converted() {
+		return $this->settings->get_conversion_enabled() && $this->file_type_allowed();
 	}
 }

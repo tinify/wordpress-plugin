@@ -1,11 +1,12 @@
 <?php
 
 $available_sizes = array_keys( $this->settings->get_sizes() );
+$conversion_enabled = $this->settings->get_conversion_enabled();
 $active_sizes = $this->settings->get_sizes();
 $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
-$active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed' ), $active_tinify_sizes );
+$active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed', 'unconverted' ), $active_tinify_sizes );
 $image_statistics = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 $available_unoptimized_sizes = $image_statistics['available_unoptimized_sizes'];
 $size_before = $image_statistics['initial_total_size'];
@@ -45,7 +46,17 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			</span>
 			<br>
 		<?php } ?>
-		<?php if ( $total['has_been_converted'] > 0 || 0 == $available_unoptimized_sizes ) { ?>
+		<?php if ( $active['uncompressed'] > 0 ) { ?>
+			<span class="message">
+				<?php
+				/* translators: %d: number of sizes to be compressed */
+				printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes );
+				?>
+			</span>
+			<br>
+		<?php } ?>
+		<?php if ($conversion_enabled) {
+		if ( $total['has_been_converted'] > 0 || 0 == $image_statistics['available_unconverted_sizes'] ) { ?>
 			<span class="message">
 				<?php
 				/* translators: %d: number of compressed sizes */
@@ -56,15 +67,18 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			</span>
 			<br>
 		<?php } ?>
-		<?php if ( $active['uncompressed'] > 0 ) { ?>
+		<?php if ( $active['unconverted'] > 0 ) { ?>
 			<span class="message">
 				<?php
-				/* translators: %d: number of sizes to be compressed */
-				printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes );
+				/* translators: %d: number of compressed sizes */
+				printf(wp_kses(_n( '<strong>%d</strong> size to be converted', '<strong>%d</strong> sizes to be converted', $active['unconverted'], 'tiny-compress-images' ), array(
+					'strong' => array(),
+				)), $active['unconverted']);
 				?>
 			</span>
 			<br>
-		<?php } ?>
+		<?php }
+		} ?>
 		<?php if ( $size_before - $size_after ) { ?>
 			<span class="message">
 				<?php
@@ -90,6 +104,10 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<?php } ?>
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
 			<?php esc_html_e( 'Compress', 'tiny-compress-images' ) ?>
+		</button>
+	<?php } elseif ( $active['unconverted'] > 0 && $tiny_image->can_be_converted() ) { ?>
+		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
+			<?php esc_html_e( 'Convert', 'tiny-compress-images' ) ?>
 		</button>
 	<?php } ?>
 </div>

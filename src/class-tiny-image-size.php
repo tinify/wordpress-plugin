@@ -117,6 +117,16 @@ class Tiny_Image_Size {
 	}
 
 	/**
+	 * Checks wether the image is applicable for conversion and has
+	 * not been converted yet.
+	 *
+	 * @return bool true if image can be converted and has not been converted
+	 */
+	public function unconverted() {
+		return ! $this->converted() && $this->exists();
+	}
+	
+	/**
 	 * Checks if the converted image size exists
 	 *
 	 * @return boolean true if the image size has a optimized alternative format

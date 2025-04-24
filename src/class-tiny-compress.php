@@ -118,7 +118,7 @@ abstract class Tiny_Compress {
 		try {
 			$file_data = file_get_contents( $file );
 
-			list($output, $details) = $this->compress(
+			list($output, $details, $convert_output ) = $this->compress(
 				$file_data,
 				$resize_opts,
 				$preserve_opts,
@@ -133,6 +133,20 @@ abstract class Tiny_Compress {
 			file_put_contents( $file, $output );
 		} catch ( Exception $e ) {
 			throw new Tiny_Exception( $e->getMessage(), 'FileError' );
+		}
+		
+		if ( $convert_output ) {
+			$converted_filepath = Tiny_Helpers::replace_file_extension(
+				$details['type'],
+				$file
+			);
+
+			try {
+				file_put_contents( $converted_filepath, $convert_output );
+			} catch ( Exception $e ) {
+				throw new Tiny_Exception( $e->getMessage(), 'FileError' );
+			}
+			$details['convert']['path'] = $convert_output;
 		}
 
 		if ( $resize_opts ) {
