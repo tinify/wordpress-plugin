@@ -4,7 +4,7 @@ $available_sizes = array_keys( $this->settings->get_sizes() );
 $active_sizes = $this->settings->get_sizes();
 $active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 $error = $tiny_image->get_latest_error();
-$total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed' ) );
+$total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
 $active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed' ), $active_tinify_sizes );
 $image_statistics = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 $available_unoptimized_sizes = $image_statistics['available_unoptimized_sizes'];
@@ -41,6 +41,17 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				printf(wp_kses(_n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array(
 					'strong' => array(),
 				)), $total['has_been_compressed']);
+				?>
+			</span>
+			<br>
+		<?php } ?>
+		<?php if ( $total['has_been_converted'] > 0 || 0 == $available_unoptimized_sizes ) { ?>
+			<span class="message">
+				<?php
+				/* translators: %d: number of compressed sizes */
+				printf(wp_kses(_n( '<strong>%d</strong> size converted', '<strong>%d</strong> sizes converted', $total['has_been_converted'], 'tiny-compress-images' ), array(
+					'strong' => array(),
+				)), $total['has_been_converted']);
 				?>
 			</span>
 			<br>
