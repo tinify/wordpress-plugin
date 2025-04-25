@@ -109,6 +109,7 @@ class Tiny_Image_Size {
 
 	/**
 	 * Checks wether the image has been processed for conversion.
+	 * Will still return true if conversion was not needed.
 	 *
 	 * @return bool true if image is processed for conversion
 	 */

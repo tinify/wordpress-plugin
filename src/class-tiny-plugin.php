@@ -483,7 +483,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->settings->get_sizes(),
 			$this->settings->get_active_tinify_sizes()
 		);
-		$size_before = $image_statistics_before['optimized_total_size'];
+		$size_before = $image_statistics_before['compressed_total_size'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 		$result = $tiny_image->compress();
@@ -494,18 +494,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
 		$current_library_size = intval( $_POST['current_size'] );
-		$size_after = $image_statistics['optimized_total_size'];
+		$size_after = $image_statistics['compressed_total_size'];
 		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message'] = $tiny_image->get_latest_error();
-		$result['image_sizes_optimized'] = $image_statistics['image_sizes_optimized'];
+		$result['image_sizes_optimized'] = $image_statistics['image_sizes_compressed'];
 
 		$result['initial_total_size'] = size_format(
 			$image_statistics['initial_total_size'], 1
 		);
 
 		$result['optimized_total_size'] = size_format(
-			$image_statistics['optimized_total_size'], 1
+			$image_statistics['compressed_total_size'], 1
 		);
 
 		$result['savings'] = $tiny_image->get_savings( $image_statistics );

@@ -114,9 +114,9 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$this->assertEquals( array(
 			'initial_total_size' => 360542,
-			'optimized_total_size' => 328670,
+			'compressed_total_size' => 328670,
 			'image_sizes_optimized' => 3,
-			'available_unoptimized_sizes' => 1,
+			'available_uncompressed_sizes' => 1,
 		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
 	}
 
@@ -125,7 +125,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$this->wp->createImage( 37857, '2015/09', 'tinypng_gravatar-150x150.png' );
 		$statistics = $this->subject->get_statistics( $active_sizes, $active_tinify_sizes );
-		$this->assertEquals( 2, $statistics['available_unoptimized_sizes'] );
+		$this->assertEquals( 2, $statistics['available_uncompressed_sizes'] );
 	}
 
 	public function test_get_savings() {

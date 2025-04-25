@@ -8,7 +8,7 @@ $error = $tiny_image->get_latest_error();
 $total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
 $active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed', 'unconverted' ), $active_tinify_sizes );
 $image_statistics = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
-$available_unoptimized_sizes = $image_statistics['available_unoptimized_sizes'];
+$available_uncompressed_sizes = $image_statistics['available_uncompressed_sizes'];
 $size_before = $image_statistics['initial_total_size'];
 $size_after = $image_statistics['optimized_total_size'];
 
@@ -29,13 +29,13 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			<span class="icon dashicons dashicons-no error"></span>
 		<?php } elseif ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
-		<?php } elseif ( $total['compressed'] > 0 && $available_unoptimized_sizes > 0 ) { ?>
+		<?php } elseif ( $total['compressed'] > 0 && $available_uncompressed_sizes > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
 		<?php } elseif ( $total['compressed'] > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes success"></span>
 		<?php } ?>
 		<span class="icon spinner hidden"></span>
-		<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_unoptimized_sizes) ) { ?>
+		<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_uncompressed_sizes) ) { ?>
 			<span class="message">
 				<?php
 				/* translators: %d: number of compressed sizes */
@@ -50,7 +50,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			<span class="message">
 				<?php
 				/* translators: %d: number of sizes to be compressed */
-				printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_unoptimized_sizes, 'tiny-compress-images' ) ), $available_unoptimized_sizes );
+				printf( esc_html( _n( '%d size to be compressed', '%d sizes to be compressed', $available_uncompressed_sizes, 'tiny-compress-images' ) ), $available_uncompressed_sizes );
 				?>
 			</span>
 			<br>
@@ -70,10 +70,8 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<?php if ( $active['unconverted'] > 0 ) { ?>
 			<span class="message">
 				<?php
-				/* translators: %d: number of compressed sizes */
-				printf(wp_kses(_n( '<strong>%d</strong> size to be converted', '<strong>%d</strong> sizes to be converted', $active['unconverted'], 'tiny-compress-images' ), array(
-					'strong' => array(),
-				)), $active['unconverted']);
+				/* translators: %d: number of sizes to be converted */
+				printf( esc_html( _n( '%d size to be converted', '%d sizes to be converted', $active['unconverted'], 'tiny-compress-images' ) ), $active['unconverted']);
 				?>
 			</span>
 			<br>
@@ -98,7 +96,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			<?php esc_html_e( 'Details', 'tiny-compress-images' ) ?>
 		</a>
 	</div>
-	<?php if ( $available_unoptimized_sizes > 0 ) { ?>
+	<?php if ( $available_uncompressed_sizes > 0 ) { ?>
 		<?php if ( in_array( $tiny_image->get_id(), $images_to_compress ) ) { ?>
 			<span class="hidden auto-compress"></span>
 		<?php } ?>

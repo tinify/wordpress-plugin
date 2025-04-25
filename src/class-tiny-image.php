@@ -181,9 +181,10 @@ class Tiny_Image {
 
 		$compressor = $this->settings->get_compressor();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+		$filter_on = $this->settings->get_conversion_enabled() ? 'unconverted' : 'uncompressed';
+		$unprocessed_sizes = $this->filter_image_sizes( $filter_on, $active_tinify_sizes );
 
-		foreach ( $uncompressed_sizes as $size_name => $size ) {
+		foreach ( $unprocessed_sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
@@ -380,7 +381,7 @@ class Tiny_Image {
 
 	public function get_savings( $stats ) {
 		$before = $stats['initial_total_size'];
-		$after = $stats['optimized_total_size'];
+		$after = $stats['compressed_total_size'];
 		if ( 0 === $before ) {
 			$savings = 0;
 		} else {
@@ -396,53 +397,62 @@ class Tiny_Image {
 		}
 
 		$this->statistics['initial_total_size'] = 0;
-		$this->statistics['optimized_total_size'] = 0;
-		$this->statistics['image_sizes_optimized'] = 0;
-		$this->statistics['available_unoptimized_sizes'] = 0;
+		$this->statistics['compressed_total_size'] = 0;
+		$this->statistics['image_sizes_compressed'] = 0;
+		$this->statistics['available_uncompressed_sizes'] = 0;
 		$this->statistics['image_sizes_converted'] = 0;
 		$this->statistics['available_unconverted_sizes'] = 0;
 
-		foreach ( $this->sizes as $size_name => $size ) {
-			if ( ! $size->is_duplicate() ) {
-				if ( array_key_exists( $size_name, $active_sizes ) ) {
-					$file_size = $size->filesize();
-					if ( isset( $size->meta['input'] ) ) {
-						$input = $size->meta['input'];
-						$this->statistics['initial_total_size'] += intval( $input['size'] );
-						if ( isset( $size->meta['output'] ) ) {
-							$output = $size->meta['output'];
-							if ( $size->modified() ) {
-								$this->statistics['optimized_total_size'] += $file_size;
-								if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-									$this->statistics['available_unoptimized_sizes'] += 1;
-								}
-							} else {
-								$output_size = intval( $output['size'] );
-								$this->statistics['optimized_total_size'] += $output_size;
-								$this->statistics['image_sizes_optimized'] += 1;
-							}
-						} else {
-							$this->statistics['optimized_total_size'] += intval( $input['size'] );
+		foreach ($this->sizes as $size_name => $size) {
+			// skip duplicates or inactive sizes
+			if ($size->is_duplicate() || ! isset($active_sizes[$size_name])) {
+				continue;
+			}
+		
+			$file_size       = $size->filesize();
+			$is_active_size  = in_array($size_name, $active_tinify_sizes, true);
+		
+			if (isset($size->meta['input'])) {
+				$input_size = (int) $size->meta['input']['size'];
+				$this->statistics['initial_total_size'] += $input_size;
+		
+				if (isset($size->meta['output'])) {
+					$output_size = (int) $size->meta['output']['size'];
+		
+					if ($size->modified()) {
+						$this->statistics['compressed_total_size'] += $file_size;
+						if ($is_active_size) {
+							$this->statistics['available_uncompressed_sizes']++;
 						}
-					} elseif ( $size->exists() ) {
-						$this->statistics['initial_total_size'] += $file_size;
-						$this->statistics['optimized_total_size'] += $file_size;
-						if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-							$this->statistics['available_unoptimized_sizes'] += 1;
-						}
-					}
-
-					if ( $size->has_been_converted() ) {
-						$this->statistics['image_sizes_converted'] += 1;
 					} else {
-						$this->statistics['available_unconverted_sizes'] += 1;
+						$this->statistics['compressed_total_size'] += $output_size;
+						$this->statistics['image_sizes_compressed']++;
 					}
+				} else {
+					$this->statistics['compressed_total_size'] += $input_size;
+				}
+		
+			// fallback to “exists” branch when no meta
+			} elseif ($size->exists()) {
+				$this->statistics['initial_total_size']   += $file_size;
+				$this->statistics['compressed_total_size'] += $file_size;
+				if ($is_active_size) {
+					$this->statistics['available_uncompressed_sizes']++;
 				}
 			}
-		}// End foreach().
+		
+			if ($is_active_size) {
+				if ($size->has_been_converted()) {
+					$this->statistics['image_sizes_converted']++;
+				} else {
+					$this->statistics['available_unconverted_sizes']++;
+				}
+			}
+		}
 
 		return $this->statistics;
 	}
+		
 
 	public static function is_original( $size ) {
 		return self::ORIGINAL === $size;

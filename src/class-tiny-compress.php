@@ -137,7 +137,7 @@ abstract class Tiny_Compress {
 		
 		if ( $convert_output ) {
 			$converted_filepath = Tiny_Helpers::replace_file_extension(
-				$details['type'],
+				$details['convert']['type'],
 				$file
 			);
 
@@ -146,7 +146,7 @@ abstract class Tiny_Compress {
 			} catch ( Exception $e ) {
 				throw new Tiny_Exception( $e->getMessage(), 'FileError' );
 			}
-			$details['convert']['path'] = $convert_output;
+			$details['convert']['path'] = $converted_filepath;
 		}
 
 		if ( $resize_opts ) {

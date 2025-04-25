@@ -93,7 +93,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array(
+									<?php echo wp_kses( __( 'Unoptimized <br> image sizes', 'tiny-compress-images' ), array(
 										'br' => array(),
 									) ) ?>
 								</h3>
