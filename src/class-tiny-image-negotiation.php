@@ -58,7 +58,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base
 	* @param int    $post_id Attachment post ID.
 	* @return string New or original URL.
 	*/
-	private function filter_attachment_url( $url, $post_id ) {
+	public function filter_attachment_url( $url, $post_id ) {
 		header( 'Vary: Accept' );
 		$supported_formats = $this->get_support_formats();
 		if ( empty($supported_formats) ) {
@@ -90,7 +90,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base
 	 * @param bool        $icon          Whether icon fallback.
 	 * @return array|false Modified image array.
 	 */
-	private function filter_attachment_image_src( $image, $attachment_id, $size, $icon ) {
+	public function filter_attachment_image_src( $image, $attachment_id, $size, $icon ) {
 		if ( ! $image ) {
 			return $image;
 		}
@@ -109,7 +109,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base
 	 * @param int     $attachment_id Attachment ID
 	 * @return array Modified sources array.
 	 */
-	private function filter_image_srcset( $sources, $size_array, $image_src, $image_meta, $attachment_id ) {
+	public function filter_image_srcset( $sources, $size_array, $image_src, $image_meta, $attachment_id ) {
 		foreach ( $sources as &$src ) {
 			$src['url'] = $this->filter_attachment_url( $src['url'], $attachment_id );
 		}
