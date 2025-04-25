@@ -969,13 +969,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 
 		$convertopts_convert_to_name = self::get_prefixed_name( 'convert_format[convert_to]' );
+		$convertopts_convert_subfields_classname = self::get_prefixed_name( 'convert_fields' );
 		$convertopts_convert_to_id = self::get_prefixed_name( 'convert_convert_to' );
 		$convertopts_convert_value = self::get_convert_format_option('convert_to', 'smallest');
 		$convertopts_convert_disabled = self::get_conversion_enabled() ? '' : ' disabled="disabled"';
 
-		echo '<fieldset class="' . $convertopts_convert_to_id . '" id="' . $convertopts_convert_to_id . '" ' . $convertopts_convert_disabled . '>';
+		echo '<fieldset class="' . $convertopts_convert_subfields_classname . '" id="' . $convertopts_convert_to_id . '" ' . $convertopts_convert_disabled . '>';
+		echo '<h4>' . __( 'Conversion output', 'tiny-compress-images' ) . '</h4>';
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
+			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'smallest' ),
 			'smallest',
 			$convertopts_convert_value,
 			__( 'Convert to smallest file type (Recommended)', 'tiny-compress-images'),
@@ -983,6 +986,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
+			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'webp' ),
 			'webp',
 			$convertopts_convert_value,
 			__( 'Convert to WebP', 'tiny-compress-images'),
@@ -990,6 +994,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
+			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'avif' ),
 			'avif',
 			$convertopts_convert_value,
 			__( 'Convert to AVIF', 'tiny-compress-images'),
@@ -999,8 +1004,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</div>';
 	}
 
-	private static function render_convert_to_radiobutton($name, $value, $current, $label, $descr) {
-		$id = sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), $value );
+	private static function render_convert_to_radiobutton($name, $id, $value, $current, $label, $descr) {
 		$checked = ($current === $value ? ' checked="checked"' : '');
 		echo '<p class="tiny-radio">';
 		echo '<input type="radio" id="' . $id . '" name="' . $name .

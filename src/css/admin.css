@@ -449,21 +449,24 @@ input[type=number][name*="tinypng_resize_original"] {
 	margin: 5px 0;
 }
 
-fieldset.tinypng_convert_convert_to {
+fieldset.tinypng_convert_fields {
 	margin: 18px 28px;
 }
 
-fieldset.tinypng_convert_convert_to p {
+fieldset.tinypng_convert_fields p {
 	display: flex;
 }
 
-fieldset.tinypng_convert_convert_to p input[type=radio] {
+fieldset.tinypng_convert_fields p input[type=radio] {
 	margin-top: 2px;
 }
 
-fieldset.tinypng_convert_convert_to label span {
+fieldset.tinypng_convert_fields label span {
 	display: flex;
 	margin-left: 0;
 	margin-top: 2px;
 	line-height: 1.5;
+}
+fieldset.tinypng_convert_fields[disabled] {
+	opacity: 0.6;
 }
