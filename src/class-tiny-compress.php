@@ -159,7 +159,12 @@ abstract class Tiny_Compress {
 	}
 
 	protected abstract function validate();
-	protected abstract function compress( $input, $resize_options, $preserve_options, $convert_opts );
+	protected abstract function compress(
+		$input,
+		$resize_options,
+		$preserve_options,
+		$convert_opts
+	);
 
 	protected static function identifier() {
 		return 'WordPress/' . Tiny_Plugin::wp_version() . ' Plugin/' . Tiny_Plugin::version();

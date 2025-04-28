@@ -385,7 +385,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function get_conversion_enabled() {
 		$conversion_enabled = self::get_convert_format_option( 'convert', 'off' );
 
-		return $conversion_enabled === 'on';
+		return 'on' === $conversion_enabled;
 	}
 
 	private function setup_incomplete_checks() {
@@ -973,8 +973,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$convertopts_convert_to_id = self::get_prefixed_name( 'convert_convert_to' );
 		$convertopts_convert_value = self::get_convert_format_option( 'convert_to', 'smallest' );
 		$convertopts_convert_disabled = self::get_conversion_enabled() ? '' : ' disabled="disabled"';
-
-		echo '<fieldset class="' . $convertopts_convert_subfields_classname . '" id="' . $convertopts_convert_to_id . '" ' . $convertopts_convert_disabled . '>';
+		echo sprintf(
+			'<fieldset class="%s" id="%s" %s>',
+			$convertopts_convert_subfields_classname,
+			$convertopts_convert_to_id,
+			$convertopts_convert_disabled
+		);
 		echo '<h4>' . __( 'Conversion output', 'tiny-compress-images' ) . '</h4>';
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
