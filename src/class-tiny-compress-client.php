@@ -121,7 +121,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$buffer = $compress_result->toBuffer();
 			$result = array( $buffer, $meta );
 
-			if ( isset($convert_opts['convert']) && $convert_opts['convert'] === true ) {
+			if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] === true ) {
 				$convert_to = array( 'image/avif', 'image/webp' );
 				$convert_source = $source->convert( array(
 					'type' => $convert_to,
@@ -134,7 +134,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				$convert_buffer = $convert_result->toBuffer();
 				$result = array( $buffer, $meta, $convert_buffer );
 			}
-			
+
 			return $result;
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;

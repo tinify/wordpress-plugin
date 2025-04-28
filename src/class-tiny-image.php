@@ -403,25 +403,25 @@ class Tiny_Image {
 		$this->statistics['image_sizes_converted'] = 0;
 		$this->statistics['available_unconverted_sizes'] = 0;
 
-		foreach ($this->sizes as $size_name => $size) {
+		foreach ( $this->sizes as $size_name => $size ) {
 			// skip duplicates or inactive sizes
-			if ($size->is_duplicate() || ! isset($active_sizes[$size_name])) {
+			if ( $size->is_duplicate() || ! isset( $active_sizes[ $size_name ] ) ) {
 				continue;
 			}
-		
+
 			$file_size       = $size->filesize();
-			$is_active_size  = in_array($size_name, $active_tinify_sizes, true);
-		
-			if (isset($size->meta['input'])) {
+			$is_active_size  = in_array( $size_name, $active_tinify_sizes, true );
+
+			if ( isset( $size->meta['input'] ) ) {
 				$input_size = (int) $size->meta['input']['size'];
 				$this->statistics['initial_total_size'] += $input_size;
-		
-				if (isset($size->meta['output'])) {
+
+				if ( isset( $size->meta['output'] ) ) {
 					$output_size = (int) $size->meta['output']['size'];
-		
-					if ($size->modified()) {
+
+					if ( $size->modified() ) {
 						$this->statistics['compressed_total_size'] += $file_size;
-						if ($is_active_size) {
+						if ( $is_active_size ) {
 							$this->statistics['available_uncompressed_sizes']++;
 						}
 					} else {
@@ -431,28 +431,26 @@ class Tiny_Image {
 				} else {
 					$this->statistics['compressed_total_size'] += $input_size;
 				}
-		
-			// fallback to “exists” branch when no meta
-			} elseif ($size->exists()) {
+			} elseif ( $size->exists() ) {
 				$this->statistics['initial_total_size']   += $file_size;
 				$this->statistics['compressed_total_size'] += $file_size;
-				if ($is_active_size) {
+				if ( $is_active_size ) {
 					$this->statistics['available_uncompressed_sizes']++;
 				}
 			}
-		
-			if ($is_active_size) {
-				if ($size->has_been_converted()) {
+
+			if ( $is_active_size ) {
+				if ( $size->has_been_converted() ) {
 					$this->statistics['image_sizes_converted']++;
 				} else {
 					$this->statistics['available_unconverted_sizes']++;
 				}
 			}
-		}
+		}// End foreach().
 
 		return $this->statistics;
 	}
-		
+
 
 	public static function is_original( $size ) {
 		return self::ORIGINAL === $size;

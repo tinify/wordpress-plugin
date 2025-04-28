@@ -149,7 +149,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		$result = array( $output, $meta );
 
-		if ( isset($convert_opts['convert']) && $convert_opts['convert'] === true ) {
+		if ( isset( $convert_opts['convert'] ) && $convert_opts['convert'] === true ) {
 			$convert_to = array( 'image/avif', 'image/webp' );
 			$convert_params = $this->request_options(
 				'POST',
@@ -160,16 +160,16 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				),
 				array( 'Content-Type: application/json' )
 			);
-	
+
 			list($convert_output, $convert_headers) = $this->request( $convert_params, $output_url );
 			$meta['convert'] = array(
 				'type' => $convert_headers['content-type'],
 				'size' => strlen( $convert_output ),
 			);
 			$result[] = $convert_output;
-			
+
 		}
-		
+
 		return $result;
 	}
 	private function request( $params, $url = Tiny_Config::SHRINK_URL ) {

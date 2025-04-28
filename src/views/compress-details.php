@@ -55,28 +55,28 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			</span>
 			<br>
 		<?php } ?>
-		<?php if ($conversion_enabled) {
-		if ( $total['has_been_converted'] > 0 || 0 == $image_statistics['available_unconverted_sizes'] ) { ?>
-			<span class="message">
-				<?php
-				/* translators: %d: number of compressed sizes */
-				printf(wp_kses(_n( '<strong>%d</strong> size converted', '<strong>%d</strong> sizes converted', $total['has_been_converted'], 'tiny-compress-images' ), array(
-					'strong' => array(),
-				)), $total['has_been_converted']);
-				?>
-			</span>
-			<br>
-		<?php } ?>
+		<?php if ( $conversion_enabled ) {
+			if ( $total['has_been_converted'] > 0 || 0 == $image_statistics['available_unconverted_sizes'] ) { ?>
+					<span class="message">
+						<?php
+						/* translators: %d: number of compressed sizes */
+						printf(wp_kses(_n( '<strong>%d</strong> size converted', '<strong>%d</strong> sizes converted', $total['has_been_converted'], 'tiny-compress-images' ), array(
+							'strong' => array(),
+						)), $total['has_been_converted']);
+						?>
+					</span>
+					<br>
+				<?php } ?>
 		<?php if ( $active['unconverted'] > 0 ) { ?>
 			<span class="message">
 				<?php
 				/* translators: %d: number of sizes to be converted */
-				printf( esc_html( _n( '%d size to be converted', '%d sizes to be converted', $active['unconverted'], 'tiny-compress-images' ) ), $active['unconverted']);
+				printf( esc_html( _n( '%d size to be converted', '%d sizes to be converted', $active['unconverted'], 'tiny-compress-images' ) ), $active['unconverted'] );
 				?>
 			</span>
 			<br>
 		<?php }
-		} ?>
+} ?>
 		<?php if ( $size_before - $size_after ) { ?>
 			<span class="message">
 				<?php

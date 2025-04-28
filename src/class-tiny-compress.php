@@ -134,7 +134,7 @@ abstract class Tiny_Compress {
 		} catch ( Exception $e ) {
 			throw new Tiny_Exception( $e->getMessage(), 'FileError' );
 		}
-		
+
 		if ( $convert_output ) {
 			$converted_filepath = Tiny_Helpers::replace_file_extension(
 				$details['convert']['type'],

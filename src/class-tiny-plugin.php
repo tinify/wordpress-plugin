@@ -42,8 +42,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$this->settings = new Tiny_Settings();
 
 		if ( $this->settings->get_conversion_enabled() ) {
-			Tiny_Picture::init( ABSPATH, array( get_site_url() ) );
-			new Tiny_Image_Negotiation();
+			new Tiny_Image_Negotiation( ABSPATH, array( get_site_url() ) );
 		}
 	}
 

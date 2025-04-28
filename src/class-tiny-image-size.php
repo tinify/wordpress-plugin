@@ -126,7 +126,7 @@ class Tiny_Image_Size {
 	public function unconverted() {
 		return ! $this->converted() && $this->exists();
 	}
-	
+
 	/**
 	 * Checks if the converted image size exists
 	 *

@@ -114,9 +114,9 @@ class Tiny_Bulk_Optimization {
 				$active_tinify_sizes
 			);
 			$image_stats = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
-			
+
 			$stats['uploaded-images']++;
-			if ($conversion_enabled) {
+			if ( $conversion_enabled ) {
 				$stats['available-unoptimised-sizes'] += $image_stats['available_unconverted_sizes'];
 				$stats['optimized-image-sizes'] += $image_stats['image_sizes_converted'];
 			} else {

@@ -371,7 +371,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function get_conversion_options() {
 		return array(
 			'convert' => $this->get_conversion_enabled(),
-			'convert_to' => self::get_convert_format_option('convert_to', 'smallest')
+			'convert_to' => self::get_convert_format_option( 'convert_to', 'smallest' ),
 		);
 
 		return $convert_to;
@@ -383,9 +383,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 * @return bool true if conversion is enabled, false otherwise
 	 */
 	public function get_conversion_enabled() {
-		$conver_state = self::get_convert_format_option('convert', 'off');
+		$conversion_enabled = self::get_convert_format_option( 'convert', 'off' );
 
-		return $conver_state === 'on';
+		return $conversion_enabled === 'on';
 	}
 
 	private function setup_incomplete_checks() {
@@ -971,7 +971,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$convertopts_convert_to_name = self::get_prefixed_name( 'convert_format[convert_to]' );
 		$convertopts_convert_subfields_classname = self::get_prefixed_name( 'convert_fields' );
 		$convertopts_convert_to_id = self::get_prefixed_name( 'convert_convert_to' );
-		$convertopts_convert_value = self::get_convert_format_option('convert_to', 'smallest');
+		$convertopts_convert_value = self::get_convert_format_option( 'convert_to', 'smallest' );
 		$convertopts_convert_disabled = self::get_conversion_enabled() ? '' : ' disabled="disabled"';
 
 		echo '<fieldset class="' . $convertopts_convert_subfields_classname . '" id="' . $convertopts_convert_to_id . '" ' . $convertopts_convert_disabled . '>';
@@ -981,30 +981,30 @@ class Tiny_Settings extends Tiny_WP_Base {
 			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'smallest' ),
 			'smallest',
 			$convertopts_convert_value,
-			__( 'Convert to smallest file type (Recommended)', 'tiny-compress-images'),
-			__( 'We will calculate what is the best format for your image.', 'tiny-compress-images'),
+			__( 'Convert to smallest file type (Recommended)', 'tiny-compress-images' ),
+			__( 'We will calculate what is the best format for your image.', 'tiny-compress-images' ),
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
 			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'webp' ),
 			'webp',
 			$convertopts_convert_value,
-			__( 'Convert to WebP', 'tiny-compress-images'),
-			__( 'WebP balances a small file size with good visual quality, supporting transparency and animation.', 'tiny-compress-images'),
+			__( 'Convert to WebP', 'tiny-compress-images' ),
+			__( 'WebP balances a small file size with good visual quality, supporting transparency and animation.', 'tiny-compress-images' ),
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
 			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'avif' ),
 			'avif',
 			$convertopts_convert_value,
-			__( 'Convert to AVIF', 'tiny-compress-images'),
-			__( 'AVIF delivers even better compression and image quality than WebP. Browser support is not as good as WebP.', 'tiny-compress-images'),
+			__( 'Convert to AVIF', 'tiny-compress-images' ),
+			__( 'AVIF delivers even better compression and image quality than WebP. Browser support is not as good as WebP.', 'tiny-compress-images' ),
 		);
 		echo '</fieldset>';
 		echo '</div>';
 	}
 
-	private static function render_convert_to_radiobutton($name, $id, $value, $current, $label, $descr) {
+	private static function render_convert_to_radiobutton( $name, $id, $value, $current, $label, $descr ) {
 		$checked = ($current === $value ? ' checked="checked"' : '');
 		echo '<p class="tiny-radio">';
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
@@ -1017,8 +1017,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	private static function get_convert_format_option( $option, $default_value ) {
 		$setting = get_option( self::get_prefixed_name( 'convert_format' ) );
-		if (isset( $setting[ $option ] ) && $setting[$option]) {
-			return $setting[$option];
+		if ( isset( $setting[ $option ] ) && $setting[ $option ] ) {
+			return $setting[ $option ];
 		}
 		return $default_value;
 	}
