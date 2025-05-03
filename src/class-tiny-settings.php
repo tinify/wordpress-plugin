@@ -972,7 +972,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$convertopts_convert_subfields_classname = self::get_prefixed_name( 'convert_fields' );
 		$convertopts_convert_to_id = self::get_prefixed_name( 'convert_convert_to' );
 		$convertopts_convert_value = self::get_convert_format_option( 'convert_to', 'smallest' );
-		$convertopts_convert_disabled = self::get_conversion_enabled() ? '' : ' disabled="disabled"';
+		$convertopts_convert_disabled =
+			self::get_conversion_enabled() ? '' : ' disabled="disabled"';
 		echo sprintf(
 			'<fieldset class="%s" id="%s" %s>',
 			$convertopts_convert_subfields_classname,
@@ -986,7 +987,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'smallest',
 			$convertopts_convert_value,
 			__( 'Convert to smallest file type (Recommended)', 'tiny-compress-images' ),
-			__( 'We will calculate what is the best format for your image.', 'tiny-compress-images' ),
+			__(
+				'We will calculate what is the best format for your image.',
+				'tiny-compress-images'
+			),
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
@@ -994,7 +998,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'webp',
 			$convertopts_convert_value,
 			__( 'Convert to WebP', 'tiny-compress-images' ),
-			__( 'WebP balances a small file size with good visual quality, supporting transparency and animation.', 'tiny-compress-images' ),
+			__(
+				'WebP balances a small file size with good visual quality, 
+				supporting transparency and animation.',
+				'tiny-compress-images'
+			),
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
@@ -1002,13 +1010,21 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'avif',
 			$convertopts_convert_value,
 			__( 'Convert to AVIF', 'tiny-compress-images' ),
-			__( 'AVIF delivers even better compression and image quality than WebP. Browser support is not as good as WebP.', 'tiny-compress-images' ),
+			__( 'AVIF delivers even better compression and image quality than WebP.
+			 Browser support is not as good as WebP.', 'tiny-compress-images' ),
 		);
 		echo '</fieldset>';
 		echo '</div>';
 	}
 
-	private static function render_convert_to_radiobutton( $name, $id, $value, $current, $label, $descr ) {
+	private static function render_convert_to_radiobutton(
+		$name,
+		$id,
+		$value,
+		$current,
+		$label,
+		$descr
+	) {
 		$checked = ($current === $value ? ' checked="checked"' : '');
 		echo '<p class="tiny-radio">';
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
