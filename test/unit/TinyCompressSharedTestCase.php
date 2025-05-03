@@ -312,6 +312,14 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 
 	public function test_should_compress_and_convert_when_convert_is_true()
 	{
+		/**
+		 * In Compress Client, should do sequentially:
+		 * - one POST to /shrink to compress
+		 * - one GET to /output/compressed.jpg to get compress result
+		 * - one POST to /output/compressed.jpg to convert
+		 * - one GET to /output/compressed.avif to get convert result
+		 */
+
 		$uncompressed_img = file_get_contents('test/fixtures/input-example.jpg');
 		file_put_contents($this->vfs->url() . '/image.jpg', $uncompressed_img);
 		$this->register('POST', '/shrink', array(
@@ -327,22 +335,6 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 				},
 				"output": {
 					"type": "image/jpeg"
-				}
-			}',
-		));
-		$this->register('POST', '/shrink', array(
-			'status' => 201,
-			'headers' => array(
-				'location' => 'https://api.tinify.com/output/compressed.avif',
-				'content-type' => 'application/json',
-				'compression-count' => 12,
-			),
-			'body' => '{
-				"input": {
-					"type": "image/jpeg"
-				},
-				"output": {
-					"type": "image/avif"
 				}
 			}',
 		));
@@ -362,19 +354,32 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 		));
 
 		$compressed_avif = file_get_contents('test/mock-tinypng-webservice/output-example.avif');
-		$this->register('GET', '/output/compressed.avif', array(
-			'status' => 200,
+
+		// API Client
+		$this->register('POST', '/output/compressed.jpg', array(
+			'status' => 201,
 			'headers' => array(
+				'location' => 'https://api.tinify.com/output/compressed.avif',
 				'content-type' => 'image/avif',
-				'content-length' => 11618,
-				'image-width' => 10,
-				'image-height' => 15,
 				'compression-count' => 12,
 			),
 			'body' => $compressed_avif,
 		));
+		
+		// SDK Client
+		// Note: 'GET' will change to 'POST' in future SDK update
+		$this->register('GET', '/output/compressed.jpg', array(
+			'status' => 201,
+			'headers' => array(
+				'location' => 'https://api.tinify.com/output/compressed.avif',
+				'content-type' => 'image/avif',
+				'compression-count' => 12,
+				'content-length' => strlen($compressed_avif),
+			),
+			'body' => $compressed_avif,
+		));
 
-		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array('convert' => true, 'replace' => false));
+		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array( 'convert' => true ));
 
 		$expected_output = array(
 			'input' => array(
@@ -387,14 +392,13 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 				'width' => 10,
 				'height' => 15,
 				'ratio' => 0.2355,
-				'convert' => array(
-					'type' => 'image/avif',
-					'size' => strlen($compressed_avif),
-					'path' => 'vfs://root/image.avif',
-				),
+			),
+			'convert' => array(
+				'type' => 'image/avif',
+				'size' => strlen($compressed_avif),
+				'path' => 'vfs://root/image.avif',
 			),
 		);
-		// Should do one request where input is a png and the output is an avif
 		$this->assertEquals($expected_output, $test_output);
 	}
 }

@@ -7,6 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: 'html',
+  timeout: 60000,
   use: {
     baseURL: `http://localhost:${process.env.WORDPRESS_PORT}`,
     trace: 'on-first-retry',

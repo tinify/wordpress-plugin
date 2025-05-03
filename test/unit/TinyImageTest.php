@@ -115,8 +115,10 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->assertEquals( array(
 			'initial_total_size' => 360542,
 			'compressed_total_size' => 328670,
-			'image_sizes_optimized' => 3,
+			'image_sizes_compressed' => 3,
 			'available_uncompressed_sizes' => 1,
+			'image_sizes_converted' => 0,
+			'available_unconverted_sizes' => 4
 		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
 	}
 

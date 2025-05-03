@@ -48,18 +48,22 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 			return;
 		}
 
-		add_filter( 'wp_get_attachment_url', array( $this, 'filter_attachment_url' ), 10, 2 );
-		add_filter( 'wp_get_attachment_image_src', array( $this, 'filter_attachment_image_src' ), 10, 4 );
-		add_filter( 'wp_calculate_image_srcset', array( $this, 'filter_image_srcset' ), 10, 5 );
-
 		add_action( 'template_redirect', function() {
 			ob_start( array( $this, 'replace_img_sources' ), 1000 );
 		});
 	}
 
 	public function replace_img_sources( $content ) {
+		$supported_formats = $this->get_support_formats();
+		if ( empty( $supported_formats ) ) {
+			return $content;
+		}
 
-		$images = $this->filter_images( $content );
+		$supported_mimetypes = array_map(function ($format) {
+			return $format['mime'];
+		}, $supported_formats);
+
+		$images = $this->filter_images( $content, $supported_mimetypes );
 
 		foreach ( $images as $image ) {
 			$content = Tiny_Image_Negotiation::replace_image( $content, $image );
@@ -68,7 +72,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 	}
 
 	private static function replace_image( $content, $image ) {
-		$content = str_replace( $image->img_element, $image->get_picture_element(), $content );
+		$content = str_replace( $image->img_element, $image->create_image_sourcesets(), $content );
 		return $content;
 	}
 
@@ -77,7 +81,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 	 *
 	 * @return Tiny_Image[]
 	 */
-	private function filter_images( $content ) {
+	private function filter_images( $content, $mimetypes ) {
 		if ( preg_match( '/(?=<body).*<\/body>/is', $content, $body ) ) {
 			$content = $body[0];
 		}
@@ -90,13 +94,9 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 			return array();
 		}
 
-		$images = array_map(function ( $img ) {
-			return new Tiny_Picture_Element( $img, $this->base_dir, $this->allowed_domains, array( 'image/avif', 'image/webp' ) );
-		}, $matches[0]);
-		$images = array_filter( $images );
-
-		if ( ! $images || ! is_array( $images ) ) {
-			return array();
+		$images = array();
+		foreach ($matches[0] as $img) {
+			$images[] = new Tiny_Image_Source( $img, $this->base_dir, $this->allowed_domains, $mimetypes );
 		}
 
 		return $images;
@@ -196,11 +196,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 }
 
 
-class Tiny_Picture_Element {
-
-
-
-
+class Tiny_Image_Source {
 	/**
 	 * The raw HTML img element as a string
 	 * @var string
@@ -229,7 +225,7 @@ class Tiny_Picture_Element {
 
 		$this->base_dir = $base_dir;
 		$this->allowed_domains = $domains;
-		$this->$valid_mimetypes = $valid_mimetypes;
+		$this->valid_mimetypes = $valid_mimetypes;
 	}
 
 	/**
@@ -314,26 +310,25 @@ class Tiny_Picture_Element {
 		return null;
 	}
 
-	public function get_picture_element() {
+	public function create_image_sourcesets() {
 		$srcsets = $this->get_image_srcsets();
 
+		$srcset_parts = [];
 		foreach ( $srcsets as $srcset ) {
 			foreach ( $this->valid_mimetypes as $mimetype ) {
 				$new_srcset = $this->get_formatted_source( $srcset, $mimetype );
+
 				if ( $new_srcset ) {
-					$srcset['path'] = $new_srcset;
+					$srcset_parts[] = trim($new_srcset . ' ' . $srcset['size']);
 					break;
 				}
 			}
 		}
-		$srcset_parts = [];
-		foreach ( $srcsets as $srcset ) {
-			if ( empty( $srcset['size'] ) ) {
-				$this->img_element_node->setAttribute( 'src', $srcset['path'] );
-			} else {
-				$srcset_parts[] = $srcset['path'] . ' ' . $srcset['size'];
-			}
+
+		if ( empty( $srcset_parts ) ) {
+			return $this->img_element;
 		}
+
 		$new_srcsets = implode( ', ', $srcset_parts );
 		$this->img_element_node->setAttribute( 'srcset', $new_srcsets );
 

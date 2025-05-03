@@ -7,7 +7,6 @@ let WPVersion = 0;
 
 test.describe('conversion', () => {
   let page: Page;
-  let api: APIRequestContext;
 
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
@@ -55,6 +54,8 @@ test.describe('conversion', () => {
     }, WPVersion);
 
     page.goto(postURL);
-    await page.waitForRequest(request => request.url().includes('input-example.avif'), { timeout: 1000 });
+    
+    const img = await page.locator('[srcset*="input-example.avif"]');
+    await expect(img).toBeVisible();
   });
 });

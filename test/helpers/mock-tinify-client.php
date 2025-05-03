@@ -58,7 +58,7 @@ class MockTinifyClient extends Tinify\Client
 			}
 
 			$isError = $status <= 199 || $status >= 300;
-			$isJson = true;
+			$isJson = isset($headers['content-type']) && 'application/json' === $headers['content-type'];
 
 			if ($isJson || $isError) {
 				$body = json_decode($body);
