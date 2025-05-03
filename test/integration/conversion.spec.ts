@@ -41,8 +41,8 @@ test.describe('conversion', () => {
     await page.getByRole('link', { name: 'Details' }).click();
 
     const tableRows = await page.locator('.tiny-compression-details tr').all();
-    const origialRow = tableRows[1];
-    const cells = await origialRow.locator('td').all();
+    const originalRow = tableRows[1];
+    const cells = await originalRow.locator('td').all();
     expect(cells[4]).toContainText('image/avif (99.2');
   });
 
