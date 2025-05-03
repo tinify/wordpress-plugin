@@ -117,11 +117,15 @@ class Tiny_Bulk_Optimization {
 
 			$stats['uploaded-images']++;
 			if ( $conversion_enabled ) {
-				$stats['available-unoptimised-sizes'] += $image_stats['available_unconverted_sizes'];
-				$stats['optimized-image-sizes'] += $image_stats['image_sizes_converted'];
+				$stats['available-unoptimised-sizes'] +=
+				$image_stats['available_unconverted_sizes'];
+				$stats['optimized-image-sizes'] +=
+				$image_stats['image_sizes_converted'];
 			} else {
-				$stats['available-unoptimised-sizes'] += $image_stats['available_uncompressed_sizes'];
-				$stats['optimized-image-sizes'] += $image_stats['image_sizes_compressed'];
+				$stats['available-unoptimised-sizes'] +=
+				$image_stats['available_uncompressed_sizes'];
+				$stats['optimized-image-sizes'] +=
+				$image_stats['image_sizes_compressed'];
 			}
 			$stats['optimized-library-size'] += $image_stats['compressed_total_size'];
 			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
@@ -131,7 +135,7 @@ class Tiny_Bulk_Optimization {
 					'post_title' => $result[ $i ]['post_title'],
 				);
 			}
-		}
+		}// End for().
 		return $stats;
 	}
 }
