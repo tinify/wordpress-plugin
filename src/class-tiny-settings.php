@@ -990,7 +990,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			__(
 				'We will calculate what is the best format for your image.',
 				'tiny-compress-images'
-			),
+			)
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
@@ -1002,7 +1002,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'WebP balances a small file size with good visual quality, 
 				supporting transparency and animation.',
 				'tiny-compress-images'
-			),
+			)
 		);
 		self::render_convert_to_radiobutton(
 			$convertopts_convert_to_name,
@@ -1011,7 +1011,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$convertopts_convert_value,
 			__( 'Convert to AVIF', 'tiny-compress-images' ),
 			__( 'AVIF delivers even better compression and image quality than WebP.
-			 Browser support is not as good as WebP.', 'tiny-compress-images' ),
+			 Browser support is not as good as WebP.', 'tiny-compress-images' )
 		);
 		echo '</fieldset>';
 		echo '</div>';
