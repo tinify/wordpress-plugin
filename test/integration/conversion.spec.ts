@@ -53,7 +53,7 @@ test.describe('conversion', () => {
       content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${media}" alt="" class="wp-image-209"/></figure>`,
     }, WPVersion);
 
-    page.goto(postURL);
+    await page.goto(postURL);
     
     const img = await page.locator('[srcset*="input-example.avif"]');
     await expect(img).toBeVisible();
