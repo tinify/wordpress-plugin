@@ -59,7 +59,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 			return $content;
 		}
 
-		$supported_mimetypes = array_map(function ($format) {
+		$supported_mimetypes = array_map(function ( $format ) {
 			return $format['mime'];
 		}, $supported_formats);
 
@@ -95,7 +95,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 		}
 
 		$images = array();
-		foreach ($matches[0] as $img) {
+		foreach ( $matches[0] as $img ) {
 			$images[] = new Tiny_Image_Source( $img, $this->base_dir, $this->allowed_domains, $mimetypes );
 		}
 
@@ -319,7 +319,7 @@ class Tiny_Image_Source {
 				$new_srcset = $this->get_formatted_source( $srcset, $mimetype );
 
 				if ( $new_srcset ) {
-					$srcset_parts[] = trim($new_srcset . ' ' . $srcset['size']);
+					$srcset_parts[] = trim( $new_srcset . ' ' . $srcset['size'] );
 					break;
 				}
 			}
