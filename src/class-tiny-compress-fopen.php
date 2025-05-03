@@ -147,7 +147,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			),
 		);
 
-		$result = array( $output, $meta );
+		$convert = null;
 
 		if ( isset( $convert_opts['convert'] ) && true === $convert_opts['convert'] ) {
 			$convert_to = array( 'image/avif', 'image/webp' );
@@ -166,9 +166,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'type' => $convert_headers['content-type'],
 				'size' => strlen( $convert_output ),
 			);
-			$result[] = $convert_output;
+			$convert = $convert_output;
 
 		}
+
+		$result = array( $output, $meta, $convert );
 
 		return $result;
 	}

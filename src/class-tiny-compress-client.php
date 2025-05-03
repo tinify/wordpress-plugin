@@ -119,7 +119,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			);
 
 			$buffer = $compress_result->toBuffer();
-			$result = array( $buffer, $meta );
+			$result = array( $buffer, $meta, null );
 
 			if ( isset( $convert_opts['convert'] ) && true == $convert_opts['convert'] ) {
 				$convert_to = array( 'image/avif', 'image/webp' );
