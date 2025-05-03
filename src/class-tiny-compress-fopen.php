@@ -161,7 +161,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				array( 'Content-Type: application/json' )
 			);
 
-			list($convert_output, $convert_headers) = $this->request( $convert_params, $output_url );
+			list($convert_output, $convert_headers) = $this->request(
+				$convert_params,
+				$output_url
+			);
 			$meta['convert'] = array(
 				'type' => $convert_headers['content-type'],
 				'size' => strlen( $convert_output ),

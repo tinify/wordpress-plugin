@@ -96,7 +96,12 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 
 		$images = array();
 		foreach ( $matches[0] as $img ) {
-			$images[] = new Tiny_Image_Source( $img, $this->base_dir, $this->allowed_domains, $mimetypes );
+			$images[] = new Tiny_Image_Source(
+				$img,
+				$this->base_dir,
+				$this->allowed_domains,
+				$mimetypes
+			);
 		}
 
 		return $images;
@@ -187,7 +192,13 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 	 * @param int     $attachment_id Attachment ID
 	 * @return array Modified sources array.
 	 */
-	public function filter_image_srcset( $sources, $size_array, $image_src, $image_meta, $attachment_id ) {
+	public function filter_image_srcset(
+		$sources,
+		$size_array,
+		$image_src,
+		$image_meta,
+		$attachment_id
+	) {
 		foreach ( $sources as &$src ) {
 			$src['url'] = $this->filter_attachment_url( $src['url'], $attachment_id );
 		}
