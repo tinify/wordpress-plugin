@@ -115,7 +115,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 	 * @return array|null [ 'ext' => string, 'mime' => string ].
 	 */
 	private function get_support_formats() {
-		$accept = isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : '';
+		$accept = isset( $_SERVER['HTTP_ACCEPT'] ) ? $_SERVER['HTTP_ACCEPT'] : '';
 		$accepted_formats = array();
 		if ( stripos( $accept, 'image/avif' ) !== false ) {
 			$accepted_formats[] = array(
