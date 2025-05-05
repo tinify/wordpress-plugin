@@ -150,7 +150,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$convert = null;
 
 		if ( isset( $convert_opts['convert'] ) && true === $convert_opts['convert'] ) {
-			$convert_to = array( 'image/avif', 'image/webp' );
+			$convert_to = $convert_opts['convert_to'];
 			$convert_params = $this->request_options(
 				'POST',
 				array(

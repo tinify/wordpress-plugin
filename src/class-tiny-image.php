@@ -243,9 +243,10 @@ class Tiny_Image {
 			$this->update_tiny_post_meta();
 			$compressor = $this->settings->get_compressor();
 			$preserve = $this->settings->get_preserve_options( $size_name );
+			$conversion = $this->settings->get_conversion_options();
 
 			try {
-				$response = $compressor->compress_file( $path, false, $preserve );
+				$response = $compressor->compress_file( $path, false, $preserve, $conversion );
 				$size->add_tiny_meta( $response );
 			} catch ( Tiny_Exception $e ) {
 				$size->add_tiny_meta_error( $e );

@@ -366,12 +366,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 	/**
 	 * Retrieves the configured settings for conversion.
 	 *
-	 * @return array{ convert: bool } The conversion options.
+	 * @return array{ convert: bool, convert_to: string } The conversion options.
 	 */
 	public function get_conversion_options() {
 		return array(
 			'convert' => $this->get_conversion_enabled(),
-			'convert_to' => self::get_convert_format_option( 'convert_to', 'smallest' ),
+			'convert_to' => $this->get_convertto_mimetype(),
 		);
 
 		return $convert_to;
@@ -386,6 +386,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$conversion_enabled = self::get_convert_format_option( 'convert', 'off' );
 
 		return 'on' === $conversion_enabled;
+	}
+
+	/**
+	 * Retrieve the mimetypes to convert to
+	 *
+	 * @return array{string} mimetypes to convert to
+	 */
+	private function get_convertto_mimetype() {
+		$convert_to = self::get_convert_format_option( 'convert_to', 'smallest' );
+		if ( 'webp' == $convert_to ) {
+			return array( 'image/webp' );
+		}
+		if ( 'avif' == $convert_to ) {
+			return array( 'image/avif' );
+		}
+		return array( 'image/avif', 'image/webp' );
 	}
 
 	private function setup_incomplete_checks() {

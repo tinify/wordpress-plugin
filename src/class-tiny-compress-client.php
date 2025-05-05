@@ -122,7 +122,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$result = array( $buffer, $meta, null );
 
 			if ( isset( $convert_opts['convert'] ) && true == $convert_opts['convert'] ) {
-				$convert_to = array( 'image/avif', 'image/webp' );
+				$convert_to = $convert_opts['convert_to'];
 				$convert_source = $source->convert( array(
 					'type' => $convert_to,
 				) );

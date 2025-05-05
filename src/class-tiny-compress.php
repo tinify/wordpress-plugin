@@ -93,6 +93,15 @@ abstract class Tiny_Compress {
 		);
 	}
 
+	/**
+	 * Compresses a single file
+	 *
+	 * @param [type] $file
+	 * @param array $resize_opts
+	 * @param array $preserve_opts
+	 * @param array{ convert: bool, convert_to: string } conversion options
+	 * @return void
+	 */
 	public function compress_file(
 		$file,
 		$resize_opts = array(),
