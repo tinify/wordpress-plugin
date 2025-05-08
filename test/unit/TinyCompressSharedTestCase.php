@@ -379,7 +379,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 			'body' => $compressed_avif,
 		));
 
-		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array( 'convert' => true ));
+		$test_output = $this->compressor->compress_file($this->vfs->url() . '/image.jpg', array(), array(), array( 'convert' => true, 'convert_to' => array('image/avif', 'image/webp') ));
 
 		$expected_output = array(
 			'input' => array(

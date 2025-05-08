@@ -373,8 +373,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'convert' => $this->get_conversion_enabled(),
 			'convert_to' => $this->get_convertto_mimetype(),
 		);
-
-		return $convert_to;
 	}
 
 	/**
