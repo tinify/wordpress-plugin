@@ -43,7 +43,7 @@
 							<p class="intro">
 								<?php
 								esc_html_e(
-									'Generate optimized formats like WebP or AVIF. These file types will improve site performace but might take up more disk space. Creating an optimized image will take 1 additional compression for each image size.',
+									'Generate optimized formats like WebP or AVIF. These file types will improve site performance but might take up more disk space. Creating an optimized image will take 1 additional compression for each image size.',
 									'tiny-compress-images'
 								)
 								?>

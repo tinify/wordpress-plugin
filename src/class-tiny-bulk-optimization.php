@@ -27,7 +27,7 @@ class Tiny_Bulk_Optimization {
 		$stats = array();
 		$stats['uploaded-images'] = 0;
 		$stats['optimized-image-sizes'] = 0;
-		$stats['available-unoptimised-sizes'] = 0;
+		$stats['available-unoptimized-sizes'] = 0;
 		$stats['optimized-library-size'] = 0;
 		$stats['unoptimized-library-size'] = 0;
 		$stats['available-for-optimization'] = array();
@@ -117,12 +117,12 @@ class Tiny_Bulk_Optimization {
 
 			$stats['uploaded-images']++;
 			if ( $conversion_enabled ) {
-				$stats['available-unoptimised-sizes'] +=
+				$stats['available-unoptimized-sizes'] +=
 				$image_stats['available_unconverted_sizes'];
 				$stats['optimized-image-sizes'] +=
 				$image_stats['image_sizes_converted'];
 			} else {
-				$stats['available-unoptimised-sizes'] +=
+				$stats['available-unoptimized-sizes'] +=
 				$image_stats['available_uncompressed_sizes'];
 				$stats['optimized-image-sizes'] +=
 				$image_stats['image_sizes_compressed'];

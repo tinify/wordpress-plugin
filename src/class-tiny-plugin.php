@@ -636,7 +636,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_bulk_optimization_page() {
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$images_to_convert = $stats['available-unoptimised-sizes'];
+		$images_to_convert = $stats['available-unoptimized-sizes'];
 
 		$conversion_enabled = $this->settings->get_conversion_enabled();
 		if ( $conversion_enabled ) {
