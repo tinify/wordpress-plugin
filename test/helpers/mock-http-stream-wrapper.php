@@ -17,7 +17,7 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 	public static function register( $method, $url, $handler ) {
 		$key = self::get_key( $method, $url );
 		if ( ! isset( self::$handlers[ $key ] ) ) {
-			self::$handlers[ $key ] = [];
+			self::$handlers[ $key ] = array();
 		}
 		self::$handlers[$key][] = $handler;
 	}
