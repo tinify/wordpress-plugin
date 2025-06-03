@@ -55,7 +55,7 @@ test.describe('conversion', () => {
 
     await page.goto(postURL);
     
-    const img = await page.locator('[srcset*="input-example.avif"]');
-    await expect(img).toBeVisible();
+    const picture = await page.locator('picture:has(source[srcset*="input-example.avif"][type="image/avif"])'); 
+    await expect(picture).toBeVisible();
   });
 });
