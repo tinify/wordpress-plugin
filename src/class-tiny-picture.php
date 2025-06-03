@@ -201,7 +201,7 @@ class Tiny_Image_Source {
 
 		$this->base_dir = $base_dir;
 		$this->allowed_domains = $domains;
-		$this->valid_mimetypes = array('image/webp', 'image/avif');
+		$this->valid_mimetypes = array( 'image/webp', 'image/avif' );
 	}
 
 	/**
@@ -295,7 +295,7 @@ class Tiny_Image_Source {
 			return array(
 				'src' => $format_url,
 				'size' => $imgsrc['size'],
-				'type' => $mimetype
+				'type' => $mimetype,
 			);
 		}
 		return null;
@@ -320,15 +320,14 @@ class Tiny_Image_Source {
 			return $this->img_element;
 		}
 
-
-		$picture_element = array('<picture>');
-		foreach($srcset_parts as $source) {
-			$srcset = trim($source['src'] . ' ' . $source['size']);
+		$picture_element = array( '<picture>' );
+		foreach ( $srcset_parts as $source ) {
+			$srcset = trim( $source['src'] . ' ' . $source['size'] );
 			$picture_element[] = '<source srcset="' . $srcset . '" type="' . $source['type'] . '" />';
 		}
 		$picture_element[] = $this->img_element;
 		$picture_element[] = '</picture>';
 
-		return implode("", $picture_element);
+		return implode( '', $picture_element );
 	}
 }
