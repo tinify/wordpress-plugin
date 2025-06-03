@@ -275,13 +275,16 @@ class Tiny_Image_Source {
 	/**
 	 * Generates a formatted image source array if the corresponding local file exists.
 	 *
-	 * Attempts to replace the file extension of the provided image path with the specified MIME type,
-	 * resolves the local path of the resulting file, and returns the `srcset` and `type` if the file exists.
+	 * Attempts to replace the file extension of the provided image path with the
+	 * specified MIME type, resolves the local path of the resulting file, and returns
+	 * the `srcset` and `type` if the file exists.
 	 *
-	 * @param array  $imgsrc   An associative array containing at least the keys 'path' (string) and 'size' (string).
+	 * @param array  $imgsrc   An associative array containing at least the keys 'path'
+	 * 						   (string) and 'size' (string).
 	 * @param string $mimetype The target MIME type (e.g., 'image/webp', 'image/avif').
 	 *
-	 * @return array|null An array with 'srcset' and 'type' if the file exists locally, or null otherwise.
+	 * @return array|null An array with 'srcset' and 'type' if the file exists locally,
+	 * 					  or null otherwise.
 	 */
 	private function get_formatted_source( $imgsrc, $mimetype ) {
 		$format_url = Tiny_Helpers::replace_file_extension( $mimetype, $imgsrc['path'] );
@@ -323,7 +326,8 @@ class Tiny_Image_Source {
 		$picture_element = array( '<picture>' );
 		foreach ( $srcset_parts as $source ) {
 			$srcset = trim( $source['src'] . ' ' . $source['size'] );
-			$picture_element[] = '<source srcset="' . $srcset . '" type="' . $source['type'] . '" />';
+			$picture_element[] =
+				'<source srcset="' . $srcset . '" type="' . $source['type'] . '" />';
 		}
 		$picture_element[] = $this->img_element;
 		$picture_element[] = '</picture>';
