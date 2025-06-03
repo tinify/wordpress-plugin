@@ -18,7 +18,7 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-class Tiny_Image_Negotiation extends Tiny_WP_Base {
+class Tiny_Picture extends Tiny_WP_Base {
 
 	/** @var string */
 	private $base_dir;
@@ -54,25 +54,17 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 	}
 
 	public function replace_img_sources( $content ) {
-		$supported_formats = $this->get_support_formats();
-		if ( empty( $supported_formats ) ) {
-			return $content;
-		}
 
-		$supported_mimetypes = array_map(function ( $format ) {
-			return $format['mime'];
-		}, $supported_formats);
-
-		$images = $this->filter_images( $content, $supported_mimetypes );
+		$images = $this->filter_images( $content );
 
 		foreach ( $images as $image ) {
-			$content = Tiny_Image_Negotiation::replace_image( $content, $image );
+			$content = Tiny_Picture::replace_image( $content, $image );
 		}
 		return $content;
 	}
 
 	private static function replace_image( $content, $image ) {
-		$content = str_replace( $image->img_element, $image->create_image_sourcesets(), $content );
+		$content = str_replace( $image->img_element, $image->create_picture_elements(), $content );
 		return $content;
 	}
 
@@ -81,7 +73,7 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 	 *
 	 * @return Tiny_Image[]
 	 */
-	private function filter_images( $content, $mimetypes ) {
+	private function filter_images( $content ) {
 		if ( preg_match( '/(?=<body).*<\/body>/is', $content, $body ) ) {
 			$content = $body[0];
 		}
@@ -99,39 +91,12 @@ class Tiny_Image_Negotiation extends Tiny_WP_Base {
 			$images[] = new Tiny_Image_Source(
 				$img,
 				$this->base_dir,
-				$this->allowed_domains,
-				$mimetypes
+				$this->allowed_domains
 			);
 		}
 
 		return $images;
 	}
-
-
-	/**
-	 * Checks the HTTP_ACCEPT header what file formats
-	 * are supported.
-	 *
-	 * @return array|null [ 'ext' => string, 'mime' => string ].
-	 */
-	private function get_support_formats() {
-		$accept = isset( $_SERVER['HTTP_ACCEPT'] ) ? $_SERVER['HTTP_ACCEPT'] : '';
-		$accepted_formats = array();
-		if ( stripos( $accept, 'image/avif' ) !== false ) {
-			$accepted_formats[] = array(
-				'ext' => '.avif',
-				'mime' => 'image/avif',
-			);
-		}
-		if ( stripos( $accept, 'image/webp' ) !== false ) {
-			$accepted_formats[] = array(
-				'ext' => '.webp',
-				'mime' => 'image/webp',
-			);
-		}
-		return $accepted_formats;
-	}
-
 	/**
 	 * Replace attachment URL with .avif/.webp variant if supported and exists.
 	*
@@ -228,7 +193,7 @@ class Tiny_Image_Source {
 
 	private $dom;
 
-	public function __construct( $img_element, $base_dir, $domains, $valid_mimetypes ) {
+	public function __construct( $img_element, $base_dir, $domains ) {
 		$this->img_element = $img_element;
 		$this->dom = new \DOMDocument();
 		$this->dom->loadHTML( $img_element );
@@ -236,7 +201,7 @@ class Tiny_Image_Source {
 
 		$this->base_dir = $base_dir;
 		$this->allowed_domains = $domains;
-		$this->valid_mimetypes = $valid_mimetypes;
+		$this->valid_mimetypes = array('image/webp', 'image/avif');
 	}
 
 	/**
@@ -307,6 +272,17 @@ class Tiny_Image_Source {
 		return $url;
 	}
 
+	/**
+	 * Generates a formatted image source array if the corresponding local file exists.
+	 *
+	 * Attempts to replace the file extension of the provided image path with the specified MIME type,
+	 * resolves the local path of the resulting file, and returns the `srcset` and `type` if the file exists.
+	 *
+	 * @param array  $imgsrc   An associative array containing at least the keys 'path' (string) and 'size' (string).
+	 * @param string $mimetype The target MIME type (e.g., 'image/webp', 'image/avif').
+	 *
+	 * @return array|null An array with 'srcset' and 'type' if the file exists locally, or null otherwise.
+	 */
 	private function get_formatted_source( $imgsrc, $mimetype ) {
 		$format_url = Tiny_Helpers::replace_file_extension( $mimetype, $imgsrc['path'] );
 		$local_path = $this->get_local_path( $format_url );
@@ -316,21 +292,25 @@ class Tiny_Image_Source {
 
 		$exists_local = file_exists( $local_path );
 		if ( $exists_local ) {
-			return $format_url . ' ' . $imgsrc['size'];
+			return array(
+				'src' => $format_url,
+				'size' => $imgsrc['size'],
+				'type' => $mimetype
+			);
 		}
 		return null;
 	}
 
-	public function create_image_sourcesets() {
+	public function create_picture_elements() {
 		$srcsets = $this->get_image_srcsets();
 
-		$srcset_parts = [];
+		$srcset_parts = array();
 		foreach ( $srcsets as $srcset ) {
 			foreach ( $this->valid_mimetypes as $mimetype ) {
 				$new_srcset = $this->get_formatted_source( $srcset, $mimetype );
 
 				if ( $new_srcset ) {
-					$srcset_parts[] = trim( $new_srcset . ' ' . $srcset['size'] );
+					$srcset_parts[] = $new_srcset;
 					break;
 				}
 			}
@@ -340,9 +320,15 @@ class Tiny_Image_Source {
 			return $this->img_element;
 		}
 
-		$new_srcsets = implode( ', ', $srcset_parts );
-		$this->img_element_node->setAttribute( 'srcset', $new_srcsets );
 
-		return $this->dom->saveHTML( $this->img_element_node );
+		$picture_element = array('<picture>');
+		foreach($srcset_parts as $source) {
+			$srcset = trim($source['src'] . ' ' . $source['size']);
+			$picture_element[] = '<source srcset="' . $srcset . '" type="' . $source['type'] . '" />';
+		}
+		$picture_element[] = $this->img_element;
+		$picture_element[] = '</picture>';
+
+		return implode("", $picture_element);
 	}
 }
