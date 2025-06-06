@@ -58,23 +58,27 @@ docker compose  -p tinify -f config/docker-compose.yml run --rm --user 33 wpcli 
   until wp db check --allow-root; do
     echo 'DB not ready yet..'
     sleep 2
-  done &&
+  done
 
   if [ ! -f wp-config.php ]; then
     wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root
-  fi &&
+  fi
 
-  wp db create --allow-root 2>/dev/null || true &&
+  wp db create --allow-root 2>/dev/null || true
 
-  export WORDPRESS_PORT=${WORDPRESS_PORT} && \
-  wp core install \
-    --url=http://localhost:\${WORDPRESS_PORT} \
-    --title='My Site' \
-    --admin_user=admin \
-    --admin_password=password \
-    --admin_email=wordpress@example.com \
-    --skip-email \
-    --allow-root
+  wp core is-installed --allow-root >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    wp core install \
+      --url=http://localhost:${WORDPRESS_PORT} \
+      --title='My Site' \
+      --admin_user=admin \
+      --admin_password=password \
+      --admin_email=wordpress@example.com \
+      --skip-email \
+      --allow-root
+  else
+    echo "WordPress already installed."
+  fi
 "
 
 echo "Activating tinify.."
