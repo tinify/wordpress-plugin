@@ -52,7 +52,7 @@ fi
 # Use override docker compose in github actions
 COMPOSE_FILES="-f config/docker-compose.yml"
 if [ "$GITHUB_ACTIONS" = "true" ]; then
-  COMPOSE_FILES="$COMPOSE_FILES -f config/docker-compose.override.yml"
+  COMPOSE_FILES="$COMPOSE_FILES -f config/docker-compose.github.yml"
 fi
 
 echo "Starting Docker environment with WordPress $WORDPRESS_VERSION and PHP $PHP_VERSION..."
