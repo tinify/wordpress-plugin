@@ -16,9 +16,10 @@ services:
       - tinify
 
   wordpress:
-    image: 'wordpress:${WORDPRESS_VERSION:-latest}-php${PHP_VERSION:-8.0}-apache'
     depends_on:
       - db
+    build:
+      dockerfile: docker/${WORDPRESS_VERSION_ENV}-${PHP_VERSION_ENV}.Dockerfile
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
