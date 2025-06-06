@@ -42,6 +42,7 @@ export PHP_VERSION_ENV
 : "${WORDPRESS_PORT:=80${WORDPRESS_VERSION_ENV}}"
 export WORDPRESS_PORT
 
+export COMPOSE_PROJECT_NAME="tinify_${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
 
 DOCKERFILE_PATH="./config/docker/${WORDPRESS_VERSION_ENV}-${PHP_VERSION_ENV}.Dockerfile"
 if [ ! -f "$DOCKERFILE_PATH" ]; then
@@ -50,11 +51,11 @@ if [ ! -f "$DOCKERFILE_PATH" ]; then
 fi
 
 echo "Starting Docker environment with WordPress $WORDPRESS_VERSION and PHP $PHP_VERSION..."
-docker compose -p tinify -f config/docker-compose.yml up -d
+docker compose -f config/docker-compose.yml up -d
 
 echo "Installing WordPress..."
 
-docker compose  -p tinify -f config/docker-compose.yml run --rm --user 33 --no-TTY --env WORDPRESS_PORT wpcli bash <<'EOF'
+docker compose -f config/docker-compose.yml run --rm --user 33 --no-TTY --env WORDPRESS_PORT wpcli bash <<'EOF'
 set -e
 
 until wp db check --allow-root; do
@@ -83,11 +84,11 @@ fi
 EOF
 
 echo "Activating tinify.."
-docker compose -p tinify -f config/docker-compose.yml run --rm wpcli wp plugin activate tiny-compress-images --allow-root
+docker compose -f config/docker-compose.yml run --rm wpcli wp plugin activate tiny-compress-images --allow-root
 
 if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
   echo "Installing compatible plugins for WordPress ${WORDPRESS_PORT}.."
-  docker compose -p tinify -f config/docker-compose.yml run --rm --user 33 wpcli wp plugin install amazon-s3-and-cloudfront --activate --allow-root || exit 1
+  docker compose -f config/docker-compose.yml run --rm --user 33 wpcli wp plugin install amazon-s3-and-cloudfront --activate --allow-root || exit 1
 fi
 
 MAX_ATTEMPTS=10

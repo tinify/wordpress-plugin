@@ -2,7 +2,7 @@
 
 port="$1"
 
-docker compose  -p tinify -f config/mocks.docker-compose.yml up -d
+docker compose -f config/mocks.docker-compose.yml up -d
 
 mv src/vendor/tinify/Tinify/Client.php src/vendor/tinify/Tinify/Client.php.bak
 cp test/fixtures/Client.php src/vendor/tinify/Tinify/Client.php
