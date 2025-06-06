@@ -54,32 +54,33 @@ docker compose -p tinify -f config/docker-compose.yml up -d
 
 echo "Installing WordPress..."
 
-docker compose  -p tinify -f config/docker-compose.yml run --rm --user 33 wpcli bash -c "
-  until wp db check --allow-root; do
-    echo 'DB not ready yet..'
-    sleep 2
-  done
+docker compose  -p tinify -f config/docker-compose.yml run --rm --user 33 --no-TTY --env WORDPRESS_PORT wpcli bash <<'EOF'
+set -e
 
-  if [ ! -f wp-config.php ]; then
-    wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root
-  fi
+until wp db check --allow-root; do
+  echo 'DB not ready yet..'
+  sleep 2
+done
 
-  wp db create --allow-root 2>/dev/null || true
+if [ ! -f wp-config.php ]; then
+  wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root
+fi
 
-  wp core is-installed --allow-root >/dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    wp core install \
-      --url=http://localhost:${WORDPRESS_PORT} \
-      --title='My Site' \
-      --admin_user=admin \
-      --admin_password=password \
-      --admin_email=wordpress@example.com \
-      --skip-email \
-      --allow-root
-  else
-    echo "WordPress already installed."
-  fi
-"
+wp db create --allow-root 2>/dev/null || true
+
+if ! wp core is-installed --allow-root; then
+  wp core install \
+    --url=http://localhost:${WORDPRESS_PORT} \
+    --title='My Site' \
+    --admin_user=admin \
+    --admin_password=password \
+    --admin_email=wordpress@example.com \
+    --skip-email \
+    --allow-root
+else
+  echo 'WordPress already installed.'
+fi
+EOF
 
 echo "Activating tinify.."
 docker compose -p tinify -f config/docker-compose.yml run --rm wpcli wp plugin activate tiny-compress-images --allow-root
@@ -88,6 +89,18 @@ if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
   echo "Installing compatible plugins for WordPress ${WORDPRESS_PORT}.."
   docker compose -p tinify -f config/docker-compose.yml run --rm --user 33 wpcli wp plugin install amazon-s3-and-cloudfront --activate --allow-root || exit 1
 fi
+
+MAX_ATTEMPTS=10
+ATTEMPT=0
+until curl -s --head --fail "http://localhost:${WORDPRESS_PORT}" >/dev/null; do
+  if [ $ATTEMPT -ge $MAX_ATTEMPTS ]; then
+    echo "Timed out waiting for WordPress"
+    exit 1
+  fi
+  echo "Waiting for WordPress to be ready..."
+  sleep 2
+  ATTEMPT=$((ATTEMPT + 1))
+done
 
 echo "WordPress is ready at http://localhost:${WORDPRESS_PORT} (admin/password)"
 echo "To stop, run: bin/stop-wordpress"

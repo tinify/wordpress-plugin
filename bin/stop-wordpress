@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 echo "Stopping Docker environment..."
-docker compose -f config/docker-compose.yml down -v
+docker compose -p tinify -f config/docker-compose.yml down -v
