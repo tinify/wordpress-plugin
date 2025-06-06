@@ -49,8 +49,14 @@ if [ ! -f "$DOCKERFILE_PATH" ]; then
   exit 1
 fi
 
+# Use override docker compose in github actions
+COMPOSE_FILES="-f config/docker-compose.yml"
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  COMPOSE_FILES="$COMPOSE_FILES -f config/docker-compose.override.yml"
+fi
+
 echo "Starting Docker environment with WordPress $WORDPRESS_VERSION and PHP $PHP_VERSION..."
-docker compose -p tinify -f config/docker-compose.yml up -d
+docker compose -p tinify $COMPOSE_FILES up -d
 
 echo "Installing WordPress..."
 
