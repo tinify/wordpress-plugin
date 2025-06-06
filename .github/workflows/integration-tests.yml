@@ -18,7 +18,7 @@ jobs:
           - { wp: 40, php: 56 }
           - { wp: 40, php: 70 }
           - { wp: 57, php: 73 }
-          - { wp: 60, php: 73 }
+          - { wp: 60, php: 74 }
           - { wp: 63, php: 80 }
           - { wp: 67, php: 82 }
           - { wp: 68, php: 83 }
