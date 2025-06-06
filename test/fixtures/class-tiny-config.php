@@ -3,6 +3,10 @@
 if (! defined('TINY_DEBUG')) {
 	define('TINY_DEBUG', null);
 }
+define('AWS_REGION', getenv('AWS_REGION'));
+define('AWS_ENDPOINT', getenv('AWS_ENDPOINT'));
+define('AWS_ACCESS_KEY_ID', getenv('AWS_ACCESS_KEY_ID'));
+define('AWS_SECRET_ACCESS_KEY', getenv('AWS_SECRET_ACCESS_KEY'));
 
 class Tiny_Config
 {

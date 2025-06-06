@@ -1,6 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-
-npx wp-env stop
-
-
+echo "Stopping Docker environment..."
+docker compose -f config/docker-compose.yml down -v
