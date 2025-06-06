@@ -58,9 +58,6 @@ jobs:
       - run: npx playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
 
-      - name: Create shared Docker network
-        run: docker network create tinify || true
-
       - name: Start WordPress
         uses: nick-fields/retry@v3
         with:

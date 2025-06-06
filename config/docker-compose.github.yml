@@ -1,5 +1,0 @@
-# Used only in CI where network is created
-
-networks:
-  tinify:
-    external: true
