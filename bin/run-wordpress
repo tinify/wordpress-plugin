@@ -3,9 +3,6 @@
 # Usage: bin/run-wordpress [WORDPRESS_VERSION] [PHP_VERSION]
 # Example: bin/run-wordpress 67 82
 
-# Run WP CLI as user 33
-# https://github.com/docker-library/docs/tree/master/wordpress#running-as-an-arbitrary-user
-
 # Ensure Docker CLI is installed.
 if ! command -v docker >/dev/null; then
   echo "Docker CLI is required."
@@ -23,7 +20,7 @@ else
 fi
 
 # Exports as 8.2
-export WORDPRESS_VERSION
+export WORDPRESS_VERSION 
 export WORDPRESS_VERSION_ENV
 
 # Parse WordPress version parameter
@@ -55,17 +52,25 @@ docker compose -f config/docker-compose.yml up -d
 
 echo "Installing WordPress..."
 
-docker compose -f config/docker-compose.yml run --rm --user 33 --no-TTY --env WORDPRESS_PORT wpcli bash <<'EOF'
+docker compose -f config/docker-compose.yml run --rm --user root --no-TTY --env WORDPRESS_PORT --env WORDPRESS_VERSION wpcli bash <<EOF
 set -e
 
-until wp db check --allow-root; do
-  echo 'DB not ready yet..'
-  sleep 2
-done
+if [ ! -f wp-load.php ]; then
+  echo "Downloading WordPress \${WORDPRESS_VERSION}..."
+  TMP=\$(mktemp -d)
+  curl -fsSL --insecure "https://wordpress.org/wordpress-\${WORDPRESS_VERSION}.tar.gz" | tar -xz -C "\$TMP"
+  cp -R "\$TMP"/wordpress/* .
+  rm -rf "\$TMP"
+fi
 
 if [ ! -f wp-config.php ]; then
   wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root
 fi
+
+until wp db check --allow-root; do
+  echo "DB not ready yet.."
+  sleep 2
+done
 
 wp db create --allow-root 2>/dev/null || true
 
@@ -78,8 +83,9 @@ if ! wp core is-installed --allow-root; then
     --admin_email=wordpress@example.com \
     --skip-email \
     --allow-root
+  chown -R 33:33 wp-content/uploads/
 else
-  echo 'WordPress already installed.'
+  echo "WordPress already installed."
 fi
 EOF
 
@@ -104,4 +110,4 @@ until curl -s --head --fail "http://localhost:${WORDPRESS_PORT}" >/dev/null; do
 done
 
 echo "WordPress is ready at http://localhost:${WORDPRESS_PORT} (admin/password)"
-echo "To stop, run: bin/stop-wordpress"
+echo "To stop, run: bin/stop-wordpress ${WORDPRESS_VERSION_ENV} ${PHP_VERSION_ENV}"

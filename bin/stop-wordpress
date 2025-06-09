@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
 
 echo "Stopping Docker environment..."
-docker compose -p tinify -f config/docker-compose.yml down -v
+
+WORDPRESS_VERSION_ENV="${1:-$WORDPRESS_VERSION}"
+export WORDPRESS_VERSION_ENV
+
+PHP_VERSION_ENV="${2:-$PHP_VERSION}"
+export PHP_VERSION_ENV
+
+export COMPOSE_PROJECT_NAME="tinify_${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
+
+docker compose -f config/docker-compose.yml down -v
