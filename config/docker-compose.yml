@@ -10,6 +10,12 @@ services:
       - db_data:/var/lib/mysql
     ports:
       - '3306:3306'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - tinify
 
@@ -40,7 +46,8 @@ services:
       - tinify
 
   wpcli:
-    image: 'wordpress:cli-php${PHP_VERSION:-8.0}'
+    image: 'wordpress:cli-php${PHP_VERSION:-8.2}'
+    user: "33:33"
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
@@ -53,13 +60,14 @@ services:
     networks:
       - tinify
     depends_on:
-      - wordpress
-      - db
-      
+      wordpress:
+        condition: service_started
+      db:
+        condition: service_healthy
+
 volumes:
   db_data:
   wordpress_data:
 
 networks:
   tinify:
-    name: tinify
