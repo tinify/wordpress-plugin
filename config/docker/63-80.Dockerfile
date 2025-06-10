@@ -1,1 +1,0 @@
-FROM wordpress:6.3-php8.0-apache

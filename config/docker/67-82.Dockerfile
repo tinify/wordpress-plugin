@@ -1,1 +1,0 @@
-FROM wordpress:6.7-php8.2-apache
