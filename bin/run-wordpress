@@ -24,7 +24,7 @@ if [ -z "$WP_IMAGE" ]; then
 fi
 
 # Parse WordPress version parameter
-if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
+if [[ "$WORDPRESS_VERSION_ENV" =~ ^[0-9]{2}$ ]]; then
   WORDPRESS_VERSION="${WORDPRESS_VERSION_ENV:0:1}.${WORDPRESS_VERSION_ENV:1:1}"
 else
   WORDPRESS_VERSION="$WORDPRESS_VERSION_ENV"
@@ -93,7 +93,7 @@ EOF
 echo "Activating tinify.."
 docker compose -f config/docker-compose.yml run --rm wpcli wp plugin activate tiny-compress-images --allow-root
 
-if [[ "$WORDPRESS_VERSION_ENV" =~ ^[0-9]+$ ]] && (( WORDPRESS_VERSION_ENV >= 55 )); then
+if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
   echo "Installing compatible plugins for WordPress ${WORDPRESS_PORT}.."
   docker compose -f config/docker-compose.yml run --rm --user 33 wpcli wp plugin install amazon-s3-and-cloudfront --activate --allow-root || exit 1
 fi
