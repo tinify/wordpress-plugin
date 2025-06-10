@@ -30,7 +30,7 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DEBUG: '1'
-      AWS_ENDPOINT: http://localstack
+      AWS_ENDPOINT: http://localstack:4566
       AWS_USE_PATH_STYLE_ENDPOINT: true
       AWS_ACCESS_KEY_ID: test_key_id
       AWS_SECRET_ACCESS_KEY: test_secret_access_key
