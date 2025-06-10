@@ -71,3 +71,4 @@ volumes:
 
 networks:
   tinify:
+    name: tinify
