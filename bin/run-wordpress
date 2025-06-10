@@ -64,7 +64,7 @@ if [ ! -f wp-load.php ]; then
 fi
 
 if [ ! -f wp-config.php ]; then
-  wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root
+  wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root --skip-salts
 fi
 
 until wp db check --allow-root; do
