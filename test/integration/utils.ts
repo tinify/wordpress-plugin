@@ -72,9 +72,9 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
     const isChecked = await size.isChecked();
 
     if (shouldBeChecked && !isChecked) {
-      await size.check({ force: true });
+      await size.check();
     } else if (!shouldBeChecked && isChecked) {
-      await size.uncheck({ force: true });
+      await size.uncheck();
     }
   }
 
@@ -93,29 +93,29 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
   if (settings.resize) {
-    await page.locator('#tinypng_resize_original_enabled').check({ force: true });
+    await page.locator('#tinypng_resize_original_enabled').check();
     await page.fill('#tinypng_resize_original_width', settings.width?.toString() || '');
     await page.fill('#tinypng_resize_original_height', settings.height?.toString() || '');
   } else {
-    await page.locator('#tinypng_resize_original_enabled').uncheck({ force: true });
+    await page.locator('#tinypng_resize_original_enabled').uncheck();
   }
 
   if (settings.preserveDate) {
-    await page.locator('#tinypng_preserve_data_creation').check({ force: true });
+    await page.locator('#tinypng_preserve_data_creation').check();
   } else {
-    await page.locator('#tinypng_preserve_data_creation').uncheck({ force: true });
+    await page.locator('#tinypng_preserve_data_creation').uncheck();
   }
 
   if (settings.preserveCopyright) {
-    page.locator('#tinypng_preserve_data_copyright').check({ force: true });
+    page.locator('#tinypng_preserve_data_copyright').check();
   } else {
-    page.locator('#tinypng_preserve_data_copyright').uncheck({ force: true });
+    page.locator('#tinypng_preserve_data_copyright').uncheck();
   }
 
   if (settings.preserveGPS) {
-    page.locator('#tinypng_preserve_data_location').check({ force: true });
+    page.locator('#tinypng_preserve_data_location').check();
   } else {
-    page.locator('#tinypng_preserve_data_location').uncheck({ force: true });
+    page.locator('#tinypng_preserve_data_location').uncheck();
   }
 
   await page.locator('#submit').click();
