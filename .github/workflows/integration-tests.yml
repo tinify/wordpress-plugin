@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - { wp: 40, php: 56 }
-          - { wp: 40, php: 70 }
+          - { wp: 46, php: 56 }
+          - { wp: 46, php: 70 }
           - { wp: 57, php: 73 }
           - { wp: 60, php: 74 }
           - { wp: 63, php: 80 }

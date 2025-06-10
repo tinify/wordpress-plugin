@@ -9,12 +9,7 @@ let page: Page;
 let WPVersion = 0;
 
 function viewImage(page: Page, file: string) {
-  const selectByLabel = WPVersion >= 5.7;
-  if (selectByLabel) {
-    page.getByLabel(`“${file}” (Edit)`).click();
-  } else {
-    page.getByRole('cell', { name: file, exact: true }).getByRole('link').click();
-  }
+  page.getByLabel(`“${file}” (Edit)`).click();
 }
 
 test.describe('compression', () => {
