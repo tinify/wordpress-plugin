@@ -24,7 +24,7 @@ if [ -z "$WP_IMAGE" ]; then
 fi
 
 # Parse WordPress version parameter
-if [[ "$WORDPRESS_VERSION_ENV" =~ ^[0-9]{2}$ ]]; then
+if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
   WORDPRESS_VERSION="${WORDPRESS_VERSION_ENV:0:1}.${WORDPRESS_VERSION_ENV:1:1}"
 else
   WORDPRESS_VERSION="$WORDPRESS_VERSION_ENV"
