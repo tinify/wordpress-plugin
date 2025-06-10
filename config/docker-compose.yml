@@ -1,0 +1,74 @@
+services:
+  db:
+    image: mariadb:lts
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - tinify
+
+  wordpress:
+    depends_on:
+      - db
+    build:
+      dockerfile: docker/${WORDPRESS_VERSION_ENV}-${PHP_VERSION_ENV}.Dockerfile
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: '1'
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_USE_PATH_STYLE_ENDPOINT: true
+      AWS_ACCESS_KEY_ID: test_key_id
+      AWS_SECRET_ACCESS_KEY: test_secret_access_key
+      AWS_REGION: eu-central-1
+      AWS_DEFAULT_REGION: eu-central-1
+    volumes:
+      - wordpress_data:/var/www/html
+      - ../:/var/www/html/wp-content/plugins/tiny-compress-images
+    ports:
+      - '${WORDPRESS_PORT:-8000}:80'
+    extra_hosts: ['host.docker.internal:host-gateway']
+    networks:
+      - tinify
+
+  wpcli:
+    image: 'wordpress:cli-php${PHP_VERSION:-8.2}'
+    user: "33:33"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+      - ../:/var/www/html/wp-content/plugins/tiny-compress-images
+    working_dir: /var/www/html
+    networks:
+      - tinify
+    depends_on:
+      wordpress:
+        condition: service_started
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  wordpress_data:
+
+networks:
+  tinify:
+    name: tinify

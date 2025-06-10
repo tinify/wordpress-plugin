@@ -9,12 +9,7 @@ let page: Page;
 let WPVersion = 0;
 
 function viewImage(page: Page, file: string) {
-  const selectByLabel = WPVersion >= 5.7;
-  if (selectByLabel) {
-    page.getByLabel(`“${file}” (Edit)`).click();
-  } else {
-    page.getByRole('cell', { name: file, exact: true }).getByRole('link').click();
-  }
+  page.getByLabel(`“${file}” (Edit)`).click();
 }
 
 test.describe('compression', () => {
@@ -89,7 +84,7 @@ test.describe('compression', () => {
     await enableCompressionSizes(page, ['0', 'medium']);
 
     await page.goto('/wp-admin/options-general.php?page=tinify');
-    await page.locator('#tinypng_preserve_data_copyright').check({ force: true });
+    await page.locator('#tinypng_preserve_data_copyright').check();
     await page.locator('#submit').click();
 
     await uploadMedia(page, 'input-example.jpg');

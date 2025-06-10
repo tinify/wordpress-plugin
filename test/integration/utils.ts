@@ -72,9 +72,9 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
     const isChecked = await size.isChecked();
 
     if (shouldBeChecked && !isChecked) {
-      await size.check({ force: true });
+      await size.check();
     } else if (!shouldBeChecked && isChecked) {
-      await size.uncheck({ force: true });
+      await size.uncheck();
     }
   }
 
@@ -100,22 +100,25 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
     await page.locator('#tinypng_resize_original_enabled').uncheck({ force: true });
   }
 
+  await page.waitForSelector('#tinypng_preserve_data_creation');
   if (settings.preserveDate) {
     await page.locator('#tinypng_preserve_data_creation').check({ force: true });
   } else {
     await page.locator('#tinypng_preserve_data_creation').uncheck({ force: true });
   }
 
+  await page.waitForSelector('#tinypng_preserve_data_copyright');
   if (settings.preserveCopyright) {
-    page.locator('#tinypng_preserve_data_copyright').check({ force: true });
+    await page.locator('#tinypng_preserve_data_copyright').check({ force: true });
   } else {
-    page.locator('#tinypng_preserve_data_copyright').uncheck({ force: true });
+    await page.locator('#tinypng_preserve_data_copyright').uncheck({ force: true });
   }
 
+  await page.waitForSelector('#tinypng_preserve_data_location');
   if (settings.preserveGPS) {
-    page.locator('#tinypng_preserve_data_location').check({ force: true });
+    await page.locator('#tinypng_preserve_data_location').check({ force: true });
   } else {
-    page.locator('#tinypng_preserve_data_location').uncheck({ force: true });
+    await page.locator('#tinypng_preserve_data_location').uncheck({ force: true });
   }
 
   await page.locator('#submit').click();

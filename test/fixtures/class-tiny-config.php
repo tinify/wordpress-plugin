@@ -3,12 +3,16 @@
 if (! defined('TINY_DEBUG')) {
 	define('TINY_DEBUG', null);
 }
+define('AWS_REGION', getenv('AWS_REGION'));
+define('AWS_ENDPOINT', getenv('AWS_ENDPOINT'));
+define('AWS_ACCESS_KEY_ID', getenv('AWS_ACCESS_KEY_ID'));
+define('AWS_SECRET_ACCESS_KEY', getenv('AWS_SECRET_ACCESS_KEY'));
 
 class Tiny_Config
 {
 	/* URL is only used by fopen driver. */
-	const SHRINK_URL = 'http://host.docker.internal:8100/shrink';
-	const KEYS_URL = 'http://host.docker.internal:8100/keys';
+	const SHRINK_URL = 'http://tinify-mock-api/shrink';
+	const KEYS_URL = 'http://tinify-mock-api/keys';
 	const MONTHLY_FREE_COMPRESSIONS = 500;
 	const META_KEY = 'tiny_compress_images';
 }
