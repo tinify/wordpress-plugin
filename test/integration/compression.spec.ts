@@ -84,7 +84,7 @@ test.describe('compression', () => {
     await enableCompressionSizes(page, ['0', 'medium']);
 
     await page.goto('/wp-admin/options-general.php?page=tinify');
-    await page.locator('#tinypng_preserve_data_copyright').check({ force: true });
+    await page.locator('#tinypng_preserve_data_copyright').check();
     await page.locator('#submit').click();
 
     await uploadMedia(page, 'input-example.jpg');

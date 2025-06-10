@@ -100,18 +100,21 @@ export async function setOriginalImage(page: Page, settings: OriginalImageSettin
     await page.locator('#tinypng_resize_original_enabled').uncheck();
   }
 
+  await page.waitForSelector('#tinypng_preserve_data_creation');
   if (settings.preserveDate) {
     await page.locator('#tinypng_preserve_data_creation').check();
   } else {
     await page.locator('#tinypng_preserve_data_creation').uncheck();
   }
 
+  await page.waitForSelector('#tinypng_preserve_data_copyright');
   if (settings.preserveCopyright) {
     page.locator('#tinypng_preserve_data_copyright').check();
   } else {
     page.locator('#tinypng_preserve_data_copyright').uncheck();
   }
 
+  await page.waitForSelector('#tinypng_preserve_data_location');
   if (settings.preserveGPS) {
     page.locator('#tinypng_preserve_data_location').check();
   } else {
