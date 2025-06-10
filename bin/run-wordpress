@@ -58,7 +58,7 @@ set -e
 if [ ! -f wp-load.php ]; then
   echo "Downloading WordPress \${WORDPRESS_VERSION}..."
   TMP=\$(mktemp -d)
-  curl -fsSL --insecure "https://wordpress.org/wordpress-\${WORDPRESS_VERSION}.tar.gz" | tar -xz -C "\$TMP"
+  curl -fsSL "http://wordpress.org/wordpress-\${WORDPRESS_VERSION}.tar.gz" | tar -xz -C "\$TMP"
   cp -R "\$TMP"/wordpress/* .
   rm -rf "\$TMP"
 fi
