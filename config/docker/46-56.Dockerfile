@@ -1,0 +1,1 @@
+FROM wordpress:4.6-php5.6-apache
