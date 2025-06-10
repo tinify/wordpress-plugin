@@ -37,7 +37,7 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 
 To stop:
 1. Stop mocks `bin/stop-mocks`
-2. Stop WordPress `bin/stop-wordpress`
+2. Stop WordPress `bin/stop-wordpress [WORDPRESS_VERSION] [PHP_VERSION]`
 
 
 ### Check if the code follows WordPress standard
