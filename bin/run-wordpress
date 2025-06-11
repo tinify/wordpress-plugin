@@ -3,6 +3,8 @@
 # Usage: bin/run-wordpress [WORDPRESS_VERSION] [PHP_VERSION]
 # Example: bin/run-wordpress 67 82
 
+CONFIG_FILE="config/wp-version.conf"
+
 # Ensure Docker CLI is installed.
 if ! command -v docker >/dev/null; then
   echo "Docker CLI is required."
@@ -12,6 +14,15 @@ fi
 WORDPRESS_VERSION_ENV="${1:-$WORDPRESS_VERSION}"
 PHP_VERSION_ENV="${2:-$PHP_VERSION}"
 
+WP_IMAGE_KEY="${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
+WP_IMAGE=$(grep "^${WP_IMAGE_KEY}=" "$CONFIG_FILE" | cut -d'=' -f2)
+WORDPRESS_PORT="80${WORDPRESS_VERSION_ENV}"
+
+if [ -z "$WP_IMAGE" ]; then
+  echo "Unsupported version combination: $WP_IMAGE_KEY"
+  exit 1
+fi
+
 # Parse WordPress version parameter
 if [[ "$WORDPRESS_VERSION_ENV" =~ ^[0-9]{2}$ ]]; then
   WORDPRESS_VERSION="${WORDPRESS_VERSION_ENV:0:1}.${WORDPRESS_VERSION_ENV:1:1}"
@@ -19,9 +30,9 @@ else
   WORDPRESS_VERSION="$WORDPRESS_VERSION_ENV"
 fi
 
-# Exports as 8.2
 export WORDPRESS_VERSION 
 export WORDPRESS_VERSION_ENV
+export WP_IMAGE
 
 # Parse WordPress version parameter
 if [[ "$PHP_VERSION_ENV" =~ ^[0-9]{2}$ ]]; then
@@ -33,19 +44,9 @@ fi
 export PHP_VERSION
 export PHP_VERSION_ENV
 
-: "${WORDPRESS_VERSION_ENV:=latest}"    # default WordPress version shorthand
-: "${PHP_VERSION_ENV:=8.0}"             # default PHP version shorthand
-
-: "${WORDPRESS_PORT:=80${WORDPRESS_VERSION_ENV}}"
 export WORDPRESS_PORT
 
 export COMPOSE_PROJECT_NAME="tinify_${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
-
-DOCKERFILE_PATH="./config/docker/${WORDPRESS_VERSION_ENV}-${PHP_VERSION_ENV}.Dockerfile"
-if [ ! -f "$DOCKERFILE_PATH" ]; then
-  echo "No Docker file available: $DOCKERFILE_PATH"
-  exit 1
-fi
 
 echo "Starting Docker environment with WordPress $WORDPRESS_VERSION and PHP $PHP_VERSION..."
 docker compose -f config/docker-compose.yml up -d
