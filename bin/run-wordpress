@@ -1,42 +1,114 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-display_usage() {
-  echo -e "Usage:\n\t$0 <version> \n\nExample:\n\t$0 45"
-}
+# Usage: bin/run-wordpress [WORDPRESS_VERSION] [PHP_VERSION]
+# Example: bin/run-wordpress 67 82
 
-if [ -z "${WORDPRESS_VERSION}" ]; then
-  if [ $# -eq 0 ]; then
-    display_usage
+CONFIG_FILE="config/wp-version.conf"
+
+# Ensure Docker CLI is installed.
+if ! command -v docker >/dev/null; then
+  echo "Docker CLI is required."
+  exit 1
+fi
+
+WORDPRESS_VERSION_ENV="${1:-$WORDPRESS_VERSION}"
+PHP_VERSION_ENV="${2:-$PHP_VERSION}"
+
+WP_IMAGE_KEY="${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
+WP_IMAGE=$(grep "^${WP_IMAGE_KEY}=" "$CONFIG_FILE" | cut -d'=' -f2)
+WORDPRESS_PORT="80${WORDPRESS_VERSION_ENV}"
+
+if [ -z "$WP_IMAGE" ]; then
+  echo "Unsupported version combination: $WP_IMAGE_KEY"
+  exit 1
+fi
+
+# Parse WordPress version parameter
+if [[ "$WORDPRESS_VERSION_ENV" =~ ^[0-9]{2}$ ]]; then
+  WORDPRESS_VERSION="${WORDPRESS_VERSION_ENV:0:1}.${WORDPRESS_VERSION_ENV:1:1}"
+else
+  WORDPRESS_VERSION="$WORDPRESS_VERSION_ENV"
+fi
+
+export WORDPRESS_VERSION 
+export WORDPRESS_VERSION_ENV
+export WP_IMAGE
+
+# Parse WordPress version parameter
+if [[ "$PHP_VERSION_ENV" =~ ^[0-9]{2}$ ]]; then
+  PHP_VERSION="${PHP_VERSION_ENV:0:1}.${PHP_VERSION_ENV:1:1}"
+else
+  PHP_VERSION="$PHP_VERSION_ENV"
+fi
+# Exports as dot seperated: 5.6
+export PHP_VERSION
+export PHP_VERSION_ENV
+
+export WORDPRESS_PORT
+
+export COMPOSE_PROJECT_NAME="tinify_${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
+
+echo "Starting Docker environment with WordPress $WORDPRESS_VERSION and PHP $PHP_VERSION..."
+docker compose -f config/docker-compose.yml up -d
+
+echo "Installing WordPress..."
+
+docker compose -f config/docker-compose.yml run --rm --user root --no-TTY --env WORDPRESS_PORT --env WORDPRESS_VERSION wpcli bash <<EOF
+set -e
+
+if [ ! -f wp-load.php ]; then
+  echo "Downloading WordPress \${WORDPRESS_VERSION}..."
+  TMP=\$(mktemp -d)
+  curl -fsSL "http://wordpress.org/wordpress-\${WORDPRESS_VERSION}.tar.gz" | tar -xz -C "\$TMP"
+  cp -R "\$TMP"/wordpress/* .
+  rm -rf "\$TMP"
+fi
+
+if [ ! -f wp-config.php ]; then
+  wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=db --allow-root --skip-salts
+fi
+
+until wp db check --allow-root; do
+  echo "DB not ready yet.."
+  sleep 2
+done
+
+wp db create --allow-root 2>/dev/null || true
+
+if ! wp core is-installed --allow-root; then
+  wp core install \
+    --url=http://localhost:${WORDPRESS_PORT} \
+    --title='My Site' \
+    --admin_user=admin \
+    --admin_password=password \
+    --admin_email=wordpress@example.com \
+    --skip-email \
+    --allow-root
+  chown -R 33:33 wp-content/uploads/
+else
+  echo "WordPress already installed."
+fi
+EOF
+
+echo "Activating tinify.."
+docker compose -f config/docker-compose.yml run --rm wpcli wp plugin activate tiny-compress-images --allow-root
+
+if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
+  echo "Installing compatible plugins for WordPress ${WORDPRESS_PORT}.."
+  docker compose -f config/docker-compose.yml run --rm --user 33 wpcli wp plugin install amazon-s3-and-cloudfront --activate --allow-root || exit 1
+fi
+
+MAX_ATTEMPTS=10
+ATTEMPT=0
+until curl -s --head --fail "http://localhost:${WORDPRESS_PORT}" >/dev/null; do
+  if [ $ATTEMPT -ge $MAX_ATTEMPTS ]; then
+    echo "Timed out waiting for WordPress"
     exit 1
   fi
+  echo "Waiting for WordPress to be ready..."
+  sleep 2
+  ATTEMPT=$((ATTEMPT + 1))
+done
 
-  wp_version_input="$1"
-  php_version_input="$2"
-
-  ## WordPress version ex. "6.7"
-  export WORDPRESS_VERSION_FULL="${wp_version_input:0:1}.${wp_version_input:1}"
-
-  ## WordPress version ex "67"
-  export WORDPRESS_VERSION="${wp_version_input}"
-
-  ## PHP Version ex "80"
-  export PHP_VERSION="${php_version_input}"
-
-  ## PHP Version ex "80"
-  export PHP_VERSION_FULL="${PHP_VERSION:0:1}.${PHP_VERSION:1}"
-  
-  echo "Starting WordPress ${WORDPRESS_VERSION_FULL} on PHP ${PHP_VERSION_FULL}"
-fi
-
-export WP_ENV_TESTS_PORT=80${WORDPRESS_VERSION}
-export WP_ENV_CORE=WordPress/Wordpress#${WORDPRESS_VERSION_FULL}
-export WP_ENV_PHP_VERSION=${PHP_VERSION_FULL}
-
-npx wp-env start || exit 1
-
-if [ "$WORDPRESS_VERSION" -ge 55 ]; then
-  echo "Installing compatible plugins for WordPress ${WORDPRESS_VERSION_FULL}.."
-  npx wp-env run tests-cli wp plugin install amazon-s3-and-cloudfront || exit 1
-fi
-
-echo "To stop, run: bin/stop-wordpress"
+echo "WordPress is ready at http://localhost:${WORDPRESS_PORT} (admin/password)"
+echo "To stop, run: bin/stop-wordpress ${WORDPRESS_VERSION_ENV} ${PHP_VERSION_ENV}"

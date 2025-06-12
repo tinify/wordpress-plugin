@@ -15,10 +15,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - { wp: 40, php: 56 }
-          - { wp: 40, php: 70 }
+          - { wp: 46, php: 56 }
+          - { wp: 46, php: 70 }
           - { wp: 57, php: 73 }
-          - { wp: 60, php: 73 }
+          - { wp: 60, php: 74 }
           - { wp: 63, php: 80 }
           - { wp: 67, php: 82 }
           - { wp: 68, php: 83 }
@@ -45,7 +45,7 @@ jobs:
 
       - name: Get installed Playwright version
         id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+        run: echo "PLAYWRIGHT_VERSION=$(node -p "require('./package.json').devDependencies['@playwright/test']")" >> $GITHUB_ENV
 
       - name: Cache Playwright
         uses: actions/cache@v4
