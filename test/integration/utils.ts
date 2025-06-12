@@ -30,7 +30,7 @@ export async function clearMediaLibrary(page: Page) {
   await page.locator('#cb-select-all-1').check({ force: true });
   await page.locator('#bulk-action-selector-top').selectOption('delete');
   page.once('dialog', (dialog) => dialog.accept());
-  await page.locator('#doaction').click({ force: true });
+  await page.locator('#doaction').click();
 }
 
 export async function setAPIKey(page: Page, key = '') {

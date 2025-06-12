@@ -19,9 +19,6 @@
 */
 
 class Tiny_Compress_Fopen extends Tiny_Compress {
-
-
-
 	private $last_error_code = 0;
 	private $compression_count;
 	private $remaining_credits;

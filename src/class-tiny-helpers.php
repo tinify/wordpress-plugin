@@ -20,9 +20,6 @@
 
 class Tiny_Helpers {
 
-
-
-
 	/**
 	 * truncate_text will truncate a string to a given length.
 	 * When text is longer than the given length, the string will be truncated and
