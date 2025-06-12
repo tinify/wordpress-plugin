@@ -9,15 +9,6 @@
       "type": "php",
       "request": "launch",
       "port": 9003
-    },
-    {
-      "name": "XDebug WordPress",
-      "type": "php",
-      "request": "launch",
-      "port": 9003,
-      "pathMappings": {
-        "/var/www/html/wp-content/plugins/tinify-wordpress-plugin/": "${workspaceFolder}/"
-      }
     }
   ]
 }
