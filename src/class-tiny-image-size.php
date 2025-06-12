@@ -69,6 +69,10 @@ class Tiny_Image_Size {
 		return isset( $this->meta['output'] );
 	}
 
+	public function has_been_converted() {
+		return isset( $this->meta['convert'] );
+	}
+
 	public function never_compressed() {
 		return ! $this->has_been_compressed();
 	}
@@ -101,6 +105,47 @@ class Tiny_Image_Size {
 
 	public function missing() {
 		return $this->has_been_compressed() && ! $this->exists();
+	}
+
+	/**
+	 * Checks wether the image has been processed for conversion.
+	 * Will still return true if conversion was not needed.
+	 *
+	 * @return bool true if image is processed for conversion
+	 */
+	public function converted() {
+		return isset( $this->meta['convert'] );
+	}
+
+	/**
+	 * Checks wether the image is applicable for conversion and has
+	 * not been converted yet.
+	 *
+	 * @return bool true if image can be converted and has not been converted
+	 */
+	public function unconverted() {
+		return ! $this->converted() && $this->exists();
+	}
+
+	/**
+	 * Checks if the converted image size exists
+	 *
+	 * @return boolean true if the image size has a optimized alternative format
+	 */
+	public function converted_image_exists() {
+		if ( ! $this->converted() ) {
+			return false;
+		}
+		return file_exists( $this->meta['convert']['path'] );
+	}
+
+	public function conversion_text() {
+		if ( ! $this->converted() ) {
+			return esc_html__( 'Not converted', 'tiny-compress-images' );
+		}
+		$conversion_text = $this->meta['convert']['type'] . ' (' .
+			size_format( $this->meta['convert']['size'], 1 ) . ')';
+		return $conversion_text;
 	}
 
 	public function compressed() {
@@ -140,6 +185,12 @@ class Tiny_Image_Size {
 
 	public function duplicate_of_size() {
 		return $this->_duplicate_of_size;
+	}
+
+	public function delete_converted_image_size() {
+		if ( $this->converted_image_exists() ) {
+			unlink( $this->meta['convert']['path'] );
+		}
 	}
 
 	private function recently_started() {

@@ -10,6 +10,15 @@ export async function uploadMedia(page: Page, file: string) {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await page.locator('#html-upload').click();
+
+  const rowID = await page.locator('table.wp-list-table tbody > tr').first().getAttribute('id');
+  if (!rowID) throw Error('Could not find row ID');
+
+  const attachmentID = rowID.split('-')[1];
+  await page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`);
+
+  const imageURL = await page.locator('input[name="attachment_url"]').inputValue();
+  return imageURL;
 }
 
 export async function clearMediaLibrary(page: Page) {
@@ -191,4 +200,57 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
   }
 
   await plugin.getByLabel('Deactivate').click();
+}
+
+export async function setConversionSettings(page: Page, settings: { convert: boolean }) {
+  await page.goto('/wp-admin/options-general.php?page=tinify');
+
+  if (settings.convert) {
+    await page.locator('#tinypng_conversion_convert').check({ force: true });
+  } else {
+    await page.locator('#tinypng_conversion_convert').uncheck({ force: true });
+  }
+
+  await page.locator('#submit').click();
+}
+
+interface NewPostOptions {
+  title?: string;
+  content: string;
+  excerpt?: string;
+}
+export async function newPost(page: Page, options: NewPostOptions, WPVersion: number): Promise<string> {
+  const query = new URLSearchParams();
+  const { title, content, excerpt } = options;
+
+  if (title) {
+    query.set('post_title', title);
+  }
+  if (excerpt) {
+    query.set('excerpt', excerpt);
+  }
+
+  
+  await page.goto('/wp-admin/post-new.php?' + query.toString() + '#content-html');
+  if (WPVersion > 5) {
+    const welcomeGuideExists = await page.getByLabel('Close', { exact: true }).isVisible(); 
+    if (welcomeGuideExists) {
+      await page.getByLabel('Close', { exact: true }).click();
+    }
+    await page.evaluate((contentHtml) => {
+      wp.data.dispatch('core/editor').resetBlocks([]);
+      wp.data.dispatch('core/editor').insertBlocks(wp.blocks.parse(contentHtml));
+    }, content);
+    await page.getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByLabel('Editor publish').getByRole('link', { name: 'View Post' }).click();
+  } else {
+    await page.locator('#content-html').click();
+    await page.locator('#content').fill(content);
+    await page.locator('#publish').click();    
+    await page.getByRole('link', { name: 'View Post', }).first().click();
+
+  }
+
+  return page.url();
 }

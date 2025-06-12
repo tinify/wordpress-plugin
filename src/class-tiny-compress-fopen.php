@@ -82,7 +82,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
@@ -133,7 +133,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$meta = array(
 			'input' => array(
 				'size' => strlen( $input ),
-				'type' => $headers['content-type'],
+				'type' => Tiny_Helpers::get_mimetype( $input ),
 			),
 			'output' => array(
 				'size' => strlen( $output ),
@@ -144,9 +144,36 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			),
 		);
 
-		return array( $output, $meta );
-	}
+		$convert = null;
 
+		if ( isset( $convert_opts['convert'] ) && true === $convert_opts['convert'] ) {
+			$convert_to = $convert_opts['convert_to'];
+			$convert_params = $this->request_options(
+				'POST',
+				array(
+					'convert' => array(
+						'type' => $convert_to,
+					),
+				),
+				array( 'Content-Type: application/json' )
+			);
+
+			list($convert_output, $convert_headers) = $this->request(
+				$convert_params,
+				$output_url
+			);
+			$meta['convert'] = array(
+				'type' => $convert_headers['content-type'],
+				'size' => strlen( $convert_output ),
+			);
+			$convert = $convert_output;
+
+		}
+
+		$result = array( $output, $meta, $convert );
+
+		return $result;
+	}
 	private function request( $params, $url = Tiny_Config::SHRINK_URL ) {
 		$context = stream_context_create( $params );
 		$request = fopen( $url, 'rb', false, $context );
@@ -188,8 +215,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$response = stream_get_contents( $request );
 		fclose( $request );
 
-		if ( isset( $headers['content-type'] ) &&
-			substr( 'application/json' == $headers['content-type'], 0, 16 ) ) {
+		if (
+			isset( $headers['content-type'] ) &&
+			substr( 'application/json' == $headers['content-type'], 0, 16 )
+		) {
 			$response = $this->decode( $response );
 		}
 
@@ -221,11 +250,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		return array(
 			'http' => array(
 				'method' => $method,
-				'header' => array_merge( $headers, array(
+				'header' => array_merge($headers, array(
 					'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
 					'User-Agent: ' . self::identifier(),
 					'Content-Type: multipart/form-data',
-				) ),
+				)),
 				'content' => $body,
 				'follow_location' => 0,
 				'max_redirects' => 1, // Necessary for PHP 5.2

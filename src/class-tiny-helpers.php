@@ -38,4 +38,74 @@ class Tiny_Helpers {
 		}
 		return $text;
 	}
+
+	/**
+	 * Will replace the file extension with the specified mimetype.
+	 *
+	 * @param string $mimetype The format to replace the extension with.
+	 * Currently supports 'image/avif' or 'image/webp'
+	 * @param string $filepath The full path to replace the extension in, ex /home/user/image.png
+	 *
+	 * @return string The full path to the file with the new extension, ex /home/user/image.avif
+	 */
+	public static function replace_file_extension( $mimetype, $filepath ) {
+		$parts = pathinfo( $filepath );
+
+		if ( ! isset( $parts['extension'] ) ) {
+			return $filepath;
+		}
+
+		$extension_new = self::mimetype_to_extension( $mimetype );
+		if ( null === $extension_new ) {
+			return $filepath;
+		}
+
+		$dir      = $parts['dirname'];
+		$name     = $parts['filename'];
+		$sep      = DIRECTORY_SEPARATOR;
+
+		if ( '.' === $dir ) {
+			return $name . '.' . $extension_new;
+		}
+
+		if ( $dir === $sep ) {
+			return $sep . $name . '.' . $extension_new;
+		}
+
+		$dir = rtrim( $dir, '/\\' );
+		return $dir . $sep . $name . '.' . $extension_new;
+	}
+
+	private static function mimetype_to_extension( $mimetype ) {
+		switch ( $mimetype ) {
+			case 'image/jpeg':
+				return 'jpg';
+			case 'image/png':
+				return 'png';
+			case 'image/webp':
+				return 'webp';
+			case 'image/avif':
+				return 'avif';
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Will return the mimetype of the file
+	 *
+	 * ref: https://www.php.net/manual/en/class.finfo.php
+	 *
+	 * @param string $input The file contents
+	 * @return string The mimetype of the file
+	 */
+	public static function get_mimetype( $input ) {
+		if ( class_exists( 'finfo' ) ) {
+			$finfo = new finfo( FILEINFO_MIME_TYPE );
+			$mime = $finfo->buffer( $input );
+			return $mime;
+		} else {
+			throw new Exception( 'finfo extension is not available.' );
+		}
+	}
 }

@@ -290,4 +290,15 @@
   jQuery(function() {
     jQuery('.tiny-notice.is-dismissible button').unbind('click').click(dismissNotice);
   });
+
+
+  function onConvertChange(e) {
+    const newValue = e.target.checked;
+    if (newValue) {
+      jQuery('#tinypng_convert_convert_to').removeAttr('disabled');
+    } else {
+      jQuery('#tinypng_convert_convert_to').attr('disabled', true);
+    }
+  }
+  jQuery('#tinypng_conversion_convert').on('change', onConvertChange);
 }).call();
