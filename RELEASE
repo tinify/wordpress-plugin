@@ -12,9 +12,8 @@ Perform the following steps to release a new version of the plugin on wordpress.
 10. If Subversion repo already existed: run `svn update` inside repo `tiny-compress-images`.
 11. Update svn:ignore property of trunk when .gitignore is updated: `svn propedit svn:ignore trunk`. Make sure src/vendor/\* is NOT ignored in SVN.
 12. Delete everything in trunk `rm -rf <path-to-local-svn-repo/trunk/*`.
-13. Manually copy the Git release to the local Subversion repo: run following command under your Github repo: `git ls-files | xargs tar c | tar x -C <path-to-local-svn-repo>/trunk/`.
+13. Manually copy the Git release to the local Subversion repo: run following command under your Github repo: `rsync -av --delete --exclude-from='.distignore' ./ <path-to-local-svn-repo>/trunk/`.
 14. Go back to your svn repo and add new files `svn st | awk '/^\?/ { print $2; }' | xargs svn add`.
-15. Delete deleted files: `svn st | awk '/^!/ { print $2; }' | xargs svn rm`.
 16. To double check changes to the repo, check difference with `svn status`.
 17. Commit the trunk to Subversion: `svn ci -m "<message>"`.
 18. Tag the new release in Subversion and commit: `svn cp trunk tags/<version> && svn ci -m "<message>"`.
