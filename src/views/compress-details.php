@@ -197,6 +197,8 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 						<td><?php echo size_format( $size_before, 1 ) ?></td>
 						<td><?php echo size_format( $size_after, 1 ) ?></td>
 						<td></td>
+						<td></td>
+						<td></td>
 					</tr>
 				</tfoot><?php
 			}
