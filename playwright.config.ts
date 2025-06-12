@@ -24,6 +24,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        channel: 'chromium',
         storageState: './test/integration/.auth/user.json',
       },
       fullyParallel: false,
