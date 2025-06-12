@@ -124,7 +124,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				<th><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Compressed', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Format', 'tiny-compress-images' ) ?></th>
-				<?php if ($conversion_enabled) { ?> <th><?php esc_html_e( 'Converted', 'tiny-compress-images' ) ?></th> <?php } ?>
+				<?php if ( $conversion_enabled ) { ?> <th><?php esc_html_e( 'Converted', 'tiny-compress-images' ) ?></th> <?php } ?>
 				<th><?php esc_html_e( 'Date' ) ?></th>
 			</tr>
 			<?php
@@ -199,7 +199,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 						<td><?php echo size_format( $size_before, 1 ) ?></td>
 						<td><?php echo size_format( $size_after, 1 ) ?></td>
 						<td></td>
-						<?php if ($conversion_enabled) { ?> <td></td> <?php } ?>
+						<?php if ( $conversion_enabled ) { ?> <td></td> <?php } ?>
 						<td></td>
 					</tr>
 				</tfoot><?php
