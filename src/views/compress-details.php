@@ -190,7 +190,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				</tr><?php
 						$i++;
 			} // End foreach().
-			if ( $image_statistics['image_sizes_optimized'] > 0 ) { ?>
+			if ( $image_statistics['image_sizes_compressed'] > 0 ) { ?>
 				<tfoot>
 					<tr>
 						<td><?php esc_html_e( 'Combined', 'tiny-compress-images' ) ?></td>
