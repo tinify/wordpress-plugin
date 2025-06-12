@@ -30,9 +30,15 @@ Got questions or feedback? Let us know! Contact us at support@tinypng.com.
 1. Run `bin/unit-tests <optional path to file>`.
 
 ### Running the integration tests
-1. Install Docker 1.12 and docker-compose.
-2. Install npm dependancies
-3. Run `bin/integration-tests <wordpress version> <php version>`. E.g. `bin/integration-tests 60 80`.
+1. Start the environment: `bin/run-wordpress [WORDPRESS_VERSION] [PHP_VERSION]`
+2. Start mocks `bin/run-mocks`
+3. Install npm dependencies: `npm install`.
+4. Run `WORDPRESS_PORT-80[WORDPRESS_VERSION] npm run test:playwright`.
+
+To stop:
+1. Stop mocks `bin/stop-mocks`
+2. Stop WordPress `bin/stop-wordpress [WORDPRESS_VERSION] [PHP_VERSION]`
+
 
 ### Check if the code follows WordPress standard
 1. Run `bin/check-style` to make sure there are no errors.

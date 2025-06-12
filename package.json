@@ -4,13 +4,9 @@
   "description": "TinyPNG - JPEG, PNG & WebP image compression",
   "main": "index.js",
   "scripts": {
-    "test:playwright": "wp-scripts test-playwright",
-    "test:playwright:help": "wp-scripts test-playwright --help",
-    "test:playwright:debug": "wp-scripts test-playwright --debug"
+    "test:playwright": "playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0",
-    "@wordpress/env": "^10.24.0",
-    "@wordpress/scripts": "^30.17.0"
+    "@playwright/test": "^1.49.1"
   }
 }
