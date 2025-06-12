@@ -38,7 +38,9 @@ class Tiny_Bulk_Optimization {
 				$result = self::wpdb_retrieve_images_and_metadata( $last_image_id );
 				$stats = self::populate_optimization_statistics( $settings, $result, $stats );
 				$last_image = end( $result );
-				$last_image_id = $last_image['ID'];
+				if ( isset( $last_image['ID'] ) ) {
+					$last_image_id = $last_image['ID'];
+				}
 			} while ( sizeof( $result ) == self::PAGING_SIZE );
 		} else {
 			$stats = self::populate_optimization_statistics( $settings, $result, $stats );
