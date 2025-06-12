@@ -10,7 +10,7 @@ $active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed', 'un
 $image_statistics = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 $available_uncompressed_sizes = $image_statistics['available_uncompressed_sizes'];
 $size_before = $image_statistics['initial_total_size'];
-$size_after = $image_statistics['optimized_total_size'];
+$size_after = $image_statistics['compressed_total_size'];
 
 $size_active = array_fill_keys( $active_tinify_sizes, true );
 $size_exists = array_fill_keys( $available_sizes, true );
