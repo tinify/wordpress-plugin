@@ -54,17 +54,15 @@ class Tiny_Picture extends Tiny_WP_Base {
 	}
 
 	public function replace_img_sources( $content ) {
-
-		$images = $this->filter_images( $content );
-
-		foreach ( $images as $image ) {
-			$content = Tiny_Picture::replace_image( $content, $image );
+		$image_sources = $this->filter_images( $content );
+		foreach ( $image_sources as $image_source ) {
+			$content = Tiny_Picture::replace_image( $content, $image_source );
 		}
 		return $content;
 	}
 
-	private static function replace_image( $content, $image ) {
-		$content = str_replace( $image->img_element, $image->create_picture_elements(), $content );
+	private static function replace_image( $content, $source ) {
+		$content = str_replace( $source->image, $source->create_picture_elements(), $content );
 		return $content;
 	}
 
@@ -97,6 +95,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 
 		return $images;
 	}
+
 	/**
 	 * Replace attachment URL with .avif/.webp variant if supported and exists.
 	*
@@ -107,7 +106,6 @@ class Tiny_Picture extends Tiny_WP_Base {
 	* @return string New or original URL.
 	*/
 	public function filter_attachment_url( $url, $post_id ) {
-		header( 'Vary: Accept' );
 		$supported_formats = $this->get_support_formats();
 		if ( empty( $supported_formats ) ) {
 			return $url;
@@ -177,13 +175,7 @@ class Tiny_Image_Source {
 	 * The raw HTML img element as a string
 	 * @var string
 	 */
-	public $img_element;
-
-	/**
-	 * The DOMElement of the img element
-	 * @var DOMNodeList::item
-	 */
-	private $img_element_node;
+	public $image;
 
 	private $base_dir;
 
@@ -191,17 +183,27 @@ class Tiny_Image_Source {
 
 	private $valid_mimetypes;
 
-	private $dom;
 
 	public function __construct( $img_element, $base_dir, $domains ) {
-		$this->img_element = $img_element;
-		$this->dom = new \DOMDocument();
-		$this->dom->loadHTML( $img_element );
-		$this->img_element_node = $this->dom->getElementsByTagName( 'img' )->item( 0 );
-
+		$this->image = $img_element;
 		$this->base_dir = $base_dir;
 		$this->allowed_domains = $domains;
 		$this->valid_mimetypes = array( 'image/webp', 'image/avif' );
+	}
+
+	/**
+	 * Attempts to get an HTML attribute from the given string
+	 *
+	 * @param string $html The string to parse
+	 * @param string $attribute_name The name of the attribute to search for.
+	 * @return string The value of the attribute, or an empty string if not found.
+	 */
+	private static function get_attribute_value( $element, $name ) {
+		if ( \preg_match( '#\b' . preg_quote( $name, '#' ) . '\s*=\s*(["\'])(.*?)\1#is', $element, $attr_matches ) ) {
+			return $attr_matches[2];
+		}
+		var_dump($element);
+		return null;
 	}
 
 	/**
@@ -211,10 +213,10 @@ class Tiny_Image_Source {
 	 */
 	private function get_image_srcsets() {
 		$result = array();
-		$srcset = $this->img_element_node->getAttribute( 'srcset' );
+		$srcset = $this::get_attribute_value($this->image, 'srcset');
 
 		if ( $srcset ) {
-			// Split the srcset by commas to get individual entries
+			// Split the srcset to get individual entries
 			$srcset_entries = explode( ',', $srcset );
 
 			foreach ( $srcset_entries as $entry ) {
@@ -240,10 +242,11 @@ class Tiny_Image_Source {
 			}
 		}
 
-		if ( $this->img_element_node->hasAttribute( 'src' ) ) {
+		$source = $this::get_attribute_value($this->image, 'src' );
+		if ( !empty($source) ) {
 			// No srcset, but we have a src attribute
 			$result[] = array(
-				'path' => $this->img_element_node->getAttribute( 'src' ),
+				'path' => $source,
 				'size' => '',
 			);
 		}
@@ -320,7 +323,7 @@ class Tiny_Image_Source {
 		}
 
 		if ( empty( $srcset_parts ) ) {
-			return $this->img_element;
+			return $this->image;
 		}
 
 		$picture_element = array( '<picture>' );
@@ -329,7 +332,7 @@ class Tiny_Image_Source {
 			$picture_element[] =
 				'<source srcset="' . $srcset . '" type="' . $source['type'] . '" />';
 		}
-		$picture_element[] = $this->img_element;
+		$picture_element[] = $this->image;
 		$picture_element[] = '</picture>';
 
 		return implode( '', $picture_element );
