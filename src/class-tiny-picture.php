@@ -199,7 +199,8 @@ class Tiny_Image_Source {
 	 * @return string The value of the attribute, or an empty string if not found.
 	 */
 	private static function get_attribute_value( $element, $name ) {
-		if ( \preg_match( '#\b' . preg_quote( $name, '#' ) . '\s*=\s*(["\'])(.*?)\1#is', $element, $attr_matches ) ) {
+		$regex = '#\b' . preg_quote( $name, '#' ) . '\s*=\s*(["\'])(.*?)\1#is';
+		if ( preg_match( $regex, $element, $attr_matches ) ) {
 			return $attr_matches[2];
 		}
 		return null;
