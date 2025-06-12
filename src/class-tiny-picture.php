@@ -202,7 +202,6 @@ class Tiny_Image_Source {
 		if ( \preg_match( '#\b' . preg_quote( $name, '#' ) . '\s*=\s*(["\'])(.*?)\1#is', $element, $attr_matches ) ) {
 			return $attr_matches[2];
 		}
-		var_dump($element);
 		return null;
 	}
 
@@ -213,7 +212,7 @@ class Tiny_Image_Source {
 	 */
 	private function get_image_srcsets() {
 		$result = array();
-		$srcset = $this::get_attribute_value($this->image, 'srcset');
+		$srcset = $this::get_attribute_value( $this->image, 'srcset' );
 
 		if ( $srcset ) {
 			// Split the srcset to get individual entries
@@ -242,8 +241,8 @@ class Tiny_Image_Source {
 			}
 		}
 
-		$source = $this::get_attribute_value($this->image, 'src' );
-		if ( !empty($source) ) {
+		$source = $this::get_attribute_value( $this->image, 'src' );
+		if ( ! empty( $source ) ) {
 			// No srcset, but we have a src attribute
 			$result[] = array(
 				'path' => $source,
