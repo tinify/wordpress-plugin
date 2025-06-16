@@ -123,6 +123,7 @@ function mock_limit_reached_response()
     header("Compression-Count: 500");
     header("Compression-Count-Remaining: 0");
     header("Paying-State: free");
+	header("Email-Address: test@example.com");
 
     $response = array(
         "error" => "Too many requests",
