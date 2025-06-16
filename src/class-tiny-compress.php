@@ -186,7 +186,7 @@ abstract class Tiny_Compress {
 	}
 
 	private static function needs_resize( $file, $resize_options ) {
-		if ( ! $resize_options ) {
+		if ( ! $resize_options || ! isset($resize_options['width']) || !isset($resize_options['height']) ) {
 			return false;
 		}
 
