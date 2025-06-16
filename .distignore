@@ -19,7 +19,7 @@ test-results
 
 # config & scripts
 bin
-config
+/config
 
 # CI/config files
 .gitignore
