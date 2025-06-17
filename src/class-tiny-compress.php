@@ -186,13 +186,18 @@ abstract class Tiny_Compress {
 	}
 
 	private static function needs_resize( $file, $resize_options ) {
-		if ( ! $resize_options || ! isset($resize_options['width']) || !isset($resize_options['height']) ) {
+		if ( ! $resize_options ) {
 			return false;
 		}
 
 		list($width, $height) = getimagesize( $file );
 
-		return ($width > $resize_options['width'] || $height > $resize_options['height']);
+		$should_resize_width  = isset( $resize_options['width'] ) &&
+			$width > $resize_options['width'];
+		$should_resize_height = isset( $resize_options['height'] ) &&
+			$height > $resize_options['height'];
+
+		return $should_resize_width || $should_resize_height;
 	}
 
 	private static function compression_cost( $total ) {
