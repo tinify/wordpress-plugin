@@ -18,7 +18,7 @@ export async function uploadMedia(page: Page, file: string) {
   }
 
   const rowID = await row.getAttribute('id');
-  const attachmentID = rowID.split('-')[1];
+  const attachmentID = rowID?.split('-')[1];
   await page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`);
 
   const imageURL = await page.locator('input[name="attachment_url"]').inputValue();
