@@ -37,7 +37,7 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase {
 			array(
 				'uploaded-images' => 3,
 				'optimized-image-sizes' => 0,
-				'available-unoptimised-sizes' => 4,
+				'available-unoptimized-sizes' => 4,
 				'optimized-library-size' => 328670,
 				'unoptimized-library-size' => 328670,
 				'available-for-optimization' => array(

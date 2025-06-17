@@ -26,7 +26,7 @@ async function setRemoveLocalMedia(page: Page, enabled: boolean) {
   
   await Promise.all([
     page.waitForResponse((resp) => resp.url().includes('/wp-offload-media/v1/settings/') && resp.status() === 200),
-    page.getByRole('button', { name: 'Save Changes' }).click({ force: true })
+    page.getByRole('button', { name: 'Save Changes' }).click()
   ]);
 }
 
