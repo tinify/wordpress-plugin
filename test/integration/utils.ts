@@ -22,15 +22,11 @@ export async function uploadMedia(page: Page, file: string) {
 }
 
 export async function clearMediaLibrary(page: Page) {
-  await page.goto('/wp-admin/upload.php?mode=list');
-  const hasNoFiles = await page.getByText('No media').isVisible();
-  if (hasNoFiles) {
-    return;
-  }
-  await page.locator('#cb-select-all-1').check({ force: true });
-  await page.locator('#bulk-action-selector-top').selectOption('delete');
-  page.once('dialog', (dialog) => dialog.accept());
-  await page.locator('#doaction').click();
+  await page.request.post('/wp-admin/admin-ajax.php', {
+    form: {
+      action: 'clear_media_library',
+    },
+  });
 }
 
 export async function setAPIKey(page: Page, key = '') {
@@ -230,10 +226,9 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
     query.set('excerpt', excerpt);
   }
 
-  
   await page.goto('/wp-admin/post-new.php?' + query.toString() + '#content-html');
   if (WPVersion > 5) {
-    const welcomeGuideExists = await page.getByLabel('Close', { exact: true }).isVisible(); 
+    const welcomeGuideExists = await page.getByLabel('Close', { exact: true }).isVisible();
     if (welcomeGuideExists) {
       await page.getByLabel('Close', { exact: true }).click();
     }
@@ -247,9 +242,8 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
   } else {
     await page.locator('#content-html').click();
     await page.locator('#content').fill(content);
-    await page.locator('#publish').click();    
-    await page.getByRole('link', { name: 'View Post', }).first().click();
-
+    await page.locator('#publish').click();
+    await page.getByRole('link', { name: 'View Post' }).first().click();
   }
 
   return page.url();
