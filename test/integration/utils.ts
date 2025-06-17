@@ -10,10 +10,14 @@ export async function uploadMedia(page: Page, file: string) {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await page.locator('#html-upload').click();
+  await page.goto('/wp-admin/upload.php?mode=list');
 
-  const rowID = await page.locator('table.wp-list-table tbody > tr').first().getAttribute('id');
-  if (!rowID) throw Error('Could not find row ID');
+  const row = await page.locator('table.wp-list-table tbody > tr').first();
+  if (!row) {
+    throw Error('Could not find recently uploaded file');
+  }
 
+  const rowID = await row.getAttribute('id');
   const attachmentID = rowID.split('-')[1];
   await page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`);
 
