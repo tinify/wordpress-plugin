@@ -717,7 +717,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $name;
 	}
 
-	function request_review() {
+	static function request_review() {
 		$review_url = "https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post";
 		$review_block = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
 		$review_block .= ' ';

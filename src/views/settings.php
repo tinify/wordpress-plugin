@@ -44,6 +44,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<p><?php echo Tiny_Plugin::request_review();?></p>
 			<p class="submit">
 				<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_html_e( 'Save Changes' ) ?>">
 			</p>

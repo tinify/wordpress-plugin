@@ -60,7 +60,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 		/* translators: %s: friendly user name */
 		printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
 		echo ' ';
-		echo $this->request_review();
+		echo Tiny_Plugin::request_review();
 		?>
 	</p>
 </div>
