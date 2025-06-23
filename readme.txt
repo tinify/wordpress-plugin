@@ -41,11 +41,11 @@ After you upload an image to your WordPress site, each resized image is uploaded
 
 = Getting started =
 
-Install this plugin and follow the instructions to set up your account. With a regular WordPress installation you can optimize **roughly 100 images each month** for free. The exact total depends on the number of thumbnail sizes that are in use in your WordPress installation. You can change which of the generated thumbnail sizes should be optimized on the *Settings > TinyPNG - JPEG, PNG & WebP image compression* page. Once installed you can also switch to a [paid account](https://tinypng.com/dashboard/api) which removes the limits and allows you to optimize as many images as you like.
+Install this plugin and follow the instructions to set up your account. With a regular WordPress installation you can optimize **roughly 100 images each month** for free. The exact total depends on the number of thumbnail sizes that are in use in your WordPress installation. You can change which of the generated thumbnail sizes should be optimized on the *Settings > TinyPNG* page. Once installed you can also switch to a [paid account](https://tinypng.com/dashboard/api) which removes the limits and allows you to optimize as many images as you like.
 
 = Optimizing all your images =
 
-You can *bulk optimize* your existing JPEG, PNG, and WebP images all at once by going to *Media > Bulk Optimization*. Clicking on the big button will start optimizing all unoptimized images in your media library.
+You can *bulk optimize* your existing JPEG, PNG, and WebP images all at once by going to *Media > Bulk TinyPNG*. Clicking on the big button will start optimizing all unoptimized images in your media library.
 
 = Multisite support =
 
@@ -66,18 +66,18 @@ Want to contribute? Check out the [Tinify Wordpress plugin on GitHub](https://gi
 1. Visit *Plugins > Add New*.
 2. Search for 'tinypng' and press the 'Install Now' button for the plugin named 'TinyPNG - JPEG, PNG & WebP image compression' by 'TinyPNG'.
 3. Activate the plugin from your *Plugins* page.
-4. Go to the *Settings > TinyPNG - JPEG, PNG & WebP image compression* page and register a new account.
+4. Go to the *Settings > TinyPNG* page and register a new account.
 5. Or enter the API key you got from https://tinypng.com/developers.
-6. Go to *Media > Bulk Optimization* and optimize all your images!
+6. Go to *Media > Bulk TinyPNG* and optimize all your images!
 
 = From WordPress.org =
 
 1. Download the plugin named 'TinyPNG - JPEG, PNG & WebP image compression' by 'TinyPNG'.
 2. Upload the `tiny-compress-images` directory to your `/wp-content/plugins/` directory, using your favorite method (ftp, sftp, scp, etc...)
 3. Activate the plugin from your Plugins page.
-4. Go to the *Settings > TinyPNG - JPEG, PNG & WebP image compression* page and register a new account.
+4. Go to the *Settings > TinyPNG* page and register a new account.
 5. Or enter the API key you got from https://tinypng.com/developers.
-6. Go to *Media > Bulk Optimization* and optimize all your images!
+6. Go to *Media > Bulk TinyPNG* and optimize all your images!
 
 = Optional configuration =
 
@@ -85,14 +85,14 @@ The API key can also be configured in your *wp-config.php* file. To do this you 
 
 `define( 'TINY_API_KEY', 'YOUR_API_KEY_HERE' );`
 
-Once set up you will see a message on the *Settings > TinyPNG - JPEG, PNG & WebP image compression* page. This will work for normal and multisite WordPress installations.
+Once set up you will see a message on the *Settings > TinyPNG* page. This will work for normal and multisite WordPress installations.
 
 == Screenshots ==
 
 1. Register a new account or enter your existing API key. Then choose the image sizes to optimize and any other options like resizing and preserving metadata in your original image uploads.
 2. In the Media Library list view you can see the savings on your images.
 3. From the Media Library you can compress individual images and use the Bulk Actions drop-down to quickly optimize multiple images at once.
-4. Last but not least you can also use Bulk Optimization to optimize your entire WordPress site.
+4. Last but not least you can also use Bulk TinyPNG to optimize your entire WordPress site.
 
 == Frequently Asked Questions ==
 
@@ -106,7 +106,7 @@ A: Just add your *Payment details* on your [account dashboard](https://tinypng.c
 A: When you remove the plugin all your optimized images will remain optimized.
 
 = Q: I don't recall uploading 500 photos this month but my limit is already reached. How is this number calculated? =
-A: When you upload an image to your website, WordPress will create different sized versions of it (see *Settings > TinyPNG - JPEG, PNG & WebP image compression*). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
+A: When you upload an image to your website, WordPress will create different sized versions of it (see *Settings > TinyPNG*). The plugin will compress each of these sizes, so when you have 100 images and 5 different sizes you will do 500 compressions.
 
 = Q: Is there a file size limit? =
 A: Yes, but they are **very** generous! The maximum file size is 500MB and the maximum canvas size is 256MP (16000px by 16000px in any ratio).
@@ -121,7 +121,7 @@ A: Yes, you can hide your API key from the admin so other admin users will not b
 A: Everything will keep on working, but newly uploaded images will not be optimized. Of course we encourage everyone to [switch](https://tinypng.com/dashboard/api) to a paid account to cover the hosting and development costs of the service.
 
 = Q: Can I optimize all existing images in my media library? =
-A: Yes! After installing the plugin, go to *Media > Bulk Optimization*, and click on the start button to optimize all unoptimized images in your media library.
+A: Yes! After installing the plugin, go to *Media > Bulk TinyPNG*, and click on the start button to optimize all unoptimized images in your media library.
 
 = Q: How do I switch to a paid account? =
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
