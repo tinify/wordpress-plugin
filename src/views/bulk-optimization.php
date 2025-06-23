@@ -179,10 +179,13 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						</tr>
 					</table>
 					<div class="notes">
-						<h4><?php esc_html_e( 'Remember', 'tiny-compress-images' ) ?></h4>
-						<p>
-							<?php esc_html_e( 'For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!', 'tiny-compress-images' ); ?>
-						</p>
+						<?php
+						/* translators: %s: link to settings page saying here */
+						printf(wp_kses(__('You configure compression settings %s.', 'tiny-compress-images'), array(
+							'a' => array(
+								'href' => array(),
+							),
+						)), '<a href=' . admin_url('options-general.php?page=tinify') . '>' . __('here', 'tiny-compress-images') . '</a>') ?>
 					</div>
 				</div>
 			</div>

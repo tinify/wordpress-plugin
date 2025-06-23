@@ -8,4 +8,5 @@
 	submit_button( esc_attr__( 'Cancelling', 'tiny-compress-images' ) . '...', 'button-primary button-hero red', 'id-cancelling', false );
 	?>
 	<div id="optimization-spinner" class="spinner"></div>
+	<p class="optimization-buttons_notice"><?php esc_html_e( 'For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!', 'tiny-compress-images' ); ?></p>
 </div>
