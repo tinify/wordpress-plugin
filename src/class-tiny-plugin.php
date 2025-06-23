@@ -156,7 +156,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function admin_menu() {
 		add_media_page(
 			__( 'Bulk Optimization', 'tiny-compress-images' ),
-			esc_html__( 'Bulk Optimization', 'tiny-compress-images' ),
+			esc_html__( 'Bulk TinyPNG', 'tiny-compress-images' ),
 			'upload_files',
 			'tiny-bulk-optimization',
 			$this->get_method( 'render_bulk_optimization_page' )
@@ -171,7 +171,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			),
 			'bulk' => sprintf(
 				'<a href="upload.php?page=tiny-bulk-optimization">%s</a>',
-				esc_html__( 'Bulk Optimization', 'tiny-compress-images' )
+				esc_html__( 'Bulk TinyPNG', 'tiny-compress-images' )
 			),
 		);
 		return array_merge( $additional, $current_links );
