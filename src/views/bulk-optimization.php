@@ -181,7 +181,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 					<div class="notes">
 						<?php
 						/* translators: %s: link to settings page saying here */
-						printf(wp_kses(__('You configure compression settings %s.', 'tiny-compress-images'), array(
+						printf(wp_kses(__('Configure compression settings %s.', 'tiny-compress-images'), array(
 							'a' => array(
 								'href' => array(),
 							),
