@@ -724,7 +724,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$review_block .= sprintf(
 			'<a href="%s" target="_blank">%s</a>',
 			esc_url( $review_url ),
-			esc_html__( 'Leave a review', 'tiny-compress-images' )
+			esc_html__( 'Write a review', 'tiny-compress-images' )
 		);
 		return $review_block;
 	}
