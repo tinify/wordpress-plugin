@@ -29,6 +29,7 @@ test.describe('conversion', () => {
     // JPG123 will ensure mock service returns a jpeg on /shrink
     await setConversionSettings(page, {
       convert: true,
+      output: 'smallest',
     });
     await uploadMedia(page, 'input-example.jpg');
 
