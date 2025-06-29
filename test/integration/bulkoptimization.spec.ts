@@ -180,4 +180,36 @@ test.describe('bulkoptimization', () => {
     const tooltips = await page.locator('div.tip').all();
     await expect(tooltips.length).toEqual(1);
   });
+
+  test('will only apply a conversion when images are already compressed but not converted', async ({ page }) => {
+    // only optimize original size
+    await enableCompressionSizes(page, ['0']);
+
+    // upload 1 image and automaticly compress it, but not convert it yet
+    await setCompressionTiming(page, 'auto');
+    await setConversionSettings(page, { convert: false });
+    await uploadMedia(page, 'input-example.jpg');
+
+    // turn on convert and set to manual compression, upload another image
+    await setCompressionTiming(page, 'manual');
+    await setConversionSettings(page, { convert: true });
+    await uploadMedia(page, 'input-example.jpg');
+
+    // apply bulk optimization
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    await page.locator('#id-start').click();
+    await page.waitForLoadState('networkidle');
+    
+    // we are expecting 2 unoptimized images sizes = 2 conversion and 1 compression
+    // expect two rows in the optimization items table
+    const optimizationRows = page.locator('#optimization-items tbody tr');
+    await expect(optimizationRows).toHaveCount(2);
+    
+    // first row should have "1 compressed and 1 converted"
+    // second row should have "1 converted"
+    await expect(optimizationRows.first()).toContainText('1 compressed 1 converted');
+    await expect(optimizationRows.nth(1)).toContainText('1 converted');
+
+    // this should have cost us 3 credits
+  });
 });

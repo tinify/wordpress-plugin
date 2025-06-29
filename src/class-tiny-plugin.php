@@ -235,6 +235,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'L10nCancelled' => __( 'Cancelled', 'tiny-compress-images' ),
 			'L10nCompressing' => __( 'Compressing', 'tiny-compress-images' ),
 			'L10nCompressed' => __( 'compressed', 'tiny-compress-images' ),
+			'L10nConverted' => __( 'converted', 'tiny-compress-images' ),
 			'L10nFile' => __( 'File', 'tiny-compress-images' ),
 			'L10nSizesOptimized' => __( 'Sizes optimized', 'tiny-compress-images' ),
 			'L10nInitialSize' => __( 'Initial size', 'tiny-compress-images' ),
@@ -499,6 +500,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message'] = $tiny_image->get_latest_error();
+		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
+		$result['image_sizes_converted'] = $image_statistics['image_sizes_converted'];
 		$result['image_sizes_optimized'] = $image_statistics['image_sizes_compressed'];
 
 		$result['initial_total_size'] = size_format(
