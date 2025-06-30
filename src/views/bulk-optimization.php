@@ -117,7 +117,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											if ( 0 == sizeof( $active_tinify_sizes ) ) {
 												esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 											} else {
-												esc_html_e( 'These sizes are currently activated for compression:', 'tiny-compress-images' );
+												esc_html_e( 'These sizes are currently activated for optimization:', 'tiny-compress-images' );
 												echo '<ul>';
 												for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
 													$name = $active_tinify_sizes[ $i ];
@@ -135,7 +135,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
 											<?php
 											/* translators: %d: number of sizes to be compressed */
-											printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
+											printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is optimized.', 'For each uploaded image <strong>%d sizes</strong> are optimized.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
 												'strong' => array(),
 											) ), count( $active_tinify_sizes ) ) ?>
 										<?php } ?>
