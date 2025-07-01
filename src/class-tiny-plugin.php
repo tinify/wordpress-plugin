@@ -716,4 +716,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
 	}
+
+	static function request_review() {
+		$review_url = 'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
+		$review_block = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
+		$review_block .= ' ';
+		$review_block .= sprintf(
+			'<a href="%s" target="_blank">%s</a>',
+			esc_url( $review_url ),
+			esc_html__( 'Write a review', 'tiny-compress-images' )
+		);
+		return $review_block;
+	}
 }

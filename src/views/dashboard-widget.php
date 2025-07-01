@@ -1,5 +1,6 @@
-<?php $link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" . esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>'; ?>
-
+<?php
+$link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" . esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>';
+?>
 <style type="text/css" >
 div#tinypng_dashboard_widget div.description {
 	display: none;
@@ -58,6 +59,8 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 		<?php
 		/* translators: %s: friendly user name */
 		printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
+		echo ' ';
+		echo Tiny_Plugin::request_review();
 		?>
 	</p>
 </div>
