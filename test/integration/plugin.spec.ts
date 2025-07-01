@@ -17,6 +17,6 @@ test.describe('plugin', () => {
   });
 
   test('includes bulk optimization link', async () => {
-    await expect(page.locator('#the-list').getByRole('link', { name: 'Bulk Optimization' })).toBeVisible();
+    await expect(page.locator('#the-list').getByRole('link', { name: 'Bulk TinyPNG' })).toBeVisible();
   });
 });
