@@ -247,6 +247,10 @@ div.tiny-bulk-optimization div.optimize div.optimization-buttons input.button-he
 	box-shadow: 0 3px 0 #920011 inset !important;
 }
 
+div.tiny-bulk-optimization div.optimize div.optimization-buttons p.optimization-buttons_notice {
+	max-width: 420px;
+	margin: 10px auto 0 auto;
+}
 div.tiny-bulk-optimization div.optimize div#optimization-spinner {
 	position: absolute;
 	display: none;

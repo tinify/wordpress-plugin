@@ -18,7 +18,7 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION = '3.5.1';
+	const VERSION = '3.5.2';
 	const MEDIA_COLUMN = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
@@ -162,7 +162,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function admin_menu() {
 		add_media_page(
 			__( 'Bulk Optimization', 'tiny-compress-images' ),
-			esc_html__( 'Bulk Optimization', 'tiny-compress-images' ),
+			esc_html__( 'Bulk TinyPNG', 'tiny-compress-images' ),
 			'upload_files',
 			'tiny-bulk-optimization',
 			$this->get_method( 'render_bulk_optimization_page' )
@@ -177,7 +177,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			),
 			'bulk' => sprintf(
 				'<a href="upload.php?page=tiny-bulk-optimization">%s</a>',
-				esc_html__( 'Bulk Optimization', 'tiny-compress-images' )
+				esc_html__( 'Bulk TinyPNG', 'tiny-compress-images' )
 			),
 		);
 		return array_merge( $additional, $current_links );
@@ -745,5 +745,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
+	}
+	
+	static function request_review() {
+		$review_url = 'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
+		$review_block = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
+		$review_block .= ' ';
+		$review_block .= sprintf(
+			'<a href="%s" target="_blank">%s</a>',
+			esc_url( $review_url ),
+			esc_html__( 'Write a review', 'tiny-compress-images' )
+		);
+		return $review_block;
 	}
 }

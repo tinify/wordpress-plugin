@@ -133,7 +133,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		add_options_page(
 			__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
-			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
+			esc_html__( 'TinyPNG', 'tiny-compress-images' ),
 			'manage_options',
 			'tinify',
 			array( $this, 'add_options_to_page' )
