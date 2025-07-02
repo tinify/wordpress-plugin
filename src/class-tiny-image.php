@@ -181,8 +181,15 @@ class Tiny_Image {
 
 		$compressor = $this->settings->get_compressor();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-		$filter_on = $this->settings->get_conversion_enabled() ? 'unconverted' : 'uncompressed';
-		$unprocessed_sizes = $this->filter_image_sizes( $filter_on, $active_tinify_sizes );
+		
+		if ( $this->settings->get_conversion_enabled() ) {
+			$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+			$unconverted_sizes = $this->filter_image_sizes( 'unconverted', $active_tinify_sizes );
+			
+			$unprocessed_sizes = $uncompressed_sizes + $unconverted_sizes;
+		} else {
+			$unprocessed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+		}
 
 		foreach ( $unprocessed_sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {

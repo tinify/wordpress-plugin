@@ -170,4 +170,28 @@ class Tiny_Image_Test extends Tiny_TestCase {
 
 		$this->assertEquals(array('updated_tiny_postmeta'), $do_action_calls);
 	}
+
+	/**
+	 * When an image is already compressed, we still need to be able to convert it
+	 * In case a customer has already compressed a couple of images and then turns
+	 * on the conversion feature.
+	 */
+public function test_compressed_images_can_be_converted() {
+		// Enable conversion and all image sizes
+		$this->wp->addOption('tinypng_conversion_enabled', true);
+		$this->wp->addOption('tinypng_convert_to', 'smallest');
+		
+		$settings = new Tiny_Settings();
+		$this->subject = new Tiny_Image($settings, 1, $this->json('_wp_attachment_metadata'));
+
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		
+		$uncompressed_sizes = $this->subject->filter_image_sizes('uncompressed', $active_tinify_sizes);
+		$unconverted_sizes = $this->subject->filter_image_sizes('unconverted', $active_tinify_sizes);
+		$unprocessed_sizes = $uncompressed_sizes + $unconverted_sizes;
+
+		$this->assertCount(1, $uncompressed_sizes, 'should be 1 size compressed');
+		$this->assertCount(4, $unconverted_sizes, 'All 4 sizes should be converted');
+		$this->assertCount(4, $unprocessed_sizes, 'All sizes should be processed');
+	}
 }
