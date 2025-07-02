@@ -10,18 +10,27 @@ export async function uploadMedia(page: Page, file: string) {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await page.locator('#html-upload').click();
+  await page.goto('/wp-admin/upload.php?mode=list');
+
+  const row = await page.locator('table.wp-list-table tbody > tr').first();
+  if (!row) {
+    throw Error('Could not find recently uploaded file');
+  }
+
+  const rowID = await row.getAttribute('id');
+  const attachmentID = rowID?.split('-')[1];
+  await page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`);
+
+  const imageURL = await page.locator('input[name="attachment_url"]').inputValue();
+  return imageURL;
 }
 
 export async function clearMediaLibrary(page: Page) {
-  await page.goto('/wp-admin/upload.php?mode=list');
-  const hasNoFiles = await page.getByText('No media').isVisible();
-  if (hasNoFiles) {
-    return;
-  }
-  await page.locator('#cb-select-all-1').check({ force: true });
-  await page.locator('#bulk-action-selector-top').selectOption('delete');
-  page.once('dialog', (dialog) => dialog.accept());
-  await page.locator('#doaction').click();
+  await page.request.post('/wp-admin/admin-ajax.php', {
+    form: {
+      action: 'clear_media_library',
+    },
+  });
 }
 
 export async function setAPIKey(page: Page, key = '') {
@@ -191,4 +200,67 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
   }
 
   await plugin.getByLabel('Deactivate').click();
+}
+
+export async function setConversionSettings(page: Page, settings: { convert: boolean; output?: 'smallest' | 'webp' | 'avif' }) {
+  await page.goto('/wp-admin/options-general.php?page=tinify');
+
+  if (settings.convert) {
+    await page.locator('#tinypng_conversion_convert').check();
+
+    switch (settings.output) {
+      case 'webp':
+        await page.locator('#tinypng_convert_convert_to_webp').check();
+        break;
+      case 'avif':
+        await page.locator('#tinypng_convert_convert_to_avif').check();
+        break;
+      case 'smallest':
+      default:
+        await page.locator('#tinypng_convert_convert_to_smallest').check();
+    }
+  } else {
+    await page.locator('#tinypng_conversion_convert').uncheck();
+  }
+
+  await page.locator('#submit').click();
+}
+
+interface NewPostOptions {
+  title?: string;
+  content: string;
+  excerpt?: string;
+}
+export async function newPost(page: Page, options: NewPostOptions, WPVersion: number): Promise<string> {
+  const query = new URLSearchParams();
+  const { title, content, excerpt } = options;
+
+  if (title) {
+    query.set('post_title', title);
+  }
+  if (excerpt) {
+    query.set('excerpt', excerpt);
+  }
+
+  await page.goto('/wp-admin/post-new.php?' + query.toString() + '#content-html');
+  if (WPVersion > 5) {
+    const welcomeGuideExists = await page.getByLabel('Close', { exact: true }).isVisible();
+    if (welcomeGuideExists) {
+      await page.getByLabel('Close', { exact: true }).click();
+    }
+    await page.evaluate((contentHtml) => {
+      wp.data.dispatch('core/editor').resetBlocks([]);
+      wp.data.dispatch('core/editor').insertBlocks(wp.blocks.parse(contentHtml));
+    }, content);
+    await page.getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByLabel('Editor publish').getByRole('link', { name: 'View Post' }).click();
+  } else {
+    await page.locator('#content-html').click();
+    await page.locator('#content').fill(content);
+    await page.locator('#publish').click();
+    await page.getByRole('link', { name: 'View Post' }).first().click();
+  }
+
+  return page.url();
 }

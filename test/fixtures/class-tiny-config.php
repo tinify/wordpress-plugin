@@ -33,3 +33,21 @@ add_filter('as3cf_aws_s3_url_domain', function ($domain, $bucket, $region, $expi
 	// Replace any AWS domain with LocalStack
 	return AWS_ENDPOINT . '/' . $bucket;
 }, 10, 5);
+
+// ajax hook to delete all attachments as doing it via UI is flaky
+add_action( 'wp_ajax_clear_media_library', 'clear_media_library' );
+function clear_media_library() {
+	$attachments = get_posts( array(
+		'post_type'      => 'attachment',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+	) );
+
+	foreach ( $attachments as $id ) {
+		wp_delete_attachment( $id, true );
+	}
+
+	wp_send_json_success( array(
+		'deleted' => count( $attachments ),
+	) );
+}

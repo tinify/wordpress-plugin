@@ -114,9 +114,11 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$this->assertEquals( array(
 			'initial_total_size' => 360542,
-			'optimized_total_size' => 328670,
-			'image_sizes_optimized' => 3,
-			'available_unoptimized_sizes' => 1,
+			'compressed_total_size' => 328670,
+			'image_sizes_compressed' => 3,
+			'available_uncompressed_sizes' => 1,
+			'image_sizes_converted' => 0,
+			'available_unconverted_sizes' => 4
 		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
 	}
 
@@ -125,7 +127,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 		$this->wp->createImage( 37857, '2015/09', 'tinypng_gravatar-150x150.png' );
 		$statistics = $this->subject->get_statistics( $active_sizes, $active_tinify_sizes );
-		$this->assertEquals( 2, $statistics['available_unoptimized_sizes'] );
+		$this->assertEquals( 2, $statistics['available_uncompressed_sizes'] );
 	}
 
 	public function test_get_savings() {
@@ -167,5 +169,29 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		}
 
 		$this->assertEquals(array('updated_tiny_postmeta'), $do_action_calls);
+	}
+
+	/**
+	 * When an image is already compressed, we still need to be able to convert it
+	 * In case a customer has already compressed a couple of images and then turns
+	 * on the conversion feature.
+	 */
+public function test_compressed_images_can_be_converted() {
+		// Enable conversion and all image sizes
+		$this->wp->addOption('tinypng_conversion_enabled', true);
+		$this->wp->addOption('tinypng_convert_to', 'smallest');
+		
+		$settings = new Tiny_Settings();
+		$this->subject = new Tiny_Image($settings, 1, $this->json('_wp_attachment_metadata'));
+
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		
+		$uncompressed_sizes = $this->subject->filter_image_sizes('uncompressed', $active_tinify_sizes);
+		$unconverted_sizes = $this->subject->filter_image_sizes('unconverted', $active_tinify_sizes);
+		$unprocessed_sizes = $uncompressed_sizes + $unconverted_sizes;
+
+		$this->assertCount(1, $uncompressed_sizes, 'should be 1 size compressed');
+		$this->assertCount(4, $unconverted_sizes, 'All 4 sizes should be converted');
+		$this->assertCount(4, $unprocessed_sizes, 'All sizes should be processed');
 	}
 }

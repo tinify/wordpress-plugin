@@ -70,7 +70,7 @@
 
   function renderContent(percentage, stats, savingsPercentage) {
     renderPercentage(savingsPercentage);
-    if ( 0 === stats['uploaded-images'] + stats['available-unoptimised-sizes'] ) {
+    if ( 0 === stats['uploaded-images'] + stats['available-unoptimized-sizes'] ) {
       jQuery('#tinypng_dashboard_widget').addClass('no-images-uploaded');
     } else if ( percentage === 0 ) {
        jQuery('#tinypng_dashboard_widget').addClass('not-optimized');
@@ -78,7 +78,7 @@
       jQuery('#tinypng_dashboard_widget').addClass('full-optimized');
     } else {
       jQuery('#uploaded-images').html( stats['uploaded-images'] );
-      jQuery('#unoptimised-sizes').html( stats['available-unoptimised-sizes'] );
+      jQuery('#unoptimized-sizes').html( stats['available-unoptimized-sizes'] );
       jQuery('#tinypng_dashboard_widget').addClass('half-optimized');
     }
     jQuery('#ie8-compressed').find('span').html(savingsPercentage);
@@ -96,7 +96,7 @@
 
   function optimizedPercentage(stats) {
     if ( 0 !== stats['unoptimized-library-size'] ) {
-      return Math.round((stats['optimized-image-sizes'] / (stats['optimized-image-sizes'] + stats['available-unoptimised-sizes']) * 100), 0);
+      return Math.round((stats['optimized-image-sizes'] / (stats['optimized-image-sizes'] + stats['available-unoptimized-sizes']) * 100), 0);
     } else {
       return 0;
     }

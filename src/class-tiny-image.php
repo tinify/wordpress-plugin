@@ -181,16 +181,30 @@ class Tiny_Image {
 
 		$compressor = $this->settings->get_compressor();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-		$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 
-		foreach ( $uncompressed_sizes as $size_name => $size ) {
+		if ( $this->settings->get_conversion_enabled() ) {
+			$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+			$unconverted_sizes = $this->filter_image_sizes( 'unconverted', $active_tinify_sizes );
+
+			$unprocessed_sizes = $uncompressed_sizes + $unconverted_sizes;
+		} else {
+			$unprocessed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+		}
+
+		foreach ( $unprocessed_sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
 				$resize = $this->settings->get_resize_options( $size_name );
 				$preserve = $this->settings->get_preserve_options( $size_name );
+				$convert_opts = $this->settings->get_conversion_options();
 				try {
-					$response = $compressor->compress_file( $size->filename, $resize, $preserve );
+					$response = $compressor->compress_file(
+						$size->filename,
+						$resize,
+						$preserve,
+						$convert_opts
+					);
 					$size->add_tiny_meta( $response );
 					$success++;
 				} catch ( Tiny_Exception $e ) {
@@ -214,6 +228,13 @@ class Tiny_Image {
 		);
 	}
 
+	public function delete_converted_image() {
+		$sizes = $this->get_image_sizes();
+		foreach ( $sizes as $size ) {
+			$size->delete_converted_image_size();
+		}
+	}
+
 	public function compress_retina( $size_name, $path ) {
 		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
@@ -229,9 +250,10 @@ class Tiny_Image {
 			$this->update_tiny_post_meta();
 			$compressor = $this->settings->get_compressor();
 			$preserve = $this->settings->get_preserve_options( $size_name );
+			$conversion = $this->settings->get_conversion_options();
 
 			try {
-				$response = $compressor->compress_file( $path, false, $preserve );
+				$response = $compressor->compress_file( $path, false, $preserve, $conversion );
 				$size->add_tiny_meta( $response );
 			} catch ( Tiny_Exception $e ) {
 				$size->add_tiny_meta_error( $e );
@@ -367,7 +389,7 @@ class Tiny_Image {
 
 	public function get_savings( $stats ) {
 		$before = $stats['initial_total_size'];
-		$after = $stats['optimized_total_size'];
+		$after = $stats['compressed_total_size'];
 		if ( 0 === $before ) {
 			$savings = 0;
 		} else {
@@ -383,38 +405,53 @@ class Tiny_Image {
 		}
 
 		$this->statistics['initial_total_size'] = 0;
-		$this->statistics['optimized_total_size'] = 0;
-		$this->statistics['image_sizes_optimized'] = 0;
-		$this->statistics['available_unoptimized_sizes'] = 0;
+		$this->statistics['compressed_total_size'] = 0;
+		$this->statistics['image_sizes_compressed'] = 0;
+		$this->statistics['available_uncompressed_sizes'] = 0;
+		$this->statistics['image_sizes_converted'] = 0;
+		$this->statistics['available_unconverted_sizes'] = 0;
 
 		foreach ( $this->sizes as $size_name => $size ) {
-			if ( ! $size->is_duplicate() ) {
-				if ( array_key_exists( $size_name, $active_sizes ) ) {
-					if ( isset( $size->meta['input'] ) ) {
-						$input = $size->meta['input'];
-						$this->statistics['initial_total_size'] += intval( $input['size'] );
-						if ( isset( $size->meta['output'] ) ) {
-							$output = $size->meta['output'];
-							if ( $size->modified() ) {
-								$this->statistics['optimized_total_size'] += $size->filesize();
-								if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-									$this->statistics['available_unoptimized_sizes'] += 1;
-								}
-							} else {
-								$this->statistics['optimized_total_size']
-									+= intval( $output['size'] );
-								$this->statistics['image_sizes_optimized'] += 1;
-							}
-						} else {
-							$this->statistics['optimized_total_size'] += intval( $input['size'] );
+			// skip duplicates or inactive sizes
+			if ( $size->is_duplicate() || ! isset( $active_sizes[ $size_name ] ) ) {
+				continue;
+			}
+
+			$file_size       = $size->filesize();
+			$is_active_size  = in_array( $size_name, $active_tinify_sizes, true );
+
+			if ( isset( $size->meta['input'] ) ) {
+				$input_size = (int) $size->meta['input']['size'];
+				$this->statistics['initial_total_size'] += $input_size;
+
+				if ( isset( $size->meta['output'] ) ) {
+					$output_size = (int) $size->meta['output']['size'];
+
+					if ( $size->modified() ) {
+						$this->statistics['compressed_total_size'] += $file_size;
+						if ( $is_active_size ) {
+							$this->statistics['available_uncompressed_sizes']++;
 						}
-					} elseif ( $size->exists() ) {
-						$this->statistics['initial_total_size'] += $size->filesize();
-						$this->statistics['optimized_total_size'] += $size->filesize();
-						if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
-							$this->statistics['available_unoptimized_sizes'] += 1;
-						}
+					} else {
+						$this->statistics['compressed_total_size'] += $output_size;
+						$this->statistics['image_sizes_compressed']++;
 					}
+				} else {
+					$this->statistics['compressed_total_size'] += $input_size;
+				}
+			} elseif ( $size->exists() ) {
+				$this->statistics['initial_total_size']   += $file_size;
+				$this->statistics['compressed_total_size'] += $file_size;
+				if ( $is_active_size ) {
+					$this->statistics['available_uncompressed_sizes']++;
+				}
+			}
+
+			if ( $is_active_size ) {
+				if ( $size->has_been_converted() ) {
+					$this->statistics['image_sizes_converted']++;
+				} else {
+					$this->statistics['available_unconverted_sizes']++;
 				}
 			}
 		}// End foreach().
@@ -422,11 +459,16 @@ class Tiny_Image {
 		return $this->statistics;
 	}
 
+
 	public static function is_original( $size ) {
 		return self::ORIGINAL === $size;
 	}
 
 	public static function is_retina( $size ) {
 		return strrpos( $size, 'wr2x' ) === strlen( $size ) - strlen( 'wr2x' );
+	}
+
+	public function can_be_converted() {
+		return $this->settings->get_conversion_enabled() && $this->file_type_allowed();
 	}
 }

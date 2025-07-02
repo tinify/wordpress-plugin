@@ -70,6 +70,7 @@ class WordPressStubs {
 		$this->addMethod( 'get_post_mime_type' );
 		$this->addMethod( 'get_plugin_data' );
 		$this->addMethod( 'wp_upload_dir' );
+		$this->addMethod( 'get_site_url' );
 		$this->addMethod( 'plugin_basename' );
 		$this->addMethod( 'is_multisite' );
 		$this->addMethod( 'current_user_can' );
