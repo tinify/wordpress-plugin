@@ -132,7 +132,10 @@ class Tiny_Bulk_Optimization {
 			$stats['optimized-library-size'] += $image_stats['compressed_total_size'];
 			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
 
-			if ( $image_stats['available_uncompressed_sizes'] > 0 || $image_stats['available_unconverted_sizes'] > 0 ) {
+			$has_conversions = $image_stats['available_unconverted_sizes'] > 0;
+			$has_compressions = $image_stats['available_uncompressed_sizes'] > 0;
+			$has_optimizations = $has_compressions || ($conversion_enabled && $has_conversions);
+			if ( $has_optimizations ) {
 				$stats['available-for-optimization'][] = array(
 					'ID' => $result[ $i ]['ID'],
 					'post_title' => $result[ $i ]['post_title'],
