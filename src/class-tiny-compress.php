@@ -41,10 +41,10 @@ abstract class Tiny_Compress {
 	}
 
 	/* Based on pricing April 2016. */
-	public static function estimate_cost( $compressions, $usage ) {
+	public static function estimate_cost( $compressions, $compressions_used ) {
 		return round(
-			self::compression_cost( $compressions + $usage ) -
-				self::compression_cost( $usage ),
+			self::compression_cost( $compressions + $compressions_used ) -
+				self::compression_cost( $compressions_used ),
 			2
 		);
 	}
