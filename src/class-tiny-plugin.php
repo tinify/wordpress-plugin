@@ -637,12 +637,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 	}
 
-	public function get_estimated_bulk_cost($available_unoptimized_sizes) {
+	public function get_estimated_bulk_cost( $available_unoptimized_sizes ) {
 		$compressions = $available_unoptimized_sizes;
 		if ( $this->settings->get_conversion_enabled() ) {
 			$compressions *= 2;
 		}
-		
+
 		return Tiny_Compress::estimate_cost(
 			$compressions,
 			$this->settings->get_compression_count()
@@ -651,8 +651,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_bulk_optimization_page() {
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		
-		$estimated_costs = $this->get_estimated_bulk_cost($stats['available-unoptimized-sizes']);
+
+		$estimated_costs = $this->get_estimated_bulk_cost( $stats['available-unoptimized-sizes'] );
 		$admin_colors = self::retrieve_admin_colors();
 
 		/* This makes sure that up to date information is retrieved from the API. */
