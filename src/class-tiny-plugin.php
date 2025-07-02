@@ -40,10 +40,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
-
-		if ( $this->settings->get_conversion_enabled() ) {
-			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
-		}
 	}
 
 	public function set_compressor( $compressor ) {
@@ -69,6 +65,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
+
+		if ( $this->settings->get_conversion_enabled() ) {
+			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
+		}
 	}
 
 	public function ajax_init() {
@@ -637,18 +637,22 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 	}
 
-	public function render_bulk_optimization_page() {
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$images_to_convert = $stats['available-unoptimized-sizes'];
-
-		$conversion_enabled = $this->settings->get_conversion_enabled();
-		if ( $conversion_enabled ) {
-			$images_to_convert *= 2;
+	public function get_estimated_bulk_cost($available_unoptimized_sizes) {
+		$compressions = $available_unoptimized_sizes;
+		if ( $this->settings->get_conversion_enabled() ) {
+			$compressions *= 2;
 		}
-		$estimated_costs = Tiny_Compress::estimate_cost(
-			$images_to_convert,
+		
+		return Tiny_Compress::estimate_cost(
+			$compressions,
 			$this->settings->get_compression_count()
 		);
+	}
+
+	public function render_bulk_optimization_page() {
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		
+		$estimated_costs = $this->get_estimated_bulk_cost($stats['available-unoptimized-sizes']);
 		$admin_colors = self::retrieve_admin_colors();
 
 		/* This makes sure that up to date information is retrieved from the API. */
