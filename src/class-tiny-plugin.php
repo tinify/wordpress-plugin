@@ -63,6 +63,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
+
+		new Tiny_CLI( $this->settings );
 	}
 
 	public function ajax_init() {
