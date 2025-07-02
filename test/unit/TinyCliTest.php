@@ -46,4 +46,13 @@ class Tiny_Cli_Test extends Tiny_TestCase {
 		
 		$this->assertFalse($cli_init_found, 'No cli_init hooks should be registered when WP_CLI is not available');
 	}
+
+	public function test_will_compress_attachments_given_in_params() {
+		$command = new Tiny_Command();
+		$command->optimize(array(), array(
+			"attachments" => array(4030),
+		));
+
+		
+	}
 }

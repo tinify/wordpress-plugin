@@ -20,16 +20,9 @@
 
 class Tiny_Cli
 {
-	/**
-	 * Tiny_Plugin $settings
-	 *
-	 * @var Tiny_Settings
-	 */
-	private $tiny_settings;
 
-	public function __construct($settings)
+	public function __construct()
 	{
-		$this->tiny_settings = $settings;
 
 		// Only add CLI hooks when WP-CLI is available
 		if (defined('WP_CLI') && WP_CLI) {
@@ -38,23 +31,13 @@ class Tiny_Cli
 	}
 
 	public function register_command() {
-		$command_instance = new Tiny_Command( $this->tiny_settings );
+		$command_instance = new Tiny_Command();
 		WP_CLI::add_command('tiny', $command_instance);
 	}
 }
 
 class Tiny_Command
 {
-	/**
-	 * Tiny_Plugin $settings
-	 *
-	 * @var Tiny_Settings
-	 */
-	private $tiny_settings;
-
-	public function __construct( $settings ) {
-		$tiny_settings = $settings;
-	}
 
 	/**
 	 * Optimize will process images
@@ -79,11 +62,6 @@ class Tiny_Command
 	 */
 	public function optimize($args, $assoc_args)
 	{
-		if (! $this->tiny_settings) {
-			WP_CLI::error('TinyPNG settings not available.');
-			return;
-		}
-
 		$attachments = isset($assoc_args['attachments']) ? array_map('trim', explode(',', $assoc_args['attachments'])) : array();
 
 		if (empty($attachments)) {
