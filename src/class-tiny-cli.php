@@ -18,18 +18,8 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Cli {
-
-	public function __construct( $settings ) {
-
-		// Only add CLI hooks when WP-CLI is available
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			add_action( 'cli_init', Tiny_Cli_Commands::register( $settings ) );
-		}
-	}
-}
-
-class Tiny_Cli_Commands {
+class Tiny_Cli
+{
 	/**
 	 * Tiny_Plugin $settings
 	 *
@@ -37,10 +27,33 @@ class Tiny_Cli_Commands {
 	 */
 	private $tiny_settings;
 
-	public static function register( $settings ) {
-		$tiny_settings = $settings;
+	public function __construct($settings)
+	{
+		$this->tiny_settings = $settings;
 
-		WP_CLI::add_command( 'tiny', self::class );
+		// Only add CLI hooks when WP-CLI is available
+		if (defined('WP_CLI') && WP_CLI) {
+			add_action('cli_init', array($this, 'register_command'));
+		}
+	}
+
+	public function register_command() {
+		$command_instance = new Tiny_Command( $this->tiny_settings );
+		WP_CLI::add_command('tiny', $command_instance);
+	}
+}
+
+class Tiny_Command
+{
+	/**
+	 * Tiny_Plugin $settings
+	 *
+	 * @var Tiny_Settings
+	 */
+	private $tiny_settings;
+
+	public function __construct( $settings ) {
+		$tiny_settings = $settings;
 	}
 
 	/**
@@ -64,11 +77,99 @@ class Tiny_Cli_Commands {
 	 * @param array $assoc_args
 	 * @return void
 	 */
-	public function optimize( $args, $assoc_args ) {
+	public function optimize($args, $assoc_args)
+	{
+		if (! $this->tiny_settings) {
+			WP_CLI::error('TinyPNG settings not available.');
+			return;
+		}
 
+		$attachments = isset($assoc_args['attachments']) ? array_map('trim', explode(',', $assoc_args['attachments'])) : array();
+
+		if (empty($attachments)) {
+			$attachments = $this->get_unoptimized_attachments();
+		}
+
+		if (empty($attachments)) {
+			WP_CLI::success('No images found that need optimization.');
+			return;
+		}
+
+		$total = count($attachments);
+		WP_CLI::log('Optimizing ' . $total . ' images.');
+
+		$progress = WP_CLI\Utils\make_progress_bar('Optimizing images', $total);
+		$optimized = 0;
+		foreach ($attachments as $attachment_id) {
+			$attachment_id = intval($attachment_id);
+
+			if (! $this->is_valid_attachment($attachment_id)) {
+				WP_CLI::warning('skipping - invalid attachment: ' . $attachment_id);
+				$progress->tick();
+				continue;
+			}
+
+			try {
+				$this->optimize_attachment($attachment_id);
+				$optimized++;
+			} catch (Exception $e) {
+				WP_CLI::warning('skipping - error: ' . $e->getMessage() . ' (ID: ' . $attachment_id . ')');
+			}
+
+			$progress->tick();
+		}
+
+		$progress->finish();
+		WP_CLI::success('Done! Optimized ' . $optimized . ' of ' . $total . ' images.');
 	}
 
-	private function compress_attachment( $id ) {
+	private function get_unoptimized_attachments()
+	{
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics($this->tiny_settings);
 
+		if (empty($stats['available-for-optimization'])) {
+			return array();
+		}
+
+		// PHP 5.6 compatible alternative to array_column
+		$ids = array();
+		foreach ($stats['available-for-optimization'] as $item) {
+			if (isset($item['ID'])) {
+				$ids[] = $item['ID'];
+			}
+		}
+		return $ids;
+	}
+
+	private function optimize_attachment($attachment_id)
+	{
+		$tiny_image = new Tiny_Image($this->tiny_settings, $attachment_id);
+		$tiny_image->compress();
+	}
+
+	private function is_valid_attachment($attachment_id)
+	{
+		$attachment = get_post($attachment_id);
+		if (! $attachment) {
+			return false;
+		}
+
+		if ($attachment->post_type !== 'attachment') {
+			return false;
+		}
+
+		// Check if it's an image
+		$mime_type = $attachment->post_mime_type;
+		if (! $mime_type || strpos($mime_type, 'image/') !== 0) {
+			return false;
+		}
+
+		// Check if it's a supported format
+		$supported_types = array('image/jpeg', 'image/png', 'image/webp');
+		if (! in_array($mime_type, $supported_types, true)) {
+			return false;
+		}
+
+		return true;
 	}
 }
