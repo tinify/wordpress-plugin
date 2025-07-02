@@ -746,7 +746,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
 	}
-	
+
 	static function request_review() {
 		$review_url = 'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
 		$review_block = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
