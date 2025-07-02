@@ -19,6 +19,17 @@
 */
 
 class Tiny_Cli {
+
+	public function __construct( $settings ) {
+
+		// Only add CLI hooks when WP-CLI is available
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			add_action( 'cli_init', Tiny_Cli_Commands::register( $settings ) );
+		}
+	}
+}
+
+class Tiny_Cli_Commands {
 	/**
 	 * Tiny_Plugin $settings
 	 *
@@ -26,23 +37,38 @@ class Tiny_Cli {
 	 */
 	private $tiny_settings;
 
-	public function __construct( $settings ) {
-		$this->tiny_settings = $settings;
+	public static function register( $settings ) {
+		$tiny_settings = $settings;
 
-		$this->add_hooks();
+		WP_CLI::add_command( 'tiny', self::class );
 	}
 
 	/**
-	 * Registers hooks to set up CLI support
+	 * Optimize will process images
+	 *
+	 * [--attachments=<strings>]
+	 * : A comma separated list of attachment IDs to process. If omitted
+	 * will optimize all uncompressed attachments
+	 *
+	 *
+	 * ## EXAMPLES
+	 *
+	 *      optimize specific attachments
+	 *      wp tiny optimize --attachments=532,603,705
+	 *
+	 *      optimize all unprocessed images
+	 *      wp tiny optimize
+	 *
+	 *
+	 * @param array $args
+	 * @param array $assoc_args
+	 * @return void
 	 */
-	public function add_hooks() {
-		// Only add CLI hooks when WP-CLI is available
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			add_action( 'cli_init', array( $this, 'register' ) );
-		}
+	public function optimize( $args, $assoc_args ) {
+
 	}
 
-	public function register() {
-		\WP_CLI::add_command( 'tiny', $this );
+	private function compress_attachment( $id ) {
+
 	}
 }
