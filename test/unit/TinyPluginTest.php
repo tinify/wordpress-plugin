@@ -308,7 +308,9 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$settings_prop->setValue($tiny_plugin, $mock_settings);
 
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
-		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['available-unoptimized-sizes']);
+		$this->assertEquals($stats['estimated_credit_use'], 2, 'one uncompressed image that will be converted is 2 credits');
+
+		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['estimated_credit_use']);
 
 		$this->assertEquals($cost, 0.02, 0.0001, 'a conversion will cost 2 credits at $0.009 each when 500 compressions already used');
 	}
@@ -382,8 +384,8 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 		$settings_prop->setValue($tiny_plugin, $mock_settings);
 
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
-		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['available-unoptimized-sizes']);
+		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['estimated_credit_use']);
 
-		$this->assertEquals($cost, 0.009, 0.0001, 'a compressed image that will be converted will cost 1 credit at $0.009 each when 500 compressions already used');
+		$this->assertEquals($cost, 0.01, 0.0001, 'a compressed image that will be converted will cost 1 credit at $0.009 (rounded $0.01) each when 500 compressions already used');
 	}
 }

@@ -11,7 +11,6 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 
 	public function test_get_optimization_statistics()
 	{
-		// Enable conversion for this test
 		$this->wp->addOption('tinypng_convert_format', array(
 			'convert' => 'on'
 		));
@@ -19,25 +18,26 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		// Image 1: 
 		// 4 sizes, all uncompressed and uncoverted
 		// lacking output and convert meta data
+		// should cost 3 * 2 = 6 credits
 		$wp_metadata_4350 = serialize(array(
 			'width' => 1256,
 			'height' => 1256,
-			'file' => '2015/09/tinypng_gravatar.png',
+			'file' => '2023/05/image-4350.png',
 			'sizes' => array(
 				'small' => array(
-					'file' => 'tinypng_gravatar-200x200.png',
+					'file' => 'image-4350-200x200.png',
 					'width' => 200,
 					'height' => 200,
 					'mime-type' => 'image/png'
 				),
 				'medium' => array(
-					'file' => 'tinypng_gravatar-300x300.png',
+					'file' => 'image-4350-300x300.png',
 					'width' => 300,
 					'height' => 300,
 					'mime-type' => 'image/png'
 				),
 				'thumbnail' => array(
-					'file' => 'tinypng_gravatar-150x150.png',
+					'file' => 'image-4350-150x150.png',
 					'width' => 150,
 					'height' => 150,
 					'mime-type' => 'image/png'
@@ -45,22 +45,22 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 			)
 		));
 		$virtual_image_4350 = array(
-			'path' => '2015/09',
+			'path' => '2023/05',
 			'images' => array(
 				array(
-					"file" => "tinypng_gravatar.png",
+					"file" => "image-4350.png",
 					"size" => 137856,
 				),
 				array(
-					"file" => "tinypng_gravatar-150x150.png",
+					"file" => "image-4350-150x150.png",
 					"size" => 37856,
 				),
 				array(
-					"file" => "tinypng_gravatar-200x200.png",
+					"file" => "image-4350-200x200.png",
 					"size" => 66480,
 				),
 				array(
-					"file" => "tinypng_gravatar-300x300.png",
+					"file" => "image-4350-300x300.png",
 					"size" => 57856,
 				),
 			)
@@ -68,19 +68,21 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		$this->wp->createImagesFromJSON($virtual_image_4350);
 
 		// Image 4351: has compressed but not converted
+		// has 3 sizes (0, thumb, medium)
+		// 3 * conversion only = 3 credits
 		$wp_metadata_4351 = serialize(array(
 			'width' => 800,
 			'height' => 600,
-			'file' => '2023/05/image-4350.jpg',
+			'file' => '2023/05/image-4351.jpg',
 			'sizes' => array(
 				'thumbnail' => array(
-					'file' => 'image-4350-150x150.jpg',
+					'file' => 'image-4351-150x150.jpg',
 					'width' => 150,
 					'height' => 150,
 					'mime-type' => 'image/jpeg',
 				),
 				'medium' => array(
-					'file' => 'image-4350-300x225.jpg',
+					'file' => 'image-4351-300x225.jpg',
 					'width' => 300,
 					'height' => 225,
 					'mime-type' => 'image/jpeg',
@@ -109,15 +111,15 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 			'images' => array(
 				array(
 					'size' => 137856,
-					'file' => 'image-4350.jpg',
+					'file' => 'image-4351.jpg',
 				),
 				array(
 					'size' => 37856,
-					'file' => 'image-4350-150x150.jpg',
+					'file' => 'image-4351-150x150.jpg',
 				),
 				array(
 					'size' => 47856,
-					'file' => 'image-4350-300x225.jpg',
+					'file' => 'image-4351-300x225.jpg',
 				),
 			)
 		);
@@ -182,7 +184,6 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		);
 		$this->wp->createImagesFromJSON($virtual_image_4352);
 
-
 		$wpdb_results = array(
 			array(
 				'ID' => 1,
@@ -210,8 +211,8 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 				'uploaded-images' => 3,
 				'optimized-image-sizes' => 3,
 				'available-unoptimized-sizes' => 6,
-				'optimized-library-size' => 295568,
-				'unoptimized-library-size' => 442568,
+				'optimized-library-size' => 529136,
+				'unoptimized-library-size' => 676136,
 				'available-for-optimization' => array(
 					array(
 						'ID' => 1,
@@ -222,7 +223,8 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 						'post_title' => 'I am compressed but not converted',
 					),
 				),
-				'display-percentage' => 33.2,
+				'display-percentage' => 21.7,
+				'estimated_credit_use' => 9
 			),
 			Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results)
 		);

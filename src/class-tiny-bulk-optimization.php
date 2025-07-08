@@ -30,6 +30,7 @@ class Tiny_Bulk_Optimization {
 		$stats['available-unoptimized-sizes'] = 0;
 		$stats['optimized-library-size'] = 0;
 		$stats['unoptimized-library-size'] = 0;
+		$stats['estimated_credit_use'] = 0;
 		$stats['available-for-optimization'] = array();
 
 		if ( is_null( $result ) ) {
@@ -103,7 +104,9 @@ class Tiny_Bulk_Optimization {
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
 			$wp_metadata = unserialize( (string) $result[ $i ]['meta_value'] );
-			$tiny_metadata = unserialize( (string) $result[ $i ]['tiny_meta_value'] );
+			$tiny_metadata = isset($result[ $i ]['tiny_meta_value']) ? 
+				unserialize( (string) $result[ $i ]['tiny_meta_value'] ) :
+				array();
 			if ( ! is_array( $tiny_metadata ) ) {
 				$tiny_metadata = array();
 			}
@@ -118,11 +121,13 @@ class Tiny_Bulk_Optimization {
 			$image_stats = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 
 			$stats['uploaded-images']++;
+			$stats['estimated_credit_use'] += $image_stats['available_uncompressed_sizes'];
 			if ( $conversion_enabled ) {
 				$stats['available-unoptimized-sizes'] +=
 				$image_stats['available_unconverted_sizes'];
 				$stats['optimized-image-sizes'] +=
 				$image_stats['image_sizes_converted'];
+				$stats['estimated_credit_use'] += $image_stats['available_unconverted_sizes'];
 			} else {
 				$stats['available-unoptimized-sizes'] +=
 				$image_stats['available_uncompressed_sizes'];
