@@ -263,8 +263,76 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 
 		$this->assertEquals($cost, 0.01, 0.0001, 'one compression is $0,009, rounded to 0.01', );
 	}
+	public function test_when_image_is_uncompressed_and_conversion_enabled_cost_two_credits()
+	{
 
-	public function test_get_bulk_cost_with_conversion_enabled() {
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on'
+		));
+
+		$virtual_compressed_image = array(
+			'path' => '2015/09',
+			'images' => array(
+				array(
+					"file" => "uncompressed.png",
+					"size" => 237856,
+				),
+			)
+		);
+		$this->wp->createImagesFromJSON($virtual_compressed_image);
+
+		$wpdb_results = array(
+			array(
+				'ID' => 1,
+				'post_title' => 'Uncompressed Image',
+				'meta_value' => serialize(array(
+					'width' => 1256,
+					'height' => 1256,
+					'file' => '2015/09/uncompressed.png',
+					'sizes' => array()
+				)),
+			),
+		);
+
+		// Mock settings with compression count
+		$mock_settings = $this->createMock(Tiny_Settings::class);
+		$mock_settings->method('get_conversion_enabled')->willReturn(true);
+		$mock_settings->method('get_compression_count')->willReturn(500);
+
+		$tiny_plugin = new Tiny_Plugin();
+
+		// because settings is private we need reflection
+		$ref = new \ReflectionClass($tiny_plugin);
+		$settings_prop = $ref->getProperty('settings');
+		$settings_prop->setAccessible(true);
+		$settings_prop->setValue($tiny_plugin, $mock_settings);
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
+		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['available-unoptimized-sizes']);
+
+		$this->assertEquals($cost, 0.02, 0.0001, 'a conversion will cost 2 credits at $0.009 each when 500 compressions already used');
+	}
+
+	/**
+	 * The conversion feature is new and typically costs 2 credits: 
+	 * 1 credit for compression and 1 for conversion. 
+	 * 
+	 * To compensate existing customers, we are temporarily reducing 
+	 * the conversion cost to 0 credits when using the Tinify API. 
+	 * 
+	 * As a result:
+	 * - If an image is already compressed, conversion will cost 0 credits (total: 0).
+	 * - If an image is compressed and then converted in the same request, 
+	 *   the total cost will be 1 credit (compression only).
+	 * - If an image has not been compressed yet and is converted separately,
+	 *   the total cost remains 2 credits.
+	 *
+	 * This pricing adjustment is temporary.
+	 *
+	 * @return void
+	 */
+	public function test_when_files_is_compressed_will_only_cost_1_credit() {
+
 		$this->wp->addOption('tinypng_convert_format', array(
 			'convert' => 'on'
 		));
@@ -279,7 +347,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 			)
 		);
 		$this->wp->createImagesFromJSON($virtual_compressed_image);
-		
+
 		$wpdb_results = array(
 			array(
 				'ID' => 1,
@@ -299,23 +367,23 @@ class Tiny_Plugin_Test extends Tiny_TestCase {
 				))
 			),
 		);
-		
+
 		// Mock settings with compression count
 		$mock_settings = $this->createMock(Tiny_Settings::class);
 		$mock_settings->method('get_conversion_enabled')->willReturn(true);
 		$mock_settings->method('get_compression_count')->willReturn(500);
-		
+
 		$tiny_plugin = new Tiny_Plugin();
 
 		// because settings is private we need reflection
 		$ref = new \ReflectionClass($tiny_plugin);
-        $settings_prop = $ref->getProperty('settings');
-        $settings_prop->setAccessible(true);
-        $settings_prop->setValue($tiny_plugin, $mock_settings);
+		$settings_prop = $ref->getProperty('settings');
+		$settings_prop->setAccessible(true);
+		$settings_prop->setValue($tiny_plugin, $mock_settings);
 
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
 		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['available-unoptimized-sizes']);
 
-		$this->assertEquals($cost, 0.02, 0.0001, 'one conversion costs 2 credits at $0.009 each when 500 compressions already used');
+		$this->assertEquals($cost, 0.009, 0.0001, 'a compressed image that will be converted will cost 1 credit at $0.009 each when 500 compressions already used');
 	}
 }
