@@ -104,7 +104,7 @@ class Tiny_Bulk_Optimization {
 
 		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
 			$wp_metadata = unserialize( (string) $result[ $i ]['meta_value'] );
-			$tiny_metadata = isset($result[ $i ]['tiny_meta_value']) ? 
+			$tiny_metadata = isset( $result[ $i ]['tiny_meta_value'] ) ?
 				unserialize( (string) $result[ $i ]['tiny_meta_value'] ) :
 				array();
 			if ( ! is_array( $tiny_metadata ) ) {
