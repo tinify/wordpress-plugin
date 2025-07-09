@@ -29,6 +29,7 @@ if ( ! defined( '\Tinify\VERSION' ) ) {
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
+
 	private $last_error_code = 0;
 	private $last_message = '';
 	private $proxy;
@@ -72,7 +73,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$this->set_request_options( \Tinify\Tinify::getClient( \Tinify\Tinify::ANONYMOUS ) );
 			\Tinify\Tinify::getClient()->request( 'get', '/keys/' . $this->get_key() );
 			return true;
-
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
@@ -88,7 +88,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
@@ -103,25 +103,39 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				$source = $source->preserve( $preserve_opts );
 			}
 
-			$result = $source->result();
-
+			$compress_result = $source->result();
 			$meta = array(
 				'input' => array(
 					'size' => strlen( $input ),
-					'type' => $result->mediaType(),
+					'type' => Tiny_Helpers::get_mimetype( $input ),
 				),
 				'output' => array(
-					'size' => $result->size(),
-					'type' => $result->mediaType(),
-					'width' => $result->width(),
-					'height' => $result->height(),
-					'ratio' => round( $result->size() / strlen( $input ), 4 ),
+					'size' => $compress_result->size(),
+					'type' => $compress_result->mediaType(),
+					'width' => $compress_result->width(),
+					'height' => $compress_result->height(),
+					'ratio' => round( $compress_result->size() / strlen( $input ), 4 ),
 				),
 			);
 
-			$buffer = $result->toBuffer();
-			return array( $buffer, $meta );
+			$buffer = $compress_result->toBuffer();
+			$result = array( $buffer, $meta, null );
 
+			if ( isset( $convert_opts['convert'] ) && true == $convert_opts['convert'] ) {
+				$convert_to = $convert_opts['convert_to'];
+				$convert_source = $source->convert( array(
+					'type' => $convert_to,
+				) );
+				$convert_result = $convert_source->result();
+				$meta['convert'] = array(
+					'type' => $convert_result->mediaType(),
+					'size' => $convert_result->size(),
+				);
+				$convert_buffer = $convert_result->toBuffer();
+				$result = array( $buffer, $meta, $convert_buffer );
+			}
+
+			return $result;
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
@@ -130,7 +144,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				get_class( $err ),
 				$err->status
 			);
-		}// End try().
+		} // End try().
 	}
 
 	public function create_key( $email, $options ) {

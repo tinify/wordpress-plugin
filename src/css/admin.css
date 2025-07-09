@@ -35,7 +35,7 @@ div.tiny-account-status p {
 	margin-bottom: 8px;
 }
 
-div.tiny-account-status button + p {
+div.tiny-account-status button+p {
 	margin-top: 8px;
 }
 
@@ -62,7 +62,7 @@ div.tiny-account-status p.status a {
 
 div.tiny-account-status p.status span {
 	position: relative;
-  margin-right: 30px;
+	margin-right: 30px;
 }
 
 div.tiny-account-status p.status span:after {
@@ -91,11 +91,12 @@ div.tiny-account-status div.status-loading:before {
 	content: "";
 }
 
-div.tiny-account-status div.status-loading  p {
+div.tiny-account-status div.status-loading p {
 	margin-bottom: 10px;
 }
 
-@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-webkit-min-device-pixel-ratio: 1.25),
+(min-resolution: 120dpi) {
 	div.tiny-account-status div.status-loading:before {
 		background-image: url("../images/spinner-2x.gif");
 	}
@@ -130,7 +131,7 @@ div.tiny-account-status div.status-pending p.status span:after {
 }
 
 div.tiny-account-status div.status-pending p.status span {
-  margin-right: 38px;
+	margin-right: 38px;
 }
 
 div.tiny-account-status div.failure input {
@@ -226,7 +227,9 @@ div.tiny-account-status.wide div.update button.loading {
 	background-repeat: no-repeat !important;
 }
 
-@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+@media (-webkit-min-device-pixel-ratio: 1.25),
+(min-resolution: 120dpi) {
+
 	div.tiny-account-status.wide div.create button.loading,
 	div.tiny-account-status.wide div.update button.loading {
 		background-image: url("../images/button-spinner-2x.gif") !important;
@@ -253,7 +256,8 @@ table.tinify-settings p.intro {
 	color: #777777;
 }
 
-table.tinify-settings div.sizes {
+table.tinify-settings div.sizes,
+table.tinify-settings div.conversion-options {
 	margin: 20px 0 5px;
 }
 
@@ -266,12 +270,13 @@ div.optimization-options {
 	margin-top: 20px;
 }
 
-p.tiny-radio  {
+p.tiny-radio {
 	margin-right: 12px;
 }
 
-p.tiny-radio span.description {
-	display: inline-block;
+p.tiny-radio span.description,
+p.tiny-check span.description {
+	display: block;
 }
 
 @media only screen and (max-width: 782px) {
@@ -285,11 +290,8 @@ p.tiny-radio.disabled span.description {
 	opacity: 0.5;
 }
 
-p.tiny-radio label {
-	font-weight: bold;
-}
-
-p.tiny-radio span {
+p.tiny-radio span,
+p.tiny-check span.description {
 	margin-left: 28px;
 	color: #777777;
 	line-height: 30px;
@@ -445,4 +447,26 @@ input[type=number][name*="tinypng_resize_original"] {
 
 .tiny-compress-images h4 {
 	margin: 5px 0;
+}
+
+fieldset.tinypng_convert_fields {
+	margin: 18px 28px;
+}
+
+fieldset.tinypng_convert_fields p {
+	display: flex;
+}
+
+fieldset.tinypng_convert_fields p input[type=radio] {
+	margin-top: 2px;
+}
+
+fieldset.tinypng_convert_fields label span {
+	display: flex;
+	margin-left: 0;
+	margin-top: 2px;
+	line-height: 1.5;
+}
+fieldset.tinypng_convert_fields[disabled] {
+	opacity: 0.6;
 }

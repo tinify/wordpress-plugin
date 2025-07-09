@@ -13,3 +13,4 @@ node_modules/
 /playwright/.cache/
 test/integration/.auth/user.json
 artifacts/
+.phpunit.result.cache
