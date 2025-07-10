@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 4.0
 Tested up to: 6.8
-Stable tag: 3.5.2
+Stable tag: 3.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,14 @@ A: Yes! After installing the plugin, go to *Media > Bulk TinyPNG*, and click on 
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 == Changelog ==
+= 3.6.0 =
+* Added a link to leave a review in the bulk and settings page
+* Renamed menu title for bulk to "Bulk TinyPNG"
+* Renamed menu title for settings to "TinyPNG"
+* Resolved warning when library was empty
+* Resolved warning when resize options was empty
+* New feature to enable converting images to WebP or AVIF
+
 = 3.5.2 =
 * Removed devdependencies and test files from plug-in
 * Fixed a warning when library contained no images
