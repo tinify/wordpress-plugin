@@ -660,9 +660,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong ); // WPCS: Needed for proper translation.
 		echo '</span>';
 		echo '<div class="tiny-resize-inputs">';
-		printf( '%s: ', esc_html__( 'Max Width' ) );
+		printf( '%s: ', esc_html__( 'Max Width', 'tiny-compress-images' ) );
 		$this->render_resize_input( 'width' );
-		printf( '%s: ', esc_html__( 'Max Height' ) );
+		printf( '%s: ', esc_html__( 'Max Height', 'tiny-compress-images' ) );
 		$this->render_resize_input( 'height' );
 		echo '</div></div></div>';
 

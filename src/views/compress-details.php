@@ -120,12 +120,12 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		</h3>
 		<table>
 			<tr>
-				<th><?php esc_html_e( 'Size' ) ?></th>
+				<th><?php esc_html_e( 'Size', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Compressed', 'tiny-compress-images' ) ?></th>
 				<th><?php esc_html_e( 'Format', 'tiny-compress-images' ) ?></th>
 				<?php if ( $conversion_enabled ) { ?> <th><?php esc_html_e( 'Converted', 'tiny-compress-images' ) ?></th> <?php } ?>
-				<th><?php esc_html_e( 'Date' ) ?></th>
+				<th><?php esc_html_e( 'Date', 'tiny-compress-images' ) ?></th>
 			</tr>
 			<?php
 			$i = 0;
@@ -168,7 +168,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 							echo '<td>' . $size->conversion_text() . '</td>';
 						}
 						/* translators: %s human friendly time difference */
-						echo '<td>' . sprintf( esc_html__( '%s ago' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
+						echo '<td>' . sprintf( esc_html__( '%s ago', 'tiny-compress-images' ), human_time_diff( $size->end_time( $size_name ) ) ) . '</td>';
 					} elseif ( ! $size->exists() ) {
 						echo '<td>-</td>';
 						echo '<td colspan=4><em>' . esc_html__( 'Not present', 'tiny-compress-images' ) . '</em></td>';
