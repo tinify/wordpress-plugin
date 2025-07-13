@@ -77,11 +77,11 @@
 			name="tinypng_api_key" size="35" spellcheck="false"
 			value="<?php echo esc_attr( $key ); ?>">
 		<button class="button button-primary" data-tiny-action="update-key"><?php
-			esc_html_e( 'Save' );
+			esc_html_e( 'Save', 'tiny-compress-images' );
 		?></button>
 		<p class="message"></p>
 		<p>
-			<a href="#" id="cancel-change-key"><?php esc_html_e( 'Cancel' ); ?></a>
+			<a href="#" id="cancel-change-key"><?php esc_html_e( 'Cancel', 'tiny-compress-images' ); ?></a>
 		</p>
 	</div>
 
