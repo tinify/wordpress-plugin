@@ -16,7 +16,10 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 
 	public static function register( $method, $url, $handler ) {
 		$key = self::get_key( $method, $url );
-		self::$handlers[ $key ] = $handler;
+		if ( ! isset( self::$handlers[ $key ] ) ) {
+			self::$handlers[ $key ] = array();
+		}
+		self::$handlers[$key][] = $handler;
 	}
 
 	private static function get_key( $method, $url ) {
@@ -57,8 +60,8 @@ class MockHttpStreamWrapper implements IteratorAggregate, ArrayAccess, Countable
 		$context = stream_context_get_options( $this->context );
 		$path = str_replace( 'https://api.tinify.com', '', $path );
 		$key = self::get_key( $context['http']['method'], $path );
-		if ( isset( self::$handlers[ $key ] ) ) {
-			$handler = self::$handlers[ $key ];
+		if ( isset( self::$handlers[ $key ] ) && ! empty( self::$handlers[ $key ] ) ) {
+			$handler = array_shift( self::$handlers[ $key ] );
 
 			$status = 'HTTP/1.1 ' . $handler['status'];
 			$body = isset( $handler['body'] ) ? $handler['body'] : '';

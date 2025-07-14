@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { enableCompressionSizes, setAPIKey } from './utils';
+import { enableCompressionSizes, setAPIKey, setConversionSettings } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -8,7 +8,7 @@ let page: Page;
 test.describe('settings', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
-    
+
     await setAPIKey(page, '');
 
     // Resize on background
@@ -16,6 +16,10 @@ test.describe('settings', () => {
 
     // Enable all sizes
     await enableCompressionSizes(page, [], true);
+
+    await setConversionSettings(page, {
+      convert: false,
+    });
 
     await page.locator('#submit').click();
   });
@@ -181,7 +185,7 @@ test.describe('settings', () => {
   });
 
   test('update free compressions', async () => {
-    await page.locator('#tinypng_sizes_medium').uncheck();
+    await enableCompressionSizes(page, ['0', 'thumbnail', 'large'], false);
 
     await expect(page.getByText('With these settings you can compress at least 166 images for free each month.')).toBeVisible();
   });
@@ -212,5 +216,17 @@ test.describe('settings', () => {
     await expect(page.locator('#tinypng_resize_original_enabled')).toBeChecked();
     await expect(page.locator('#tinypng_resize_original_width')).toHaveValue('234');
     await expect(page.locator('#tinypng_resize_original_height')).toHaveValue('345');
+  });
+
+  test('will not convert by default', async () => {
+    await expect(page.locator('#tinypng_conversion_convert')).not.toBeChecked();
+  });
+
+  test('will store conversion settings', async () => {
+    await setConversionSettings(page, {
+      convert: true,
+    });
+
+    await expect(page.locator('#tinypng_conversion_convert')).toBeChecked();
   });
 });

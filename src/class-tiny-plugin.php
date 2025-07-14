@@ -18,7 +18,7 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION = '3.5.2';
+	const VERSION = '3.6.0';
 	const MEDIA_COLUMN = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
@@ -60,11 +60,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			10, 2
 		);
 
+		add_action( 'delete_attachment', $this->get_method( 'clean_attachment' ), 10, 2 );
+
 		load_plugin_textdomain( self::NAME, false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
 
 		new Tiny_CLI( $this->settings );
+		
+		if ( $this->settings->get_conversion_enabled() ) {
+			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
+		}
 	}
 
 	public function ajax_init() {
@@ -231,6 +237,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'L10nCancelled' => __( 'Cancelled', 'tiny-compress-images' ),
 			'L10nCompressing' => __( 'Compressing', 'tiny-compress-images' ),
 			'L10nCompressed' => __( 'compressed', 'tiny-compress-images' ),
+			'L10nConverted' => __( 'converted', 'tiny-compress-images' ),
 			'L10nFile' => __( 'File', 'tiny-compress-images' ),
 			'L10nSizesOptimized' => __( 'Sizes optimized', 'tiny-compress-images' ),
 			'L10nInitialSize' => __( 'Initial size', 'tiny-compress-images' ),
@@ -480,7 +487,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->settings->get_sizes(),
 			$this->settings->get_active_tinify_sizes()
 		);
-		$size_before = $image_statistics_before['optimized_total_size'];
+		$size_before = $image_statistics_before['compressed_total_size'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 		$result = $tiny_image->compress();
@@ -491,18 +498,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
 		$current_library_size = intval( $_POST['current_size'] );
-		$size_after = $image_statistics['optimized_total_size'];
+		$size_after = $image_statistics['compressed_total_size'];
 		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message'] = $tiny_image->get_latest_error();
-		$result['image_sizes_optimized'] = $image_statistics['image_sizes_optimized'];
+		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
+		$result['image_sizes_converted'] = $image_statistics['image_sizes_converted'];
+		$result['image_sizes_optimized'] = $image_statistics['image_sizes_compressed'];
 
 		$result['initial_total_size'] = size_format(
 			$image_statistics['initial_total_size'], 1
 		);
 
 		$result['optimized_total_size'] = size_format(
-			$image_statistics['optimized_total_size'], 1
+			$image_statistics['compressed_total_size'], 1
 		);
 
 		$result['savings'] = $tiny_image->get_savings( $image_statistics );
@@ -630,12 +639,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 	}
 
-	public function render_bulk_optimization_page() {
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$estimated_costs = Tiny_Compress::estimate_cost(
-			$stats['available-unoptimised-sizes'],
+	public function get_estimated_bulk_cost( $estimated_credit_use ) {
+		return Tiny_Compress::estimate_cost(
+			$estimated_credit_use,
 			$this->settings->get_compression_count()
 		);
+	}
+
+	public function render_bulk_optimization_page() {
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+
+		$estimated_costs = $this->get_estimated_bulk_cost( $stats['estimated_credit_use'] );
 		$admin_colors = self::retrieve_admin_colors();
 
 		/* This makes sure that up to date information is retrieved from the API. */
@@ -717,6 +731,21 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$user = wp_get_current_user();
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
+	}
+
+	/**
+	 * Will clean up converted files (if any) when the original is deleted
+	 *
+	 * Hooked to the `delete_attachment` action.
+	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
+	 *
+	 * @param [int] $post_id
+	 *
+	 * @return void
+	 */
+	function clean_attachment( $post_id ) {
+		$tiny_image = new Tiny_Image( $this->settings, $post_id );
+		$tiny_image->delete_converted_image();
 	}
 
 	static function request_review() {

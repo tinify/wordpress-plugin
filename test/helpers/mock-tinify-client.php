@@ -1,32 +1,35 @@
 <?php
 
-class MockTinifyClient extends Tinify\Client {
+class MockTinifyClient extends Tinify\Client
+{
 	protected $handlers;
 
-	function __construct( $key = null, $appIdentifier = null ) {
-		parent::__construct( $key, $appIdentifier );
+	function __construct($key = null, $appIdentifier = null)
+	{
+		parent::__construct($key, $appIdentifier);
 		$this->handlers = array();
 	}
 
-	public function request( $method, $url, $body = null, $header = array() ) {
-		$url = str_replace( 'https://api.tinify.com', '', $url );
-		$key = $this->get_key( $method, $url );
-		if ( isset( $this->handlers[ $key ] ) ) {
-			$handler = $this->handlers[ $key ];
+	public function request($method, $url, $body = null, $header = array())
+	{
+		$url = str_replace('https://api.tinify.com', '', $url);
+		$key = $this->get_key($method, $url);
+		if (isset($this->handlers[$key]) && count($this->handlers[$key]) > 0) {
+			$handler = array_shift($this->handlers[$key]);
 
 			$status = $handler['status'];
-			$body = isset( $handler['body'] ) ? $handler['body'] : '';
-			$headers = isset( $handler['headers'] ) ? $handler['headers'] : array();
+			$body = isset($handler['body']) ? $handler['body'] : '';
+			$headers = isset($handler['headers']) ? $handler['headers'] : array();
 
-			if ( isset( $headers['compression-count'] ) ) {
+			if (isset($headers['compression-count'])) {
 				\Tinify\Tinify::setCompressionCount(
-					intval( $headers['compression-count'] )
+					intval($headers['compression-count'])
 				);
 			}
 
-			if ( isset( $headers['compression-count-remaining'] ) ) {
+			if (isset($headers['compression-count-remaining'])) {
 				\Tinify\Tinify::setRemainingCredits(
-					intval( $headers['compression-count-remaining'] )
+					intval($headers['compression-count-remaining'])
 				);
 			} else {
 				\Tinify\Tinify::setRemainingCredits(
@@ -34,7 +37,7 @@ class MockTinifyClient extends Tinify\Client {
 				);
 			}
 
-			if ( isset( $headers['paying-state'] ) ) {
+			if (isset($headers['paying-state'])) {
 				\Tinify\Tinify::setPayingState(
 					$headers['paying-state']
 				);
@@ -44,7 +47,7 @@ class MockTinifyClient extends Tinify\Client {
 				);
 			}
 
-			if ( isset( $headers['email-address'] ) ) {
+			if (isset($headers['email-address'])) {
 				\Tinify\Tinify::setEmailAddress(
 					$headers['email-address']
 				);
@@ -55,17 +58,17 @@ class MockTinifyClient extends Tinify\Client {
 			}
 
 			$isError = $status <= 199 || $status >= 300;
-			$isJson = true;
+			$isJson = isset($headers['content-type']) && 'application/json' === $headers['content-type'];
 
-			if ( $isJson || $isError ) {
-				$body = json_decode( $body );
+			if ($isJson || $isError) {
+				$body = json_decode($body);
 			}
 
-			if ( $isError ) {
-				if ( $handler['body'] !== '{}' ) {
-					throw \Tinify\Exception::create( $body->message, $body->error, $status );
+			if ($isError) {
+				if ($handler['body'] !== '{}') {
+					throw \Tinify\Exception::create($body->message, $body->error, $status);
 				} else {
-					throw \Tinify\Exception::create( null, null, $status );
+					throw \Tinify\Exception::create(null, null, $status);
 				}
 			}
 
@@ -74,16 +77,21 @@ class MockTinifyClient extends Tinify\Client {
 				'headers' => $headers,
 			);
 		} else {
-			throw new Exception( 'No handler for ' . $key );
+			throw new Exception('No handler for ' . $key);
 		}
 	}
 
-	public function register( $method, $url, $handler ) {
-		$key = $this->get_key( $method, $url );
-		$this->handlers[ $key ] = $handler;
+	public function register($method, $url, $handler)
+	{
+		$key = $this->get_key($method, $url);
+		if (! isset($this->handlers[$key])) {
+			$this->handlers[$key] = [];
+		}
+		$this->handlers[$key][] = $handler;
 	}
 
-	private function get_key( $method, $url ) {
-		return strtoupper( $method ) . ' ' . $url;
+	private function get_key($method, $url)
+	{
+		return strtoupper($method) . ' ' . $url;
 	}
 }

@@ -52,7 +52,7 @@ $email = trim( $user->user_email );
 		<p class="message"></p>
 
 		<button class="button button-primary" data-tiny-action="update-key">
-			<?php esc_html_e( 'Save' ); ?>
+			<?php esc_html_e( 'Save', 'tiny-compress-images' ); ?>
 		</button>
 	</div>
 </div>

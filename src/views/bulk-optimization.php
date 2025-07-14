@@ -41,18 +41,18 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 					<h3><?php esc_html_e( 'Available Images', 'tiny-compress-images' ) ?></h3>
 					<p>
 						<?php
-						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) {
+						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'] ) {
 							$percentage = 0;
 						} else {
-							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ) * 100, 2 );
+							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'] ) * 100, 2 );
 						}
-						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimised-sizes'] ) {
+						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimized-sizes'] ) {
 							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
 							echo ' ';
 							esc_html_e( 'You do not seem to have uploaded any JPEG, PNG or WebP images yet.', 'tiny-compress-images' );
 						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
-						} elseif ( 0 == $stats['available-unoptimised-sizes'] ) {
+						} elseif ( 0 == $stats['available-unoptimized-sizes'] ) {
 							/* translators: %s: friendly user name */
 							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
@@ -93,22 +93,22 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							</td>
 							<td class="item">
 								<h3>
-									<?php echo wp_kses( __( 'Uncompressed image sizes', 'tiny-compress-images' ), array(
+									<?php echo wp_kses( __( 'Unoptimized <br> image sizes', 'tiny-compress-images' ), array(
 										'br' => array(),
 									) ) ?>
 								</h3>
 								<span id="optimizable-image-sizes">
-									<?php echo $stats['available-unoptimised-sizes'] ?>
+									<?php echo $stats['available-unoptimized-sizes'] ?>
 								</span>
 								<div class="tooltip">
 									<span class="dashicons dashicons-info"></span>
 									<div class="tip">
-										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimised-sizes'] > 0 ) { ?>
+										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
 											<p>
 												<?php
 												/* translators: %1$s: number of sizes that can be optimised, %2$s number of images */
 												printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.',
-												'tiny-compress-images'), $stats['available-unoptimised-sizes'], $stats['uploaded-images'] );
+												'tiny-compress-images'), $stats['available-unoptimized-sizes'], $stats['uploaded-images'] );
 												?>
 											</p>
 										<?php } ?>
@@ -117,7 +117,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											if ( 0 == sizeof( $active_tinify_sizes ) ) {
 												esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 											} else {
-												esc_html_e( 'These sizes are currently activated for compression:', 'tiny-compress-images' );
+												esc_html_e( 'These sizes are currently activated for optimization:', 'tiny-compress-images' );
 												echo '<ul>';
 												for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
 													$name = $active_tinify_sizes[ $i ];
@@ -135,7 +135,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
 											<?php
 											/* translators: %d: number of sizes to be compressed */
-											printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is compressed.', 'For each uploaded image <strong>%d sizes</strong> are compressed.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
+											printf( wp_kses( _n( 'For each uploaded image <strong>%d size</strong> is optimized.', 'For each uploaded image <strong>%d sizes</strong> are optimized.', count( $active_tinify_sizes ), 'tiny-compress-images' ), array(
 												'strong' => array(),
 											) ), count( $active_tinify_sizes ) ) ?>
 										<?php } ?>
@@ -229,20 +229,20 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 				</div>
 			</div>
 		</div>
-		<?php $show_notice = $is_on_free_plan && $stats['available-unoptimised-sizes'] > $remaining_credits; ?>
+		<?php $show_notice = $is_on_free_plan && $stats['available-unoptimized-sizes'] > $remaining_credits; ?>
 		<div class="optimize">
-			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?>" data-amount-optimized="0" style="<?php echo $show_notice ? 'display:none;' : '' ?>">
+			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'] ?>" data-amount-optimized="0" style="<?php echo $show_notice ? 'display:none;' : '' ?>">
 				<div id="progress-size" class="progress">
 				</div>
 				<div class="numbers" >
 					<span id="optimized-so-far"><?php echo $stats['optimized-image-sizes'] ?></span>
 					/
-					<span><?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimised-sizes'] ?></span>
+					<span><?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'] ?></span>
 					<span id="percentage"></span>
 				</div>
 			</div>
 			<?php
-			if ( $stats['available-unoptimised-sizes'] > 0 ) {
+			if ( $stats['available-unoptimized-sizes'] > 0 ) {
 				require_once dirname( __FILE__ ) . '/bulk-optimization-form.php';
 			}
 			?>

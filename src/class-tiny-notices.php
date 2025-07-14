@@ -281,7 +281,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 			$query_string = 'action=deactivate&plugin=' . $file . '&_wpnonce=' . $nonce;
 			$url = admin_url( 'plugins.php?' . $query_string );
 			$notice .= '<a class="button button-primary" href="' . $url . '">';
-			$notice .= esc_html__( 'Deactivate' );
+			$notice .= esc_html__( 'Deactivate', 'tiny-compress-images' );
 			$notice .= '</a></td></tr>';
 		}
 		$notice .= '</table>';
