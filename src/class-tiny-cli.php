@@ -77,7 +77,9 @@ class Tiny_Command {
 	 * @return void
 	 */
 	public function optimize( $args, $assoc_args ) {
-		$attachments = isset( $assoc_args['attachments'] ) ? array_map( 'trim', explode( ',', $assoc_args['attachments'] ) ) : array();
+		$attachments = isset( $assoc_args['attachments'] ) ?
+			array_map( 'trim', explode( ',', $assoc_args['attachments'] ) ) :
+			array();
 
 		if ( empty( $attachments ) ) {
 			$attachments = $this->get_unoptimized_attachments();
@@ -106,7 +108,13 @@ class Tiny_Command {
 				$this->optimize_attachment( $attachment_id );
 				$optimized++;
 			} catch ( Exception $e ) {
-				WP_CLI::warning( 'skipping - error: ' . $e->getMessage() . ' (ID: ' . $attachment_id . ')' );
+				WP_CLI::warning(
+					'skipping - error: ' .
+					$e->getMessage() .
+					' (ID: ' .
+					$attachment_id .
+					')'
+				);
 			}
 
 			$progress->tick();
@@ -143,7 +151,7 @@ class Tiny_Command {
 			return false;
 		}
 
-		if ( $attachment->post_type !== 'attachment' ) {
+		if ( 'attachment' !== $attachment->post_type ) {
 			return false;
 		}
 
