@@ -71,6 +71,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 	}
 
+	public function cli_init() {
+		Tiny_CLI::register_command( $this->settings );
+	}
+
 	public function ajax_init() {
 		add_filter( 'wp_ajax_tiny_async_optimize_upload_new_media',
 			$this->get_method( 'compress_on_upload' )

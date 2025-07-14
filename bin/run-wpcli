@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Usage: bin/run-wpcli [WORDPRESS_VERSION] [PHP_VERSION] [COMMAND]
+# Example: bin/run-wpcli 67 82 "tiny optimize --attachments=123,456"
+# Example: bin/run-wpcli 67 82 "tiny optimize"
+
+
+CONFIG_FILE="config/wp-version.conf"
+WORDPRESS_VERSION_ENV="${1:-$WORDPRESS_VERSION}"
+PHP_VERSION_ENV="${2:-$PHP_VERSION}"
+
+WORDPRESS_PORT="80${WORDPRESS_VERSION_ENV}"
+WP_IMAGE_KEY="${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
+WP_IMAGE=$(grep "^${WP_IMAGE_KEY}=" "$CONFIG_FILE" | cut -d'=' -f2)
+
+COMMAND=${3:-"tiny --help"}
+
+export WP_IMAGE
+export COMPOSE_PROJECT_NAME="tinify_${WORDPRESS_VERSION_ENV}_${PHP_VERSION_ENV}"
+export WORDPRESS_PORT
+
+docker compose -f config/docker-compose.yml run --rm wpcli wp $COMMAND

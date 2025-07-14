@@ -49,6 +49,10 @@ abstract class Tiny_WP_Base {
 		return defined( 'DOING_AJAX' ) && DOING_AJAX;
 	}
 
+	protected function is_cli() {
+		return defined( 'WP_CLI' ) && WP_CLI;
+	}
+
 	protected static function get_prefixed_name( $name ) {
 		return self::PREFIX . $name;
 	}
@@ -64,6 +68,10 @@ abstract class Tiny_WP_Base {
 		} elseif ( is_admin() ) {
 			add_action( 'admin_init', $this->get_method( 'admin_init' ) );
 			add_action( 'admin_menu', $this->get_method( 'admin_menu' ) );
+		}
+
+		if ( self::is_cli() ) {
+			add_action( 'cli_init', $this->get_method( 'cli_init' ) );
 		}
 	}
 
@@ -99,5 +107,8 @@ abstract class Tiny_WP_Base {
 	}
 
 	public function rest_init() {
+	}
+
+	public function cli_init() {
 	}
 }
