@@ -146,22 +146,11 @@ class Tiny_Command {
 	}
 
 	private function is_valid_attachment( $attachment_id ) {
-		$attachment = get_post( $attachment_id );
-		if ( ! $attachment ) {
-			return false;
-		}
-
-		if ( 'attachment' !== $attachment->post_type ) {
-			return false;
-		}
-
-		// Check if it's an image
-		$mime_type = $attachment->post_mime_type;
+		$mime_type = get_post_mime_type( $attachment_id );
 		if ( ! $mime_type || strpos( $mime_type, 'image/' ) !== 0 ) {
 			return false;
 		}
 
-		// Check if it's a supported format
 		$supported_types = array( 'image/jpeg', 'image/png', 'image/webp' );
 		if ( ! in_array( $mime_type, $supported_types, true ) ) {
 			return false;
