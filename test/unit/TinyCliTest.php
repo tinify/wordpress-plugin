@@ -111,8 +111,7 @@ class Tiny_Cli_Test extends Tiny_TestCase
 				$expected['resize'],
 				$expected['preserve'],
 				$expected['convert_opts']
-			)
-			->willReturn('foo');
+			);
 		$settings->set_compressor($mockCompressor);
 
 		$command = new Tiny_Command($settings);
@@ -122,8 +121,76 @@ class Tiny_Cli_Test extends Tiny_TestCase
 		));
 	}
 
-	public function test_will_compress_all_uncompressed_attachments_if_none_given() {
-		
+	public function test_will_compress_all_uncompressed_attachments_if_none_given()
+	{
+		// Define WordPress constants needed for wpdb operations
+		if (!defined('ARRAY_A')) {
+			define('ARRAY_A', 'ARRAY_A');
+		}
+
+		$this->wp->stub('get_post_mime_type', function ($i) {
+			return 'image/png';
+		});
+
+		// Mock the global wpdb object
+		global $wpdb;
+
+		// Create a mock class that has the methods we need
+		$wpdb = $this->getMockBuilder(stdClass::class)
+			->addMethods(['get_results'])
+			->getMock();
+
+		$wpdb->posts = 'wp_posts';
+		$wpdb->postmeta = 'wp_postmeta';
+
+		$this->wp->stub('wp_get_attachment_metadata', function ($i) {
+			return array(
+				'width' => 1256,
+				'height' => 1256,
+				'file' => '2025/07/test.png',
+				'sizes' => array(),
+			);
+		});
+
+		$mock_results = array(
+			array(
+				'ID' => 1,
+				'post_title' => 'Test Image',
+				'meta_value' => serialize(array(
+					'width' => 1200,
+					'height' => 800,
+					'file' => '2025/07/test.png',
+					'sizes' => array()
+				)),
+				'unique_attachment_name' => '2025/07/test.png',
+				'tiny_meta_value' => ''
+			)
+		);
+		$virtual_test_image = array(
+			'path' => '2025/07',
+			'images' => array(
+				array(
+					'size' => 137856,
+					'file' => 'test.png',
+				),
+			)
+		);
+		$this->wp->createImagesFromJSON($virtual_test_image);
+
+		$wpdb->method('get_results')
+			->willReturn($mock_results);
+
+		$settings = new Tiny_Settings();
+		$mockCompressor = $this->createMock(Tiny_Compress::class);
+
+		$mockCompressor->expects($this->once())
+			->method('compress_file')
+			->willReturn(array('output' => array('size' => 1000)));
+
+		$settings->set_compressor($mockCompressor);
+
+		$command = new Tiny_Command($settings);
+
+		$command->optimize(array(), array());
 	}
-	
 }
