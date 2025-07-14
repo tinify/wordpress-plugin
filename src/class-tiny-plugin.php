@@ -67,7 +67,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		new Tiny_CLI( $this->settings );
-		
+
 		if ( $this->settings->get_conversion_enabled() ) {
 			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
 		}
