@@ -66,11 +66,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
 
-		new Tiny_CLI( $this->settings );
-
 		if ( $this->settings->get_conversion_enabled() ) {
 			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
 		}
+	}
+
+	public function cli_init() {
+		Tiny_CLI::register_command( $this->settings );
 	}
 
 	public function ajax_init() {

@@ -19,25 +19,8 @@
 */
 
 class Tiny_Cli {
-
-	/**
-	 * Tinify Settings
-	 *
-	 * @var Tiny_Settings
-	 */
-	private $tiny_settings;
-
-	public function __construct( $settings ) {
-		$this->tiny_settings = $settings;
-
-		// Only add CLI hooks when WP-CLI is available
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			add_action( 'cli_init', array( $this, 'register_command' ) );
-		}
-	}
-
-	public function register_command() {
-		$command_instance = new Tiny_Command( $this->tiny_settings );
+	public static function register_command( $settings ) {
+		$command_instance = new Tiny_Command( $settings );
 		WP_CLI::add_command( 'tiny', $command_instance );
 	}
 }
@@ -105,8 +88,10 @@ class Tiny_Command {
 			}
 
 			try {
-				$this->optimize_attachment( $attachment_id );
-				$optimized++;
+				$result = $this->optimize_attachment( $attachment_id );
+				if ( isset( $result['success'] ) && $result['success'] > 0 ) {
+					$optimized++;
+				}
 			} catch ( Exception $e ) {
 				WP_CLI::warning(
 					'skipping - error: ' .
@@ -140,9 +125,14 @@ class Tiny_Command {
 		return $ids;
 	}
 
+	/**
+	 * Will process an attachment for optimization
+	 *
+	 * @return array{ success: int, failed: int }
+	 */
 	private function optimize_attachment( $attachment_id ) {
 		$tiny_image = new Tiny_Image( $this->tiny_settings, $attachment_id );
-		$tiny_image->compress();
+		return $tiny_image->compress();
 	}
 
 	private function is_valid_attachment( $attachment_id ) {
