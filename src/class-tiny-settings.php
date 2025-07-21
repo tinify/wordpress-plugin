@@ -50,6 +50,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
+	public function cli_init() {
+		try {
+			$this->init_compressor();
+		} catch ( Tiny_Exception $e ) {
+		}
+	}
+
 	public function ajax_init() {
 		try {
 			$this->init_compressor();

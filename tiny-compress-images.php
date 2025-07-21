@@ -21,6 +21,7 @@ require dirname( __FILE__ ) . '/src/class-tiny-image.php';
 require dirname( __FILE__ ) . '/src/class-tiny-settings.php';
 require dirname( __FILE__ ) . '/src/class-tiny-plugin.php';
 require dirname( __FILE__ ) . '/src/class-tiny-notices.php';
+require dirname( __FILE__ ) . '/src/class-tiny-cli.php';
 require dirname( __FILE__ ) . '/src/class-tiny-picture.php';
 require dirname( __FILE__ ) . '/src/compatibility/wpml/class-tiny-wpml.php';
 require dirname( __FILE__ ) . '/src/compatibility/as3cf/class-tiny-as3cf.php';
