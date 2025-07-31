@@ -61,6 +61,53 @@
     });
   }
 
+  /**
+   * Marks an image attachment as compressed without actually compressing it.
+   *
+   * This function sends an AJAX request to mark an image as compressed by creating
+   * fake compression metadata. This is useful for images that are already optimized
+   * or when you want to skip compression for specific images while still marking
+   * them as processed in the system.
+   *
+   * @param {string} attachmentID - The WordPress attachment ID of the image to mark as compressed.
+   * @returns {Promise<string>} - string of html displaying the updated compressions.
+   */
+  function markAsCompressed(attachmentID) {
+    return new Promise((resolve, reject) => {
+      jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+          _nonce: tinyCompress.nonce,
+          action: 'tiny_mark_image_as_compressed',
+          id: attachmentID,
+        },
+        success: function (data) {
+          resolve(data);
+        },
+        error: function (err) {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  async function onClickButtonMarkAsCompressed(event) {
+    const element = jQuery(event.target);
+    var container = element.closest('div.tiny-ajax-container');
+    element.attr('disabled', 'disabled');
+    container.find('span.spinner').removeClass('hidden');
+    container.find('span.dashicons').remove();
+    const attachmentID = element.data('id') || element.attr('data-id');
+    try {
+      const result = await markAsCompressed(attachmentID);
+      container.html(result);
+    } finally {
+      element.removeAttr('disabled');
+      container.find('span.spinner').addClass('hidden');
+    }
+  }
+
   function toggleChangeKey(event) {
     jQuery('div.tiny-account-status div.update').toggle();
     jQuery('div.tiny-account-status div.status').toggle();
@@ -231,6 +278,7 @@
   switch (adminpage) {
   case 'upload-php':
     eventOn('click', 'button.tiny-compress', compressImage);
+    eventOn('click', 'button.tiny-mark-as-compressed', onClickButtonMarkAsCompressed);
 
     setPropOf('button.tiny-compress', 'disabled', null);
 
