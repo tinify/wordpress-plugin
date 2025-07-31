@@ -65,6 +65,48 @@ class Tiny_Image_Size {
 		}
 	}
 
+	/**
+	 * Marks the image size as compressed without actually processing it.
+	 *
+	 * This method simulates the compression process by creating metadata that
+	 * indicates the image has been processed, while keeping the original file
+	 * size and format unchanged. Useful for marking images as compressed when
+	 * they don't need actual compression or have been processed externally.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $include_conversion Optional. Whether to include conversion metadata.
+	 *                                 When true, adds conversion data with current
+	 *                                 file information. Default false.
+	 * @return void
+	 */
+	public function mark_as_compressed( $include_conversion = false ) {
+		$file_size = $this->filesize();
+		$mime_type = mime_content_type($this->filename);
+
+		if ( ! $this->has_been_compressed() ) {
+			$this->add_tiny_meta_start();
+			$tiny_image_size_meta = array(
+				'input'  => array(
+					'size' => $file_size
+				),
+				'output' => array(
+					'size' => $file_size,
+					'type' => $mime_type,
+				),
+			);
+			$this->add_tiny_meta( $tiny_image_size_meta );
+		}
+		
+		if ( $include_conversion ) {
+			$this->meta['convert'] = array(
+				'size' => $file_size,
+				'type' => $mime_type,
+				'path' => $this->filename,
+			);
+		}
+	}
+
 	public function has_been_compressed() {
 		return isset( $this->meta['output'] );
 	}
