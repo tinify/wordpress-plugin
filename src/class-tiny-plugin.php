@@ -96,6 +96,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'ajax_compression_status' )
 		);
 
+		add_action( 'wp_ajax_tiny_mark_image_as_compressed',
+			$this->get_method( 'mark_image_as_compressed' )
+		);
+
 		/* When touching any functionality linked to image compressions when
 			 uploading images make sure it also works with XML-RPC. See README. */
 		add_filter( 'wp_ajax_nopriv_tiny_rpc',
@@ -400,37 +404,55 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
-	public function compress_image_from_library() {
+	/**
+	 * Validates AJAX request for attachment operations.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return array Either error array ['error' => 'message'] or success array ['data' => [$id, $metadata]]
+	 */
+	private function validate_ajax_attachment_request() {
 		if ( ! $this->check_ajax_referer() ) {
 			exit();
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
-			$message = esc_html__(
-				"You don't have permission to upload files.",
-				'tiny-compress-images'
+			return array(
+				'error' => esc_html__(
+					"You don't have permission to upload files.",
+					'tiny-compress-images'
+				)
 			);
-			echo $message;
-			exit();
 		}
 		if ( empty( $_POST['id'] ) ) {
-			$message = esc_html__(
-				'Not a valid media file.',
-				'tiny-compress-images'
+			return array(
+				'error' => esc_html__(
+					'Not a valid media file.',
+					'tiny-compress-images'
+				)
 			);
-			echo $message;
-			exit();
 		}
 		$id = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( ! is_array( $metadata ) ) {
-			$message = esc_html__(
-				'Could not find metadata of media file.',
-				'tiny-compress-images'
+			return array(
+				'error' => esc_html__(
+					'Could not find metadata of media file.',
+					'tiny-compress-images'
+				)
 			);
-			echo $message;
-			exit;
 		}
 
+		return array('data' => array($id, $metadata));
+	}
+
+	public function compress_image_from_library() {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset($response['error']) ) {
+			echo $response['error'];
+			exit();
+		}
+
+		list($id, $metadata) = $response['data'];
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 		$result = $tiny_image->compress();
 
@@ -448,42 +470,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function compress_image_for_bulk() {
-		if ( ! $this->check_ajax_referer() ) {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset($response['error'])) {
+			echo json_encode($response);
 			exit();
-		}
-		if ( ! current_user_can( 'upload_files' ) ) {
-			$message = esc_html__(
-				"You don't have permission to upload files.",
-				'tiny-compress-images'
-			);
-			echo json_encode( array(
-				'error' => $message,
-			) );
-			exit();
-		}
-		if ( empty( $_POST['id'] ) ) {
-			$message = esc_html__(
-				'Not a valid media file.',
-				'tiny-compress-images'
-			);
-			echo json_encode( array(
-				'error' => $message,
-			) );
-			exit();
-		}
-		$id = intval( $_POST['id'] );
-		$metadata = wp_get_attachment_metadata( $id );
-		if ( ! is_array( $metadata ) ) {
-			$message = esc_html__(
-				'Could not find metadata of media file.',
-				'tiny-compress-images'
-			);
-			echo json_encode( array(
-				'error' => $message,
-			) );
-			exit;
 		}
 
+		list($id, $metadata) = $response['data'];
 		$tiny_image_before = new Tiny_Image( $this->settings, $id, $metadata );
 		$image_statistics_before = $tiny_image_before->get_statistics(
 			$this->settings->get_sizes(),
@@ -541,30 +534,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_compression_status() {
-		if ( ! $this->check_ajax_referer() ) {
+		$response = $this->validate_ajax_attachment_request();
+
+		if (isset($response['error'])) {
+			echo $response['error'];
 			exit();
 		}
-		if ( ! current_user_can( 'upload_files' ) ) {
-			exit();
-		}
-		if ( empty( $_POST['id'] ) ) {
-			$message = esc_html__(
-				'Not a valid media file.',
-				'tiny-compress-images'
-			);
-			echo $message;
-			exit();
-		}
-		$id = intval( $_POST['id'] );
-		$metadata = wp_get_attachment_metadata( $id );
-		if ( ! is_array( $metadata ) ) {
-			$message = esc_html__(
-				'Could not find metadata of media file.',
-				'tiny-compress-images'
-			);
-			echo $message;
-			exit;
-		}
+		list($id, $metadata) = $response['data'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 
@@ -760,5 +736,21 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			esc_html__( 'Write a review', 'tiny-compress-images' )
 		);
 		return $review_block;
+	}
+
+	function mark_image_as_compressed() {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset($response['error']) ) {
+			echo $response['error'];
+			exit();
+		}
+
+		list($id, $metadata) = $response['data'];
+		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
+		$tiny_image->mark_as_compressed();
+
+		echo $this->render_compress_details( $tiny_image );
+
+		exit();
 	}
 }
