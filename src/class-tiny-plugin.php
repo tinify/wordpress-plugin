@@ -140,6 +140,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_action( 'admin_action_-1',
 			$this->get_method( 'media_library_bulk_action' )
 		);
+		
+		add_action( 'admin_action_tiny_bulk_mark_compressed',
+			$this->get_method( 'media_library_bulk_action' )
+		);
 
 		add_filter( 'manage_media_columns',
 			$this->get_method( 'add_media_columns' )
@@ -240,6 +244,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'L10nAllDone' => __( 'All images are processed', 'tiny-compress-images' ),
 			'L10nNoActionTaken' => __( 'No action taken', 'tiny-compress-images' ),
 			'L10nBulkAction' => __( 'Compress Images', 'tiny-compress-images' ),
+			'L10nBulkMarkCompressed' => __( 'Mark as Compressed', 'tiny-compress-images' ),
 			'L10nCancelled' => __( 'Cancelled', 'tiny-compress-images' ),
 			'L10nCompressing' => __( 'Compressing', 'tiny-compress-images' ),
 			'L10nCompressed' => __( 'compressed', 'tiny-compress-images' ),
@@ -550,9 +555,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function media_library_bulk_action() {
-		if ( empty( $_REQUEST['action'] ) || (
-				'tiny_bulk_action' != $_REQUEST['action'] &&
-				'tiny_bulk_action' != $_REQUEST['action2'] ) ) {
+		$valid_actions = array( 'tiny_bulk_action', 'tiny_bulk_mark_compressed' );
+		$action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
+		$action2 = isset( $_REQUEST['action2'] ) ? $_REQUEST['action2'] : '';
+
+		if ( ! in_array( $action, $valid_actions, true ) && ! in_array( $action2, $valid_actions, true ) ) {
 			return;
 		}
 		if ( empty( $_REQUEST['media'] ) || ( ! $_REQUEST['media'] ) ) {
@@ -562,6 +569,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		check_admin_referer( 'bulk-media' );
 		$ids = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
 		$location = 'upload.php?mode=list&ids=' . $ids;
+
+		$location = add_query_arg( 'action', $_REQUEST['action'], $location );
 
 		if ( ! empty( $_REQUEST['paged'] ) ) {
 			$location = add_query_arg( 'paged', absint( $_REQUEST['paged'] ), $location );

@@ -24,8 +24,15 @@
   }
 
   function compressImageSelection() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const action = queryParams.get('action');
     jQuery('span.auto-compress').each(function(index, element) {
-      jQuery(element).siblings('button').click()
+      if (action === 'tiny_bulk_mark_compressed') {
+        jQuery(element).siblings('button.tiny-mark-as-compressed').click()
+      }
+      if (action === 'tiny_bulk_action') {
+        jQuery(element).siblings('button.tiny-compress').click()
+      }
     });
   }
 
@@ -281,12 +288,14 @@
     eventOn('click', 'button.tiny-mark-as-compressed', onClickButtonMarkAsCompressed);
 
     setPropOf('button.tiny-compress', 'disabled', null);
-
+    
     compressImageSelection();
     watchCompressingImages();
 
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]');
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action2]');
+    jQuery('<option>').val('tiny_bulk_mark_compressed').text(tinyCompress.L10nBulkMarkCompressed).appendTo('select[name=action]');
+    jQuery('<option>').val('tiny_bulk_mark_compressed').text(tinyCompress.L10nBulkMarkCompressed).appendTo('select[name=action2]');
     break;
   case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage);
