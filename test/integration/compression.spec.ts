@@ -149,7 +149,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await page.getByRole('button', { name: 'Compress' }).click();
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
   });
 
@@ -165,7 +165,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await page.getByRole('button', { name: 'Compress' }).click();
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
     await expect(page.getByText('3 sizes compressed')).toBeVisible();
   });
 
@@ -184,7 +184,7 @@ test.describe('compression', () => {
 
     await page.waitForLoadState('networkidle');
 
-    await page.getByRole('button', { name: 'Compress' }).click({ force: true });
+    await page.getByRole('button', { name: 'Compress', exact: true }).click({ force: true });
 
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
   });
@@ -199,7 +199,7 @@ test.describe('compression', () => {
     await setAPIKey(page, 'JSON1234');
     await page.goto('/wp-admin/upload.php');
 
-    await page.getByRole('button', { name: 'Compress' }).click();
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
     await expect(page.getByText('Error while parsing response')).toBeVisible();
   });
 
@@ -434,7 +434,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Compress', exact: true })).not.toBeVisible();
   });
 
   test('non image file should not show compress info in library', async () => {
@@ -451,7 +451,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Compress', exact: true })).not.toBeVisible();
   });
 
   test('compresses images upload via JSON API', async () => {
