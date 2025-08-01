@@ -144,6 +144,6 @@ test.describe('as3cf', () => {
 
     await page.goto('/wp-admin/upload.php?mode=list');
 
-    await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Compress' }, { exact: true })).not.toBeVisible();
   });
 });
