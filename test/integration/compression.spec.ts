@@ -492,4 +492,29 @@ test.describe('compression', () => {
     await page.goto(`/wp-admin/post.php?post=${response.id}&action=edit`);
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
   });
+
+  test('will mark a single attachment as compressed', async () => {
+    await uploadMedia(page, 'input-example.jpg');
+    await setCompressionTiming(page, 'manual');
+    
+    await page.goto('/wp-admin/upload.php');
+
+    await page.getByRole('button', { name: 'Mark as Compressed' }).click();
+    await expect(page.getByText('5 sizes compressed')).toBeVisible();
+    await expect(page.getByText('5 sizes converted')).toBeVisible();
+  });
+  
+  test('will mark multiple attachments as compressed', async () => {
+    await uploadMedia(page, 'input-example.jpg');
+    await uploadMedia(page, 'input-example.png');
+    await setCompressionTiming(page, 'manual');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await page.locator('#cb-select-all-1').check();
+    await page.locator('#bulk-action-selector-top').selectOption('tiny_bulk_mark_compressed');
+    await page.locator('#doaction').click();
+    await expect(page.getByText('5 sizes compressed')).toBeVisible();
+    await expect(page.getByText('5 sizes converted')).toBeVisible();
+  });
 });
