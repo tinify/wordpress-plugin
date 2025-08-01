@@ -140,7 +140,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_action( 'admin_action_-1',
 			$this->get_method( 'media_library_bulk_action' )
 		);
-		
+
 		add_action( 'admin_action_tiny_bulk_mark_compressed',
 			$this->get_method( 'media_library_bulk_action' )
 		);
@@ -414,7 +414,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @return array Either error array ['error' => 'message'] or success array ['data' => [$id, $metadata]]
+	 * @return array Either error array ['error' => 'message']
+	 * 				 or success array ['data' => [$id, $metadata]]
 	 */
 	private function validate_ajax_attachment_request() {
 		if ( ! $this->check_ajax_referer() ) {
@@ -425,7 +426,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'error' => esc_html__(
 					"You don't have permission to upload files.",
 					'tiny-compress-images'
-				)
+				),
 			);
 		}
 		if ( empty( $_POST['id'] ) ) {
@@ -433,7 +434,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'error' => esc_html__(
 					'Not a valid media file.',
 					'tiny-compress-images'
-				)
+				),
 			);
 		}
 		$id = intval( $_POST['id'] );
@@ -443,16 +444,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'error' => esc_html__(
 					'Could not find metadata of media file.',
 					'tiny-compress-images'
-				)
+				),
 			);
 		}
 
-		return array('data' => array($id, $metadata));
+		return array(
+			'data' => array( $id, $metadata ),
+		);
 	}
 
 	public function compress_image_from_library() {
 		$response = $this->validate_ajax_attachment_request();
-		if ( isset($response['error']) ) {
+		if ( isset( $response['error'] ) ) {
 			echo $response['error'];
 			exit();
 		}
@@ -476,8 +479,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function compress_image_for_bulk() {
 		$response = $this->validate_ajax_attachment_request();
-		if ( isset($response['error'])) {
-			echo json_encode($response);
+		if ( isset( $response['error'] ) ) {
+			echo json_encode( $response );
 			exit();
 		}
 
@@ -541,7 +544,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function ajax_compression_status() {
 		$response = $this->validate_ajax_attachment_request();
 
-		if (isset($response['error'])) {
+		if ( isset( $response['error'] ) ) {
 			echo $response['error'];
 			exit();
 		}
@@ -559,7 +562,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
 		$action2 = isset( $_REQUEST['action2'] ) ? $_REQUEST['action2'] : '';
 
-		if ( ! in_array( $action, $valid_actions, true ) && ! in_array( $action2, $valid_actions, true ) ) {
+		if (
+			! in_array( $action, $valid_actions, true ) &&
+			! in_array( $action2, $valid_actions, true )
+		) {
 			return;
 		}
 		if ( empty( $_REQUEST['media'] ) || ( ! $_REQUEST['media'] ) ) {
@@ -749,7 +755,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	function mark_image_as_compressed() {
 		$response = $this->validate_ajax_attachment_request();
-		if ( isset($response['error']) ) {
+		if ( isset( $response['error'] ) ) {
 			echo $response['error'];
 			exit();
 		}

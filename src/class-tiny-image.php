@@ -487,10 +487,10 @@ class Tiny_Image {
 
 		$conversion_enabled = $this->settings->get_conversion_enabled();
 
-		foreach($this->sizes as $size) {
+		foreach ( $this->sizes as $size ) {
 			$size->mark_as_compressed( $conversion_enabled );
 		}
-		
+
 		$this->update_tiny_post_meta();
 	}
 }

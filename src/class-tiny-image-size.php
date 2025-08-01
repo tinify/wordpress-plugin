@@ -82,13 +82,13 @@ class Tiny_Image_Size {
 	 */
 	public function mark_as_compressed( $include_conversion = false ) {
 		$file_size = $this->filesize();
-		$mime_type = mime_content_type($this->filename);
+		$mime_type = Tiny_Helpers::get_mimetype( $this->filename );
 
 		if ( ! $this->has_been_compressed() ) {
 			$this->add_tiny_meta_start();
 			$tiny_image_size_meta = array(
 				'input'  => array(
-					'size' => $file_size
+					'size' => $file_size,
 				),
 				'output' => array(
 					'size' => $file_size,
@@ -97,14 +97,15 @@ class Tiny_Image_Size {
 			);
 			$this->add_tiny_meta( $tiny_image_size_meta );
 		}
-		
-		if ( $include_conversion ) {
+
+		if ( ! $this->has_been_converted() && $include_conversion ) {
 			$this->meta['convert'] = array(
 				'size' => $file_size,
 				'type' => $mime_type,
 				'path' => $this->filename,
 			);
 		}
+
 	}
 
 	public function has_been_compressed() {
