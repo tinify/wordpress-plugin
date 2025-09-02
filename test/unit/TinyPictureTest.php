@@ -25,7 +25,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
     {
         $this->wp->createImage(37857, '2025/01', 'test.webp');
 
-        $output = $this->tiny_picture->replace_img_sources('<img src="https://www.tinifytest.com/wp-content/uploads/2025/01/test.png">');
+        $output = $this->tiny_picture->replace_sources('<img src="https://www.tinifytest.com/wp-content/uploads/2025/01/test.png">');
         $expected_output = '<picture><source srcset="https://www.tinifytest.com/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="https://www.tinifytest.com/wp-content/uploads/2025/01/test.png"></picture>';
         $this->assertEquals($expected_output, $output);
     }
@@ -36,7 +36,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
      */
     public function test_absolute_url_to_remote_image()
     {
-        $output = $this->tiny_picture->replace_img_sources('<img src="https://www.remotetinify.com/wp-content/uploads/2025/01/test.png">');
+        $output = $this->tiny_picture->replace_sources('<img src="https://www.remotetinify.com/wp-content/uploads/2025/01/test.png">');
         $expected_output = '<img src="https://www.remotetinify.com/wp-content/uploads/2025/01/test.png">';
         $this->assertEquals($expected_output, $output);
     }
@@ -48,7 +48,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
     {
         $this->wp->createImage(37857, '2025/01', 'test.webp');
 
-        $output = $this->tiny_picture->replace_img_sources('<img src="/wp-content/uploads/2025/01/test.png">');
+        $output = $this->tiny_picture->replace_sources('<img src="/wp-content/uploads/2025/01/test.png">');
         $expected_output = '<picture><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
         $this->assertEquals($expected_output, $output);
     }
@@ -59,7 +59,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
      */
     public function test_img_with_no_alternate_format_should_not_change()
     {
-        $output = $this->tiny_picture->replace_img_sources('<img src="/wp-content/uploads/2025/01/missing.png">');
+        $output = $this->tiny_picture->replace_sources('<img src="/wp-content/uploads/2025/01/missing.png">');
         $expected_output = '<img src="/wp-content/uploads/2025/01/missing.png">';
         $this->assertEquals($expected_output, $output);
     }
@@ -73,7 +73,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
     {
         $this->wp->createImage(37857, '2025/01', 'test.avif');
 
-        $output = $this->tiny_picture->replace_img_sources('<img src="/wp-content/uploads/2025/01/test.png?ver=123">');
+        $output = $this->tiny_picture->replace_sources('<img src="/wp-content/uploads/2025/01/test.png?ver=123">');
         $expected_output = '<picture><source srcset="/wp-content/uploads/2025/01/test.avif" type="image/avif" /><img src="/wp-content/uploads/2025/01/test.png?ver=123"></picture>';
         $this->assertEquals($expected_output, $output);
     }
@@ -85,7 +85,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
 
         $input = '<img src="/wp-content/uploads/2025/01/first.png" /><p>Hello</p><img src="/wp-content/uploads/2025/01/second.png" />';
         $expected = '<picture><source srcset="/wp-content/uploads/2025/01/first.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/first.png" /></picture><p>Hello</p><picture><source srcset="/wp-content/uploads/2025/01/second.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/second.png" /></picture>';
-        $output = $this->tiny_picture->replace_img_sources($input);
+        $output = $this->tiny_picture->replace_sources($input);
         $this->assertEquals($expected, $output);
     }
 
@@ -95,7 +95,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
 
         $input = '<img src="/wp-content/uploads/2025/01/test.png" class="lazy" alt="Test" loading="lazy">';
         $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png" class="lazy" alt="Test" loading="lazy"></picture>';
-        $output = $this->tiny_picture->replace_img_sources($input);
+        $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
     }
@@ -106,7 +106,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
 
         $input = '<IMG SRC="/wp-content/uploads/2025/01/test.png">';
         $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><IMG SRC="/wp-content/uploads/2025/01/test.png"></picture>';
-        $output = $this->tiny_picture->replace_img_sources($input);
+        $output = $this->tiny_picture->replace_sources($input);
         $this->assertEquals($expected, $output);
     }
 
@@ -116,7 +116,19 @@ class Tiny_Picture_Test extends Tiny_TestCase
 
         $input = '<a href="/something"><img src="/wp-content/uploads/2025/01/test.png"></a>';
         $expected = '<a href="/something"><picture><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture></a>';
-        $output = $this->tiny_picture->replace_img_sources($input);
+        $output = $this->tiny_picture->replace_sources($input);
+
+        $this->assertEquals($expected, $output);
+    }
+
+    public function test_img_in_picture_element()
+    {
+        $this->wp->createImage(1000, '2025/01', 'test.webp');
+        $this->wp->createImage(1000, '2025/01', 'test_500x500.webp');
+
+        $input = '<picture><source media="(max-width: 767px)" srcset="/wp-content/uploads/2025/01/test_500x500.png" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
+        $expected = '<picture><source media="(max-width: 767px)" srcset="/wp-content/uploads/2025/01/test_500x500.png" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" type="image/webp" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
+        $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
     }
