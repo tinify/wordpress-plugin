@@ -379,7 +379,7 @@ abstract class Tiny_Source_Base {
 				}
 
 				$source_attr_parts['type'] = $mimetype;
-				$source_parts[] = '<source';
+				$source_parts = array( '<source' );
 				foreach ( $source_attr_parts as $source_attr_name => $source_attr_val ) {
 					$source_parts[] = $source_attr_name . '="' . $source_attr_val . '"';
 				}
