@@ -30,6 +30,7 @@
 class Tiny_Picture extends Tiny_WP_Base {
 
 
+
 	/** @var string */
 	private $base_dir;
 
@@ -100,18 +101,8 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 */
 	private function filter_pictures( $content ) {
 		$matches = array();
-		/*
-		 * Match <picture> blocks that contain one or more <source> tags.
-		 *
-		 * Pattern parts:
-		 * - (?:<picture[^>]*?>\s*): opening <picture> with optional attributes and
-		 *   trailing whitespace.
-		 * - (?:<source[^>]*?>)+: one or more <source> tags inside the picture.
-		 * - (?:.*?</picture>)?: optionally include everything up to the closing
-		 *   </picture>.
-		 */
 		if ( ! preg_match_all(
-			'#(?:<picture[^>]*?>\s*)(?:<source[^>]*?>)+(?:.*?</picture>)?#is',
+			'#<picture\b[^>]*>.*?<\/picture>#is',
 			$content,
 			$matches
 		) ) {
@@ -197,6 +188,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 
 abstract class Tiny_Source_Base {
 
+
 	public $raw_html;
 	protected $base_dir;
 	protected $allowed_domains;
@@ -210,12 +202,51 @@ abstract class Tiny_Source_Base {
 	}
 
 	protected static function get_attribute_value( $element, $name ) {
-		// Find {name} enclosed in single or double quotes after '='
-		$regex = '#\b' . preg_quote( $name, '#' ) . '\s*=\s*(["\'])(.*?)\1#is';
-		if ( preg_match( $regex, $element, $attr_matches ) ) {
-			return $attr_matches[2];
+		// Match the exact attribute name (not part of data-media, mediaType, etc.)
+		// and capture a single- or double-quoted value.
+		$delim = '~';
+		$attr  = preg_quote( $name, $delim );
+		$regex = $delim . '(?<![\w:-])' . $attr . '\s*=\s*(["\'])(.*?)\1' . $delim . 'is';
+
+		if ( preg_match( $regex, $element, $m ) ) {
+			return $m[2];
 		}
 		return null;
+	}
+
+	/**
+	 * Extract elements by tag name from an HTML string (regex-based).
+	 *
+	 * @param string $html     The HTML string to search in.
+	 * @param string $tagname  The tag name (e.g., 'div', 'source', 'img').
+	 * @return array           Array of matched elements as strings.
+	 */
+	protected function get_element_by_tag( $html, $tagname ) {
+		$results = [];
+
+		// Self-closing / void tag (e.g. <source />, <img />, <br />)
+		if ( preg_match_all(
+			'~<' . preg_quote( $tagname, '~' ) . '\b(?:[^>"\']+|"[^"]*"|\'[^\']*\')*/?>~i',
+			$html,
+			$matches
+		) ) {
+			$results = array_merge( $results, $matches[0] );
+		}
+
+		// Normal paired tags (e.g. <div>…</div>)
+		$regex_tag = preg_quote( $tagname, '~' );
+		if ( preg_match_all(
+			'~<' . $regex_tag .
+			'\b(?:[^>"\']+|"[^"]*"|\'[^\']*\')*>.*?</' .
+			$regex_tag .
+			'>~is',
+			$html,
+			$matches
+		) ) {
+			$results = array_merge( $results, $matches[0] );
+		}
+
+		return $results;
 	}
 
 	protected function get_local_path( $url ) {
@@ -258,134 +289,14 @@ abstract class Tiny_Source_Base {
 		return null;
 	}
 
-	protected function build_alternative_sources_for_url( $url, $size = '' ) {
-		$sources = array();
-		foreach ( $this->valid_mimetypes as $mimetype ) {
-			$formatted = $this->get_formatted_source( array(
-				'path' => $url,
-				'size' => $size,
-			), $mimetype );
-			if ( $formatted ) {
-				$srcset = trim( $formatted['src'] . ' ' . $formatted['size'] );
-				$sources[] = '<source srcset="' .
-					$srcset . '" type="' .
-					$formatted['type'] . '" />';
-				break;
-			}
-		}
-		return $sources;
-	}
-
 	/**
-	 * Will parse the srcset attribute
-	 *
-	 * @param string $srcset
-	 * @return array{ path: string, size: string } srcset parts
-	 */
-	protected static function parse_srcset_list( $srcset ) {
-		$out = [];
-		foreach ( explode( ',', $srcset ) as $entry ) {
-			$entry = trim( $entry );
-			if ( '' === $entry ) {
-				continue;
-			}
-			$parts = preg_split( '/\s+/', $entry, 2 );
-			$out[] = [
-				'path' => $parts[0],
-				'size' => $parts[1] ?? '',
-			];
-		}
-		return $out;
-	}
-}
-
-class Tiny_Picture_Source extends Tiny_Source_Base {
-
-
-	/**
-	 * Adds alternative format sources (e.g., image/webp, image/avif) to an existing
-	 * <picture> element based on locally available converted files.
-	 *
-	 *
-	 * @return string The augmented <picture> HTML or the original if no additions.
-	 */
-	public function augment_picture_element() {
-		$new_sources = array();
-
-		// Find existing <source> tags inside the <picture>.
-		if ( preg_match_all( '#<source\b[^>]*>#i', $this->raw_html, $source_tag_matches ) ) {
-			foreach ( $source_tag_matches[0] as $source_tag_html ) {
-				// Extract srcset="..."
-				if ( ! preg_match( '#\bsrcset\s*=\s*([\"\'])(.*?)\1#i', $source_tag_html, $m ) ) { continue;
-				}
-				$media = '';
-				// Extract optional media="..." to preserve any media query
-				if ( preg_match( '#\bmedia\s*=\s*([\"\'])(.*?)\1#i', $source_tag_html, $mm ) ) {
-					$media = $mm[2];
-				}
-				foreach ( self::parse_srcset_list( $m[2] ) as $entry ) {
-					foreach ( $this->valid_mimetypes as $mimetype ) {
-						$formatted = $this->get_formatted_source( $entry, $mimetype );
-						if ( $formatted ) {
-							$srcset = trim( $formatted['src'] . ' ' . $formatted['size'] );
-							$tag = '<source srcset="' . $srcset . '" type="' . $formatted['type'] . '"';
-							if ( $media ) { $tag .= ' media="' . $media . '"';
-							}
-							$new_sources[] = $tag . ' />';
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		// inner <img>
-		if ( preg_match( '#<img\b[^>]*>#i', $this->raw_html, $img_tag_match ) ) {
-			$img_tag = $img_tag_match[0];
-			$candidates = [];
-			// Extract srcset="..."
-			if ( preg_match( '#\bsrcset\s*=\s*([\"\'])(.*?)\1#i', $img_tag, $m ) ) {
-				$candidates = array_merge( $candidates, self::parse_srcset_list( $m[2] ) );
-			}
-			// Extract fallback src="..."
-			if ( preg_match( '#\bsrc\s*=\s*([\"\'])(.*?)\1#i', $img_tag, $m ) ) {
-				$candidates[] = [
-					'path' => $m[2],
-					'size' => '',
-				];
-			}
-			foreach ( $candidates as $entry ) {
-				foreach ( $this->valid_mimetypes as $mimetype ) {
-					$formatted = $this->get_formatted_source( $entry, $mimetype );
-					if ( $formatted ) {
-						$srcset = trim( $formatted['src'] . ' ' . $formatted['size'] );
-						$new_sources[] = '<source srcset="' . $srcset . '" type="' . $formatted['type'] . '" />';
-						break;
-					}
-				}
-			}
-		}
-		if ( empty( $new_sources ) ) {
-			return $this->raw_html;
-		}
-
-		$insertion = implode( '', $new_sources );
-
-		// Insert newly built <source> elements immediately before the first <img>
-		return preg_replace( '#(<img\b)#i', $insertion . '$1', $this->raw_html, 1 );
-	}
-}
-
-class Tiny_Image_Source extends Tiny_Source_Base {
-
-	/**
-	 * Retrieves the image sources from the img element
+	 * Retrieves the sources from the <img> or <source> element
 	 *
 	 * @return array{path: string, size: string}[] The image sources
 	 */
-	private function get_image_srcsets() {
+	protected function get_image_srcsets( $html ) {
 		$result = array();
-		$srcset = $this::get_attribute_value( $this->raw_html, 'srcset' );
+		$srcset = $this::get_attribute_value( $html, 'srcset' );
 
 		if ( $srcset ) {
 			// Split the srcset to get individual entries
@@ -414,7 +325,7 @@ class Tiny_Image_Source extends Tiny_Source_Base {
 			}
 		}
 
-		$source = $this::get_attribute_value( $this->raw_html, 'src' );
+		$source = $this::get_attribute_value( $html, 'src' );
 		if ( ! empty( $source ) ) {
 			// No srcset, but we have a src attribute
 			$result[] = array(
@@ -427,19 +338,19 @@ class Tiny_Image_Source extends Tiny_Source_Base {
 
 
 	/**
-	 * Generates a formatted image source array if the corresponding local file exists.
+	 * Creates one or more <source> elements if alternative formats
+	 * are available.
 	 *
-	 * Attempts to replace the file extension of the provided image path with the
-	 * specified MIME type, resolves the local path of the resulting file, and returns
-	 * the `srcset` and `type` if the file exists.
-	 *
-	 * @return string a <picture> element contain additional sources
+	 * @param string $original_source_html, either <source> or <img>
+	 * @return array{string} array of <source> html
 	 */
-	public function create_picture_elements() {
-		$srcsets = $this->get_image_srcsets();
+	protected function create_alternative_sources( $original_source_html ) {
+		$srcsets = $this->get_image_srcsets( $original_source_html );
 		if ( empty( $srcsets ) ) {
-			return $this->raw_html;
+			return array();
 		}
+
+		$is_source_tag = (bool) preg_match( '#<source\b#i', $original_source_html );
 
 		$sources = array();
 		foreach ( $this->valid_mimetypes as $mimetype ) {
@@ -453,16 +364,96 @@ class Tiny_Image_Source extends Tiny_Source_Base {
 			}
 
 			if ( ! empty( $srcset_parts ) ) {
+				$source_attr_parts = array();
+
 				$srcset_attr = implode( ', ', $srcset_parts );
-				$mimetype_source = '<source srcset="' . $srcset_attr . '" type="' . $mimetype . '" />';
-				$sources[] = $mimetype_source;
+				$source_attr_parts['srcset'] = $srcset_attr;
+
+				if ( $is_source_tag ) {
+					foreach ( array( 'sizes', 'media', 'width', 'height' ) as $attr ) {
+						$attr_value = $this->get_attribute_value( $original_source_html, $attr );
+						if ( $attr_value ) {
+							$source_attr_parts[ $attr ] = $attr_value;
+						}
+					}
+				}
+
+				$source_attr_parts['type'] = $mimetype;
+				$source_parts[] = '<source';
+				foreach ( $source_attr_parts as $source_attr_name => $source_attr_val ) {
+					$source_parts[] = $source_attr_name . '="' . $source_attr_val . '"';
+				}
+				$source_parts[] = '/>';
+				$sources[] = implode( ' ', $source_parts );
 			}
 		}
 
+		return $sources;
+	}
+}
+
+class Tiny_Picture_Source extends Tiny_Source_Base {
+
+
+
+	/**
+	 * Adds alternative format sources (e.g., image/webp, image/avif) to an existing
+	 * <picture> element based on locally available converted files.
+	 *
+	 * @return string The augmented <picture> HTML or the original if no additions.
+	 */
+	public function augment_picture_element() {
+		$modified_sources = array();
+
+		// handle existing sources
+		$optimized_types = [ 'image/webp', 'image/avif' ];
+
+		foreach ( $this->get_element_by_tag( $this->raw_html, 'source' ) as $source_tag_html ) {
+			$type_attr = self::get_attribute_value( $source_tag_html, 'type' );
+			$type_attr = null !== $type_attr ? strtolower( trim( $type_attr ) ) : '';
+
+			// Skip if already optimized.
+			if ( '' !== $type_attr && in_array( $type_attr, $optimized_types, true ) ) {
+				continue;
+			}
+
+			$alternative_sources = $this->create_alternative_sources( $source_tag_html );
+			if ( is_array( $alternative_sources ) && $alternative_sources ) {
+				foreach ( $alternative_sources as $alt ) {
+					$modified_sources[] = $alt; // no array_merge in the loop
+				}
+			}
+		}
+
+		// handle inner image
+		foreach ( $this->get_element_by_tag( $this->raw_html, 'img' ) as $img_tag_html ) {
+			$alt_image_source = $this->create_alternative_sources( $img_tag_html );
+			$modified_sources = array_merge( $modified_sources, $alt_image_source );
+		}
+
+		$modified_source = implode( '', $modified_sources );
+
+		// Insert newly built <source> elements immediately before the first <img>
+		return preg_replace( '#(<img\b)#i', $modified_source . '$1', $this->raw_html, 1 );
+	}
+}
+
+class Tiny_Image_Source extends Tiny_Source_Base {
+
+	/**
+	 * Generates a formatted image source array if the corresponding local file exists.
+	 *
+	 * Attempts to replace the file extension of the provided image path with the
+	 * specified MIME type, resolves the local path of the resulting file, and returns
+	 * the `srcset` and `type` if the file exists.
+	 *
+	 * @return string a <picture> element contain additional sources
+	 */
+	public function create_picture_elements() {
+		$sources = $this->create_alternative_sources( $this->raw_html );
 		if ( empty( $sources ) ) {
 			return $this->raw_html;
 		}
-
 		$picture_element = array( '<picture>' );
 		$picture_element[] = implode( '', $sources );
 		$picture_element[] = $this->raw_html;

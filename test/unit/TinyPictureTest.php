@@ -127,7 +127,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test_500x500.webp');
 
         $input = '<picture><source media="(max-width: 767px)" srcset="/wp-content/uploads/2025/01/test_500x500.png" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
-        $expected = '<picture><source media="(max-width: 767px)" srcset="/wp-content/uploads/2025/01/test_500x500.png" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" type="image/webp" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
+        $expected = '<picture><source media="(max-width: 767px)" srcset="/wp-content/uploads/2025/01/test_500x500.png" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" media="(max-width: 767px)" type="image/webp" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
@@ -139,7 +139,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test_500x500.webp');
 
         $input = '<picture><source srcset="/wp-content/uploads/2025/01/test_500x500.png" media="(max-width: 767px)" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
-        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test_500x500.png" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" type="image/webp" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test_500x500.png" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" media="(max-width: 767px)" type="image/webp" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
@@ -151,7 +151,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test_500x500.webp');
 
         $input = '<picture><source srcset="/wp-content/uploads/2025/01/test_500x500.png" media="(max-width: 767px)" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
-        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test_500x500.png" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" type="image/webp" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test_500x500.png" media="(max-width: 767px)" /><source srcset="/wp-content/uploads/2025/01/test_500x500.webp" media="(max-width: 767px)" type="image/webp" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
@@ -176,10 +176,21 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test-480w.webp');
         $this->wp->createImage(1000, '2025/01', 'test-320w.webp');
 
-        $input = '<picture><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" />';
+        $input = '<picture><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
         $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test-320w.webp, /wp-content/uploads/2025/01/test-480w.webp 1.5x, /wp-content/uploads/2025/01/test-640w.webp 2x, /wp-content/uploads/2025/01/test-640w.webp" type="image/webp" /><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
+    }
+
+    public function test_picture_with_attributes() {
+        $this->wp->createImage(1000, '2025/01', 'test-landscape.webp');
+
+        $input = '<picture><source srcset="/wp-content/uploads/2025/01/test-landscape.jpg" width="200" height="200" media="(width >= 600px)" /><img src="/wp-content/uploads/2025/01/test.jpg" /></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test-landscape.jpg" width="200" height="200" media="(width >= 600px)" /><source srcset="/wp-content/uploads/2025/01/test-landscape.webp" media="(width >= 600px)" width="200" height="200" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.jpg" /></picture>';
+        $output = $this->tiny_picture->replace_sources($input);
+
+        $this->assertEquals($expected, $output);
+
     }
 }
