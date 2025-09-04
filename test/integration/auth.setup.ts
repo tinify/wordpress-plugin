@@ -9,7 +9,10 @@ setup.describe('setup', () => {
     await page.fill('#user_login', 'admin');
     await page.fill('#user_pass', 'password');
 
-    await page.getByRole('button', { name: 'Log In' }).click();
+    await Promise.all([
+      page.waitForURL('**/wp-admin/**', { timeout: 15000 }),
+      page.getByRole('button', { name: 'Log In' }).click(),
+    ]);
 
     await page.context().storageState({ path: authFile });
   });
