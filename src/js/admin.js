@@ -24,8 +24,15 @@
   }
 
   function compressImageSelection() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const action = queryParams.get('action');
     jQuery('span.auto-compress').each(function(index, element) {
-      jQuery(element).siblings('button').click()
+      if (action === 'tiny_bulk_mark_compressed') {
+        jQuery(element).siblings('button.tiny-mark-as-compressed').click()
+      }
+      if (action === 'tiny_bulk_action') {
+        jQuery(element).siblings('button.tiny-compress').click()
+      }
     });
   }
 
@@ -59,6 +66,53 @@
         }
       });
     });
+  }
+
+  /**
+   * Marks an image attachment as compressed without actually compressing it.
+   *
+   * This function sends an AJAX request to mark an image as compressed by creating
+   * fake compression metadata. This is useful for images that are already optimized
+   * or when you want to skip compression for specific images while still marking
+   * them as processed in the system.
+   *
+   * @param {string} attachmentID - The WordPress attachment ID of the image to mark as compressed.
+   * @returns {Promise<string>} - string of html displaying the updated compressions.
+   */
+  function markAsCompressed(attachmentID) {
+    return new Promise((resolve, reject) => {
+      jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+          _nonce: tinyCompress.nonce,
+          action: 'tiny_mark_image_as_compressed',
+          id: attachmentID,
+        },
+        success: function (data) {
+          resolve(data);
+        },
+        error: function (err) {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  async function onClickButtonMarkAsCompressed(event) {
+    const element = jQuery(event.target);
+    var container = element.closest('div.tiny-ajax-container');
+    element.attr('disabled', 'disabled');
+    container.find('span.spinner').removeClass('hidden');
+    container.find('span.dashicons').remove();
+    const attachmentID = element.data('id') || element.attr('data-id');
+    try {
+      const result = await markAsCompressed(attachmentID);
+      container.html(result);
+    } finally {
+      element.removeAttr('disabled');
+      container.find('span.spinner').addClass('hidden');
+    }
   }
 
   function toggleChangeKey(event) {
@@ -231,14 +285,17 @@
   switch (adminpage) {
   case 'upload-php':
     eventOn('click', 'button.tiny-compress', compressImage);
+    eventOn('click', 'button.tiny-mark-as-compressed', onClickButtonMarkAsCompressed);
 
     setPropOf('button.tiny-compress', 'disabled', null);
-
+    
     compressImageSelection();
     watchCompressingImages();
 
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action]');
     jQuery('<option>').val('tiny_bulk_action').text(tinyCompress.L10nBulkAction).appendTo('select[name=action2]');
+    jQuery('<option>').val('tiny_bulk_mark_compressed').text(tinyCompress.L10nBulkMarkCompressed).appendTo('select[name=action]');
+    jQuery('<option>').val('tiny_bulk_mark_compressed').text(tinyCompress.L10nBulkMarkCompressed).appendTo('select[name=action2]');
     break;
   case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage);

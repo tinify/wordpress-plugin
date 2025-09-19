@@ -142,14 +142,15 @@ test.describe('compression', () => {
 
   test('button in edit screen should compress images', async () => {
     await setAPIKey(page, '');
-    await setCompressionTiming(page, 'auto');
+    await setCompressionTiming(page, 'manual');
     await enableCompressionSizes(page, ['medium', 'large']);
-    await uploadMedia(page, 'input-example.jpg');
     await setAPIKey(page, 'JPG123');
+    
+    await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
 
-    await page.getByRole('button', { name: 'Compress' }).click();
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
   });
 
@@ -165,7 +166,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await page.getByRole('button', { name: 'Compress' }).click();
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
     await expect(page.getByText('3 sizes compressed')).toBeVisible();
   });
 
@@ -184,7 +185,7 @@ test.describe('compression', () => {
 
     await page.waitForLoadState('networkidle');
 
-    await page.getByRole('button', { name: 'Compress' }).click({ force: true });
+    await page.getByRole('button', { name: 'Compress', exact: true }).click({ force: true });
 
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
   });
@@ -199,7 +200,7 @@ test.describe('compression', () => {
     await setAPIKey(page, 'JSON1234');
     await page.goto('/wp-admin/upload.php');
 
-    await page.getByRole('button', { name: 'Compress' }).click();
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
     await expect(page.getByText('Error while parsing response')).toBeVisible();
   });
 
@@ -434,7 +435,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Compress', exact: true })).not.toBeVisible();
   });
 
   test('non image file should not show compress info in library', async () => {
@@ -451,7 +452,7 @@ test.describe('compression', () => {
 
     await page.goto('/wp-admin/upload.php');
 
-    await expect(page.getByRole('button', { name: 'Compress' })).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Compress', exact: true })).not.toBeVisible();
   });
 
   test('compresses images upload via JSON API', async () => {
@@ -491,5 +492,35 @@ test.describe('compression', () => {
 
     await page.goto(`/wp-admin/post.php?post=${response.id}&action=edit`);
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
+  });
+
+  test('will mark a single attachment as compressed', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0', 'medium']);
+    await uploadMedia(page, 'input-example.jpg');
+    
+    await page.goto('/wp-admin/upload.php');
+
+    await page.getByRole('button', { name: 'Mark as Compressed' }).click();
+    await expect(page.getByText('2 sizes compressed')).toBeVisible();
+    await expect(page.getByText('2 sizes converted')).toBeVisible();
+  });
+  
+  test('will mark multiple attachments as compressed', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0', 'medium']);
+    
+    await uploadMedia(page, 'input-example.jpg');
+    await uploadMedia(page, 'input-example.png');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await page.locator('#cb-select-all-1').check();
+    await page.locator('#bulk-action-selector-top').selectOption('tiny_bulk_mark_compressed');
+    await page.locator('#doaction').click();
+    await expect(page.getByText('2 sizes compressed')).toBeVisible();
+    await expect(page.getByText('2 sizes converted')).toBeVisible();
   });
 });

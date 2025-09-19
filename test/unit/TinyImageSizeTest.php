@@ -192,4 +192,62 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 	public function test_resized_should_return_false_if_meta_have_output_and_not_resized() {
 		$this->assertFalse( $this->thumbnail->resized() );
 	}
+
+	/**
+	 * Customers can select multiple images in the media library and select
+	 * images that have already been compressed. We do not want to modify these images.
+	 * When image is already compressed, it will not be modified.
+	 */
+	public function test_when_compressed_will_skip_marking()
+	{
+		$image_size = $this->getMockBuilder(Tiny_Image_Size::class)
+			->onlyMethods(['add_tiny_meta', 'has_been_compressed'])
+			->setConstructorArgs(['2015/09/tinypng_gravatar.png'])
+			->getMock();
+
+		// mock has_been_compressed to return true
+		$image_size->method('has_been_compressed')
+			->willReturn(true);
+
+		// assert if that is true
+		$this->assertTrue($image_size->has_been_compressed());
+
+		// execute subject of test
+		$image_size->mark_as_compressed();
+
+		// validate if add_tiny_meta has not been called
+		$image_size->expects($this->never())->method('add_tiny_meta');
+	}
+
+	/**
+	 * When image is not compressed, it will not marked as compressed
+	 */
+	public function test_when_not_compressed_will_mark_as_compressed()
+	{
+		$image_size = new Tiny_Image_Size('2015/09/tinypng_gravatar.png');
+
+		// assert if that is true
+		$this->assertFalse($image_size->has_been_compressed());
+
+		// execute subject of test
+		$image_size->mark_as_compressed();
+
+		// should now be compressed
+		$this->assertTrue($image_size->has_been_compressed());
+	}
+
+	/**
+	 * Users can still mark an image as converted when compression has already been done.
+	 */
+	public function test_when_compressed_but_unconverted_will_add_convert_meta()
+	{
+		$image_size = new Tiny_Image_Size('2015/09/tinypng_gravatar.png');
+		$image_size->mark_as_compressed();
+		$this->assertTrue($image_size->has_been_compressed());
+		
+		$this->assertFalse($image_size->has_been_converted());
+
+		$image_size->mark_as_compressed(true);
+		$this->assertTrue($image_size->has_been_converted());
+	}
 }
