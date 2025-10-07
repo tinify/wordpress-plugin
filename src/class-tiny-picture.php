@@ -18,7 +18,18 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+/**
+ * Class responsible for parsing and modifying html to insert picture elements.
+ *
+ * 1) searches for <picture> elements or <img> elements
+ * 2) checks wether existing source has a modern alternative
+ * 3) augments or creates a picture element
+ * 4) replaces the original source with the source which includes the modern format
+ */
 class Tiny_Picture extends Tiny_WP_Base {
+
+
 
 	/** @var string */
 	private $base_dir;
@@ -48,12 +59,33 @@ class Tiny_Picture extends Tiny_WP_Base {
 			return;
 		}
 
-		add_action( 'template_redirect', function() {
-			ob_start( array( $this, 'replace_img_sources' ), 1000 );
+		add_action('template_redirect', function () {
+			ob_start( array( $this, 'replace_sources' ), 1000 );
 		});
 	}
 
-	public function replace_img_sources( $content ) {
+	public function replace_sources( $content ) {
+		$content = $this->replace_picture_sources( $content );
+		$content = $this->replace_img_sources( $content );
+
+		return $content;
+	}
+
+	/**
+	 * Will extend existing picture elements with additional sourcesets
+	 *
+	 * @param string $content
+	 * @return string the new source html
+	 */
+	private function replace_picture_sources( $content ) {
+		$picture_sources = $this->filter_pictures( $content );
+		foreach ( $picture_sources as $picture_source ) {
+			$content = $this->replace_picture( $content, $picture_source );
+		}
+		return $content;
+	}
+
+	private function replace_img_sources( $content ) {
 		$image_sources = $this->filter_images( $content );
 		foreach ( $image_sources as $image_source ) {
 			$content = Tiny_Picture::replace_image( $content, $image_source );
@@ -61,8 +93,58 @@ class Tiny_Picture extends Tiny_WP_Base {
 		return $content;
 	}
 
+	/**
+	 * Will search for all picture elements within the given source html
+	 *
+	 * @param string $content
+	 * @return array<Tiny_Picture_Source> an array of picture element sources
+	 */
+	private function filter_pictures( $content ) {
+		$matches = array();
+		if ( ! preg_match_all(
+			'#<picture\b[^>]*>.*?<\/picture>#is',
+			$content,
+			$matches
+		) ) {
+			return array();
+		}
+
+		$pictures = array();
+		foreach ( $matches[0] as $raw_picture ) {
+			$pictures[] = new Tiny_Picture_Source(
+				$raw_picture,
+				$this->base_dir,
+				$this->allowed_domains
+			);
+		}
+
+		return $pictures;
+	}
+
+	/**
+	 * Will add additional sourcesets to picture elements.
+	 *
+	 * @param string $content the full page content
+	 * @param Tiny_Picture_Source $source the picture element
+	 *
+	 * @return string the updated content including augmented picture elements
+	 */
+	private function replace_picture( $content, $source ) {
+		$content = str_replace( $source->raw_html, $source->augment_picture_element(), $content );
+		return $content;
+	}
+
+
+	/**
+	 * Will replace img elements with picture elements that (possibly) have additional formats.
+	 *
+	 * @param string $content the full page content
+	 * @param Tiny_Image_Source $source the picture element
+	 *
+	 * @return string the updated content including augmented picture elements
+	 */
 	private static function replace_image( $content, $source ) {
-		$content = str_replace( $source->image, $source->create_picture_elements(), $content );
+		$content = str_replace( $source->raw_html, $source->create_picture_elements(), $content );
 		return $content;
 	}
 
@@ -72,15 +154,22 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 * @return Tiny_Image[]
 	 */
 	private function filter_images( $content ) {
+		// Extract only the <body>...</body> section.
 		if ( preg_match( '/(?=<body).*<\/body>/is', $content, $body ) ) {
 			$content = $body[0];
 		}
 
+		// strip HTML comments.
 		$content = preg_replace( '/<!--(.*)-->/Uis', '', $content );
 
-		$content = preg_replace( '#<noscript(.*?)>(.*?)</noscript>#is', '', $content );
+		// strip existing <picture> blocks to avoid double-processing.
+		$content = preg_replace( '/<picture\b.*?>.*?<\/picture>/is', '', $content );
 
-		if ( ! preg_match_all( '/<img\s.*>/isU', $content, $matches ) ) {
+		// Strip <noscript> blocks to avoid altering their contents.
+		$content = preg_replace( '/<noscript\b.*?>.*?<\/noscript>/is', '', $content );
+
+		// Find all <img> tags with any attributes.
+		if ( ! preg_match_all( '/<img\b[^>]*>/is', $content, $matches ) ) {
 			return array();
 		}
 
@@ -95,125 +184,119 @@ class Tiny_Picture extends Tiny_WP_Base {
 
 		return $images;
 	}
-
-	/**
-	 * Replace attachment URL with .avif/.webp variant if supported and exists.
-	*
-	* @see https://developer.wordpress.org/reference/hooks/wp_get_attachment_url/
-	*
-	* @param string $url     Original attachment URL.
-	* @param int    $post_id Attachment post ID.
-	* @return string New or original URL.
-	*/
-	public function filter_attachment_url( $url, $post_id ) {
-		$supported_formats = $this->get_support_formats();
-		if ( empty( $supported_formats ) ) {
-			return $url;
-		}
-
-		$uploads = wp_upload_dir();
-		$basedir = trailingslashit( $uploads['basedir'] );
-		$baseurl = trailingslashit( $uploads['baseurl'] );
-
-		$relative = str_replace( $baseurl, '', $url );
-		$path     = $basedir . $relative;
-
-		foreach ( $supported_formats as $format ) {
-			$candidate = preg_replace( '/\.(jpe?g|png|webp)$/i', $format['ext'], $path );
-			if ( file_exists( $candidate ) ) {
-				return $baseurl . ltrim( str_replace( $basedir, '', $candidate ), '/' );
-			}
-		}
-		return $url;
-	}
-
-	/**
-	 * Swap URL in <img> tags.
-	 *
-	 * @param array|false $image         [0]=URL, [1]=width, [2]=height, [3]=is_intermediate
-	 * @param int         $attachment_id Attachment ID.
-	 * @param string|int[] $size         Size name or [width,height].
-	 * @param bool        $icon          Whether icon fallback.
-	 * @return array|false Modified image array.
-	 */
-	public function filter_attachment_image_src( $image, $attachment_id, $size, $icon ) {
-		if ( ! $image ) {
-			return $image;
-		}
-		list( $url, $w, $h, $inter ) = $image;
-		$new_url = $this->filter_attachment_url( $url, $attachment_id );
-		return [ $new_url, $w, $h, $inter ];
-	}
-
-	/**
-	 * Swap URLs in responsive srcset.
-	 *
-	 * @param array   $sources       Array of [ 'url'=>..., 'descriptor'=>..., 'value'=>... ]
-	 * @param int[]   $size_array    [width, height]
-	 * @param string  $image_src     Original src
-	 * @param array   $image_meta    Attachment metadata
-	 * @param int     $attachment_id Attachment ID
-	 * @return array Modified sources array.
-	 */
-	public function filter_image_srcset(
-		$sources,
-		$size_array,
-		$image_src,
-		$image_meta,
-		$attachment_id
-	) {
-		foreach ( $sources as &$src ) {
-			$src['url'] = $this->filter_attachment_url( $src['url'], $attachment_id );
-		}
-		return $sources;
-	}
 }
 
-
-class Tiny_Image_Source {
-	/**
-	 * The raw HTML img element as a string
-	 * @var string
-	 */
-	public $image;
-
-	private $base_dir;
-
-	private $allowed_domains;
-
-	private $valid_mimetypes;
+abstract class Tiny_Source_Base {
 
 
-	public function __construct( $img_element, $base_dir, $domains ) {
-		$this->image = $img_element;
-		$this->base_dir = $base_dir;
+	public $raw_html;
+	protected $base_dir;
+	protected $allowed_domains;
+	protected $valid_mimetypes;
+
+	public function __construct( $html, $base_dir, $domains ) {
+		$this->raw_html 	   = $html;
+		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
 		$this->valid_mimetypes = array( 'image/webp', 'image/avif' );
 	}
 
-	/**
-	 * Attempts to get an HTML attribute from the given string
-	 *
-	 * @param string $html The string to parse
-	 * @param string $attribute_name The name of the attribute to search for.
-	 * @return string The value of the attribute, or an empty string if not found.
-	 */
-	private static function get_attribute_value( $element, $name ) {
-		$regex = '#\b' . preg_quote( $name, '#' ) . '\s*=\s*(["\'])(.*?)\1#is';
-		if ( preg_match( $regex, $element, $attr_matches ) ) {
-			return $attr_matches[2];
+	protected static function get_attribute_value( $element, $name ) {
+		// Match the exact attribute name (not part of data-media, mediaType, etc.)
+		// and capture a single- or double-quoted value.
+		$delim = '~';
+		$attr  = preg_quote( $name, $delim );
+		$regex = $delim . '(?<![\w:-])' . $attr . '\s*=\s*(["\'])(.*?)\1' . $delim . 'is';
+
+		if ( preg_match( $regex, $element, $m ) ) {
+			return $m[2];
 		}
 		return null;
 	}
 
 	/**
-	 * Retrieves the image sources from the img element
+	 * Extract elements by tag name from an HTML string (regex-based).
+	 *
+	 * @param string $html     The HTML string to search in.
+	 * @param string $tagname  The tag name (e.g., 'div', 'source', 'img').
+	 * @return array           Array of matched elements as strings.
+	 */
+	protected function get_element_by_tag( $html, $tagname ) {
+		$results = [];
+
+		// Self-closing / void tag (e.g. <source />, <img />, <br />)
+		if ( preg_match_all(
+			'~<' . preg_quote( $tagname, '~' ) . '\b(?:[^>"\']+|"[^"]*"|\'[^\']*\')*/?>~i',
+			$html,
+			$matches
+		) ) {
+			$results = array_merge( $results, $matches[0] );
+		}
+
+		// Normal paired tags (e.g. <div>…</div>)
+		$regex_tag = preg_quote( $tagname, '~' );
+		if ( preg_match_all(
+			'~<' . $regex_tag .
+			'\b(?:[^>"\']+|"[^"]*"|\'[^\']*\')*>.*?</' .
+			$regex_tag .
+			'>~is',
+			$html,
+			$matches
+		) ) {
+			$results = array_merge( $results, $matches[0] );
+		}
+
+		return $results;
+	}
+
+	protected function get_local_path( $url ) {
+		if ( strpos( $url, 'http' ) === 0 ) {
+			$matched_domain = null;
+
+			foreach ( $this->allowed_domains as $domain ) {
+				if ( strpos( $url, $domain ) === 0 ) {
+					$matched_domain = $domain;
+					break;
+				}
+			}
+
+			if ( null === $matched_domain ) {
+				return '';
+			}
+
+			$url = substr( $url, strlen( $matched_domain ) );
+		}
+		$url = $this->base_dir . $url;
+
+		return $url;
+	}
+
+	protected function get_formatted_source( $image_source_data, $mimetype ) {
+		$format_url = Tiny_Helpers::replace_file_extension( $mimetype, $image_source_data['path'] );
+		$local_path = $this->get_local_path( $format_url );
+		if ( empty( $local_path ) ) {
+			return null;
+		}
+
+		$exists_local = file_exists( $local_path );
+		if ( $exists_local ) {
+			return array(
+				'src' => $format_url,
+				'size' => $image_source_data['size'],
+				'type' => $mimetype,
+			);
+		}
+		return null;
+	}
+
+	/**
+	 * Retrieves the sources from the <img> or <source> element
 	 *
 	 * @return array{path: string, size: string}[] The image sources
 	 */
-	private function get_image_srcsets() {
+	protected function get_image_srcsets( $html ) {
 		$result = array();
-		$srcset = $this::get_attribute_value( $this->image, 'srcset' );
+		$srcset = $this::get_attribute_value( $html, 'srcset' );
 
 		if ( $srcset ) {
 			// Split the srcset to get individual entries
@@ -242,7 +325,7 @@ class Tiny_Image_Source {
 			}
 		}
 
-		$source = $this::get_attribute_value( $this->image, 'src' );
+		$source = $this::get_attribute_value( $html, 'src' );
 		if ( ! empty( $source ) ) {
 			// No srcset, but we have a src attribute
 			$result[] = array(
@@ -253,27 +336,109 @@ class Tiny_Image_Source {
 		return $result;
 	}
 
-	private function get_local_path( $url ) {
-		if ( strpos( $url, 'http' ) === 0 ) {
-			$matched_domain = null;
 
-			foreach ( $this->allowed_domains as $domain ) {
-				if ( strpos( $url, $domain ) === 0 ) {
-					$matched_domain = $domain;
-					break;
+	/**
+	 * Creates one or more <source> elements if alternative formats
+	 * are available.
+	 *
+	 * @param string $original_source_html, either <source> or <img>
+	 * @return array{string} array of <source> html
+	 */
+	protected function create_alternative_sources( $original_source_html ) {
+		$srcsets = $this->get_image_srcsets( $original_source_html );
+		if ( empty( $srcsets ) ) {
+			return array();
+		}
+
+		$is_source_tag = (bool) preg_match( '#<source\b#i', $original_source_html );
+
+		$sources = array();
+		foreach ( $this->valid_mimetypes as $mimetype ) {
+			$srcset_parts = [];
+
+			foreach ( $srcsets as $srcset ) {
+				$alt_source = $this->get_formatted_source( $srcset, $mimetype );
+				if ( $alt_source ) {
+					$srcset_parts[] = trim( $alt_source['src'] . ' ' . $alt_source['size'] );
 				}
 			}
 
-			if ( null === $matched_domain ) {
-				return '';
+			if ( ! empty( $srcset_parts ) ) {
+				$source_attr_parts = array();
+
+				$srcset_attr = implode( ', ', $srcset_parts );
+				$source_attr_parts['srcset'] = $srcset_attr;
+
+				if ( $is_source_tag ) {
+					foreach ( array( 'sizes', 'media', 'width', 'height' ) as $attr ) {
+						$attr_value = $this->get_attribute_value( $original_source_html, $attr );
+						if ( $attr_value ) {
+							$source_attr_parts[ $attr ] = $attr_value;
+						}
+					}
+				}
+
+				$source_attr_parts['type'] = $mimetype;
+				$source_parts = array( '<source' );
+				foreach ( $source_attr_parts as $source_attr_name => $source_attr_val ) {
+					$source_parts[] = $source_attr_name . '="' . $source_attr_val . '"';
+				}
+				$source_parts[] = '/>';
+				$sources[] = implode( ' ', $source_parts );
+			}
+		}
+
+		return $sources;
+	}
+}
+
+class Tiny_Picture_Source extends Tiny_Source_Base {
+
+
+
+	/**
+	 * Adds alternative format sources (e.g., image/webp, image/avif) to an existing
+	 * <picture> element based on locally available converted files.
+	 *
+	 * @return string The augmented <picture> HTML or the original if no additions.
+	 */
+	public function augment_picture_element() {
+		$modified_sources = array();
+
+		// handle existing sources
+		$optimized_types = [ 'image/webp', 'image/avif' ];
+
+		foreach ( $this->get_element_by_tag( $this->raw_html, 'source' ) as $source_tag_html ) {
+			$type_attr = self::get_attribute_value( $source_tag_html, 'type' );
+			$type_attr = null !== $type_attr ? strtolower( trim( $type_attr ) ) : '';
+
+			// Skip if already optimized.
+			if ( '' !== $type_attr && in_array( $type_attr, $optimized_types, true ) ) {
+				continue;
 			}
 
-			$url = substr( $url, strlen( $matched_domain ) );
+			$alternative_sources = $this->create_alternative_sources( $source_tag_html );
+			if ( is_array( $alternative_sources ) && $alternative_sources ) {
+				foreach ( $alternative_sources as $alt ) {
+					$modified_sources[] = $alt; // no array_merge in the loop
+				}
+			}
 		}
-		$url = $this->base_dir . $url;
 
-		return $url;
+		// handle inner image
+		foreach ( $this->get_element_by_tag( $this->raw_html, 'img' ) as $img_tag_html ) {
+			$alt_image_source = $this->create_alternative_sources( $img_tag_html );
+			$modified_sources = array_merge( $modified_sources, $alt_image_source );
+		}
+
+		$modified_source = implode( '', $modified_sources );
+
+		// Insert newly built <source> elements immediately before the first <img>
+		return preg_replace( '#(<img\b)#i', $modified_source . '$1', $this->raw_html, 1 );
 	}
+}
+
+class Tiny_Image_Source extends Tiny_Source_Base {
 
 	/**
 	 * Generates a formatted image source array if the corresponding local file exists.
@@ -282,57 +447,16 @@ class Tiny_Image_Source {
 	 * specified MIME type, resolves the local path of the resulting file, and returns
 	 * the `srcset` and `type` if the file exists.
 	 *
-	 * @param array  $imgsrc   An associative array containing at least the keys 'path'
-	 * 						   (string) and 'size' (string).
-	 * @param string $mimetype The target MIME type (e.g., 'image/webp', 'image/avif').
-	 *
-	 * @return array|null An array with 'srcset' and 'type' if the file exists locally,
-	 * 					  or null otherwise.
+	 * @return string a <picture> element contain additional sources
 	 */
-	private function get_formatted_source( $imgsrc, $mimetype ) {
-		$format_url = Tiny_Helpers::replace_file_extension( $mimetype, $imgsrc['path'] );
-		$local_path = $this->get_local_path( $format_url );
-		if ( empty( $local_path ) ) {
-			return null;
-		}
-
-		$exists_local = file_exists( $local_path );
-		if ( $exists_local ) {
-			return array(
-				'src' => $format_url,
-				'size' => $imgsrc['size'],
-				'type' => $mimetype,
-			);
-		}
-		return null;
-	}
-
 	public function create_picture_elements() {
-		$srcsets = $this->get_image_srcsets();
-
-		$srcset_parts = array();
-		foreach ( $srcsets as $srcset ) {
-			foreach ( $this->valid_mimetypes as $mimetype ) {
-				$new_srcset = $this->get_formatted_source( $srcset, $mimetype );
-
-				if ( $new_srcset ) {
-					$srcset_parts[] = $new_srcset;
-					break;
-				}
-			}
+		$sources = $this->create_alternative_sources( $this->raw_html );
+		if ( empty( $sources ) ) {
+			return $this->raw_html;
 		}
-
-		if ( empty( $srcset_parts ) ) {
-			return $this->image;
-		}
-
 		$picture_element = array( '<picture>' );
-		foreach ( $srcset_parts as $source ) {
-			$srcset = trim( $source['src'] . ' ' . $source['size'] );
-			$picture_element[] =
-				'<source srcset="' . $srcset . '" type="' . $source['type'] . '" />';
-		}
-		$picture_element[] = $this->image;
+		$picture_element[] = implode( '', $sources );
+		$picture_element[] = $this->raw_html;
 		$picture_element[] = '</picture>';
 
 		return implode( '', $picture_element );
