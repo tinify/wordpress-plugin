@@ -67,7 +67,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		if ( $this->settings->get_conversion_enabled() ) {
-			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
+			/**
+			 * Controls wether the page should replace <img> with <picture> elements
+			 * converted sources.
+			 *
+			 * @since 3.7.0
+			 */
+			$should_replace = apply_filters( 'tiny_replace_with_picture', true );
+			if ( $should_replace ) {
+				new Tiny_Picture( ABSPATH, array( get_site_url() ) );
+			}
 		}
 	}
 
