@@ -424,4 +424,82 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 
 		$this->assertEquals($cost, 0.01, 0.0001, 'a compressed image that will be converted will cost 1 credit at $0.009 (rounded $0.01) each when 500 compressions already used');
 	}
+
+	public function test_conversion_enabled_but_filtered_off_not_load_picture()
+	{
+		// Mock settings with compression count
+		$mock_settings = $this->createMock(Tiny_Settings::class);
+		$mock_settings->method('get_conversion_enabled')->willReturn(true);
+
+		// set filter to disable picture, this can be done by devs in themes/plugins
+		add_filter('tiny_replace_with_picture', function () {
+			return false;
+		}, 5);
+
+		// test is only valid when it is public
+		$this->wp->stub('is_admin', function () {
+			return false;
+		});
+
+		$tiny_plugin = new Tiny_Plugin();
+
+		// set settings via reflection as settings is private
+		$ref = new \ReflectionClass($tiny_plugin);
+		$settings_prop = $ref->getProperty('settings');
+		$settings_prop->setAccessible(true);
+		$settings_prop->setValue($tiny_plugin, $mock_settings);
+
+		// Init plugin
+		$tiny_plugin->init();
+
+		// verify tiny_replace_with_picture filter
+		$filter_registered = false;
+		foreach ($this->wp->getCalls('add_filter') as $call) {
+			$priority = isset($call[2]) ? $call[2] : 10;
+			if ($call[0] === 'tiny_replace_with_picture' && $priority === 5) {
+				$filter_registered = true;
+				break;
+			}
+		}
+		$this->assertTrue(
+			$filter_registered,
+			'Expected tiny_replace_with_picture filter to be registered with priority 5.'
+		);
+	}
+
+	public function test_conversion_enabled_and_not_filtered()
+	{
+		// Mock settings with compression count
+		$mock_settings = $this->createMock(Tiny_Settings::class);
+		$mock_settings->method('get_conversion_enabled')->willReturn(true);
+
+		// hook is only done on public, so should not be admin
+		$this->wp->stub('is_admin', function () {
+			return false;
+		});
+
+		$tiny_plugin = new Tiny_Plugin();
+
+		// set settings via reflection as settings is private
+		$ref = new \ReflectionClass($tiny_plugin);
+		$settings_prop = $ref->getProperty('settings');
+		$settings_prop->setAccessible(true);
+		$settings_prop->setValue($tiny_plugin, $mock_settings);
+
+		// Init plugin
+		$tiny_plugin->init();
+
+		$template_redirect_registered = false;
+		foreach ($this->wp->getCalls('add_action') as $call) {
+			if ($call[0] === 'template_redirect') {
+				$template_redirect_registered = true;
+				break;
+			}
+		}
+
+		$this->assertTrue(
+			$template_redirect_registered,
+			'Expected Tiny_Picture to hook into template_redirect.'
+		);
+	}
 }
