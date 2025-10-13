@@ -82,7 +82,8 @@ class Tiny_Image_Size {
 	 */
 	public function mark_as_compressed( $include_conversion = false ) {
 		$file_size = $this->filesize();
-		$mime_type = Tiny_Helpers::get_mimetype( $this->filename );
+		$file = file_get_contents($this->filename);
+		$mime_type = Tiny_Helpers::get_mimetype( $file );
 
 		if ( ! $this->has_been_compressed() ) {
 			$this->add_tiny_meta_start();
