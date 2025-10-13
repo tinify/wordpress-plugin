@@ -110,6 +110,9 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
 			<?php esc_html_e( 'Convert', 'tiny-compress-images' ) ?>
 		</button>
+		<button type="button" class="tiny-mark-as-compressed button button-small button-secondary" data-id="<?php echo $tiny_image->get_id() ?>">
+			<?php esc_html_e( 'Mark as Converted', 'tiny-compress-images' ) ?>
+		</button>
 	<?php } ?>
 </div>
 
