@@ -48,6 +48,7 @@ class WordPressStubs {
 	private $metadata;
 	private $calls;
 	private $stubs;
+	private $filters;
 
 	public function __construct( $vfs ) {
 		$GLOBALS['wp'] = $this;
@@ -55,6 +56,7 @@ class WordPressStubs {
 		$this->addMethod( 'add_action' );
 		$this->addMethod( 'do_action' );
 		$this->addMethod( 'add_filter' );
+		$this->addMethod( 'apply_filters' );
 		$this->addMethod( 'register_setting' );
 		$this->addMethod( 'add_settings_section' );
 		$this->addMethod( 'add_settings_field' );
@@ -76,6 +78,7 @@ class WordPressStubs {
 		$this->addMethod( 'current_user_can' );
 		$this->addMethod( 'wp_get_attachment_metadata' );
 		$this->addMethod( 'is_admin' );
+		$this->addMethod( 'is_customize_preview' );
 		$this->addMethod( 'is_plugin_active' );
 		$this->defaults();
 		$this->create_filesystem();
@@ -91,6 +94,7 @@ class WordPressStubs {
 		$this->admin_initFunctions = array();
 		$this->options = new WordPressOptions();
 		$this->metadata = array();
+		$this->filters = array();
 		$GLOBALS['_wp_additional_image_sizes'] = array();
 	}
 
@@ -102,6 +106,47 @@ class WordPressStubs {
 			} elseif ( 'admin_init' === $args[0] ) {
 				$this->admin_initFunctions[] = $args[1];
 			}
+		}
+		// Allow explicit stubs to override defaults/behaviors
+		if ( isset( $this->stubs[ $method ] ) && $this->stubs[ $method ] ) {
+			return call_user_func_array( $this->stubs[ $method ], $args );
+		}
+		if ( 'add_filter' === $method ) {
+			$tag = isset( $args[0] ) ? $args[0] : '';
+			$function_to_add = isset( $args[1] ) ? $args[1] : '';
+			$priority = isset( $args[2] ) ? intval( $args[2] ) : 10;
+			$accepted_args = isset( $args[3] ) ? intval( $args[3] ) : 1;
+			if ( ! isset( $this->filters[ $tag ] ) ) {
+				$this->filters[ $tag ] = array();
+			}
+			if ( ! isset( $this->filters[ $tag ][ $priority ] ) ) {
+				$this->filters[ $tag ][ $priority ] = array();
+			}
+			$this->filters[ $tag ][ $priority ][] = array(
+				'function' => $function_to_add,
+				'accepted_args' => $accepted_args,
+			);
+			return true;
+		}
+		if ( 'apply_filters' === $method ) {
+			$tag = isset( $args[0] ) ? $args[0] : '';
+			// $value is the first value passed to filters
+			$value = isset( $args[1] ) ? $args[1] : null;
+			$call_args = array_slice( $args, 1 );
+			if ( isset( $this->filters[ $tag ] ) ) {
+				$priorities = array_keys( $this->filters[ $tag ] );
+				sort( $priorities, SORT_NUMERIC );
+				foreach ( $priorities as $priority ) {
+					foreach ( $this->filters[ $tag ][ $priority ] as $callback ) {
+						$accepted = max( 1, intval( $callback['accepted_args'] ) );
+						$args_to_pass = array_slice( $call_args, 0, $accepted );
+						$returned = call_user_func_array( $callback['function'], $args_to_pass );
+						// Filters should return the (possibly modified) value as first argument.
+						$call_args[0] = $returned;
+					}
+				}
+			}
+			return $call_args[0];
 		}
 		if ( 'translate' === $method ) {
 			return $args[0];
@@ -123,8 +168,6 @@ class WordPressStubs {
 			return array( 'basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR );
 		} elseif ( 'is_admin' === $method ) {
 			return true;
-		} elseif ( $this->stubs[ $method ] ) {
-			return call_user_func_array( $this->stubs[ $method ], $args );
 		}
 	}
 
