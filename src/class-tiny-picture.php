@@ -198,7 +198,7 @@ abstract class Tiny_Source_Base {
 		$this->raw_html 	   = $html;
 		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
-		$this->valid_mimetypes = array(  'image/avif', 'image/webp' );
+		$this->valid_mimetypes = array( 'image/avif', 'image/webp' );
 	}
 
 	protected static function get_attribute_value( $element, $name ) {
