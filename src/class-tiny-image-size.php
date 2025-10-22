@@ -82,7 +82,7 @@ class Tiny_Image_Size {
 	 * @return void
 	 */
 	public function mark_as_compressed( $include_conversion = false ) {
-		
+
 		if ( ! $this->has_been_compressed() ) {
 			$this->add_tiny_meta_start();
 			$tiny_image_size_meta = array(
@@ -96,7 +96,7 @@ class Tiny_Image_Size {
 			);
 			$this->add_tiny_meta( $tiny_image_size_meta );
 		}
-		
+
 		if ( ! $this->has_been_converted() && $include_conversion ) {
 			$this->meta['convert'] = array(
 				'size' => $this->filesize(),
