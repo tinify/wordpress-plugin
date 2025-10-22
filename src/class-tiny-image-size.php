@@ -139,6 +139,7 @@ class Tiny_Image_Size {
 				$this->_mime_type = 'application/octet-stream';
 			}
 		}
+		return $this->_mime_type;
 	}
 
 	public function exists() {
