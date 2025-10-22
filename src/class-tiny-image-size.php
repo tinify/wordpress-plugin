@@ -25,6 +25,7 @@ class Tiny_Image_Size {
 	/* Used more than once and not trivial, so we are memoizing these */
 	private $_exists;
 	private $_file_size;
+	private $_mime_type;
 	private $_duplicate = false;
 	private $_duplicate_of_size = '';
 
@@ -81,28 +82,25 @@ class Tiny_Image_Size {
 	 * @return void
 	 */
 	public function mark_as_compressed( $include_conversion = false ) {
-		$file_size = $this->filesize();
-		$file = file_get_contents( $this->filename );
-		$mime_type = Tiny_Helpers::get_mimetype( $file );
-
+		
 		if ( ! $this->has_been_compressed() ) {
 			$this->add_tiny_meta_start();
 			$tiny_image_size_meta = array(
 				'input'  => array(
-					'size' => $file_size,
+					'size' => $this->filesize(),
 				),
 				'output' => array(
-					'size' => $file_size,
-					'type' => $mime_type,
+					'size' => $this->filesize(),
+					'type' => $this->mimetype(),
 				),
 			);
 			$this->add_tiny_meta( $tiny_image_size_meta );
 		}
-
+		
 		if ( ! $this->has_been_converted() && $include_conversion ) {
 			$this->meta['convert'] = array(
-				'size' => $file_size,
-				'type' => $mime_type,
+				'size' => $this->filesize(),
+				'type' => $this->mimetype(),
 				'path' => $this->filename,
 			);
 		}
@@ -130,6 +128,17 @@ class Tiny_Image_Size {
 			}
 		}
 		return $this->_file_size;
+	}
+
+	public function mimetype() {
+		if ( is_null( $this->_mime_type ) ) {
+			if ( $this->exists() ) {
+				$file = file_get_contents( $this->filename );
+				$this->_mime_type = Tiny_Helpers::get_mimetype( $file );
+			} else {
+				$this->_mime_type = 'application/octet-stream';
+			}
+		}
 	}
 
 	public function exists() {
