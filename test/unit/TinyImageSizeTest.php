@@ -193,6 +193,11 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 		$this->assertFalse( $this->thumbnail->resized() );
 	}
 
+	public function test_will_read_mimetype_from_file() {
+		// because files in the virtual file system are not really files but empty strings, it is a text/plain.
+		$this->assertEquals( $this->original->mimetype(), 'text/plain');
+	}
+
 	/**
 	 * Customers can select multiple images in the media library and select
 	 * images that have already been compressed. We do not want to modify these images.
