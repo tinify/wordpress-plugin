@@ -316,7 +316,8 @@ abstract class Tiny_Source_Base {
 						'size' => $parts[1],
 					);
 				} elseif ( count( $parts ) === 1 ) {
-					// We only have a path, will be interpreted as pixel density 1x (unusual in srcset)
+					// We only have a path, will be interpreted as pixel
+					// density 1x (unusual in srcset)
 					$result[] = array(
 						'path' => $parts[0],
 						'size' => '',
@@ -359,7 +360,7 @@ abstract class Tiny_Source_Base {
 			$srcsets[] = $this->get_image_src( $original_source_html );
 		}
 
-		if ( empty ( $srcsets ) ) {
+		if ( empty( $srcsets ) ) {
 			return array();
 		}
 
@@ -378,7 +379,11 @@ abstract class Tiny_Source_Base {
 				}
 			}
 
-			if ( $width_descriptor && ! self::srcset_contains_width_descriptor( $srcset_parts, $width_descriptor ) ) {
+			if ( $width_descriptor &&
+				! self::srcset_contains_width_descriptor(
+					$srcset_parts,
+					$width_descriptor
+				) ) {
 				continue;
 			}
 
@@ -407,13 +412,14 @@ abstract class Tiny_Source_Base {
 			}
 			$source_parts[] = '/>';
 			$sources[] = implode( ' ', $source_parts );
-		}
+		}// End foreach().
 
 		return $sources;
 	}
 
 	/**
-	 * Returns the largest numeric width descriptor (e.g. 2000 from "2000w") found in the srcset data.
+	 * Returns the largest numeric width descriptor
+	 * (e.g. 2000 from "2000w") found in the srcset data.
 	 *
 	 * @param array<array{path: string, size: string}> $srcsets
 	 * @return int
