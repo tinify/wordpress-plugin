@@ -193,7 +193,7 @@ class Tiny_Image {
 
 		$compressor = $this->settings->get_compressor();
 		$convert_to = $this->convert_to();
-		
+
 		foreach ( $unprocessed_sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
@@ -209,7 +209,9 @@ class Tiny_Image {
 					);
 
 					// ensure that all conversion are in the same format as the first one
-					$convert_to = isset($response['convert']) ? array($response['convert']['type']) : $convert_to;
+					$convert_to = isset( $response['convert'] ) ?
+						array( $response['convert']['type'] ) :
+						$convert_to;
 
 					$size->add_tiny_meta( $response );
 					$success++;
@@ -251,7 +253,7 @@ class Tiny_Image {
 		}
 
 		$size = $this->sizes[ $size_name ];
-		
+
 		$compressor = $this->settings->get_compressor();
 		$convert_to = $this->convert_to();
 
@@ -486,7 +488,7 @@ class Tiny_Image {
 	 * If nothing is converted yet, we use the settings conversion settings.
 	 *
 	 * @since 3.6.4
-	 * 
+	 *
 	 * @return array{string} mimetypes to which the image should be converted to
 	 */
 	private function convert_to() {
@@ -504,11 +506,11 @@ class Tiny_Image {
 		$original_img_size = $this->sizes[ self::ORIGINAL ];
 		if ( $original_img_size->converted() ) {
 			// original has been convert so use that mimetype to convert to
-			return array($original_img_size->meta['convert']['type']);
+			return array( $original_img_size->meta['convert']['type'] );
 		}
 
 		return $convert_settings['convert_to'];
-		
+
 	}
 
 	/**
