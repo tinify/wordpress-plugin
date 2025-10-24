@@ -82,7 +82,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_to ) {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
@@ -146,8 +146,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		$convert = null;
 
-		if ( isset( $convert_opts['convert'] ) && true === $convert_opts['convert'] ) {
-			$convert_to = $convert_opts['convert_to'];
+		if ( count( $convert_to ) > 0 ) {
 			$convert_params = $this->request_options(
 				'POST',
 				array(
