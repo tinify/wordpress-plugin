@@ -56,13 +56,7 @@ class Tiny_Cli_Test extends Tiny_TestCase
 			'file' => "vfs://root/wp-content/uploads/2025/07/test.png",
 			'resize' => false,
 			'preserve' => array(),
-			'convert_opts' => array(
-				'convert' => false,
-				'convert_to' => array(
-					'image/avif',
-					'image/webp'
-				)
-			),
+			'convert_to' => array(),
 		);
 		$mockCompressor->expects($this->once())
 			->method('compress_file')
@@ -70,7 +64,7 @@ class Tiny_Cli_Test extends Tiny_TestCase
 				$expected['file'],
 				$expected['resize'],
 				$expected['preserve'],
-				$expected['convert_opts']
+				$expected['convert_to']
 			);
 		$settings->set_compressor($mockCompressor);
 

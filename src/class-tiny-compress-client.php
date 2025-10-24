@@ -88,7 +88,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		}
 	}
 
-	protected function compress( $input, $resize_opts, $preserve_opts, $convert_opts ) {
+	protected function compress( $input, $resize_opts, $preserve_opts, $convert_to ) {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
@@ -121,8 +121,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$buffer = $compress_result->toBuffer();
 			$result = array( $buffer, $meta, null );
 
-			if ( isset( $convert_opts['convert'] ) && true == $convert_opts['convert'] ) {
-				$convert_to = $convert_opts['convert_to'];
+			if ( count( $convert_to ) > 0 ) {
 				$convert_source = $source->convert( array(
 					'type' => $convert_to,
 				) );

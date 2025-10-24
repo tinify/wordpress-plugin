@@ -99,14 +99,14 @@ abstract class Tiny_Compress {
 	 * @param [type] $file
 	 * @param array $resize_opts
 	 * @param array $preserve_opts
-	 * @param array{ convert: bool, convert_to: string } conversion options
+	 * @param array{ string } conversion options
 	 * @return void
 	 */
 	public function compress_file(
 		$file,
 		$resize_opts = array(),
 		$preserve_opts = array(),
-		$convert_opts = array()
+		$convert_to = array()
 	) {
 		if ( $this->get_key() == null ) {
 			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
@@ -131,7 +131,7 @@ abstract class Tiny_Compress {
 				$file_data,
 				$resize_opts,
 				$preserve_opts,
-				$convert_opts
+				$convert_to
 			);
 		} catch ( Tiny_Exception $err ) {
 			$this->call_after_compress_callback();
@@ -172,7 +172,7 @@ abstract class Tiny_Compress {
 		$input,
 		$resize_options,
 		$preserve_options,
-		$convert_opts
+		$convert_to
 	);
 
 	protected static function identifier() {
