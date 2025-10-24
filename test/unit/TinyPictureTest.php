@@ -315,14 +315,14 @@ class Tiny_Picture_Test extends Tiny_TestCase
      * Note that if any resource in a srcset is described with a "w" descriptor, all resources within that srcset must also be described with "w" descriptors, and the image element's src is not considered a candidate.
      * https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/srcset#value
      */
-    public function test_mixed_descriptors_in_soruce()
+    public function test_mixed_descriptors_in_source()
     {
         $this->wp->createImage(37857, '2025/09', 'test_250x250.webp');
         $this->wp->createImage(37857, '2025/09', 'test.webp');
 
         // this will show test_250x250.png but that would also happen on the original img
         $input = '<img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2x">';
-        $expected = '<picture><source srcset="/wp-content/uploads/2025/09/test_250x250.webp 350w, /wp-content/uploads/2025/09/test.png 2x" type="image/webp" /><img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2x"></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/09/test_250x250.webp 350w, /wp-content/uploads/2025/09/test.webp 2x" type="image/webp" /><img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2x"></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertSame($expected, $output);
