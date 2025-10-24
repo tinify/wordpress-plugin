@@ -76,7 +76,7 @@ class Tiny_Command {
 		$total = count( $attachments );
 		WP_CLI::log( 'Optimizing ' . $total . ' images.' );
 
-		$progress = WP_CLI\Utils\make_progress_bar( 'Optimizing images', $total );
+		$progress = Utils\make_progress_bar( 'Optimizing images', $total );
 		$optimized = 0;
 		foreach ( $attachments as $attachment_id ) {
 			$attachment_id = intval( $attachment_id );

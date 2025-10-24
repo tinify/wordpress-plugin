@@ -25,6 +25,7 @@ class Tiny_Image_Size {
 	/* Used more than once and not trivial, so we are memoizing these */
 	private $_exists;
 	private $_file_size;
+	private $_mime_type;
 	private $_duplicate = false;
 	private $_duplicate_of_size = '';
 
@@ -65,6 +66,47 @@ class Tiny_Image_Size {
 		}
 	}
 
+	/**
+	 * Marks the image size as compressed without actually processing it.
+	 *
+	 * This method simulates the compression process by creating metadata that
+	 * indicates the image has been processed, while keeping the original file
+	 * size and format unchanged. Useful for marking images as compressed when
+	 * they don't need actual compression or have been processed externally.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $include_conversion Optional. Whether to include conversion metadata.
+	 *                                 When true, adds conversion data with current
+	 *                                 file information. Default false.
+	 * @return void
+	 */
+	public function mark_as_compressed( $include_conversion = false ) {
+
+		if ( ! $this->has_been_compressed() ) {
+			$this->add_tiny_meta_start();
+			$tiny_image_size_meta = array(
+				'input'  => array(
+					'size' => $this->filesize(),
+				),
+				'output' => array(
+					'size' => $this->filesize(),
+					'type' => $this->mimetype(),
+				),
+			);
+			$this->add_tiny_meta( $tiny_image_size_meta );
+		}
+
+		if ( ! $this->has_been_converted() && $include_conversion ) {
+			$this->meta['convert'] = array(
+				'size' => $this->filesize(),
+				'type' => $this->mimetype(),
+				'path' => $this->filename,
+			);
+		}
+
+	}
+
 	public function has_been_compressed() {
 		return isset( $this->meta['output'] );
 	}
@@ -86,6 +128,18 @@ class Tiny_Image_Size {
 			}
 		}
 		return $this->_file_size;
+	}
+
+	public function mimetype() {
+		if ( is_null( $this->_mime_type ) ) {
+			if ( $this->exists() ) {
+				$file = file_get_contents( $this->filename );
+				$this->_mime_type = Tiny_Helpers::get_mimetype( $file );
+			} else {
+				$this->_mime_type = 'application/octet-stream';
+			}
+		}
+		return $this->_mime_type;
 	}
 
 	public function exists() {

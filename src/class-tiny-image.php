@@ -126,7 +126,7 @@ class Tiny_Image {
 		return $filenames;
 	}
 
-	private function parse_tiny_metadata( $tiny_metadata ) {
+	private function parse_tiny_metadata( $tiny_metadata = null ) {
 		if ( is_null( $tiny_metadata ) ) {
 			$tiny_metadata = get_post_meta( $this->id, Tiny_Config::META_KEY, true );
 		}
@@ -470,5 +470,38 @@ class Tiny_Image {
 
 	public function can_be_converted() {
 		return $this->settings->get_conversion_enabled() && $this->file_type_allowed();
+	}
+
+	/**
+	 * Marks the image as compressed without actually compressing it.
+	 *
+	 * This method parses existing metadata and delegates to each image size to mark
+	 * itself as compressed. It considers conversion settings when marking the sizes.
+	 * This is useful for images that are already optimized or when you want to skip
+	 * compression while still marking them as processed in the system.
+	 *
+	 * @since 3.0.0
+	 */
+	public function mark_as_compressed() {
+		$this->parse_tiny_metadata();
+
+		$conversion_enabled = $this->settings->get_conversion_enabled();
+
+		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+
+		if ( $this->settings->get_conversion_enabled() ) {
+			$uncompressed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+			$unconverted_sizes = $this->filter_image_sizes( 'unconverted', $active_tinify_sizes );
+
+			$unprocessed_sizes = $uncompressed_sizes + $unconverted_sizes;
+		} else {
+			$unprocessed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+		}
+
+		foreach ( $unprocessed_sizes as $size ) {
+			$size->mark_as_compressed( $conversion_enabled );
+		}
+
+		$this->update_tiny_post_meta();
 	}
 }

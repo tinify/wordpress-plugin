@@ -364,9 +364,12 @@ input[type=number][name*="tinypng_resize_original"] {
 }
 
 .tiny-compress-images .details-container button {
-	display: block;
-	margin-left: 20px;
+	display: inline-block;
 	margin-bottom: 5px;
+}
+
+.tiny-compress-images .details-container button:first-of-type {
+	margin-left: 20px;
 }
 
 .tiny-compress-images .details-container span.icon {
@@ -467,6 +470,7 @@ fieldset.tinypng_convert_fields label span {
 	margin-top: 2px;
 	line-height: 1.5;
 }
+
 fieldset.tinypng_convert_fields[disabled] {
 	opacity: 0.6;
 }

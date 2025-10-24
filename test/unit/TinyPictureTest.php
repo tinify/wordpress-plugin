@@ -257,7 +257,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test.avif');
 
         $input = '<img src="/wp-content/uploads/2025/01/test.png">';
-        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><source srcset="/wp-content/uploads/2025/01/test.avif" type="image/avif" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test.avif" type="image/avif" /><source srcset="/wp-content/uploads/2025/01/test.webp" type="image/webp" /><img src="/wp-content/uploads/2025/01/test.png"></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);

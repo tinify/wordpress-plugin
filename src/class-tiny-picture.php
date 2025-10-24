@@ -198,7 +198,7 @@ abstract class Tiny_Source_Base {
 		$this->raw_html 	   = $html;
 		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
-		$this->valid_mimetypes = array( 'image/webp', 'image/avif' );
+		$this->valid_mimetypes = array( 'image/avif', 'image/webp' );
 	}
 
 	protected static function get_attribute_value( $element, $name ) {
@@ -475,15 +475,12 @@ class Tiny_Picture_Source extends Tiny_Source_Base {
 	public function augment_picture_element() {
 		$modified_sources = array();
 
-		// handle existing sources
-		$optimized_types = [ 'image/webp', 'image/avif' ];
-
 		foreach ( $this->get_element_by_tag( $this->raw_html, 'source' ) as $source_tag_html ) {
 			$type_attr = self::get_attribute_value( $source_tag_html, 'type' );
 			$type_attr = null !== $type_attr ? strtolower( trim( $type_attr ) ) : '';
 
 			// Skip if already optimized.
-			if ( '' !== $type_attr && in_array( $type_attr, $optimized_types, true ) ) {
+			if ( '' !== $type_attr && in_array( $type_attr, $this->valid_mimetypes, true ) ) {
 				continue;
 			}
 
