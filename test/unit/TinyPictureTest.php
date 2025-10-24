@@ -164,10 +164,67 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test-320w.webp');
 
         $input = '<img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" />';
-        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test-320w.webp, /wp-content/uploads/2025/01/test-480w.webp 1.5x, /wp-content/uploads/2025/01/test-640w.webp 2x, /wp-content/uploads/2025/01/test-640w.webp" type="image/webp" /><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test-320w.webp, /wp-content/uploads/2025/01/test-480w.webp 1.5x, /wp-content/uploads/2025/01/test-640w.webp 2x" type="image/webp" /><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
+    }
+
+    public function test_get_largest_width_descriptor_returns_largest_value()
+    {
+        $srcsets = array(
+            array('path' => '/wp-content/uploads/2025/01/test_320x320.jpg', 'size' => '320w'),
+            array('path' => '/wp-content/uploads/2025/01/test_320x320.jpg', 'size' => '2000w'),
+            array('path' => 'c', 'size' => '2x'), // this is effectively ignored because there are width descriptors
+        );
+
+        $imgSource = new Tiny_Image_Source('<img srcset="/wp-content/uploads/2025/01/test-420w.jpg 420w, /wp-content/uploads/2025/01/test-650w.jpg 650w, /wp-content/uploads/2025/01/test.jpg 2000w" src="/wp-content/uploads/2025/01/test.jpg" />', '', array());
+        $largest = Tiny_Image_Source::get_largest_width_descriptor($srcsets);
+
+        $this->assertEquals(2000, $largest);
+    }
+
+    public function test_get_largest_width_descriptor_without_widths_returns_zero()
+    {
+        $srcsets = array(
+            array('path' => '/wp-content/uploads/2025/01/test@1x.jpg', 'size' => '1x'),
+            array('path' => '/wp-content/uploads/2025/01/test.jpg', 'size' => '2x'),
+        );
+
+        $largest = Tiny_Image_Source::get_largest_width_descriptor($srcsets);
+
+        $this->assertSame(0, $largest);
+    }
+
+    public function test_srcset_contains_width_descriptor_returns_true_when_present()
+    {
+        $parts = array(
+            '/wp-content/uploads/2025/01/test-320w.webp 320w',
+            '/wp-content/uploads/2025/01/test-640w.webp 640w',
+        );
+
+        $this->assertTrue(Tiny_Image_Source::srcset_contains_width_descriptor($parts, 640));
+    }
+
+    public function test_srcset_contains_width_descriptor_returns_false_when_missing()
+    {
+        $parts = array(
+            '/wp-content/uploads/2025/01/test-320w.webp 320w',
+            '/wp-content/uploads/2025/01/test-640w.webp 640w',
+        );
+
+        $this->assertFalse(Tiny_Image_Source::srcset_contains_width_descriptor($parts, 1280));
+    }
+
+    public function test_get_largest_width_no_descriptors()
+    {
+        $srcsets = array(
+            array('path' => '/wp-content/uploads/2025/01/test.jpg', 'size' => ''),
+        );
+
+        $largest = Tiny_Image_Source::get_largest_width_descriptor($srcsets);
+
+        $this->assertSame(0, $largest);
     }
 
     public function test_picture_with_srcsets()
@@ -177,13 +234,14 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $this->wp->createImage(1000, '2025/01', 'test-320w.webp');
 
         $input = '<picture><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
-        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test-320w.webp, /wp-content/uploads/2025/01/test-480w.webp 1.5x, /wp-content/uploads/2025/01/test-640w.webp 2x, /wp-content/uploads/2025/01/test-640w.webp" type="image/webp" /><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/01/test-320w.webp, /wp-content/uploads/2025/01/test-480w.webp 1.5x, /wp-content/uploads/2025/01/test-640w.webp 2x" type="image/webp" /><img srcset="/wp-content/uploads/2025/01/test-320w.jpg, /wp-content/uploads/2025/01/test-480w.jpg 1.5x, /wp-content/uploads/2025/01/test-640w.jpg 2x" src="/wp-content/uploads/2025/01/test-640w.jpg" /></picture>';
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
     }
 
-    public function test_picture_with_attributes() {
+    public function test_picture_with_attributes()
+    {
         $this->wp->createImage(1000, '2025/01', 'test-landscape.webp');
 
         $input = '<picture><source srcset="/wp-content/uploads/2025/01/test-landscape.jpg" width="200" height="200" media="(width >= 600px)" /><img src="/wp-content/uploads/2025/01/test.jpg" /></picture>';
@@ -214,5 +272,59 @@ class Tiny_Picture_Test extends Tiny_TestCase
         $output = $this->tiny_picture->replace_sources($input);
 
         $this->assertEquals($expected, $output);
+    }
+
+    /**
+     * scenario where there is only a low resolution variant for a certain image.
+     * this can happen when credits or API decides that only low resolution image
+     * is in a different format (this is resolved in 3.6.4)
+     */
+    public function test_skip_low_res_if_largest_width_is_not_present()
+    {
+        $this->wp->createImage(37857, '2025/09', 'test_250x250.webp');
+
+        // largest size should exist otherwise we mark it as a incomplete sourceset
+        $input = '<img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2000w">';
+        $output = $this->tiny_picture->replace_sources($input);
+
+        // no replacement should be done as there is only a 250x250 but no original
+        $this->assertEquals($input, $output);
+    }
+
+    /**
+     * if the largest width is in a srcset, then we will use the alternative source
+     */
+    public function test_largest_width_is_present_so_include_sourceset()
+    {
+        $this->wp->createImage(37857, '2025/09', 'test_250x250.webp');
+        $this->wp->createImage(37857, '2025/09', 'test.webp');
+
+        // largest size should be present otherwise we mark it as a incomplete sourceset
+        $input = '<img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2000w">';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/09/test_250x250.webp 350w, /wp-content/uploads/2025/09/test.webp 2000w" type="image/webp" /><img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2000w"></picture>';
+        $output = $this->tiny_picture->replace_sources($input);
+
+        // no replacement should be done as there is only a 250x250 but no original
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * if width and pd descriptors are present, then only width is applicable and
+     * pd are effectively ignored
+     * 
+     * Note that if any resource in a srcset is described with a "w" descriptor, all resources within that srcset must also be described with "w" descriptors, and the image element's src is not considered a candidate.
+     * https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/srcset#value
+     */
+    public function test_mixed_descriptors_in_soruce()
+    {
+        $this->wp->createImage(37857, '2025/09', 'test_250x250.webp');
+        $this->wp->createImage(37857, '2025/09', 'test.webp');
+
+        // this will show test_250x250.png but that would also happen on the original img
+        $input = '<img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2x">';
+        $expected = '<picture><source srcset="/wp-content/uploads/2025/09/test_250x250.webp 350w, /wp-content/uploads/2025/09/test.png 2x" type="image/webp" /><img src="/wp-content/uploads/2025/09/test.png" srcset="/wp-content/uploads/2025/09/test_250x250.png 350w, /wp-content/uploads/2025/09/test.png 2x"></picture>';
+        $output = $this->tiny_picture->replace_sources($input);
+
+        $this->assertSame($expected, $output);
     }
 }

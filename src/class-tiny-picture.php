@@ -306,7 +306,7 @@ abstract class Tiny_Source_Base {
 				// Trim whitespace
 				$entry = trim( $entry );
 
-				// Split by whitespace to separate path and size descriptor
+				// Split by whitespace to separate path and size/density descriptor
 				$parts = preg_split( '/\s+/', $entry, 2 );
 
 				if ( count( $parts ) === 2 ) {
@@ -316,7 +316,7 @@ abstract class Tiny_Source_Base {
 						'size' => $parts[1],
 					);
 				} elseif ( count( $parts ) === 1 ) {
-					// We only have a path (unusual in srcset)
+					// We only have a path, will be interpreted as pixel density 1x (unusual in srcset)
 					$result[] = array(
 						'path' => $parts[0],
 						'size' => '',
@@ -324,16 +324,24 @@ abstract class Tiny_Source_Base {
 				}
 			}
 		}
+		return $result;
+	}
 
+	/**
+	 * Retrieves the sources from the <img> or <source> element
+	 *
+	 * @return array{path: string, size: string}[] The image sources
+	 */
+	private function get_image_src( $html ) {
 		$source = $this::get_attribute_value( $html, 'src' );
 		if ( ! empty( $source ) ) {
 			// No srcset, but we have a src attribute
-			$result[] = array(
+			return array(
 				'path' => $source,
 				'size' => '',
 			);
 		}
-		return $result;
+		return array();
 	}
 
 
@@ -347,14 +355,21 @@ abstract class Tiny_Source_Base {
 	protected function create_alternative_sources( $original_source_html ) {
 		$srcsets = $this->get_image_srcsets( $original_source_html );
 		if ( empty( $srcsets ) ) {
+			// no srcset, try src attribute
+			$srcsets[] = $this->get_image_src( $original_source_html );
+		}
+
+		if ( empty ( $srcsets ) ) {
 			return array();
 		}
 
 		$is_source_tag = (bool) preg_match( '#<source\b#i', $original_source_html );
 
 		$sources = array();
+		$width_descriptor = $this->get_largest_width_descriptor( $srcsets );
+
 		foreach ( $this->valid_mimetypes as $mimetype ) {
-			$srcset_parts = [];
+			$srcset_parts = array();
 
 			foreach ( $srcsets as $srcset ) {
 				$alt_source = $this->get_formatted_source( $srcset, $mimetype );
@@ -363,32 +378,87 @@ abstract class Tiny_Source_Base {
 				}
 			}
 
-			if ( ! empty( $srcset_parts ) ) {
-				$source_attr_parts = array();
+			if ( $width_descriptor && ! self::srcset_contains_width_descriptor( $srcset_parts, $width_descriptor ) ) {
+				continue;
+			}
 
-				$srcset_attr = implode( ', ', $srcset_parts );
-				$source_attr_parts['srcset'] = $srcset_attr;
+			if ( empty( $srcset_parts ) ) {
+				continue;
+			}
 
-				if ( $is_source_tag ) {
-					foreach ( array( 'sizes', 'media', 'width', 'height' ) as $attr ) {
-						$attr_value = $this->get_attribute_value( $original_source_html, $attr );
-						if ( $attr_value ) {
-							$source_attr_parts[ $attr ] = $attr_value;
-						}
+			$source_attr_parts = array();
+
+			$srcset_attr = implode( ', ', $srcset_parts );
+			$source_attr_parts['srcset'] = $srcset_attr;
+
+			if ( $is_source_tag ) {
+				foreach ( array( 'sizes', 'media', 'width', 'height' ) as $attr ) {
+					$attr_value = $this->get_attribute_value( $original_source_html, $attr );
+					if ( $attr_value ) {
+						$source_attr_parts[ $attr ] = $attr_value;
 					}
 				}
-
-				$source_attr_parts['type'] = $mimetype;
-				$source_parts = array( '<source' );
-				foreach ( $source_attr_parts as $source_attr_name => $source_attr_val ) {
-					$source_parts[] = $source_attr_name . '="' . $source_attr_val . '"';
-				}
-				$source_parts[] = '/>';
-				$sources[] = implode( ' ', $source_parts );
 			}
+
+			$source_attr_parts['type'] = $mimetype;
+			$source_parts = array( '<source' );
+			foreach ( $source_attr_parts as $source_attr_name => $source_attr_val ) {
+				$source_parts[] = $source_attr_name . '="' . $source_attr_val . '"';
+			}
+			$source_parts[] = '/>';
+			$sources[] = implode( ' ', $source_parts );
 		}
 
 		return $sources;
+	}
+
+	/**
+	 * Returns the largest numeric width descriptor (e.g. 2000 from "2000w") found in the srcset data.
+	 *
+	 * @param array<array{path: string, size: string}> $srcsets
+	 * @return int
+	 */
+	public static function get_largest_width_descriptor( $srcsets ) {
+		$largest = 0;
+
+		foreach ( $srcsets as $srcset ) {
+			if ( empty( $srcset['size'] ) ) {
+				continue;
+			}
+
+			if ( preg_match( '/(\d+)w/', $srcset['size'], $matches ) ) {
+				$width = (int) $matches[1];
+				if ( $width > $largest ) {
+					$largest = $width;
+				}
+			}
+		}
+
+		return $largest;
+	}
+
+	/**
+	 * Determines whether a srcset list contains the provided width descriptor.
+	 *
+	 * @param string[] $srcset_parts
+	 * @param int      $width_descriptor
+	 * @return bool    true if width is in srcset
+	 */
+	public static function srcset_contains_width_descriptor( $srcset_parts, $width_descriptor ) {
+		if ( empty( $srcset_parts ) || $width_descriptor <= 0 ) {
+			return false;
+		}
+
+		$suffix = ' ' . $width_descriptor . 'w';
+		$suffix_length = strlen( $suffix );
+
+		foreach ( $srcset_parts as $srcset_part ) {
+			if ( substr( $srcset_part, -$suffix_length ) === $suffix ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 
