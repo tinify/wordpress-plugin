@@ -21,6 +21,7 @@
 class Tiny_Image {
 	const ORIGINAL = 0;
 
+	/** @var Tiny_Settings */
 	private $settings;
 	private $id;
 	private $name;
@@ -179,7 +180,6 @@ class Tiny_Image {
 		$success = 0;
 		$failed = 0;
 
-		$compressor = $this->settings->get_compressor();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
 		if ( $this->settings->get_conversion_enabled() ) {
@@ -191,20 +191,26 @@ class Tiny_Image {
 			$unprocessed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
 		}
 
+		$compressor = $this->settings->get_compressor();
+		$convert_to = $this->convert_to();
+		
 		foreach ( $unprocessed_sizes as $size_name => $size ) {
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
 				$resize = $this->settings->get_resize_options( $size_name );
 				$preserve = $this->settings->get_preserve_options( $size_name );
-				$convert_opts = $this->settings->get_conversion_options();
 				try {
 					$response = $compressor->compress_file(
 						$size->filename,
 						$resize,
 						$preserve,
-						$convert_opts
+						$convert_to
 					);
+
+					// ensure that all conversion are in the same format as the first one
+					$convert_to = isset($response['convert']) ? array($response['convert']['type']) : $convert_to;
+
 					$size->add_tiny_meta( $response );
 					$success++;
 				} catch ( Tiny_Exception $e ) {
@@ -243,17 +249,19 @@ class Tiny_Image {
 		if ( ! isset( $this->sizes[ $size_name ] ) ) {
 			$this->sizes[ $size_name ] = new Tiny_Image_Size( $path );
 		}
+
 		$size = $this->sizes[ $size_name ];
+		
+		$compressor = $this->settings->get_compressor();
+		$convert_to = $this->convert_to();
 
 		if ( ! $size->has_been_compressed() ) {
 			$size->add_tiny_meta_start();
 			$this->update_tiny_post_meta();
-			$compressor = $this->settings->get_compressor();
 			$preserve = $this->settings->get_preserve_options( $size_name );
-			$conversion = $this->settings->get_conversion_options();
 
 			try {
-				$response = $compressor->compress_file( $path, false, $preserve, $conversion );
+				$response = $compressor->compress_file( $path, false, $preserve, $convert_to );
 				$size->add_tiny_meta( $response );
 			} catch ( Tiny_Exception $e ) {
 				$size->add_tiny_meta_error( $e );
@@ -470,6 +478,37 @@ class Tiny_Image {
 
 	public function can_be_converted() {
 		return $this->settings->get_conversion_enabled() && $this->file_type_allowed();
+	}
+
+	/**
+	 * Get the targeted conversion.
+	 * If original is already converted, then we use the originals' mimetype.
+	 * If nothing is converted yet, we use the settings conversion settings.
+	 *
+	 * @since 3.6.4
+	 * 
+	 * @return array{string} mimetypes to which the image should be converted to
+	 */
+	private function convert_to() {
+		$convert_settings = $this->settings->get_conversion_options();
+		if ( ! $convert_settings['convert'] ) {
+			// conversion is off so return no mimetypes to convert to
+			return array();
+		}
+
+		if ( isset( $this->sizes[ self::ORIGINAL ] ) ) {
+			// original is not in sizes so mimetypes are open
+			return $convert_settings['convert_to'];
+		}
+
+		$original_img_size = $this->sizes[ self::ORIGINAL ];
+		if ( $original_img_size->converted() ) {
+			// original has been convert so use that mimetype to convert to
+			return array($original_img_size->meta['convert']['type']);
+		}
+
+		return $convert_settings['convert_to'];
+		
 	}
 
 	/**
