@@ -239,6 +239,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return array( null, null );
 	}
 
+	/**
+	 * Retrieves image sizes as a map of size and width, height and tinify meta data
+	 * The first entry will always be '0', aka the original uploaded image.
+	 *
+	 * @return array{string: array{width: int|null, height: int|null, tinify: array{}}} $sizes
+	 */
 	public function get_sizes() {
 		if ( is_array( $this->sizes ) ) {
 			return $this->sizes;
@@ -374,7 +380,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	/**
 	 * Retrieves the configured settings for conversion.
 	 *
-	 * @return array{ convert: bool, convert_to: string } The conversion options.
+	 * @return array{ convert: bool, convert_to: array{string} } The conversion options.
 	 */
 	public function get_conversion_options() {
 		return array(
