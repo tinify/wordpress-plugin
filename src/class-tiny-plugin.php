@@ -252,6 +252,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'pluginVersion' => self::version(),
 			'L10nAllDone' => __( 'All images are processed', 'tiny-compress-images' ),
 			'L10nNoActionTaken' => __( 'No action taken', 'tiny-compress-images' ),
+			'L10nDuplicate' => __( 'Image was already processed', 'tiny-compress-images' ),
 			'L10nBulkAction' => __( 'Compress Images', 'tiny-compress-images' ),
 			'L10nBulkMarkCompressed' => __( 'Mark as Compressed', 'tiny-compress-images' ),
 			'L10nCancelled' => __( 'Cancelled', 'tiny-compress-images' ),
