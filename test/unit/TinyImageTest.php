@@ -44,6 +44,52 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->assertEquals( 100, $tiny_image_metadata['height'] );
 		$this->assertEquals( 100, $tiny_image_metadata['filesize'] );
 	}
+	
+	public function test_parse_wp_metadata_should_ignore_invalid_sizes() {
+		$invalid_metadata = array(
+			'width' => 1256,
+			'height' => 1256,
+			'file' => '2015/09/tinypng_gravatar.png',
+			'sizes' => array(
+				'valid' => array(
+					'file' => 'tinypng_gravatar-200x200.png',
+					'width' => 200,
+					'height' => 200,
+					'mime-type' => 'image/png',
+				),
+				'missing-file' => array(
+					'width' => 50,
+					'height' => 50,
+					'mime-type' => 'image/png',
+				),
+				'scalar-size' => 'tinypng_gravatar-300x300.png',
+				'null-size' => null,
+				'valid-second' => array(
+					'file' => 'tinypng_gravatar-400x400.png',
+					'mime-type' => 'image/png',
+				),
+			),
+			'image_meta' => array(),
+		);
+
+		$tiny_image = new Tiny_Image( $this->settings, 999, $invalid_metadata );
+
+		$this->assertEquals(
+			array(
+				'valid' => array(
+					'file' => 'tinypng_gravatar-200x200.png',
+					'width' => 200,
+					'height' => 200,
+					'mime-type' => 'image/png',
+				),
+				'valid-second' => array(
+					'file' => 'tinypng_gravatar-400x400.png',
+					'mime-type' => 'image/png',
+				),
+			),
+			$tiny_image->get_wp_metadata()['sizes']
+		);
+	}
 
 	public function test_get_images_should_return_all_images() {
 		$this->assertEquals( array(

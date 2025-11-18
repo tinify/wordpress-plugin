@@ -49,10 +49,8 @@ class Tiny_Image {
 		if ( ! is_array( $this->wp_metadata ) ) {
 			$this->wp_metadata = wp_get_attachment_metadata( $this->id );
 		}
-		if ( ! is_array( $this->wp_metadata ) ) {
-			return;
-		}
-		if ( ! isset( $this->wp_metadata['file'] ) ) {
+
+		if ( ! is_array( $this->wp_metadata ) || ! isset( $this->wp_metadata['file'] ) ) {
 			/* No file metadata found, this might be another plugin messing with
 			   metadata. Simply ignore this! */
 			return;
@@ -72,11 +70,25 @@ class Tiny_Image {
 		$filename = $path_prefix . $this->name;
 		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
 
-		if ( isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] ) ) {
-			foreach ( $this->wp_metadata['sizes'] as $size_name => $info ) {
-				$this->sizes[ $size_name ] = new Tiny_Image_Size( $path_prefix . $info['file'] );
+		// Ensure 'sizes' exists and is an array to prevent PHP Warnings
+		$sizes = isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] )
+		? $this->wp_metadata['sizes']
+		: array();
+
+		$sanitized_sizes = array();
+		foreach ( $sizes as $size_name => $size_info ) {
+			// size is valid when its an array and has a file
+			if ( is_array( $size_info ) && isset( $size_info['file'] ) ) {
+				// Add to sanitized metadata
+				$sanitized_sizes[ $size_name ] = $size_info;
+				$this->sizes[ $size_name ] = new Tiny_Image_Size(
+					$path_prefix . $size_info['file']
+				);
 			}
 		}
+
+		// Update the metadata with only the valid sizes found
+		$this->wp_metadata['sizes'] = $sanitized_sizes;
 	}
 
 	private function detect_duplicates( $active_sizes, $active_tinify_sizes ) {
