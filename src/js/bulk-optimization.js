@@ -145,7 +145,7 @@
   }
 
   function bulkOptimizeItem(items, i) {
-    if (window.optimizationCancelled || isProcessedInQueue) {
+    if (window.optimizationCancelled) {
       return;
     }
 
