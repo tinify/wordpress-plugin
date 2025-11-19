@@ -2,7 +2,7 @@
 	<div class="update">
 		<h4><?php esc_html_e( 'Configure your account', 'tiny-compress-images' ); ?></h4>
 		<p class="introduction"><?php
-			$link = sprintf( '<a href="https://tinypng.com/developers" target="_blank">%s</a>',
+			$link = sprintf( '<a href="https://tinypng.com/developers?utm_source=installation&utm_medium=wordpress-plugin" target="_blank">%s</a>',
 				esc_html__( 'TinyPNG developer section', 'tiny-compress-images' )
 			);
 
