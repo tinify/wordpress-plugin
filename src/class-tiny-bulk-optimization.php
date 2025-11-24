@@ -95,7 +95,8 @@ class Tiny_Bulk_Optimization {
 			ORDER BY ID DESC
 			LIMIT " . self::PAGING_SIZE;
 
-		return $wpdb->get_results( $query, ARRAY_A ); // WPCS: unprepared SQL OK.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Query is built from internal IDs and constants only.
+		return $wpdb->get_results( $query, ARRAY_A );
 	}
 
 	private static function populate_optimization_statistics( $settings, $result, $stats ) {
