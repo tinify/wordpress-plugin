@@ -196,7 +196,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		$plugin = plugin_basename(
-			dirname( __DIR__, 1 ) . '/tiny-compress-images.php'
+			dirname( __DIR__ ) . '/tiny-compress-images.php'
 		);
 
 		add_filter(
@@ -289,7 +289,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'nonce'                  => wp_create_nonce( 'tiny-compress' ),
 				'wpVersion'              => self::wp_version(),
 				'pluginVersion'          => self::version(),
-				'L10nAllDone'            => __( 'All images are processed', 'tiny-compress-images' ),
+				'L10nAllDone'            => __(
+					'All images are processed',
+					'tiny-compress-images'
+				),
 				'L10nNoActionTaken'      => __(
 					'No action taken',
 					'tiny-compress-images'
@@ -774,7 +777,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 	}
 
-	function add_widget_view() {
+	public function add_widget_view() {
 		$admin_colors = self::retrieve_admin_colors();
 		include __DIR__ . '/views/dashboard-widget.php';
 	}
@@ -806,7 +809,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $admin_colors;
 	}
 
-	function friendly_user_name() {
+	public function friendly_user_name() {
 		$user = wp_get_current_user();
 		$name = ucfirst( empty( $user->first_name ) ? $user->display_name : $user->first_name );
 		return $name;
@@ -822,12 +825,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *
 	 * @return void
 	 */
-	function clean_attachment( $post_id ) {
+	public function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
 	}
 
-	static function request_review() {
+	public static function request_review() {
 		$review_url    =
 			'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
 		$review_block  = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
@@ -840,7 +843,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $review_block;
 	}
 
-	function mark_image_as_compressed() {
+	public function mark_image_as_compressed() {
 		$response = $this->validate_ajax_attachment_request();
 		if ( isset( $response['error'] ) ) {
 			echo $response['error'];
