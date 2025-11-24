@@ -188,7 +188,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$disabled_functions          = explode( ',', ini_get( 'disable_functions' ) );
 
 		foreach ( $required_functions as $required_function ) {
-			if ( in_array( $required_function, $disabled_functions ) ) {
+			if ( in_array( $required_function, $disabled_functions, true ) ) {
 				array_push( $disabled_required_functions, $required_function );
 			}
 		}

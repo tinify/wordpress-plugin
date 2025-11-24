@@ -114,7 +114,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		</a>
 	</div>
 	<?php if ( $available_uncompressed_sizes > 0 ) { ?>
-		<?php if ( in_array( $tiny_image->get_id(), $images_to_compress ) ) { ?>
+		<?php if ( in_array( $tiny_image->get_id(), $images_to_compress, true ) ) { ?>
 			<span class="hidden auto-compress"></span>
 		<?php } ?>
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id(); ?>">

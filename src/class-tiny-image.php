@@ -177,7 +177,11 @@ class Tiny_Image {
 	}
 
 	public function file_type_allowed() {
-		return in_array( $this->get_mime_type(), array( 'image/jpeg', 'image/png', 'image/webp' ) );
+		return in_array(
+			$this->get_mime_type(),
+			array( 'image/jpeg', 'image/png', 'image/webp' ),
+			true
+		);
 	}
 
 	public function get_mime_type() {
