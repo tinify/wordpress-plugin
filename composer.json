@@ -23,7 +23,9 @@
     "phpdocumentor/reflection-docblock": "~2.0",
     "squizlabs/php_codesniffer": "~2.2",
     "tinify/tinify": "dev-create-key",
-    "wp-coding-standards/wpcs": "0.11"
+    "wp-coding-standards/wpcs": "0.11",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpcompatibility/phpcompatibility-wp": "^2.1"
   },
   "scripts": {
     "post-install-cmd": "bin/post-install",
@@ -31,7 +33,8 @@
   },
   "config": {
     "allow-plugins": {
-      "composer/installers": true
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   }
 }
