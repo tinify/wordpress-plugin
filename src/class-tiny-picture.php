@@ -43,7 +43,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 * @param string $base_dir       Absolute path (e.g. ABSPATH)
 	 * @param array  $domains        List of allowed domain URLs
 	 */
-	function __construct( $base_dir = ABSPATH, $domains = array() ) {
+	public function __construct( $base_dir = ABSPATH, $domains = array() ) {
 		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
 
