@@ -622,9 +622,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 				wp_kses(
 					/* translators: %1$s: number of images */
 					__(
-						'With these settings you can compress '
-						. '<strong>at least %1$s images</strong> for free each month.',
-						// WPCS: Needed for proper translation.
+						// phpcs:ignore Generic.Files.LineLength
+						'With these settings you can compress <strong>at least %1$s images</strong> for free each month.',
 						'tiny-compress-images'
 					),
 					$strong
@@ -679,21 +678,21 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '<span>';
 			echo wp_kses(
 				__(
-					'<strong>Save space</strong> by setting a maximum width and height '
-					. 'for all images uploaded.',
+					// phpcs:ignore Generic.Files.LineLength
+					'<strong>Save space</strong> by setting a maximum width and height for all images uploaded.',
 					'tiny-compress-images'
 				),
 				$strong
-			);  // WPCS: Needed for proper translation.
+			);
 		echo '<br>';
 			echo wp_kses(
 				__(
-					'Resizing takes <strong>1 additional compression</strong> '
-					. 'for each image that is larger.',
+					// phpcs:ignore Generic.Files.LineLength
+					'Resizing takes <strong>1 additional compression</strong> for each image that is larger.',
 					'tiny-compress-images'
 				),
 				$strong
-			); // WPCS: Needed for proper translation.
+			);
 		echo '</span>';
 		echo '<div class="tiny-resize-inputs">';
 		printf( '%s: ', esc_html__( 'Max Width', 'tiny-compress-images' ) );
@@ -741,9 +740,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
 			$message = esc_html_e(
-				'For compression to work you will need to configure WP Offload S3 '
-				. 'to keep a copy of the images on the server.',
-				// WPCS: Needed for proper translation.
+				// phpcs:ignore Generic.Files.LineLength
+				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.',
 				'tiny-compress-images'
 			);
 			echo $message;
@@ -1027,9 +1025,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'</label>';
 		echo '</p>';
 
-		$convertopts_convert_to_name             = self::get_prefixed_name( 'convert_format[convert_to]' );
+		$convertopts_convert_to_name             =
+			self::get_prefixed_name( 'convert_format[convert_to]' );
 		$convertopts_convert_subfields_classname =
-			self::get_prefixed_name( 'convert_fields' );
+		self::get_prefixed_name( 'convert_fields' );
 		$convertopts_convert_to_id               = self::get_prefixed_name( 'convert_convert_to' );
 		$convertopts_convert_value               =
 			self::get_convert_format_option( 'convert_to', 'smallest' );

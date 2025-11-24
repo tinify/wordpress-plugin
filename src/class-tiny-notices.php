@@ -238,16 +238,14 @@ class Tiny_Notices extends Tiny_WP_Base {
 				);
 			} elseif ( ! Tiny_PHP::curl_available() ) {
 				$message = esc_html__(
-					'We noticed that cURL is not available. For the best experience '
-					. 'we recommend to make sure cURL is available.',
-					// WPCS: Needed for proper translation.
+					// phpcs:ignore Generic.Files.LineLength
+					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.',
 					'tiny-compress-images'
 				);
 			} elseif ( Tiny_PHP::curl_exec_disabled() ) {
 				$message = esc_html__(
-					'We noticed that curl_exec is disabled in your PHP configuration. '
-					. 'Please update this setting for the best experience.',
-					// WPCS: Needed for proper translation.
+					// phpcs:ignore Generic.Files.LineLength
+					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.',
 					'tiny-compress-images'
 				);
 			}
@@ -272,9 +270,8 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice         .= '</h3>';
 		$notice         .= '<p>';
 				$notice .= esc_html__(
-					'You have activated multiple image optimization plugins. This may '
-					. 'lead to unexpected results. The following plugins were detected:',
-					// WPCS: Needed for proper translation.
+					// phpcs:ignore Generic.Files.LineLength
+					'You have activated multiple image optimization plugins. This may lead to unexpected results. The following plugins were detected:',
 					'tiny-compress-images'
 				);
 		$notice .= '</p>';
