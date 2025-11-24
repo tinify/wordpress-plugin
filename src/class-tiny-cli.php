@@ -76,7 +76,7 @@ class Tiny_Command {
 		$total = count( $attachments );
 		WP_CLI::log( 'Optimizing ' . $total . ' images.' );
 
-		$progress = Utils\make_progress_bar( 'Optimizing images', $total );
+		$progress  = Utils\make_progress_bar( 'Optimizing images', $total );
 		$optimized = 0;
 		foreach ( $attachments as $attachment_id ) {
 			$attachment_id = intval( $attachment_id );
@@ -90,7 +90,7 @@ class Tiny_Command {
 			try {
 				$result = $this->optimize_attachment( $attachment_id );
 				if ( isset( $result['success'] ) && $result['success'] > 0 ) {
-					$optimized++;
+					++$optimized;
 				}
 			} catch ( Exception $e ) {
 				WP_CLI::warning(

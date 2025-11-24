@@ -59,9 +59,12 @@ class Tiny_Picture extends Tiny_WP_Base {
 			return;
 		}
 
-		add_action('template_redirect', function () {
-			ob_start( array( $this, 'replace_sources' ), 1000 );
-		});
+		add_action(
+			'template_redirect',
+			function () {
+				ob_start( array( $this, 'replace_sources' ), 1000 );
+			}
+		);
 	}
 
 	public function replace_sources( $content ) {
@@ -195,7 +198,7 @@ abstract class Tiny_Source_Base {
 	protected $valid_mimetypes;
 
 	public function __construct( $html, $base_dir, $domains ) {
-		$this->raw_html 	   = $html;
+		$this->raw_html        = $html;
 		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
 		$this->valid_mimetypes = array( 'image/avif', 'image/webp' );
@@ -222,7 +225,7 @@ abstract class Tiny_Source_Base {
 	 * @return array           Array of matched elements as strings.
 	 */
 	protected function get_element_by_tag( $html, $tagname ) {
-		$results = [];
+		$results = array();
 
 		// Self-closing / void tag (e.g. <source />, <img />, <br />)
 		if ( preg_match_all(
@@ -281,7 +284,7 @@ abstract class Tiny_Source_Base {
 		$exists_local = file_exists( $local_path );
 		if ( $exists_local ) {
 			return array(
-				'src' => $format_url,
+				'src'  => $format_url,
 				'size' => $image_source_data['size'],
 				'type' => $mimetype,
 			);
@@ -366,7 +369,7 @@ abstract class Tiny_Source_Base {
 
 		$is_source_tag = (bool) preg_match( '#<source\b#i', $original_source_html );
 
-		$sources = array();
+		$sources          = array();
 		$width_descriptor = $this->get_largest_width_descriptor( $srcsets );
 
 		foreach ( $this->valid_mimetypes as $mimetype ) {
@@ -393,7 +396,7 @@ abstract class Tiny_Source_Base {
 
 			$source_attr_parts = array();
 
-			$srcset_attr = implode( ', ', $srcset_parts );
+			$srcset_attr                 = implode( ', ', $srcset_parts );
 			$source_attr_parts['srcset'] = $srcset_attr;
 
 			if ( $is_source_tag ) {
@@ -406,12 +409,12 @@ abstract class Tiny_Source_Base {
 			}
 
 			$source_attr_parts['type'] = $mimetype;
-			$source_parts = array( '<source' );
+			$source_parts              = array( '<source' );
 			foreach ( $source_attr_parts as $source_attr_name => $source_attr_val ) {
 				$source_parts[] = $source_attr_name . '="' . $source_attr_val . '"';
 			}
 			$source_parts[] = '/>';
-			$sources[] = implode( ' ', $source_parts );
+			$sources[]      = implode( ' ', $source_parts );
 		}// End foreach().
 
 		return $sources;
@@ -455,7 +458,7 @@ abstract class Tiny_Source_Base {
 			return false;
 		}
 
-		$suffix = ' ' . $width_descriptor . 'w';
+		$suffix        = ' ' . $width_descriptor . 'w';
 		$suffix_length = strlen( $suffix );
 
 		foreach ( $srcset_parts as $srcset_part ) {
@@ -527,7 +530,7 @@ class Tiny_Image_Source extends Tiny_Source_Base {
 		if ( empty( $sources ) ) {
 			return $this->raw_html;
 		}
-		$picture_element = array( '<picture>' );
+		$picture_element   = array( '<picture>' );
 		$picture_element[] = implode( '', $sources );
 		$picture_element[] = $this->raw_html;
 		$picture_element[] = '</picture>';

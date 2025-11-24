@@ -6,10 +6,16 @@
 				'strong' => array(),
 			);
 			/* translators: %s: number of remaining credits */
-			printf( wp_kses( __(
-				'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong> this month.', // WPCS: Needed for proper translation.
-				'tiny-compress-images'
-			), $strong ), $remaining_credits );
+			printf(
+				wp_kses(
+					__(
+						'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong> this month.', // WPCS: Needed for proper translation.
+						'tiny-compress-images'
+					),
+					$strong
+				),
+				$remaining_credits
+			);
 			?>
 		</p>
 		<p>

@@ -37,7 +37,7 @@ class Tiny_PHP {
 	}
 
 	public static function client_supported() {
-		return 	Tiny_PHP::has_fully_supported_php() &&
+		return Tiny_PHP::has_fully_supported_php() &&
 						Tiny_PHP::curl_available() &&
 						! Tiny_PHP::curl_exec_disabled();
 	}

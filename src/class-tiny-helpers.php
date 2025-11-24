@@ -60,9 +60,9 @@ class Tiny_Helpers {
 			return $filepath;
 		}
 
-		$dir      = $parts['dirname'];
-		$name     = $parts['filename'];
-		$sep      = DIRECTORY_SEPARATOR;
+		$dir  = $parts['dirname'];
+		$name = $parts['filename'];
+		$sep  = DIRECTORY_SEPARATOR;
 
 		if ( '.' === $dir ) {
 			return $name . '.' . $extension_new;
@@ -102,7 +102,7 @@ class Tiny_Helpers {
 	public static function get_mimetype( $input ) {
 		if ( class_exists( 'finfo' ) ) {
 			$finfo = new finfo( FILEINFO_MIME_TYPE );
-			$mime = $finfo->buffer( $input );
+			$mime  = $finfo->buffer( $input );
 			return $mime;
 		} else {
 			throw new Exception( 'finfo extension is not available.' );

@@ -26,14 +26,20 @@ class Tiny_WPML {
 
 	private function add_hooks() {
 		// When WPML duplicates an attachment in other languages.
-		add_action( 'wpml_after_duplicate_attachment',
-			array( $this, 'copy_tiny_postmeta' ), 10, 2
+		add_action(
+			'wpml_after_duplicate_attachment',
+			array( $this, 'copy_tiny_postmeta' ),
+			10,
+			2
 		);
 
 		// When you add a missing translation text or restore an image
 		// on the WPML media tranlation popup.
-		add_action( 'wpml_after_copy_attached_file_postmeta',
-			array( $this, 'after_copy_attached_file' ), 10, 2
+		add_action(
+			'wpml_after_copy_attached_file_postmeta',
+			array( $this, 'after_copy_attached_file' ),
+			10,
+			2
 		);
 
 		// When adding an alternative image on the WPML media translation popup.
