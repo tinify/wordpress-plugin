@@ -39,9 +39,9 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<?php if ( $total['has_been_compressed'] > 0 || ( 0 == $total['has_been_compressed'] && 0 == $available_uncompressed_sizes ) ) { ?>
 			<span class="message">
 				<?php
-				/* translators: %d: number of compressed sizes */
 				printf(
 					wp_kses(
+						/* translators: %d: number of compressed sizes */
 						_n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ),
 						array(
 							'strong' => array(),
@@ -68,9 +68,9 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				?>
 					<span class="message">
 						<?php
-						/* translators: %d: number of compressed sizes */
 						printf(
 							wp_kses(
+								/* translators: %d: number of compressed sizes */
 								_n( '<strong>%d</strong> size converted', '<strong>%d</strong> sizes converted', $total['has_been_converted'], 'tiny-compress-images' ),
 								array(
 									'strong' => array(),

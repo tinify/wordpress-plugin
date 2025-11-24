@@ -618,9 +618,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'strong' => array(),
 			);
 
-			/* translators: %1$s: number of images */
 			printf(
 				wp_kses(
+					/* translators: %1$s: number of images */
 					__(
 						'With these settings you can compress <strong>at least %1$s images</strong> for free each month.', // WPCS: Needed for proper translation.
 						'tiny-compress-images'

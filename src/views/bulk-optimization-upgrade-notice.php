@@ -5,9 +5,9 @@
 			$strong = array(
 				'strong' => array(),
 			);
-			/* translators: %s: number of remaining credits */
 			printf(
 				wp_kses(
+					/* translators: %s: number of remaining credits */
 					__(
 						'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong> this month.', // WPCS: Needed for proper translation.
 						'tiny-compress-images'

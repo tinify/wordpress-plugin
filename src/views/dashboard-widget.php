@@ -27,9 +27,9 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 		/* translators: %s: friendly user name */
 		printf( esc_html__( 'Hi %s, you haven’t compressed any images in your media library.', 'tiny-compress-images' ), $this->friendly_user_name() );
 		echo ' ';
-		/* translators: %s: bulk optimization page */
 		printf(
 			wp_kses(
+				/* translators: %s: bulk optimization page */
 				__( 'If you like you can to optimize your whole library in one go with the %s page.', 'tiny-compress-images' ),
 				array(
 					'a' => array(
@@ -51,9 +51,9 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 		/* translators: %s: number of optimizable sizes and number of uploaded images */
 		printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.', 'tiny-compress-images' ), '<span id="unoptimized-sizes"></span>', '<span id="uploaded-images"></span>' );
 		echo ' ';
-		/* translators: %s: bulk optimization link */
 		printf(
 			wp_kses(
+				/* translators: %s: bulk optimization link */
 				__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ),
 				array(
 					'a' => array(
@@ -79,9 +79,9 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 <div class="description" id="ie8-compressed">
 	<p>
 		<?php
-		/* translators: %s: savings percentage */
 		printf(
 			wp_kses(
+				/* translators: %s: savings percentage */
 				__( 'You have <strong>saved %s</strong> of your media library size.', 'tiny-compress-images' ),
 				array(
 					'span'   => array(),

@@ -30,9 +30,9 @@
 			$compressions      = self::get_compression_count();
 			$remaining_credits = self::get_remaining_credits();
 			if ( self::is_on_free_plan() ) {
-				/* translators: %s: number of remaining credits */
 				printf(
 					wp_kses(
+						/* translators: %s: number of remaining credits */
 						__(
 							'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong> this month.', // WPCS: Needed for proper translation.
 							'tiny-compress-images'
@@ -42,8 +42,8 @@
 					$remaining_credits
 				);
 			} elseif ( ! $status->pending ) {
-				/* translators: %s: number of compressions */
 				printf(
+					/* translators: %s: number of compressions */
 					esc_html__(
 						'You have made %s compressions this month.',
 						'tiny-compress-images'
@@ -67,8 +67,8 @@
 		<p>
 		<?php
 		if ( defined( 'TINY_API_KEY' ) ) {
-			/* translators: %s: wp-config.php */
 			echo sprintf(
+				/* translators: %s: wp-config.php */
 				esc_html__(
 					'The API key has been configured in %s',
 					'tiny-compress-images'
@@ -88,8 +88,8 @@
 				'<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
-			/* translators: %s: link saying API dashboard */
 			printf(
+				/* translators: %s: link saying API dashboard */
 				esc_html__(
 					'Enter your API key. If you have lost your key, go to your %s to retrieve it.',
 					'tiny-compress-images'
