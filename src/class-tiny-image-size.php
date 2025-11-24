@@ -247,7 +247,7 @@ class Tiny_Image_Size {
 	}
 
 	private function recently_started() {
-		$thirty_minutes_ago = date( 'U' ) - ( 60 * 30 );
+		$thirty_minutes_ago = gmdate( 'U' ) - ( 60 * 30 );
 		return (
 			isset( $this->meta['start'] ) &&
 			$this->meta['start'] > $thirty_minutes_ago
