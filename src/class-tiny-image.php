@@ -399,9 +399,15 @@ class Tiny_Image {
 		foreach ( $this->sizes as $size_name => $size ) {
 			if ( in_array( $size_name, $active_tinify_sizes, true ) ) {
 				if ( isset( $size->meta['error'] ) && isset( $size->meta['message'] ) ) {
-					if ( null === $last_timestamp || $last_timestamp < $size->meta['timestamp'] ) {
+					if (
+						null === $last_timestamp ||
+						$last_timestamp < $size->meta['timestamp']
+					) {
 						$last_timestamp = $size->meta['timestamp'];
-						$error_message  = Tiny_Helpers::truncate_text( $size->meta['message'], 140 );
+						$error_message  = Tiny_Helpers::truncate_text(
+							$size->meta['message'],
+							140
+						);
 					}
 				}
 			}

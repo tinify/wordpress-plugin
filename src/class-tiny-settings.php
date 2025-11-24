@@ -622,7 +622,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				wp_kses(
 					/* translators: %1$s: number of images */
 					__(
-						'With these settings you can compress <strong>at least %1$s images</strong> for free each month.', // WPCS: Needed for proper translation.
+						'With these settings you can compress '
+						. '<strong>at least %1$s images</strong> for free each month.',
+						// WPCS: Needed for proper translation.
 						'tiny-compress-images'
 					),
 					$strong
@@ -673,11 +675,25 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'" value="on" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label><br>';
 
-		echo '<div class="tiny-resize-available tiny-resize-resolution">';
+			echo '<div class="tiny-resize-available tiny-resize-resolution">';
 		echo '<span>';
-		echo wp_kses( __( '<strong>Save space</strong> by setting a maximum width and height for all images uploaded.', 'tiny-compress-images' ), $strong );  // WPCS: Needed for proper translation.
+			echo wp_kses(
+				__(
+					'<strong>Save space</strong> by setting a maximum width and height '
+					. 'for all images uploaded.',
+					'tiny-compress-images'
+				),
+				$strong
+			);  // WPCS: Needed for proper translation.
 		echo '<br>';
-		echo wp_kses( __( 'Resizing takes <strong>1 additional compression</strong> for each image that is larger.', 'tiny-compress-images' ), $strong ); // WPCS: Needed for proper translation.
+			echo wp_kses(
+				__(
+					'Resizing takes <strong>1 additional compression</strong> '
+					. 'for each image that is larger.',
+					'tiny-compress-images'
+				),
+				$strong
+			); // WPCS: Needed for proper translation.
 		echo '</span>';
 		echo '<div class="tiny-resize-inputs">';
 		printf( '%s: ', esc_html__( 'Max Width', 'tiny-compress-images' ) );
@@ -725,7 +741,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
 			$message = esc_html_e(
-				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
+				'For compression to work you will need to configure WP Offload S3 '
+				. 'to keep a copy of the images on the server.',
+				// WPCS: Needed for proper translation.
 				'tiny-compress-images'
 			);
 			echo $message;
@@ -904,7 +922,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 			}
 
 			try {
-				$site       = str_replace( array( 'http://', 'https://' ), '', get_bloginfo( 'url' ) );
+				$site       = str_replace(
+					array( 'http://', 'https://' ),
+					'',
+					get_bloginfo( 'url' )
+				);
 				$identifier = 'WordPress plugin for ' . $site;
 				$link       = $this->get_absolute_url();
 				$compressor->create_key(
@@ -1006,9 +1028,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 
 		$convertopts_convert_to_name             = self::get_prefixed_name( 'convert_format[convert_to]' );
-		$convertopts_convert_subfields_classname = self::get_prefixed_name( 'convert_fields' );
+		$convertopts_convert_subfields_classname =
+			self::get_prefixed_name( 'convert_fields' );
 		$convertopts_convert_to_id               = self::get_prefixed_name( 'convert_convert_to' );
-		$convertopts_convert_value               = self::get_convert_format_option( 'convert_to', 'smallest' );
+		$convertopts_convert_value               =
+			self::get_convert_format_option( 'convert_to', 'smallest' );
 		$convertopts_convert_disabled            =
 			self::get_conversion_enabled() ? '' : ' disabled="disabled"';
 		echo sprintf(

@@ -106,7 +106,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			);
 		}
 
-		$params                               = $this->output_request_options( $resize_opts, $preserve_opts );
+		$params                               = $this->output_request_options(
+			$resize_opts,
+			$preserve_opts
+		);
 		list($output, $headers, $status_code) = $this->request( $params, $output_url );
 
 		if ( $status_code >= 400 && is_array( $output ) && isset( $output['error'] ) ) {
@@ -140,7 +143,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'type'   => $headers['content-type'],
 				'width'  => intval( $headers['image-width'] ),
 				'height' => intval( $headers['image-height'] ),
-				'ratio'  => round( strlen( $output ) / strlen( $input ), 4 ),
+				'ratio'  => round(
+					strlen( $output ) / strlen( $input ),
+					4
+				),
 			),
 		);
 

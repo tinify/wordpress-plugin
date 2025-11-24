@@ -238,12 +238,16 @@ class Tiny_Notices extends Tiny_WP_Base {
 				);
 			} elseif ( ! Tiny_PHP::curl_available() ) {
 				$message = esc_html__(
-					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.', // WPCS: Needed for proper translation.
+					'We noticed that cURL is not available. For the best experience '
+					. 'we recommend to make sure cURL is available.',
+					// WPCS: Needed for proper translation.
 					'tiny-compress-images'
 				);
 			} elseif ( Tiny_PHP::curl_exec_disabled() ) {
 				$message = esc_html__(
-					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.', // WPCS: Needed for proper translation.
+					'We noticed that curl_exec is disabled in your PHP configuration. '
+					. 'Please update this setting for the best experience.',
+					// WPCS: Needed for proper translation.
 					'tiny-compress-images'
 				);
 			}
@@ -259,18 +263,20 @@ class Tiny_Notices extends Tiny_WP_Base {
 	}
 
 	private function show_incompatible_plugins( $incompatible_plugins ) {
-		$notice  = '<div class="error notice tiny-notice incompatible-plugins">';
-		$notice .= '<h3>';
-		$notice .= esc_html__(
+		$notice          = '<div class="error notice tiny-notice incompatible-plugins">';
+		$notice         .= '<h3>';
+		$notice         .= esc_html__(
 			'TinyPNG - JPEG, PNG & WebP image compression',
 			'tiny-compress-images'
 		);
-		$notice .= '</h3>';
-		$notice .= '<p>';
-		$notice .= esc_html__(
-			'You have activated multiple image optimization plugins. This may lead to unexpected results. The following plugins were detected:', // WPCS: Needed for proper translation.
-			'tiny-compress-images'
-		);
+		$notice         .= '</h3>';
+		$notice         .= '<p>';
+				$notice .= esc_html__(
+					'You have activated multiple image optimization plugins. This may '
+					. 'lead to unexpected results. The following plugins were detected:',
+					// WPCS: Needed for proper translation.
+					'tiny-compress-images'
+				);
 		$notice .= '</p>';
 		$notice .= '<table>';
 		$notice .= '<tr><td class="bullet">•</td><td class="name">';

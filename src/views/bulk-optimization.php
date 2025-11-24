@@ -116,8 +116,8 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
 											<p>
 												<?php
-												/* translators: %1$s: number of sizes that can be optimised, %2$s number of images */
 												printf(
+													/* translators: %1$s: number of sizes that can be optimised, %2$s number of images */
 													esc_html__(
 														'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.',
 														'tiny-compress-images'
@@ -150,9 +150,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<p>
 										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
 											<?php
-											/* translators: %d: number of sizes to be compressed */
 											printf(
 												wp_kses(
+													/* translators: %d: number of sizes to be compressed */
 													_n( 'For each uploaded image <strong>%d size</strong> is optimized.', 'For each uploaded image <strong>%d sizes</strong> are optimized.', count( $active_tinify_sizes ), 'tiny-compress-images' ),
 													array(
 														'strong' => array(),
@@ -163,9 +163,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											?>
 										<?php } ?>
 										<?php
-										/* translators: %s: link to settings page saying here */
 										printf(
 											wp_kses(
+												/* translators: %s: link to settings page saying here */
 												__( 'You can change these settings %s.', 'tiny-compress-images' ),
 												array(
 													'a' => array(
@@ -199,9 +199,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<div class="tip">
 											<p>
 											<?php
-											/* translators: %1$d %2$s: number of image sizes, %3$s: link saying upgrade here */
 											printf(
 												wp_kses(
+													/* translators: %1$d %2$s: number of image sizes, %3$s: link saying upgrade here */
 													__( 'If you wish to compress more than <strong>%1$d %2$s</strong> a month and you are still on a free account %3$s.', 'tiny-compress-images' ),
 													array(
 														'strong' => array(),
@@ -224,9 +224,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 					</table>
 					<div class="notes">
 						<?php
-						/* translators: %s: link to settings page saying here */
 						printf(
 							wp_kses(
+								/* translators: %s: link to settings page saying here */
 								__( 'Configure compression settings %s.', 'tiny-compress-images' ),
 								array(
 									'a' => array(

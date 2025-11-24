@@ -290,21 +290,36 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'wpVersion'              => self::wp_version(),
 				'pluginVersion'          => self::version(),
 				'L10nAllDone'            => __( 'All images are processed', 'tiny-compress-images' ),
-				'L10nNoActionTaken'      => __( 'No action taken', 'tiny-compress-images' ),
-				'L10nDuplicate'          => __( 'Image was already processed', 'tiny-compress-images' ),
+				'L10nNoActionTaken'      => __(
+					'No action taken',
+					'tiny-compress-images'
+				),
+				'L10nDuplicate'          => __(
+					'Image was already processed',
+					'tiny-compress-images'
+				),
 				'L10nBulkAction'         => __( 'Compress Images', 'tiny-compress-images' ),
-				'L10nBulkMarkCompressed' => __( 'Mark as Compressed', 'tiny-compress-images' ),
+				'L10nBulkMarkCompressed' => __(
+					'Mark as Compressed',
+					'tiny-compress-images'
+				),
 				'L10nCancelled'          => __( 'Cancelled', 'tiny-compress-images' ),
 				'L10nCompressing'        => __( 'Compressing', 'tiny-compress-images' ),
 				'L10nCompressed'         => __( 'compressed', 'tiny-compress-images' ),
 				'L10nConverted'          => __( 'converted', 'tiny-compress-images' ),
 				'L10nFile'               => __( 'File', 'tiny-compress-images' ),
-				'L10nSizesOptimized'     => __( 'Sizes optimized', 'tiny-compress-images' ),
+				'L10nSizesOptimized'     => __(
+					'Sizes optimized',
+					'tiny-compress-images'
+				),
 				'L10nInitialSize'        => __( 'Initial size', 'tiny-compress-images' ),
 				'L10nCurrentSize'        => __( 'Current size', 'tiny-compress-images' ),
 				'L10nSavings'            => __( 'Savings', 'tiny-compress-images' ),
 				'L10nStatus'             => __( 'Status', 'tiny-compress-images' ),
-				'L10nShowMoreDetails'    => __( 'Show more details', 'tiny-compress-images' ),
+				'L10nShowMoreDetails'    => __(
+					'Show more details',
+					'tiny-compress-images'
+				),
 				'L10nError'              => __( 'Error', 'tiny-compress-images' ),
 				'L10nLatestError'        => __( 'Latest error', 'tiny-compress-images' ),
 				'L10nInternalError'      => __( 'Internal error', 'tiny-compress-images' ),
@@ -813,7 +828,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	static function request_review() {
-		$review_url    = 'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
+		$review_url    =
+			'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
 		$review_block  = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
 		$review_block .= ' ';
 		$review_block .= sprintf(

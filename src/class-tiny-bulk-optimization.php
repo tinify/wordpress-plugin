@@ -128,19 +128,22 @@ class Tiny_Bulk_Optimization {
 				$image_stats['available_unconverted_sizes'];
 				$stats['optimized-image-sizes']       +=
 				$image_stats['image_sizes_converted'];
-				$stats['estimated_credit_use']        += $image_stats['available_unconverted_sizes'];
+				$stats['estimated_credit_use']        +=
+					$image_stats['available_unconverted_sizes'];
 			} else {
 				$stats['available-unoptimized-sizes'] +=
-				$image_stats['available_uncompressed_sizes'];
+					$image_stats['available_uncompressed_sizes'];
 				$stats['optimized-image-sizes']       +=
-				$image_stats['image_sizes_compressed'];
+					$image_stats['image_sizes_compressed'];
 			}
 			$stats['optimized-library-size']   += $image_stats['compressed_total_size'];
 			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
 
 			$has_conversions   = $image_stats['available_unconverted_sizes'] > 0;
 			$has_compressions  = $image_stats['available_uncompressed_sizes'] > 0;
-			$has_optimizations = $has_compressions || ( $conversion_enabled && $has_conversions );
+			$has_optimizations = $has_compressions || (
+				$conversion_enabled && $has_conversions
+			);
 			if ( $has_optimizations ) {
 				$stats['available-for-optimization'][] = array(
 					'ID'         => $result[ $i ]['ID'],

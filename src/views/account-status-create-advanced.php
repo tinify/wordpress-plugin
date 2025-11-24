@@ -47,8 +47,8 @@ $email = trim( $user->user_email );
 				'<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
-			/* translators: %s: link saying API dashboard */
 			printf(
+				/* translators: %s: link saying API dashboard */
 				esc_html__(
 					'Enter your API key. Go to your %s to retrieve it.',
 					'tiny-compress-images'
