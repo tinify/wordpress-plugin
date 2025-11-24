@@ -19,13 +19,6 @@
 */
 
 class Tiny_Cli {
-	public static function register_command( $settings ) {
-		$command_instance = new Tiny_Command( $settings );
-		WP_CLI::add_command( 'tiny', $command_instance );
-	}
-}
-
-class Tiny_Command {
 
 	/**
 	 * Tinify Settings
@@ -36,6 +29,11 @@ class Tiny_Command {
 
 	public function __construct( $settings ) {
 		$this->tiny_settings = $settings;
+	}
+
+	public static function register_command( $settings ) {
+		$command_instance = new Tiny_Cli( $settings );
+		WP_CLI::add_command( 'tiny', $command_instance );
 	}
 
 	/**
