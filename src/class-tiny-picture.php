@@ -19,9 +19,9 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-require_once dirname( __FILE__ ) . '/class-tiny-source-base.php';
-require_once dirname( __FILE__ ) . '/class-tiny-source-image.php';
-require_once dirname( __FILE__ ) . '/class-tiny-source-picture.php';
+require_once __DIR__ . '/class-tiny-source-base.php';
+require_once __DIR__ . '/class-tiny-source-image.php';
+require_once __DIR__ . '/class-tiny-source-picture.php';
 
 /**
  * Class responsible for parsing and modifying html to insert picture elements.
