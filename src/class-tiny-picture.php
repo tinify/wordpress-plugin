@@ -142,7 +142,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 * Will replace img elements with picture elements that (possibly) have additional formats.
 	 *
 	 * @param string $content the full page content
-	 * @param Tiny_Image_Source $source the picture element
+	 * @param Tiny_Source_Image $source the picture element
 	 *
 	 * @return string the updated content including augmented picture elements
 	 */
