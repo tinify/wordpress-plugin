@@ -19,6 +19,10 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+require dirname( __FILE__ ) . '/class-tiny-source-base.php';
+require dirname( __FILE__ ) . '/class-tiny-source-image.php';
+require dirname( __FILE__ ) . '/class-tiny-source-picture.php';
+
 /**
  * Class responsible for parsing and modifying html to insert picture elements.
  *
@@ -28,8 +32,6 @@
  * 4) replaces the original source with the source which includes the modern format
  */
 class Tiny_Picture extends Tiny_WP_Base {
-
-
 
 	/** @var string */
 	private $base_dir;
@@ -100,7 +102,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 * Will search for all picture elements within the given source html
 	 *
 	 * @param string $content
-	 * @return array<Tiny_Picture_Source> an array of picture element sources
+	 * @return array<Tiny_Source_Picture> an array of picture element sources
 	 */
 	private function filter_pictures( $content ) {
 		$matches = array();
@@ -128,7 +130,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 * Will add additional sourcesets to picture elements.
 	 *
 	 * @param string $content the full page content
-	 * @param Tiny_Picture_Source $source the picture element
+	 * @param Tiny_Source_Picture $source the picture element
 	 *
 	 * @return string the updated content including augmented picture elements
 	 */
@@ -175,7 +177,6 @@ class Tiny_Picture extends Tiny_WP_Base {
 		if ( ! preg_match_all( '/<img\b[^>]*>/is', $content, $matches ) ) {
 			return array();
 		}
-
 		$images = array();
 		foreach ( $matches[0] as $img ) {
 			$images[] = new Tiny_Source_Image(
