@@ -68,7 +68,7 @@ class Tiny_Cli_Test extends Tiny_TestCase
 			);
 		$settings->set_compressor($mockCompressor);
 
-		$command = new Tiny_Command($settings);
+		$command = new Tiny_Cli($settings);
 
 		$command->optimize(array(), array(
 			"attachments" => '4030',
@@ -144,7 +144,7 @@ class Tiny_Cli_Test extends Tiny_TestCase
 			->method('compress_file');
 
 		// invoke test
-		$command = new Tiny_Command($settings);
+		$command = new Tiny_Cli($settings);
 		$command->optimize(array(), array());
 	}
 }

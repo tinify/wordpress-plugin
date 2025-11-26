@@ -1,16 +1,16 @@
 <?php
 
-$available_sizes = array_keys( $this->settings->get_sizes() );
-$conversion_enabled = $this->settings->get_conversion_enabled();
-$active_sizes = $this->settings->get_sizes();
-$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
-$error = $tiny_image->get_latest_error();
-$total = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
-$active = $tiny_image->get_count( array( 'uncompressed', 'never_compressed', 'unconverted' ), $active_tinify_sizes );
-$image_statistics = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
+$available_sizes              = array_keys( $this->settings->get_sizes() );
+$conversion_enabled           = $this->settings->get_conversion_enabled();
+$active_sizes                 = $this->settings->get_sizes();
+$active_tinify_sizes          = $this->settings->get_active_tinify_sizes();
+$error                        = $tiny_image->get_latest_error();
+$total                        = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
+$active                       = $tiny_image->get_count( array( 'uncompressed', 'never_compressed', 'unconverted' ), $active_tinify_sizes );
+$image_statistics             = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 $available_uncompressed_sizes = $image_statistics['available_uncompressed_sizes'];
-$size_before = $image_statistics['initial_total_size'];
-$size_after = $image_statistics['compressed_total_size'];
+$size_before                  = $image_statistics['initial_total_size'];
+$size_after                   = $image_statistics['compressed_total_size'];
 
 $size_active = array_fill_keys( $active_tinify_sizes, true );
 $size_exists = array_fill_keys( $available_sizes, true );
@@ -23,9 +23,10 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 ?>
 <div class="details-container">
 	<div class="details">
-		<?php if ( $error ) {
+		<?php
+		if ( $error ) {
 			// dashicons-warning available for WP 4.3+
-		?>
+			?>
 			<span class="icon dashicons dashicons-no error"></span>
 		<?php } elseif ( $total['missing'] > 0 || $total['modified'] > 0 ) { ?>
 			<span class="icon dashicons dashicons-yes alert"></span>
@@ -35,13 +36,19 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			<span class="icon dashicons dashicons-yes success"></span>
 		<?php } ?>
 		<span class="icon spinner hidden"></span>
-		<?php if ( $total['has_been_compressed'] > 0 || (0 == $total['has_been_compressed'] && 0 == $available_uncompressed_sizes) ) { ?>
+		<?php if ( $total['has_been_compressed'] > 0 || ( 0 == $total['has_been_compressed'] && 0 == $available_uncompressed_sizes ) ) { ?>
 			<span class="message">
 				<?php
-				/* translators: %d: number of compressed sizes */
-				printf(wp_kses(_n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ), array(
-					'strong' => array(),
-				)), $total['has_been_compressed']);
+				printf(
+					wp_kses(
+						/* translators: %d: number of compressed sizes */
+						_n( '<strong>%d</strong> size compressed', '<strong>%d</strong> sizes compressed', $total['has_been_compressed'], 'tiny-compress-images' ),
+						array(
+							'strong' => array(),
+						)
+					),
+					$total['has_been_compressed']
+				);
 				?>
 			</span>
 			<br>
@@ -55,19 +62,27 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 			</span>
 			<br>
 		<?php } ?>
-		<?php if ( $conversion_enabled ) {
-			if ( $total['has_been_converted'] > 0 || 0 == $image_statistics['available_unconverted_sizes'] ) { ?>
+		<?php
+		if ( $conversion_enabled ) {
+			if ( $total['has_been_converted'] > 0 || 0 == $image_statistics['available_unconverted_sizes'] ) {
+				?>
 					<span class="message">
 						<?php
-						/* translators: %d: number of compressed sizes */
-						printf(wp_kses(_n( '<strong>%d</strong> size converted', '<strong>%d</strong> sizes converted', $total['has_been_converted'], 'tiny-compress-images' ), array(
-							'strong' => array(),
-						)), $total['has_been_converted']);
+						printf(
+							wp_kses(
+								/* translators: %d: number of compressed sizes */
+								_n( '<strong>%d</strong> size converted', '<strong>%d</strong> sizes converted', $total['has_been_converted'], 'tiny-compress-images' ),
+								array(
+									'strong' => array(),
+								)
+							),
+							$total['has_been_converted']
+						);
 						?>
 					</span>
 					<br>
 				<?php } ?>
-		<?php if ( $active['unconverted'] > 0 ) { ?>
+			<?php if ( $active['unconverted'] > 0 ) { ?>
 			<span class="message">
 				<?php
 				/* translators: %d: number of sizes to be converted */
@@ -75,48 +90,50 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 				?>
 			</span>
 			<br>
-		<?php }
-} ?>
+				<?php
+			}
+		}
+		?>
 		<?php if ( $size_before - $size_after ) { ?>
 			<span class="message">
 				<?php
 				/* translators: %.0f%: savings percentage */
-				printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), (1 - $size_after / floatval( $size_before )) * 100 );
+				printf( esc_html__( 'Total savings %.0f%%', 'tiny-compress-images' ), ( 1 - $size_after / floatval( $size_before ) ) * 100 );
 				?>
 			</span>
 			<br>
 		<?php } ?>
 		<?php if ( $error ) { ?>
 			<span class="message error_message">
-				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error, 'tiny-compress-images' ) ?>
+				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error, 'tiny-compress-images' ); ?>
 			</span>
 			<br>
 		<?php } ?>
-		<a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_image->get_id() ?>">
-			<?php esc_html_e( 'Details', 'tiny-compress-images' ) ?>
+		<a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo $tiny_image->get_id(); ?>">
+			<?php esc_html_e( 'Details', 'tiny-compress-images' ); ?>
 		</a>
 	</div>
 	<?php if ( $available_uncompressed_sizes > 0 ) { ?>
-		<?php if ( in_array( $tiny_image->get_id(), $images_to_compress ) ) { ?>
+		<?php if ( in_array( $tiny_image->get_id(), $images_to_compress, true ) ) { ?>
 			<span class="hidden auto-compress"></span>
 		<?php } ?>
-		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
-			<?php esc_html_e( 'Compress', 'tiny-compress-images' ) ?>
+		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id(); ?>">
+			<?php esc_html_e( 'Compress', 'tiny-compress-images' ); ?>
 		</button>
-		<button type="button" class="tiny-mark-as-compressed button button-small button-secondary" data-id="<?php echo $tiny_image->get_id() ?>">
-			<?php esc_html_e( 'Mark as Compressed', 'tiny-compress-images' ) ?>
+		<button type="button" class="tiny-mark-as-compressed button button-small button-secondary" data-id="<?php echo $tiny_image->get_id(); ?>">
+			<?php esc_html_e( 'Mark as Compressed', 'tiny-compress-images' ); ?>
 		</button>
 	<?php } elseif ( $active['unconverted'] > 0 && $tiny_image->can_be_converted() ) { ?>
-		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id() ?>">
-			<?php esc_html_e( 'Convert', 'tiny-compress-images' ) ?>
+		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo $tiny_image->get_id(); ?>">
+			<?php esc_html_e( 'Convert', 'tiny-compress-images' ); ?>
 		</button>
-		<button type="button" class="tiny-mark-as-compressed button button-small button-secondary" data-id="<?php echo $tiny_image->get_id() ?>">
-			<?php esc_html_e( 'Mark as Converted', 'tiny-compress-images' ) ?>
+		<button type="button" class="tiny-mark-as-compressed button button-small button-secondary" data-id="<?php echo $tiny_image->get_id(); ?>">
+			<?php esc_html_e( 'Mark as Converted', 'tiny-compress-images' ); ?>
 		</button>
 	<?php } ?>
 </div>
 
-<div class="modal" id="modal_<?php echo $tiny_image->get_id() ?>">
+<div class="modal" id="modal_<?php echo $tiny_image->get_id(); ?>">
 	<div class="tiny-compression-details">
 		<h3>
 			<?php
@@ -126,30 +143,33 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		</h3>
 		<table>
 			<tr>
-				<th><?php esc_html_e( 'Size', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Compressed', 'tiny-compress-images' ) ?></th>
-				<th><?php esc_html_e( 'Format', 'tiny-compress-images' ) ?></th>
-				<?php if ( $conversion_enabled ) { ?> <th><?php esc_html_e( 'Converted', 'tiny-compress-images' ) ?></th> <?php } ?>
-				<th><?php esc_html_e( 'Date', 'tiny-compress-images' ) ?></th>
+				<th><?php esc_html_e( 'Size', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Compressed', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Format', 'tiny-compress-images' ); ?></th>
+				<?php
+				if ( $conversion_enabled ) {
+					?>
+					<th><?php esc_html_e( 'Converted', 'tiny-compress-images' ); ?></th> <?php } ?>
+				<th><?php esc_html_e( 'Date', 'tiny-compress-images' ); ?></th>
 			</tr>
 			<?php
-			$i = 0;
+			$i     = 0;
 			$sizes = $tiny_image->get_image_sizes() + $size_exists;
 			foreach ( $sizes as $size_name => $size ) {
 				if ( ! is_object( $size ) ) {
 					$size = new Tiny_Image_Size();
 				}
-			?>
-				<tr class="<?php echo (0 == $i % 2) ? 'even' : 'odd' ?>">
+				?>
+				<tr class="<?php echo ( 0 == $i % 2 ) ? 'even' : 'odd'; ?>">
 					<?php
 					echo '<td>';
 					echo '<span title="' . esc_html( basename( (string) $size->filename ) ) . '">';
-					echo (Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ));
+					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
 					echo '</span>' . ' ';
 					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
-					} elseif ( $size->missing() && (Tiny_Settings::wr2x_active() || ! Tiny_Image::is_retina( $size_name )) ) {
+					} elseif ( $size->missing() && ( Tiny_Settings::wr2x_active() || ! Tiny_Image::is_retina( $size_name ) ) ) {
 						echo '<em>' . esc_html__( '(file removed)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->modified() ) {
 						echo '<em>' . esc_html__( '(modified after compression)', 'tiny-compress-images' ) . '</em>';
@@ -195,22 +215,28 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 						echo '<td>-</td>';
 					}
 					?>
-				</tr><?php
-						$i++;
+				</tr>
+				<?php
+						++$i;
 			} // End foreach().
-			if ( $image_statistics['image_sizes_compressed'] > 0 ) { ?>
+			if ( $image_statistics['image_sizes_compressed'] > 0 ) {
+				?>
 				<tfoot>
 					<tr>
-						<td><?php esc_html_e( 'Combined', 'tiny-compress-images' ) ?></td>
-						<td><?php echo size_format( $size_before, 1 ) ?></td>
-						<td><?php echo size_format( $size_after, 1 ) ?></td>
+						<td><?php esc_html_e( 'Combined', 'tiny-compress-images' ); ?></td>
+						<td><?php echo size_format( $size_before, 1 ); ?></td>
+						<td><?php echo size_format( $size_after, 1 ); ?></td>
 						<td></td>
-						<?php if ( $conversion_enabled ) { ?> <td></td> <?php } ?>
+						<?php
+						if ( $conversion_enabled ) {
+							?>
+							<td></td> <?php } ?>
 						<td></td>
 					</tr>
-				</tfoot><?php
+				</tfoot>
+				<?php
 			}
-						?>
+			?>
 		</table>
 		<p>
 			<strong>
@@ -219,7 +245,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 					printf(
 						/* translators: %1$.0f%%: savings percentage, %2$s: total file size savings */
 						esc_html__( 'Total savings %1$.0f%% (%2$s)', 'tiny-compress-images' ),
-						(1 - $size_after / floatval( $size_before )) * 100,
+						( 1 - $size_after / floatval( $size_before ) ) * 100,
 						size_format( $size_before - $size_after, 1 )
 					);
 				} else {

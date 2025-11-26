@@ -23,13 +23,13 @@ class Tiny_Exception extends Exception {
 	protected $status;
 
 	public function __construct( $message, $type = null, $status = null ) {
-		if ( ! is_string( $message ) || ($type && ! is_string( $type )) ) {
+		if ( ! is_string( $message ) || ( $type && ! is_string( $type ) ) ) {
 			throw new InvalidArgumentException(
 				'First two arguments must be strings'
 			);
 		}
 
-		$this->type = $type;
+		$this->type   = $type;
 		$this->status = $status;
 
 		parent::__construct( $message );

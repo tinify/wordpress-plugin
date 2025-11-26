@@ -178,8 +178,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
             array('path' => 'c', 'size' => '2x'), // this is effectively ignored because there are width descriptors
         );
 
-        $imgSource = new Tiny_Image_Source('<img srcset="/wp-content/uploads/2025/01/test-420w.jpg 420w, /wp-content/uploads/2025/01/test-650w.jpg 650w, /wp-content/uploads/2025/01/test.jpg 2000w" src="/wp-content/uploads/2025/01/test.jpg" />', '', array());
-        $largest = Tiny_Image_Source::get_largest_width_descriptor($srcsets);
+        $largest = Tiny_Source_Image::get_largest_width_descriptor($srcsets);
 
         $this->assertEquals(2000, $largest);
     }
@@ -191,7 +190,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
             array('path' => '/wp-content/uploads/2025/01/test.jpg', 'size' => '2x'),
         );
 
-        $largest = Tiny_Image_Source::get_largest_width_descriptor($srcsets);
+        $largest = Tiny_Source_Image::get_largest_width_descriptor($srcsets);
 
         $this->assertSame(0, $largest);
     }
@@ -203,7 +202,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
             '/wp-content/uploads/2025/01/test-640w.webp 640w',
         );
 
-        $this->assertTrue(Tiny_Image_Source::srcset_contains_width_descriptor($parts, 640));
+        $this->assertTrue(Tiny_Source_Image::srcset_contains_width_descriptor($parts, 640));
     }
 
     public function test_srcset_contains_width_descriptor_returns_false_when_missing()
@@ -213,7 +212,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
             '/wp-content/uploads/2025/01/test-640w.webp 640w',
         );
 
-        $this->assertFalse(Tiny_Image_Source::srcset_contains_width_descriptor($parts, 1280));
+        $this->assertFalse(Tiny_Source_Image::srcset_contains_width_descriptor($parts, 1280));
     }
 
     public function test_get_largest_width_no_descriptors()
@@ -222,7 +221,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
             array('path' => '/wp-content/uploads/2025/01/test.jpg', 'size' => ''),
         );
 
-        $largest = Tiny_Image_Source::get_largest_width_descriptor($srcsets);
+        $largest = Tiny_Source_Image::get_largest_width_descriptor($srcsets);
 
         $this->assertSame(0, $largest);
     }
