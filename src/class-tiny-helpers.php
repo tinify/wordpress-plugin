@@ -113,6 +113,8 @@ class Tiny_Helpers {
 
 	/**
 	 * Checks wether a user is viewing from a page builder
+	 * 
+	 * @since 3.6.5
 	 */
 	public static function is_pagebuilder_request() {
 		$pagebuilder_keys = array(
