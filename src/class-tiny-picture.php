@@ -31,6 +31,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 
 
 
+
 	/** @var string */
 	private $base_dir;
 
@@ -56,6 +57,10 @@ class Tiny_Picture extends Tiny_WP_Base {
 		}
 
 		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
+			return;
+		}
+
+		if ( Tiny_Helpers::is_pagebuilder_request() ) {
 			return;
 		}
 
@@ -189,6 +194,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 abstract class Tiny_Source_Base {
 
 
+
 	public $raw_html;
 	protected $base_dir;
 	protected $allowed_domains;
@@ -237,9 +243,9 @@ abstract class Tiny_Source_Base {
 		$regex_tag = preg_quote( $tagname, '~' );
 		if ( preg_match_all(
 			'~<' . $regex_tag .
-			'\b(?:[^>"\']+|"[^"]*"|\'[^\']*\')*>.*?</' .
-			$regex_tag .
-			'>~is',
+				'\b(?:[^>"\']+|"[^"]*"|\'[^\']*\')*>.*?</' .
+				$regex_tag .
+				'>~is',
 			$html,
 			$matches
 		) ) {
@@ -379,11 +385,13 @@ abstract class Tiny_Source_Base {
 				}
 			}
 
-			if ( $width_descriptor &&
+			if (
+				$width_descriptor &&
 				! self::srcset_contains_width_descriptor(
 					$srcset_parts,
 					$width_descriptor
-				) ) {
+				)
+			) {
 				continue;
 			}
 
@@ -412,7 +420,7 @@ abstract class Tiny_Source_Base {
 			}
 			$source_parts[] = '/>';
 			$sources[] = implode( ' ', $source_parts );
-		}// End foreach().
+		} // End foreach().
 
 		return $sources;
 	}
@@ -472,6 +480,7 @@ class Tiny_Picture_Source extends Tiny_Source_Base {
 
 
 
+
 	/**
 	 * Adds alternative format sources (e.g., image/webp, image/avif) to an existing
 	 * <picture> element based on locally available converted files.
@@ -512,6 +521,7 @@ class Tiny_Picture_Source extends Tiny_Source_Base {
 }
 
 class Tiny_Image_Source extends Tiny_Source_Base {
+
 
 	/**
 	 * Generates a formatted image source array if the corresponding local file exists.
