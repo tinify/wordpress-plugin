@@ -469,6 +469,8 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 
 	public function test_conversion_enabled_and_not_filtered()
 	{
+		$_GET = array();
+		
 		// Mock settings with compression count
 		$mock_settings = $this->createMock(Tiny_Settings::class);
 		$mock_settings->method('get_conversion_enabled')->willReturn(true);
