@@ -110,4 +110,24 @@ public function test_uppercase_extension_and_mimetype_case_insensitive()
     $expected = '/home/user/PICTURE.avif';
     $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/avif', $input));
 }
+
+public function test_is_pagebuilder_request_returns_false_when_no_pagebuilder_keys()
+{
+    $_GET = array();
+    $this->assertFalse(Tiny_Helpers::is_pagebuilder_request());
+}
+
+public function test_is_pagebuilder_request_returns_true_for_beaver_builder()
+{
+    $_GET = array('fl_builder' => '1');
+    $this->assertTrue(Tiny_Helpers::is_pagebuilder_request());
+    $_GET = array();
+}
+
+public function test_is_pagebuilder_request_returns_false_for_non_pagebuilder_keys()
+{
+    $_GET = array('page' => 'settings', 'post_id' => '123');
+    $this->assertFalse(Tiny_Helpers::is_pagebuilder_request());
+    $_GET = array();
+}
 }

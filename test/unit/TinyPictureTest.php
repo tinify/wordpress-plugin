@@ -327,4 +327,30 @@ class Tiny_Picture_Test extends Tiny_TestCase
 
         $this->assertSame($expected, $output);
     }
+
+    public function test_does_not_register_hooks_when_pagebuilder_request()
+    {
+        $_GET = array('fl_builder' => '1');
+        
+        $this->wp->stub('is_admin', function () {
+            return false;
+        });
+        
+        $tiny_picture = new Tiny_Picture($this->vfs->url(), array('https://www.tinifytest.com'));
+
+        $template_redirect_registered = false;
+        foreach ($this->wp->getCalls('add_action') as $call) {
+            if ($call[0] === 'template_redirect') {
+                $template_redirect_registered = true;
+                break;
+            }
+        }
+
+        $this->assertFalse(
+            $template_redirect_registered,
+            'Tiny_Picture should not register template_redirect hook when pagebuilder is active'
+        );
+        
+        $_GET = array();
+    }
 }
