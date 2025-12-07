@@ -151,7 +151,8 @@ test.describe('compression', () => {
     await page.goto('/wp-admin/upload.php');
 
     await page.getByRole('button', { name: 'Compress', exact: true }).click();
-    await expect(page.getByText('2 sizes compressed')).toBeVisible({ timeout: 2000 });
+    // check interval is 5s so wait atleast 6s
+    await expect(page.getByText('2 sizes compressed')).toBeVisible({ timeout: 6000 });
   });
 
   test('compress button in edit screen should compress webp images', async () => {
@@ -167,7 +168,8 @@ test.describe('compression', () => {
     await page.goto('/wp-admin/upload.php');
 
     await page.getByRole('button', { name: 'Compress', exact: true }).click();
-    await expect(page.getByText('3 sizes compressed')).toBeVisible({ timeout: 2000 });
+    // check interval is 5s so wait atleast 6s
+    await expect(page.getByText('3 sizes compressed')).toBeVisible({ timeout: 6000 });
   });
 
   test('compress button should compress uncompressed sizes', async () => {
