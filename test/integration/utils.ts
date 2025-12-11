@@ -9,11 +9,8 @@ export async function uploadMedia(page: Page, file: string): Promise<string> {
   await page.getByLabel('Upload').click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
-  await Promise.all([
-    page.waitForURL('**/wp-admin/upload.php**', { waitUntil: 'load' }),
-    page.locator('#html-upload').click(),
-  ]);
-  
+  await Promise.all([page.waitForURL('**/wp-admin/upload.php**', { waitUntil: 'load' }), page.locator('#html-upload').click()]);
+
   await page.goto('/wp-admin/upload.php?mode=list');
 
   const row = await page.locator('table.wp-list-table tbody > tr').first();
@@ -23,10 +20,7 @@ export async function uploadMedia(page: Page, file: string): Promise<string> {
 
   const rowID = await row.getAttribute('id');
   const attachmentID = rowID?.split('-')[1];
-  await Promise.all([
-    page.waitForURL(new RegExp(`/wp-admin/post\\.php\\?post=${attachmentID}&action=edit$`), { waitUntil: 'load' }),
-    page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`),
-  ]);
+  await Promise.all([page.waitForURL(new RegExp(`/wp-admin/post\\.php\\?post=${attachmentID}&action=edit$`), { waitUntil: 'load' }), page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`)]);
 
   return page.locator('input[name="attachment_url"]').inputValue();
 }
@@ -260,13 +254,16 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
     }, content);
     await page.getByRole('button', { name: 'Publish', exact: true }).click();
     await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
-    await page.getByLabel('Editor publish').getByRole('link', { name: 'View Post' }).click();
   } else {
     await page.locator('#content-html').click();
     await page.locator('#content').fill(content);
     await page.locator('#publish').click();
-    await page.getByRole('link', { name: 'View Post' }).first().click();
   }
-
-  return page.url();
+  await page.waitForURL('**/wp-admin/post.php**');
+  const url = new URL(page.url());
+  const postID = url.searchParams.get('post');
+  if (!postID) {
+    throw new Error('unable to get post id from url');
+  }
+  return postID;
 }
