@@ -12,6 +12,9 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        php: ['8.2']
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -19,7 +22,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          php: '8.2'
+          php: ${{ matrix.php }}
 
       - name: PHPCS
         run: ./bin/check-style
