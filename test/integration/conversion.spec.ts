@@ -49,14 +49,18 @@ test.describe('conversion', () => {
 
   test('will display the optimized image on a page', async () => {
     const media = await uploadMedia(page, 'input-example.jpg');
-    const postURL = await newPost(page, {
-      title: 'test',
-      content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${media}" alt="" class="wp-image-209"/></figure>`,
-    }, WPVersion);
+    const postID = await newPost(
+      page,
+      {
+        title: 'test',
+        content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${media}" alt="" class="wp-image-209"/></figure>`,
+      },
+      WPVersion
+    );
 
-    await page.goto(postURL);
-    
-    const picture = await page.locator('picture:has(source[srcset*="input-example.avif"][type="image/avif"])'); 
+    await page.goto(`/?p=${postID}`);
+
+    const picture = await page.locator('picture:has(source[srcset*="input-example.avif"][type="image/avif"])');
     await expect(picture).toBeVisible();
   });
 });
