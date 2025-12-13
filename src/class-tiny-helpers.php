@@ -125,6 +125,7 @@ class Tiny_Helpers {
 			'breakdance_browser', // Breakdance Builder
 			'ct_builder', // Oxygen Builder
 			'fb-edit', // Avada Live Builder
+			'builder', // Avada Live Builder
 			'spio_no_cdn', // Site Origin
 			'tatsu', // Tatsu Builder
 			'tve', // Thrive Architect
