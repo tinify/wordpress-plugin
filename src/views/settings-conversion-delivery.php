@@ -9,7 +9,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-$tinify_delivery_name = self::get_prefixed_name( 'convert_delivery' );
+$tinify_delivery_name = self::get_prefixed_name( 'convert_format[delivery_method]' );
 
 $tinify_delivery_option_picture = self::get_prefixed_name( 'convert_delivery_picture' );
 $tinify_delivery_option_htaccess = self::get_prefixed_name( 'convert_delivery_htaccess' );
