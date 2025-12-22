@@ -96,7 +96,8 @@ class Tiny_Server_Capabilities extends Tiny_WP_Base {
 	/**
 	 * Get a detailed capabilities object.
 	 *
-	 * @return array Array with properties: server, is_apache, has_mod_rewrite, uploads_writable, htaccess_available
+	 * @return array Array with properties: server, is_apache, has_mod_rewrite,
+	 * uploads_writable, htaccess_available
 	 */
 	public static function get_capabilities() {
 		return array(
@@ -104,7 +105,9 @@ class Tiny_Server_Capabilities extends Tiny_WP_Base {
 			'is_apache'       => self::is_apache(),
 			'has_mod_rewrite' => self::has_mod_rewrite(),
 			'uploads_writable' => self::uploads_htaccess_writable(),
-			'htaccess_available' => self::is_apache() && self::has_mod_rewrite() && self::uploads_htaccess_writable(),
+			'htaccess_available' => self::is_apache() &&
+				self::has_mod_rewrite() &&
+				self::uploads_htaccess_writable(),
 		);
 	}
 }
