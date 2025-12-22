@@ -22,7 +22,7 @@ $convertopts_convert_checked = $this->get_conversion_enabled() ?
 			id="<?php echo esc_attr( $convertopts_convert_id ); ?>"
 			name="<?php echo esc_attr( $convertopts_convert ); ?>"
 			value="on"
-			<?php esc_html( $convertopts_convert_checked ); ?> />
+			<?php echo esc_html( $convertopts_convert_checked ); ?> />
 		<label for="$convertopts_convert_id">
 			<?php esc_html_e( 'Generate optimized image formats', 'tiny-compress-images' ); ?>
 		</label>
