@@ -18,6 +18,7 @@ require dirname( __FILE__ ) . '/src/class-tiny-compress.php';
 require dirname( __FILE__ ) . '/src/class-tiny-bulk-optimization.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image-size.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image.php';
+require dirname( __FILE__ ) . '/src/class-tiny-server-capabilities.php';
 require dirname( __FILE__ ) . '/src/class-tiny-settings.php';
 require dirname( __FILE__ ) . '/src/class-tiny-plugin.php';
 require dirname( __FILE__ ) . '/src/class-tiny-notices.php';
