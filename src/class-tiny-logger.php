@@ -59,11 +59,11 @@ class Tiny_Logger
 	private function __construct()
 	{
 		$this->log_enabled = 'on' === get_option('tinypng_logging_enabled', false);
-		if ($this->log_enabled) {
-			$this->log_file_path = $this->get_log_file_path();
-		}
+		$this->log_file_path = $this->get_log_file_path();
+	}
 
-		add_action('pre_update_option_tinypng_logging_enabled', array($this, 'on_save_log_enabled'), 10, 3);
+	public static function init() {
+		add_filter('pre_update_option_tinypng_logging_enabled', 'Tiny_Logger::on_save_log_enabled', 10, 3);
 	}
 
 	/**
@@ -74,12 +74,14 @@ class Tiny_Logger
 	 *
 	 * @since 3.7.0
 	 */
-	public function on_save_log_enabled($new, $old, $option)
+	public static function on_save_log_enabled($log_enabled, $old, $option)
 	{
-		$this->log_enabled = 'on' === $new;
-		if ($this->log_enabled) {
-			$this->log_file_path = $this->get_log_file_path();
+		if ($log_enabled !== "on") {
+			$instance = self::get_instance();
+			$instance->clear_logs();
 		}
+
+		return $log_enabled;
 	}
 
 	/**

@@ -92,7 +92,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
-
 			$source = \Tinify\fromBuffer( $input );
 
 			if ( $resize_opts ) {
@@ -137,6 +136,11 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			return $result;
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
+			
+			Tiny_Logger::error('client compress error', array(
+				"error" => $err->getMessage(),
+				"status" => $err->status,
+			));
 
 			throw new Tiny_Exception(
 				$err->getMessage(),

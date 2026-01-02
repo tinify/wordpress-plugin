@@ -86,6 +86,12 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		$params = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
 
+		Tiny_Logger::debug('client fopen compress out', array(
+			'details' => $details,
+			'headers' => $headers,
+			'status' => $status_code,
+		));
+
 		$output_url = isset( $headers['location'] ) ? $headers['location'] : null;
 		if ( $status_code >= 400 && is_array( $details ) && isset( $details['error'] ) ) {
 			throw new Tiny_Exception(
