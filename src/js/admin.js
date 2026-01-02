@@ -1,4 +1,10 @@
 (function() {
+  function downloadDiagnostics() {
+    const downloadURL = `${ajaxurl}?action=tiny_download_diagnostics&security=${tinyCompress.nonce}`;
+    window.location.href = downloadURL;
+  }
+  jQuery('#tiny-download-diagnostics').click(downloadDiagnostics);
+  
   function compressImage(event) {
     var element = jQuery(event.target);
     var container = element.closest('div.tiny-ajax-container');
