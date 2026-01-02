@@ -30,6 +30,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
+		new Tiny_Diagnostics($this);
 	}
 
 	private function init_compressor() {
@@ -126,6 +127,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 		register_setting( 'tinify', $field );
 
 		$field = self::get_prefixed_name( 'convert_format' );
+		register_setting( 'tinify', $field );
+
+		$field = self::get_prefixed_name( 'logging_enabled' );
 		register_setting( 'tinify', $field );
 	}
 
