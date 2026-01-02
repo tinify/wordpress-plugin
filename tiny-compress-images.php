@@ -14,6 +14,7 @@ require dirname( __FILE__ ) . '/src/class-tiny-helpers.php';
 require dirname( __FILE__ ) . '/src/class-tiny-php.php';
 require dirname( __FILE__ ) . '/src/class-tiny-wp-base.php';
 require dirname( __FILE__ ) . '/src/class-tiny-exception.php';
+require dirname( __FILE__ ) . '/src/class-tiny-logger.php';
 require dirname( __FILE__ ) . '/src/class-tiny-compress.php';
 require dirname( __FILE__ ) . '/src/class-tiny-bulk-optimization.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image-size.php';
