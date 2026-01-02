@@ -474,3 +474,11 @@ fieldset.tinypng_convert_fields label span {
 fieldset.tinypng_convert_fields[disabled] {
 	opacity: 0.6;
 }
+
+.tiny-d-flex {
+	display: flex;
+}
+
+.tiny-mt-2 {
+	margin-top: 10px;
+}

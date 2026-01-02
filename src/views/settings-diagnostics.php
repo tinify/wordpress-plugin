@@ -21,9 +21,12 @@ $tiny_logging_value = get_option($tiny_logging_formfield_name);
                         <?php esc_html_e('Enable logging', 'tiny-compress-images'); ?>
                     </label>
                 </p>
-                <button class="button" type="button" id="tiny-download-diagnostics">
+                <div class="tiny-d-flex tiny-mt-2">
+                    <button class="button" type="button" id="tiny-download-diagnostics">
                     <?php esc_html_e('Download Diagnostics', 'tiny-compress-images'); ?>
-                </button>
+                    </button>
+                    <div id="download-diagnostics-spinner" class="hidden spinner inline"></div>
+                </div>
             </td>
         </tr>
     </tbody>
