@@ -72,7 +72,9 @@ class Tiny_Logger {
 	 * @return void
 	 */
 	public static function init() {
-		add_filter( 'pre_update_option_tinypng_logging_enabled', 'Tiny_Logger::on_save_log_enabled', 10, 3 );
+		add_filter(
+			'pre_update_option_tinypng_logging_enabled',
+		'Tiny_Logger::on_save_log_enabled', 10, 3 );
 	}
 
 	/**
@@ -103,7 +105,7 @@ class Tiny_Logger {
 	 * @since 3.7.0
 	 */
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
-		if ( $log_enabled !== 'on' ) {
+		if ( 'on' !== $log_enabled ) {
 			$instance = self::get_instance();
 			$instance->clear_logs();
 		}
@@ -221,7 +223,7 @@ class Tiny_Logger {
 			$new_file = $this->log_file_path . '.' . ($i + 1);
 
 			if ( file_exists( $old_file ) ) {
-				if ( $i === self::MAX_LOG_FILES - 1 ) {
+				if ( self::MAX_LOG_FILES - 1 === $i ) {
 					unlink( $old_file );
 				} else {
 					rename( $old_file, $new_file );
