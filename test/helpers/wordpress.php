@@ -92,16 +92,6 @@ class WordPressStubs
 		$this->create_filesystem();
 	}
 
-	/**
-	 * Mocked function for https://developer.wordpress.org/reference/functions/trailingslashit/
-	 *
-	 * @return void
-	 */
-	public function trailingslashit($value)
-	{
-		return $value;
-	}
-
 	public function create_filesystem()
 	{
 		vfsStream::newDirectory(self::UPLOAD_DIR)
@@ -120,6 +110,7 @@ class WordPressStubs
 
 	public function call($method, $args)
 	{
+		$mocks = new WordPressMocks();
 		$this->calls[$method][] = $args;
 		if ('add_action' === $method) {
 			if ('init' === $args[0]) {
@@ -189,6 +180,8 @@ class WordPressStubs
 			return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR);
 		} elseif ('is_admin' === $method) {
 			return true;
+		} elseif (method_exists($mocks, $method)) {
+			return $mocks->$method($args[0]);
 		}
 	}
 
@@ -350,6 +343,18 @@ class WordPressStubs
 			: sprintf('Expected hook "%s" to be called with the given arguments.', $hookname);
 
 		Assert::assertTrue($found, $message);
+	}
+}
+
+class WordPressMocks {
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/trailingslashit/
+	 *
+	 * @return void
+	 */
+	public function trailingslashit($value)
+	{
+		return $value . '/';
 	}
 }
 

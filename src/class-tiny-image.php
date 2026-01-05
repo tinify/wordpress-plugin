@@ -211,25 +211,25 @@ class Tiny_Image {
 		$convert_to = $this->convert_to();
 
 		foreach ( $unprocessed_sizes as $size_name => $size ) {
-			Tiny_Logger::debug('compress size', array(
-				'image_id' => $this->id,
-				'size' => $size_name,
-				'resize' => $resize,
-				'preserve' => $preserve,
-				'convert' => $convert_to,
-				'modified' => $size->modified(),
-				'filename' => $size->filename,
-				'is_duplicate' => $size->is_duplicate(),
-				'exists' => $size->exists(),
-				'has_been_compressed' => $size->has_been_compressed(),
-				'filesize' => $size->filesize(),
-				'mimetype' => $size->mimetype(),
-			));
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
 				$resize = $this->settings->get_resize_options( $size_name );
 				$preserve = $this->settings->get_preserve_options( $size_name );
+				Tiny_Logger::debug('compress size', array(
+					'image_id' => $this->id,
+					'size' => $size_name,
+					'resize' => $resize,
+					'preserve' => $preserve,
+					'convert' => $convert_to,
+					'modified' => $size->modified(),
+					'filename' => $size->filename,
+					'is_duplicate' => $size->is_duplicate(),
+					'exists' => $size->exists(),
+					'has_been_compressed' => $size->has_been_compressed(),
+					'filesize' => $size->filesize(),
+					'mimetype' => $size->mimetype(),
+				));
 				try {
 					$response = $compressor->compress_file(
 						$size->filename,

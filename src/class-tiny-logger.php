@@ -18,8 +18,10 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+
 /**
  * Handles logging of plugin events to file.
+ * 
  *
  * @since 3.7.0
  */
@@ -33,7 +35,8 @@ class Tiny_Logger {
 	const MAX_LOG_FILES = 3;
 
 	private static $instance = null;
-	private $log_enabled = false;
+
+	private $log_enabled = null;
 	private $log_file_path = null;
 
 	/**
@@ -53,12 +56,10 @@ class Tiny_Logger {
 
 	/**
 	 * Constructor.
-	 *
-	 * @since 3.7.0
+
 	 */
 	private function __construct() {
-		$this->log_enabled = 'on' === get_option( 'tinypng_logging_enabled', false );
-		$this->log_file_path = $this->get_log_file_path();
+		$this->log_file_path = $this->resolve_log_file_path();
 	}
 
 	/**
@@ -66,8 +67,6 @@ class Tiny_Logger {
 	 *
 	 * This method hooks into 'pre_update_option_tinypng_logging_enabled' to
 	 * intercept and process logging settings before they are saved to the database.
-	 *
-	 * @since 3.7.0
 	 *
 	 * @return void
 	 */
@@ -88,12 +87,24 @@ class Tiny_Logger {
 	/**
 	 * Retrieves whether logging is currently enabled.
 	 *
-	 * @since 3.7.0
-	 *
 	 * @return bool True if logging is enabled, false otherwise.
 	 */
 	public function get_log_enabled() {
+		if ( null === $this->log_enabled) {
+			$this->log_enabled = 'on' === get_option( 'tinypng_logging_enabled', false );
+		}
+
 		return $this->log_enabled;
+	}
+
+	/**
+	 * Retrieves the absolute filesystem path to the log file.
+	 *
+	 * @return string The full filesystem path to the tiny-compress.log file.
+	 */
+	public function get_log_file_path() 
+	{
+		return $this->log_file_path;
 	}
 
 	/**
@@ -114,28 +125,18 @@ class Tiny_Logger {
 	}
 
 	/**
-	 * Gets the log file path.
+	 * Retrieves the log path using wp_upload_dir. This operation
+	 * should only be used internally. Use the getter to get the
+	 * memoized function.
 	 *
 	 * @since 3.7.0
 	 *
 	 * @return string The log file path.
 	 */
-	private function get_log_file_path() {
+	private function resolve_log_file_path() {
 		$upload_dir = wp_upload_dir();
 		$log_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-logs';
-
-		return trailingslashit( $log_dir ) . 'tiny-compress.log';
-	}
-
-	/**
-	 * Gets the log directory path.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @return string The log directory path.
-	 */
-	public function get_log_dir() {
-		return dirname( $this->log_file_path );
+		return trailingslashit($log_dir) . 'tiny-compress.log';
 	}
 
 	/**

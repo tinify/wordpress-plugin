@@ -193,7 +193,6 @@ class Tiny_Diagnostics {
 
 		$upload_dir = wp_upload_dir();
 		$temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-temp';
-
 		if ( ! file_exists( $temp_dir ) ) {
 			wp_mkdir_p( $temp_dir );
 		}

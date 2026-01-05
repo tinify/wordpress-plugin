@@ -26,9 +26,14 @@ class Tiny_Logger_Test extends Tiny_TestCase
 		assertEquals($instance1, $instance2, 'logger should be a singleton');
 	}
 
-	public function test_log_enabled_when_option_is_on() {
+	public function test_get_log_enabled_memoizes_log_enabled() {
 		$this->wp->addOption('tinypng_logging_enabled', 'on');
 		$logger = Tiny_Logger::get_instance();
 		assertTrue($logger->get_log_enabled(), 'log should be enabled when tinypng_logging_enabled is on');
+	}
+
+	public function test_sets_log_path_on_construct() {
+		$logger = Tiny_Logger::get_instance();
+		assertEquals($logger->get_log_file_path(), 'vfs://root/wp-content/uploads/tiny-compress-logs/tiny-compress.log');
 	}
 }
