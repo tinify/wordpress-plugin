@@ -25,6 +25,7 @@
  */
 class Tiny_Logger {
 
+
 	const LOG_LEVEL_ERROR = 'error';
 	const LOG_LEVEL_DEBUG = 'debug';
 
@@ -60,8 +61,37 @@ class Tiny_Logger {
 		$this->log_file_path = $this->get_log_file_path();
 	}
 
+	/**
+	 * Initializes the logger by registering WordPress hooks.
+	 *
+	 * This method hooks into 'pre_update_option_tinypng_logging_enabled' to
+	 * intercept and process logging settings before they are saved to the database.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return void
+	 */
 	public static function init() {
 		add_filter( 'pre_update_option_tinypng_logging_enabled', 'Tiny_Logger::on_save_log_enabled', 10, 3 );
+	}
+
+	/**
+	 * Resets the singleton instance.
+	 * Used primarily for unit testing.
+	 */
+	public static function reset() {
+		self::$instance = null;
+	}
+
+	/**
+	 * Retrieves whether logging is currently enabled.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return bool True if logging is enabled, false otherwise.
+	 */
+	public function get_log_enabled() {
+		return $this->log_enabled;
 	}
 
 	/**
