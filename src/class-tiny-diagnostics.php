@@ -109,14 +109,18 @@ class Tiny_Diagnostics {
 
 		return array(
 			'php_version' => phpversion(),
-			'server_software' => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'Unknown',
+			'server_software' => isset( $_SERVER['SERVER_SOFTWARE'] ) ?
+				sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) :
+				'Unknown',
 			'mysql_version' => $wpdb->db_version(),
 			'max_execution_time' => ini_get( 'max_execution_time' ),
 			'memory_limit' => ini_get( 'memory_limit' ),
 			'post_max_size' => ini_get( 'post_max_size' ),
 			'upload_max_filesize' => ini_get( 'upload_max_filesize' ),
 			'max_input_vars' => ini_get( 'max_input_vars' ),
-			'curl_version' => function_exists( 'curl_version' ) ? curl_version()['version'] : 'Not available',
+			'curl_version' => function_exists( 'curl_version' ) ?
+				curl_version()['version'] :
+				'Not available',
 			'disabled_functions' => ini_get( 'disable_functions' ),
 		);
 	}
@@ -179,7 +183,12 @@ class Tiny_Diagnostics {
 	 */
 	public function create_diagnostic_zip() {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			return new WP_Error( 'zip_not_available', __( 'ZipArchive class is not available on this server.', 'tiny-compress-images' ) );
+			return new WP_Error(
+				'zip_not_available',
+				__( 'ZipArchive class is not available on this server.',
+					'tiny-compress-images'
+				)
+			);
 		}
 
 		$upload_dir = wp_upload_dir();
@@ -194,7 +203,10 @@ class Tiny_Diagnostics {
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
-			return new WP_Error( 'zip_create_failed', __( 'Failed to create zip file.', 'tiny-compress-images' ) );
+			return new WP_Error( 'zip_create_failed',
+				__( 'Failed to create zip file.',
+				'tiny-compress-images' )
+			);
 		}
 
 		// Add diagnostic info.
