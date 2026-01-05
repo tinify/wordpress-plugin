@@ -96,12 +96,6 @@ class Tiny_Logger
 		$upload_dir = wp_upload_dir();
 		$log_dir = trailingslashit($upload_dir['basedir']) . 'tiny-compress-logs';
 
-		if (! file_exists($log_dir)) {
-			wp_mkdir_p($log_dir);
-			// Add .htaccess to protect log files.
-			file_put_contents(trailingslashit($log_dir) . '.htaccess', 'Deny from all');
-		}
-
 		return trailingslashit($log_dir) . 'tiny-compress.log';
 	}
 
