@@ -23,8 +23,8 @@
  *
  * @since 3.7.0
  */
-class Tiny_Logger
-{
+class Tiny_Logger {
+
 	const LOG_LEVEL_ERROR = 'error';
 	const LOG_LEVEL_DEBUG = 'debug';
 
@@ -43,9 +43,8 @@ class Tiny_Logger
 	 *
 	 * @return Tiny_Logger The logger instance.
 	 */
-	public static function get_instance()
-	{
-		if (null === self::$instance) {
+	public static function get_instance() {
+		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -56,14 +55,13 @@ class Tiny_Logger
 	 *
 	 * @since 3.7.0
 	 */
-	private function __construct()
-	{
-		$this->log_enabled = 'on' === get_option('tinypng_logging_enabled', false);
+	private function __construct() {
+		$this->log_enabled = 'on' === get_option( 'tinypng_logging_enabled', false );
 		$this->log_file_path = $this->get_log_file_path();
 	}
 
 	public static function init() {
-		add_filter('pre_update_option_tinypng_logging_enabled', 'Tiny_Logger::on_save_log_enabled', 10, 3);
+		add_filter( 'pre_update_option_tinypng_logging_enabled', 'Tiny_Logger::on_save_log_enabled', 10, 3 );
 	}
 
 	/**
@@ -74,9 +72,8 @@ class Tiny_Logger
 	 *
 	 * @since 3.7.0
 	 */
-	public static function on_save_log_enabled($log_enabled, $old, $option)
-	{
-		if ($log_enabled !== "on") {
+	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
+		if ( $log_enabled !== 'on' ) {
 			$instance = self::get_instance();
 			$instance->clear_logs();
 		}
@@ -91,12 +88,11 @@ class Tiny_Logger
 	 *
 	 * @return string The log file path.
 	 */
-	private function get_log_file_path()
-	{
+	private function get_log_file_path() {
 		$upload_dir = wp_upload_dir();
-		$log_dir = trailingslashit($upload_dir['basedir']) . 'tiny-compress-logs';
+		$log_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-logs';
 
-		return trailingslashit($log_dir) . 'tiny-compress.log';
+		return trailingslashit( $log_dir ) . 'tiny-compress.log';
 	}
 
 	/**
@@ -106,9 +102,8 @@ class Tiny_Logger
 	 *
 	 * @return string The log directory path.
 	 */
-	public function get_log_dir()
-	{
-		return dirname($this->log_file_path);
+	public function get_log_dir() {
+		return dirname( $this->log_file_path );
 	}
 
 	/**
@@ -118,8 +113,7 @@ class Tiny_Logger
 	 *
 	 * @return bool True if logging is enabled.
 	 */
-	public function is_enabled()
-	{
+	public function is_enabled() {
 		return $this->log_enabled;
 	}
 
@@ -131,10 +125,9 @@ class Tiny_Logger
 	 * @param string $message The message to log.
 	 * @param array  $context Optional. Additional context data. Default empty array.
 	 */
-	public static function error($message, $context = array())
-	{
+	public static function error( $message, $context = array() ) {
 		$instance = self::get_instance();
-		$instance->log(self::LOG_LEVEL_ERROR, $message, $context);
+		$instance->log( self::LOG_LEVEL_ERROR, $message, $context );
 	}
 
 	/**
@@ -145,10 +138,9 @@ class Tiny_Logger
 	 * @param string $message The message to log.
 	 * @param array  $context Optional. Additional context data. Default empty array.
 	 */
-	public static function debug($message, $context = array())
-	{
+	public static function debug( $message, $context = array() ) {
 		$instance = self::get_instance();
-		$instance->log(self::LOG_LEVEL_DEBUG, $message, $context);
+		$instance->log( self::LOG_LEVEL_DEBUG, $message, $context );
 	}
 
 	/**
@@ -160,23 +152,22 @@ class Tiny_Logger
 	 * @param string $message The message to log.
 	 * @param array  $context Optional. Additional context data. Default empty array.
 	 */
-	private function log($level, $message, $context = array())
-	{
-		if (! $this->log_enabled) {
+	private function log( $level, $message, $context = array() ) {
+		if ( ! $this->log_enabled ) {
 			return;
 		}
 
 		$this->rotate_logs();
 
-		$timestamp = current_time('Y-m-d H:i:s');
-		$level_str = strtoupper($level);
-		$context_str = ! empty($context) ? ' ' . wp_json_encode($context) : '';
+		$timestamp = current_time( 'Y-m-d H:i:s' );
+		$level_str = strtoupper( $level );
+		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
 		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}\n";
 
-		$file = fopen($this->log_file_path, 'a');
-		if ($file) {
-			fwrite($file, $log_entry);
-			fclose($file);
+		$file = fopen( $this->log_file_path, 'a' );
+		if ( $file ) {
+			fwrite( $file, $log_entry );
+			fclose( $file );
 		}
 	}
 
@@ -185,31 +176,30 @@ class Tiny_Logger
 	 *
 	 * @since 3.7.0
 	 */
-	private function rotate_logs()
-	{
-		if (! file_exists($this->log_file_path)) {
+	private function rotate_logs() {
+		if ( ! file_exists( $this->log_file_path ) ) {
 			return;
 		}
 
-		$file_size = filesize($this->log_file_path);
-		if ($file_size < self::MAX_LOG_SIZE) {
+		$file_size = filesize( $this->log_file_path );
+		if ( $file_size < self::MAX_LOG_SIZE ) {
 			return;
 		}
 
-		for ($i = self::MAX_LOG_FILES - 1; $i > 0; $i--) {
+		for ( $i = self::MAX_LOG_FILES - 1; $i > 0; $i-- ) {
 			$old_file = $this->log_file_path . '.' . $i;
 			$new_file = $this->log_file_path . '.' . ($i + 1);
 
-			if (file_exists($old_file)) {
-				if ($i === self::MAX_LOG_FILES - 1) {
-					unlink($old_file);
+			if ( file_exists( $old_file ) ) {
+				if ( $i === self::MAX_LOG_FILES - 1 ) {
+					unlink( $old_file );
 				} else {
-					rename($old_file, $new_file);
+					rename( $old_file, $new_file );
 				}
 			}
 		}
 
-		rename($this->log_file_path, $this->log_file_path . '.1');
+		rename( $this->log_file_path, $this->log_file_path . '.1' );
 	}
 
 	/**
@@ -219,20 +209,19 @@ class Tiny_Logger
 	 *
 	 * @return bool True if logs were cleared successfully.
 	 */
-	public function clear_logs()
-	{
+	public function clear_logs() {
 		$cleared = true;
 
 		// Remove main log file.
-		if (file_exists($this->log_file_path)) {
-			$cleared = unlink($this->log_file_path) && $cleared;
+		if ( file_exists( $this->log_file_path ) ) {
+			$cleared = unlink( $this->log_file_path ) && $cleared;
 		}
 
 		// Remove rotated log files.
-		for ($i = 1; $i <= self::MAX_LOG_FILES; $i++) {
+		for ( $i = 1; $i <= self::MAX_LOG_FILES; $i++ ) {
 			$log_file = $this->log_file_path . '.' . $i;
-			if (file_exists($log_file)) {
-				$cleared = unlink($log_file) && $cleared;
+			if ( file_exists( $log_file ) ) {
+				$cleared = unlink( $log_file ) && $cleared;
 			}
 		}
 
@@ -246,17 +235,16 @@ class Tiny_Logger
 	 *
 	 * @return array Array of log file paths.
 	 */
-	public function get_log_files()
-	{
+	public function get_log_files() {
 		$files = array();
 
-		if (file_exists($this->log_file_path)) {
+		if ( file_exists( $this->log_file_path ) ) {
 			$files[] = $this->log_file_path;
 		}
 
-		for ($i = 1; $i <= self::MAX_LOG_FILES; $i++) {
+		for ( $i = 1; $i <= self::MAX_LOG_FILES; $i++ ) {
 			$log_file = $this->log_file_path . '.' . $i;
-			if (file_exists($log_file)) {
+			if ( file_exists( $log_file ) ) {
 				$files[] = $log_file;
 			}
 		}

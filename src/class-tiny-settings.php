@@ -30,7 +30,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->notices = new Tiny_Notices();
-		new Tiny_Diagnostics($this);
+		new Tiny_Diagnostics( $this );
 	}
 
 	private function init_compressor() {

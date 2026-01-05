@@ -60,7 +60,7 @@
 				</tbody>
 			</table>
 			
-			<?php include plugin_dir_path(__FILE__) . 'settings-diagnostics.php'; ?>
+			<?php include plugin_dir_path( __FILE__ ) . 'settings-diagnostics.php'; ?>
 			
 			<p><?php echo Tiny_Plugin::request_review();?></p>
 			<p class="submit">

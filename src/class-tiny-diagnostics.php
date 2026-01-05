@@ -23,8 +23,8 @@
  *
  * @since 3.7.0
  */
-class Tiny_Diagnostics
-{
+class Tiny_Diagnostics {
+
 	/**
 	 * Tiny settings
 	 *
@@ -35,19 +35,18 @@ class Tiny_Diagnostics
 	/**
 	 * @param Tiny_Settings $settings
 	 */
-	public function __construct($settings)
-	{
+	public function __construct( $settings ) {
 		$this->settings = $settings;
 
 		add_action(
 			'wp_ajax_tiny_download_diagnostics',
-			array($this, 'download_diagnostics')
+			array( $this, 'download_diagnostics' )
 		);
 	}
 
 	/**
 	 * Collects all diagnostic information.
-	 * 
+	 *
 	 * File contains:
 	 * - timestamp of export
 	 * - server information
@@ -56,15 +55,14 @@ class Tiny_Diagnostics
 	 * - tinify settings
 	 * - image settings
 	 * - logs
-	 * 
+	 *
 	 * @since 3.7.0
 	 *
 	 * @return array Array of diagnostic information.
 	 */
-	public function collect_info()
-	{
+	public function collect_info() {
 		$info = array(
-			'timestamp' => current_time('Y-m-d H:i:s'),
+			'timestamp' => current_time( 'Y-m-d H:i:s' ),
 			'server_info' => self::get_server_info(),
 			'site_info' => self::get_site_info(),
 			'active_plugins' => self::get_active_plugins(),
@@ -82,8 +80,7 @@ class Tiny_Diagnostics
 	 *
 	 * @return array Site information.
 	 */
-	private static function get_site_info()
-	{
+	private static function get_site_info() {
 		global $wp_version;
 		$theme = wp_get_theme();
 
@@ -94,9 +91,9 @@ class Tiny_Diagnostics
 			'is_multisite' => is_multisite(),
 			'site_language' => get_locale(),
 			'timezone' => wp_timezone_string(),
-			'theme_name' => $theme->get('Name'),
-			'theme_version' => $theme->get('Version'),
-			'theme_uri' => $theme->get('ThemeURI'),
+			'theme_name' => $theme->get( 'Name' ),
+			'theme_version' => $theme->get( 'Version' ),
+			'theme_uri' => $theme->get( 'ThemeURI' ),
 		);
 	}
 
@@ -107,21 +104,20 @@ class Tiny_Diagnostics
 	 *
 	 * @return array Server information.
 	 */
-	private static function get_server_info()
-	{
+	private static function get_server_info() {
 		global $wpdb;
 
 		return array(
 			'php_version' => phpversion(),
-			'server_software' => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : 'Unknown',
+			'server_software' => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'Unknown',
 			'mysql_version' => $wpdb->db_version(),
-			'max_execution_time' => ini_get('max_execution_time'),
-			'memory_limit' => ini_get('memory_limit'),
-			'post_max_size' => ini_get('post_max_size'),
-			'upload_max_filesize' => ini_get('upload_max_filesize'),
-			'max_input_vars' => ini_get('max_input_vars'),
-			'curl_version' => function_exists('curl_version') ? curl_version()['version'] : 'Not available',
-			'disabled_functions' => ini_get('disable_functions'),
+			'max_execution_time' => ini_get( 'max_execution_time' ),
+			'memory_limit' => ini_get( 'memory_limit' ),
+			'post_max_size' => ini_get( 'post_max_size' ),
+			'upload_max_filesize' => ini_get( 'upload_max_filesize' ),
+			'max_input_vars' => ini_get( 'max_input_vars' ),
+			'curl_version' => function_exists( 'curl_version' ) ? curl_version()['version'] : 'Not available',
+			'disabled_functions' => ini_get( 'disable_functions' ),
 		);
 	}
 
@@ -132,13 +128,12 @@ class Tiny_Diagnostics
 	 *
 	 * @return array List of active plugins.
 	 */
-	private static function get_active_plugins()
-	{
-		$active_plugins = get_option('active_plugins', array());
+	private static function get_active_plugins() {
+		$active_plugins = get_option( 'active_plugins', array() );
 		$plugins = array();
 
-		foreach ($active_plugins as $plugin) {
-			$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+		foreach ( $active_plugins as $plugin ) {
+			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
 			$plugins[] = array(
 				'name' => $plugin_data['Name'],
 				'version' => $plugin_data['Version'],
@@ -157,8 +152,7 @@ class Tiny_Diagnostics
 	 *
 	 * @return array Plugin settings
 	 */
-	private function get_tiny_info()
-	{
+	private function get_tiny_info() {
 		return array(
 			'version' => Tiny_Plugin::version(),
 			'status' => $this->settings->get_status(),
@@ -171,10 +165,9 @@ class Tiny_Diagnostics
 		);
 	}
 
-	public function download_diagnostics()
-	{
+	public function download_diagnostics() {
 		$zippath = $this->create_diagnostic_zip();
-		return $this->download_zip($zippath);
+		return $this->download_zip( $zippath );
 	}
 
 	/**
@@ -184,38 +177,37 @@ class Tiny_Diagnostics
 	 *
 	 * @return string|WP_Error Path to the created zip file or WP_Error on failure.
 	 */
-	public function create_diagnostic_zip()
-	{
-		if (! class_exists('ZipArchive')) {
-			return new WP_Error('zip_not_available', __('ZipArchive class is not available on this server.', 'tiny-compress-images'));
+	public function create_diagnostic_zip() {
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			return new WP_Error( 'zip_not_available', __( 'ZipArchive class is not available on this server.', 'tiny-compress-images' ) );
 		}
 
 		$upload_dir = wp_upload_dir();
-		$temp_dir = trailingslashit($upload_dir['basedir']) . 'tiny-compress-temp';
+		$temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-temp';
 
-		if (! file_exists($temp_dir)) {
-			wp_mkdir_p($temp_dir);
+		if ( ! file_exists( $temp_dir ) ) {
+			wp_mkdir_p( $temp_dir );
 		}
 
-		$zip_filename = 'tiny-compress-diagnostics-' . gmdate('Y-m-d-His') . '.zip';
-		$zip_path = trailingslashit($temp_dir) . $zip_filename;
+		$zip_filename = 'tiny-compress-diagnostics-' . gmdate( 'Y-m-d-His' ) . '.zip';
+		$zip_path = trailingslashit( $temp_dir ) . $zip_filename;
 
 		$zip = new ZipArchive();
-		if (true !== $zip->open($zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-			return new WP_Error('zip_create_failed', __('Failed to create zip file.', 'tiny-compress-images'));
+		if ( true !== $zip->open( $zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+			return new WP_Error( 'zip_create_failed', __( 'Failed to create zip file.', 'tiny-compress-images' ) );
 		}
 
 		// Add diagnostic info.
 		$info = self::collect_info();
-		$zip->addFromString('diagnostics.json', wp_json_encode($info, JSON_PRETTY_PRINT));
+		$zip->addFromString( 'diagnostics.json', wp_json_encode( $info, JSON_PRETTY_PRINT ) );
 
 		// Add log files.
 		$logger = Tiny_Logger::get_instance();
 		$log_files = $logger->get_log_files();
 
-		foreach ($log_files as $log_file) {
-			if (file_exists($log_file)) {
-				$zip->addFile($log_file, 'logs/' . basename($log_file));
+		foreach ( $log_files as $log_file ) {
+			if ( file_exists( $log_file ) ) {
+				$zip->addFile( $log_file, 'logs/' . basename( $log_file ) );
 			}
 		}
 
@@ -230,24 +222,23 @@ class Tiny_Diagnostics
 	 *
 	 * @param string $zip_path Path to the zip file.
 	 */
-	public static function download_zip($zip_path)
-	{
-		if (! file_exists($zip_path)) {
-			wp_die(esc_html__('Diagnostic file not found.', 'tiny-compress-images'));
+	public static function download_zip( $zip_path ) {
+		if ( ! file_exists( $zip_path ) ) {
+			wp_die( esc_html__( 'Diagnostic file not found.', 'tiny-compress-images' ) );
 		}
 
-		header('Content-Type: application/zip');
-		header('Content-Disposition: attachment; filename="' . basename($zip_path) . '"');
-		header('Content-Length: ' . filesize($zip_path));
-		header('Pragma: no-cache');
-		header('Expires: 0');
+		header( 'Content-Type: application/zip' );
+		header( 'Content-Disposition: attachment; filename="' . basename( $zip_path ) . '"' );
+		header( 'Content-Length: ' . filesize( $zip_path ) );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
-		readfile($zip_path);
+		readfile( $zip_path );
 
 		// Clean up.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-		unlink($zip_path);
+		unlink( $zip_path );
 
 		exit;
 	}
@@ -257,22 +248,21 @@ class Tiny_Diagnostics
 	 *
 	 * @since 3.7.0
 	 */
-	public static function cleanup_old_diagnostics()
-	{
+	public static function cleanup_old_diagnostics() {
 		$upload_dir = wp_upload_dir();
-		$temp_dir = trailingslashit($upload_dir['basedir']) . 'tiny-compress-temp';
+		$temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-temp';
 
-		if (! file_exists($temp_dir)) {
+		if ( ! file_exists( $temp_dir ) ) {
 			return;
 		}
 
-		$files = glob(trailingslashit($temp_dir) . 'tiny-compress-diagnostics-*.zip');
+		$files = glob( trailingslashit( $temp_dir ) . 'tiny-compress-diagnostics-*.zip' );
 		$max_age = DAY_IN_SECONDS; // 1 day.
 
-		foreach ($files as $file) {
-			if (file_exists($file) && (time() - filemtime($file)) > $max_age) {
+		foreach ( $files as $file ) {
+			if ( file_exists( $file ) && (time() - filemtime( $file )) > $max_age ) {
 				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-				unlink($file);
+				unlink( $file );
 			}
 		}
 	}

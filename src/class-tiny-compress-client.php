@@ -144,10 +144,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			return $result;
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
-			
+
 			Tiny_Logger::error('client compress error', array(
-				"error" => $err->getMessage(),
-				"status" => $err->status,
+				'error' => $err->getMessage(),
+				'status' => $err->status,
 			));
 
 			throw new Tiny_Exception(

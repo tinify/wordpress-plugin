@@ -260,8 +260,8 @@ class Tiny_Image {
 				}
 				$this->add_wp_metadata( $size_name, $size );
 				$this->update_tiny_post_meta();
-			}
-		}
+			}// End if().
+		}// End foreach().
 
 		/*
 			Other plugins can hook into this action to execute custom logic

@@ -319,7 +319,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			Tiny_Logger::debug('blocking compress on upload', array(
 				'image_id' => $attachment_id,
 			));
-			
+
 			$result = $tiny_image->compress();
 			return $tiny_image->get_wp_metadata();
 		} else {
@@ -489,7 +489,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		Tiny_Logger::debug('compress from library', array(
 			'image_id' => $id,
 		));
-		
+
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 		$result = $tiny_image->compress();
 
@@ -522,7 +522,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$size_before = $image_statistics_before['compressed_total_size'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
-		
+
 		Tiny_Logger::debug('compress from bulk', array(
 			'image_id' => $id,
 		));
