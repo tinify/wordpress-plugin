@@ -30,6 +30,14 @@ if ( ! defined( '\Tinify\VERSION' ) ) {
 
 class Tiny_Compress_Client extends Tiny_Compress {
 
+	/**
+	 * API request timeout in seconds.
+	 *
+	 * @since 3.6.8
+	 * @var int
+	 */
+	const API_TIMEOUT = 10;
+
 	private $last_error_code = 0;
 	private $last_message = '';
 	private $proxy;
@@ -176,6 +184,10 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		$property->setAccessible( true );
 		$options = $property->getValue( $client );
 
+		// Set API request timeout to prevent indefinite hanging
+		$options[ CURLOPT_TIMEOUT ] = self::API_TIMEOUT;
+		$options[ CURLOPT_CONNECTTIMEOUT ] = self::API_TIMEOUT;
+
 		if ( TINY_DEBUG ) {
 			$file = fopen( dirname( __FILE__ ) . '/curl.log', 'w' );
 			if ( is_resource( $file ) ) {
@@ -194,5 +206,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 				$options[ CURLOPT_PROXYUSERPWD ] = $this->proxy->authentication();
 			}
 		}
+
+		$property->setValue( $client, $options );
 	}
 }
