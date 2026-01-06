@@ -21,7 +21,7 @@
 
 /**
  * Handles logging of plugin events to file.
- * 
+ *
  *
  * @since 3.7.0
  */
@@ -96,8 +96,7 @@ class Tiny_Logger {
 	 *
 	 * @return string The full filesystem path to the tiny-compress.log file.
 	 */
-	public function get_log_file_path() 
-	{
+	public function get_log_file_path() {
 		return $this->log_file_path;
 	}
 
@@ -110,7 +109,7 @@ class Tiny_Logger {
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
 		$instance = self::get_instance();
 		$instance->log_enabled = 'on' === $log_enabled;
-		
+
 		if ( 'on' !== $log_enabled ) {
 			$instance->clear_logs();
 		}
@@ -128,7 +127,7 @@ class Tiny_Logger {
 	private function resolve_log_file_path() {
 		$upload_dir = wp_upload_dir();
 		$log_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-logs';
-		return trailingslashit($log_dir) . 'tiny-compress.log';
+		return trailingslashit( $log_dir ) . 'tiny-compress.log';
 	}
 
 	/**
@@ -187,7 +186,7 @@ class Tiny_Logger {
 	}
 
 	/**
-	 * Deletes log file and creates a new one when the 
+	 * Deletes log file and creates a new one when the
 	 * MAX_LOG_SIZE is met.
 	 *
 	 * @return void
