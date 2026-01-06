@@ -210,7 +210,7 @@ class Tiny_Diagnostics {
 
 		// Add diagnostic info.
 		$info = self::collect_info();
-		$zip->addFromString( 'diagnostics.json', wp_json_encode( $info, JSON_PRETTY_PRINT ) );
+		$zip->addFromString( 'tiny-diagnostics.json', wp_json_encode( $info, JSON_PRETTY_PRINT ) );
 
 		// Add log files.
 		$logger = Tiny_Logger::get_instance();

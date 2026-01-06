@@ -253,7 +253,7 @@ class Tiny_Image {
 					$size->add_tiny_meta_error( $e );
 					$failed++;
 					Tiny_Logger::error('compress failed', array(
-						'error' => $e,
+						'error' => $e->get_message(),
 						'size' => $size_name,
 						'image_id' => $this->id,
 					));

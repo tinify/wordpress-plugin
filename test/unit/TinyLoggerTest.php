@@ -102,12 +102,12 @@ class Tiny_Logger_Test extends Tiny_TestCase
 		$log_dir = $this->vfs->getChild($log_dir_path);
 		
 		vfsStream::newFile('tiny-compress.log')
-			->withContent(LargeFileContent::withMegabytes(5.1))
+			->withContent(LargeFileContent::withMegabytes(2.1))
 			->at($log_dir);
 	
 		$logger = Tiny_Logger::get_instance();
 
-		assertTrue(filesize($logger->get_log_file_path()) > 5242880, 'log file should be larger than 5MB');
+		assertTrue(filesize($logger->get_log_file_path()) > 2097152, 'log file should be larger than 2MB');
 
 		Tiny_Logger::error('This should be logged');
 

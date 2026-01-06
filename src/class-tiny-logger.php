@@ -31,7 +31,7 @@ class Tiny_Logger {
 	const LOG_LEVEL_ERROR = 'error';
 	const LOG_LEVEL_DEBUG = 'debug';
 
-	const MAX_LOG_SIZE = 5242880; // 5MB
+	const MAX_LOG_SIZE = 2 * 1024 * 1024; // 2MB
 
 	private static $instance = null;
 
@@ -176,11 +176,14 @@ class Tiny_Logger {
 		$timestamp = current_time( 'Y-m-d H:i:s' );
 		$level_str = strtoupper( $level );
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
-		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}\\n";
-
+		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
 		$file = fopen( $this->log_file_path, 'a' );
 		if ( $file ) {
-			fwrite( $file, $log_entry );
+			if ( flock( $file, LOCK_EX ) ) {
+				fwrite( $file, $log_entry );
+				fflush( $file );
+				flock( $file, LOCK_UN );
+			}
 			fclose( $file );
 		}
 	}
