@@ -32,7 +32,6 @@ class Tiny_Logger {
 	const LOG_LEVEL_DEBUG = 'debug';
 
 	const MAX_LOG_SIZE = 5242880; // 5MB
-	const MAX_LOG_FILES = 3;
 
 	private static $instance = null;
 
@@ -42,8 +41,6 @@ class Tiny_Logger {
 	/**
 	 * To log on various places easily, we create a singleton
 	 * to prevent passing around the instance.
-	 *
-	 * @since 3.7.0
 	 *
 	 * @return Tiny_Logger The logger instance.
 	 */
@@ -60,6 +57,7 @@ class Tiny_Logger {
 	 */
 	private function __construct() {
 		$this->log_file_path = $this->resolve_log_file_path();
+		$this->log_enabled = 'on' === get_option( 'tinypng_logging_enabled', false );
 	}
 
 	/**
@@ -90,10 +88,6 @@ class Tiny_Logger {
 	 * @return bool True if logging is enabled, false otherwise.
 	 */
 	public function get_log_enabled() {
-		if ( null === $this->log_enabled) {
-			$this->log_enabled = 'on' === get_option( 'tinypng_logging_enabled', false );
-		}
-
 		return $this->log_enabled;
 	}
 
@@ -112,12 +106,12 @@ class Tiny_Logger {
 	 * - set the setting on the instance
 	 * - if turn off, clear the logs
 	 * - if turned on, check if we can create the log file
-	 *
-	 * @since 3.7.0
 	 */
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
+		$instance = self::get_instance();
+		$instance->log_enabled = 'on' === $log_enabled;
+		
 		if ( 'on' !== $log_enabled ) {
-			$instance = self::get_instance();
 			$instance->clear_logs();
 		}
 
@@ -129,8 +123,6 @@ class Tiny_Logger {
 	 * should only be used internally. Use the getter to get the
 	 * memoized function.
 	 *
-	 * @since 3.7.0
-	 *
 	 * @return string The log file path.
 	 */
 	private function resolve_log_file_path() {
@@ -140,20 +132,7 @@ class Tiny_Logger {
 	}
 
 	/**
-	 * Checks if logging is enabled.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @return bool True if logging is enabled.
-	 */
-	public function is_enabled() {
-		return $this->log_enabled;
-	}
-
-	/**
 	 * Logs an error message.
-	 *
-	 * @since 3.7.0
 	 *
 	 * @param string $message The message to log.
 	 * @param array  $context Optional. Additional context data. Default empty array.
@@ -166,8 +145,6 @@ class Tiny_Logger {
 	/**
 	 * Logs a debug message.
 	 *
-	 * @since 3.7.0
-	 *
 	 * @param string $message The message to log.
 	 * @param array  $context Optional. Additional context data. Default empty array.
 	 */
@@ -179,11 +156,10 @@ class Tiny_Logger {
 	/**
 	 * Logs a message.
 	 *
-	 * @since 3.7.0
-	 *
 	 * @param string $level The log level.
 	 * @param string $message The message to log.
 	 * @param array  $context Optional. Additional context data. Default empty array.
+	 * @return void
 	 */
 	private function log( $level, $message, $context = array() ) {
 		if ( ! $this->log_enabled ) {
@@ -192,10 +168,16 @@ class Tiny_Logger {
 
 		$this->rotate_logs();
 
+		// Ensure log directory exists.
+		$log_dir = dirname( $this->log_file_path );
+		if ( ! file_exists( $log_dir ) ) {
+			wp_mkdir_p( $log_dir );
+		}
+
 		$timestamp = current_time( 'Y-m-d H:i:s' );
 		$level_str = strtoupper( $level );
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
-		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}\n";
+		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}\\n";
 
 		$file = fopen( $this->log_file_path, 'a' );
 		if ( $file ) {
@@ -205,9 +187,10 @@ class Tiny_Logger {
 	}
 
 	/**
-	 * Rotates log files when they exceed the max size.
+	 * Deletes log file and creates a new one when the 
+	 * MAX_LOG_SIZE is met.
 	 *
-	 * @since 3.7.0
+	 * @return void
 	 */
 	private function rotate_logs() {
 		if ( ! file_exists( $this->log_file_path ) ) {
@@ -219,52 +202,24 @@ class Tiny_Logger {
 			return;
 		}
 
-		for ( $i = self::MAX_LOG_FILES - 1; $i > 0; $i-- ) {
-			$old_file = $this->log_file_path . '.' . $i;
-			$new_file = $this->log_file_path . '.' . ($i + 1);
-
-			if ( file_exists( $old_file ) ) {
-				if ( self::MAX_LOG_FILES - 1 === $i ) {
-					unlink( $old_file );
-				} else {
-					rename( $old_file, $new_file );
-				}
-			}
-		}
-
-		rename( $this->log_file_path, $this->log_file_path . '.1' );
+		unlink( $this->log_file_path );
 	}
 
 	/**
-	 * Clears all log files.
-	 *
-	 * @since 3.7.0
+	 * Clears log file
 	 *
 	 * @return bool True if logs were cleared successfully.
 	 */
 	public function clear_logs() {
-		$cleared = true;
-
-		// Remove main log file.
 		if ( file_exists( $this->log_file_path ) ) {
-			$cleared = unlink( $this->log_file_path ) && $cleared;
+			return unlink( $this->log_file_path );
 		}
 
-		// Remove rotated log files.
-		for ( $i = 1; $i <= self::MAX_LOG_FILES; $i++ ) {
-			$log_file = $this->log_file_path . '.' . $i;
-			if ( file_exists( $log_file ) ) {
-				$cleared = unlink( $log_file ) && $cleared;
-			}
-		}
-
-		return $cleared;
+		return true;
 	}
 
 	/**
 	 * Gets all log file paths.
-	 *
-	 * @since 3.7.0
 	 *
 	 * @return array Array of log file paths.
 	 */
@@ -273,13 +228,6 @@ class Tiny_Logger {
 
 		if ( file_exists( $this->log_file_path ) ) {
 			$files[] = $this->log_file_path;
-		}
-
-		for ( $i = 1; $i <= self::MAX_LOG_FILES; $i++ ) {
-			$log_file = $this->log_file_path . '.' . $i;
-			if ( file_exists( $log_file ) ) {
-				$files[] = $log_file;
-			}
 		}
 
 		return $files;

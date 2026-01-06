@@ -88,6 +88,8 @@ class WordPressStubs
 		$this->addMethod('is_customize_preview');
 		$this->addMethod('is_plugin_active');
 		$this->addMethod('trailingslashit');
+		$this->addMethod('current_time');
+		$this->addMethod('wp_mkdir_p');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -355,6 +357,25 @@ class WordPressMocks {
 	public function trailingslashit($value)
 	{
 		return $value . '/';
+	}
+	
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/current_time/
+	 *
+	 * @return int|string
+	 */
+	public function current_time() {
+		$dt = new DateTime( 'now' );
+		return $dt->format('Y-m-d H:i:s');
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/wp_mkdir_p/
+	 *
+	 * @return bool
+	 */
+	public function wp_mkdir_p( $dir ) {
+		mkdir( $dir, 0755, true );
 	}
 }
 
