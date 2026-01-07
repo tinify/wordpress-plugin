@@ -36,7 +36,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	 * @since 3.6.8
 	 * @var int
 	 */
-	const API_TIMEOUT = 10;
+	const API_TIMEOUT = 300;
 
 	private $last_error_code = 0;
 	private $last_message = '';
