@@ -59,6 +59,7 @@ class WordPressStubs
 	public function __construct($vfs)
 	{
 		$GLOBALS['wp'] = $this;
+		$GLOBALS['wpdb'] = $this;
 		$this->vfs = $vfs;
 		$this->addMethod('add_action');
 		$this->addMethod('do_action');
@@ -90,6 +91,12 @@ class WordPressStubs
 		$this->addMethod('trailingslashit');
 		$this->addMethod('current_time');
 		$this->addMethod('wp_mkdir_p');
+		$this->addMethod('db_version');
+		$this->addMethod('wp_get_theme');
+		$this->addMethod('get_home_url');
+		$this->addMethod('get_locale');
+		$this->addMethod('wp_timezone_string');
+		$this->addMethod('update_option');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -108,6 +115,11 @@ class WordPressStubs
 		$this->metadata = array();
 		$this->filters = array();
 		$GLOBALS['_wp_additional_image_sizes'] = array();
+	}
+
+	public function __call($method, $args)
+	{
+		return $this->call($method, $args);
 	}
 
 	public function call($method, $args)
@@ -183,7 +195,7 @@ class WordPressStubs
 		} elseif ('is_admin' === $method) {
 			return true;
 		} elseif (method_exists($mocks, $method)) {
-			return $mocks->$method($args[0]);
+			return call_user_func_array(array($mocks, $method), $args);
 		}
 	}
 
@@ -348,7 +360,8 @@ class WordPressStubs
 	}
 }
 
-class WordPressMocks {
+class WordPressMocks
+{
 	/**
 	 * Mocked function for https://developer.wordpress.org/reference/functions/trailingslashit/
 	 *
@@ -358,14 +371,15 @@ class WordPressMocks {
 	{
 		return $value . '/';
 	}
-	
+
 	/**
 	 * Mocked function for https://developer.wordpress.org/reference/functions/current_time/
 	 *
 	 * @return int|string
 	 */
-	public function current_time() {
-		$dt = new DateTime( 'now' );
+	public function current_time()
+	{
+		$dt = new DateTime('now');
 		return $dt->format('Y-m-d H:i:s');
 	}
 
@@ -374,8 +388,71 @@ class WordPressMocks {
 	 *
 	 * @return bool
 	 */
-	public function wp_mkdir_p( $dir ) {
-		mkdir( $dir, 0755, true );
+	public function wp_mkdir_p($dir)
+	{
+		mkdir($dir, 0755, true);
+	}
+
+	/**
+	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 *
+	 * @return string|null database version
+	 */
+	public function db_version()
+	{
+		return 'mysqlv';
+	}
+
+	/**
+	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 *
+	 * @return string|null database version
+	 */
+	public function wp_get_theme()
+	{
+		return new class {
+			function get($val)
+			{
+				return $val;
+			}
+		};
+	}
+
+	/**
+	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 *
+	 * @return string|null database version
+	 */
+	public function get_home_url()
+	{
+		return 'http://localhost';
+	}
+
+	/**
+	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 *
+	 * @return string|null database version
+	 */
+	public function get_locale()
+	{
+		return 'gb_GB';
+	}
+	/**
+	 * https://developer.wordpress.org/reference/functions/wp_timezone_string/
+	 *
+	 * @return string|null database version
+	 */
+	public function wp_timezone_string()
+	{
+		return 'timezone';
+	}
+	/**
+	 * https://developer.wordpress.org/reference/functions/wp_timezone_string/
+	 *
+	 * @return void
+	 */
+	public function update_option()
+	{
 	}
 }
 
