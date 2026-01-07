@@ -264,8 +264,8 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 				<th class="column-primary" ><?php esc_html_e( 'File', 'tiny-compress-images' ) ?></th>
 				<th class="column-author"><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ) ?></th>
 				<th class="column-author"><?php esc_html_e( 'Current Size', 'tiny-compress-images' ) ?></th>
-				<th class="column-author savings" ><?php esc_html_e( 'Savings', 'tiny-compress-images' ) ?></th>
-				<th class="column-author status" ><?php esc_html_e( 'Status', 'tiny-compress-images' ) ?></th>
+				<th class="column-author savings"><?php esc_html_e( 'Savings', 'tiny-compress-images' ) ?></th>
+				<th class="column-author status"><?php esc_html_e( 'Status', 'tiny-compress-images' ) ?></th>
 			</tr>
 		</thead>
 		<tbody>
