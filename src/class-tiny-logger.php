@@ -103,14 +103,13 @@ class Tiny_Logger {
 	/**
 	 * Triggered when log_enabled is saved
 	 * - set the setting on the instance
-	 * - if turn off, clear the logs
-	 * - if turned on, check if we can create the log file
+	 * - if turn on, clear the old logs
 	 */
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
 		$instance = self::get_instance();
 		$instance->log_enabled = 'on' === $log_enabled;
 
-		if ( 'on' !== $log_enabled ) {
+		if ( $instance->get_log_enabled() ) {
 			$instance->clear_logs();
 		}
 
