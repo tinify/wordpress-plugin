@@ -36,7 +36,8 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	 * @since 3.6.8
 	 * @var int
 	 */
-	const API_TIMEOUT = 300;
+	const API_TIMEOUT = 120;
+	const CONNECT_TIMEOUT = 8;
 
 	private $last_error_code = 0;
 	private $last_message = '';
@@ -186,7 +187,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 		// Set API request timeout to prevent indefinite hanging
 		$options[ CURLOPT_TIMEOUT ] = self::API_TIMEOUT;
-		$options[ CURLOPT_CONNECTTIMEOUT ] = self::API_TIMEOUT;
+		$options[ CURLOPT_CONNECTTIMEOUT ] = self::CONNECT_TIMEOUT;
 
 		if ( TINY_DEBUG ) {
 			$file = fopen( dirname( __FILE__ ) . '/curl.log', 'w' );
