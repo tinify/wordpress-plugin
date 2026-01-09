@@ -63,7 +63,6 @@ class Tiny_Diagnostics {
 	public function collect_info() {
 		$info = array(
 			'timestamp' => current_time( 'Y-m-d H:i:s' ),
-			'server_info' => self::get_server_info(),
 			'site_info' => self::get_site_info(),
 			'active_plugins' => self::get_active_plugins(),
 			'tiny_info' => $this->get_tiny_info(),
@@ -94,34 +93,6 @@ class Tiny_Diagnostics {
 			'theme_name' => $theme->get( 'Name' ),
 			'theme_version' => $theme->get( 'Version' ),
 			'theme_uri' => $theme->get( 'ThemeURI' ),
-		);
-	}
-
-	/**
-	 * Gets server information.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @return array Server information.
-	 */
-	private static function get_server_info() {
-		global $wpdb;
-
-		return array(
-			'php_version' => phpversion(),
-			'server_software' => isset( $_SERVER['SERVER_SOFTWARE'] ) ?
-				sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) :
-				'Unknown',
-			'mysql_version' => $wpdb->db_version(),
-			'max_execution_time' => ini_get( 'max_execution_time' ),
-			'memory_limit' => ini_get( 'memory_limit' ),
-			'post_max_size' => ini_get( 'post_max_size' ),
-			'upload_max_filesize' => ini_get( 'upload_max_filesize' ),
-			'max_input_vars' => ini_get( 'max_input_vars' ),
-			'curl_version' => function_exists( 'curl_version' ) ?
-				curl_version()['version'] :
-				'Not available',
-			'disabled_functions' => ini_get( 'disable_functions' ),
 		);
 	}
 
@@ -211,6 +182,14 @@ class Tiny_Diagnostics {
 		// Add diagnostic info.
 		$info = self::collect_info();
 		$zip->addFromString( 'tiny-diagnostics.json', wp_json_encode( $info, JSON_PRETTY_PRINT ) );
+
+		// Add phpinfo HTML.
+		ob_start();
+		phpinfo( INFO_GENERAL );
+		phpinfo( INFO_CONFIGURATION );
+		phpinfo( INFO_MODULES );
+		$phpinfo_html = ob_get_clean();
+		$zip->addFromString( 'phpinfo.html', $phpinfo_html );
 
 		// Add log files.
 		$logger = Tiny_Logger::get_instance();

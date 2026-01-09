@@ -1,9 +1,4 @@
 <?php
-
-use Mockery\Matcher\Any;
-
-use function PHPUnit\Framework\assertIsString;
-use function PHPUnit\Framework\assertIsArray;
 use function PHPUnit\Framework\assertArrayHasKey;
 
 require_once dirname(__FILE__) . '/TinyTestCase.php';
@@ -32,7 +27,6 @@ class Tiny_Diagnostics_Test extends Tiny_TestCase
 
 		// were just verifying the main structure
 		assertArrayHasKey('timestamp', $info);
-		assertArrayHasKey('server_info', $info);
 		assertArrayHasKey('site_info', $info);
 		assertArrayHasKey('active_plugins', $info);
 		assertArrayHasKey('tiny_info', $info);
