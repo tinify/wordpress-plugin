@@ -24,8 +24,6 @@
     "squizlabs/php_codesniffer": "^3.13",
     "tinify/tinify": "dev-create-key",
     "wp-coding-standards/wpcs": "^3.2",
-    "phpcompatibility/php-compatibility": "^9.3",
-    "phpcompatibility/phpcompatibility-wp": "^2.1",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2"
   },
   "scripts": {
