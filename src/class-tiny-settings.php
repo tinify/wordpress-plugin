@@ -740,7 +740,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 			echo '<div class="notice notice-warning inline"><p>';
 			echo '<strong>' . esc_html__( 'Warning', 'tiny-compress-images' ) . '</strong> — ';
 			$message = esc_html__(
-				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.', // WPCS: Needed for proper translation.
+				// phpcs:ignore Generic.Files.LineLength
+				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.',
 				'tiny-compress-images'
 			);
 			echo $message;
