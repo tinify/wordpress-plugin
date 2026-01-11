@@ -20,6 +20,7 @@
 
 class Tiny_Helpers {
 
+
 	/**
 	 * truncate_text will truncate a string to a given length.
 	 * When text is longer than the given length, the string will be truncated and
@@ -107,5 +108,36 @@ class Tiny_Helpers {
 		} else {
 			throw new Exception( 'finfo extension is not available.' );
 		}
+	}
+
+
+	/**
+	 * Checks wether a user is viewing from a page builder
+	 *
+	 * @since 3.6.5
+	 */
+	public static function is_pagebuilder_request() {
+		$pagebuilder_keys = array(
+			'fl_builder', // Beaver Builder
+			'et_fb', // Divi Builder
+			'bricks', // Bricks Builder
+			'breakdance', // Breakdance Builder
+			'breakdance_browser', // Breakdance Builder
+			'ct_builder', // Oxygen Builder
+			'fb-edit', // Avada Live Builder
+			'builder', // Avada Live Builder
+			'spio_no_cdn', // Site Origin
+			'tatsu', // Tatsu Builder
+			'tve', // Thrive Architect
+			'tcbf', // Thrive Architect
+		);
+
+		foreach ( $pagebuilder_keys as $key ) {
+			if ( isset( $_GET[ $key ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

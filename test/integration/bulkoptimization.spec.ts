@@ -182,7 +182,7 @@ test.describe('bulkoptimization', () => {
   });
 
   test('will only apply a conversion when images are already compressed but not converted', async ({ page }) => {
-    // only optimize original size
+    await setAPIKey(page, 'JPG123');
     await enableCompressionSizes(page, ['0']);
 
     // upload 1 image and automaticly compress it, but not convert it yet
@@ -197,8 +197,12 @@ test.describe('bulkoptimization', () => {
 
     // apply bulk optimization
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-    await page.locator('#id-start').click();
-    await page.waitForLoadState('networkidle');
+    await Promise.all([
+      page.waitForResponse(res => 
+        res.url().includes('admin-ajax.php') && res.status() === 200
+      ),
+      page.locator('#id-start').click(),
+    ]);
     
     // we are expecting 2 unoptimized images sizes = 2 conversion and 1 compression
     // expect two rows in the optimization items table
@@ -207,8 +211,8 @@ test.describe('bulkoptimization', () => {
     
     // first row should have "1 compressed and 1 converted"
     // second row should have "1 converted"
-    await expect(optimizationRows.first()).toContainText('1 compressed 1 converted');
-    await expect(optimizationRows.nth(1)).toContainText('1 converted');
+    await expect(page.getByTestId(`bulk-item-status-1`)).toContainText('1 compressed 1 converted');
+    await expect(page.getByTestId(`bulk-item-status-0`)).toContainText('1 converted');
 
     // this should have cost us 3 credits
   });

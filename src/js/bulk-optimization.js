@@ -201,20 +201,19 @@
   }
 
   function drawSomeRows(items, rowsToDraw) {
-    var list = jQuery('#optimization-items tbody');
-    var row;
-    for (var drawNow = window.totalRowsDrawn; drawNow < Math.min( rowsToDraw + window.totalRowsDrawn, items.length); drawNow++) {
-      row = jQuery('<tr class=\'media-item\'>' +
-          '<th class=\'thumbnail\' />' +
-          '<td class=\'column-primary name\' />' +
-          '<td class=\'column-author initial-size\' data-colname=\'' + tinyCompress.L10nInitialSize + '\' ></>' +
-          '<td class=\'column-author optimized-size\' data-colname=\'' + tinyCompress.L10nCurrentSize + '\' ></>' +
-          '<td class=\'column-author savings\' data-colname=\'' + tinyCompress.L10nSavings + '\' ></>' +
-          '<td class=\'column-author status todo\' data-colname=\'' + tinyCompress.L10nStatus + '\' />' +
-        '</tr>');
-      row.find('.status').html(tinyCompress.L10nWaiting).attr('data-status', 'waiting');
-      row.find('.name').html(items[drawNow].post_title);
-      list.append(row);
+    const list = jQuery('#optimization-items tbody');
+    let drawNow = window.totalRowsDrawn;
+    for(let i = drawNow;i < Math.min(rowsToDraw + window.totalRowsDrawn, items.length); i++) {
+      const tableRow = `<tr class="media-item">
+        <td class="thumbnail" />
+        <td class="column-primary name">${items[i].post_title}</th>
+        <td class="column-author initial-size" data-colname="${tinyCompress.L10nInitialSize}" />
+        <td class="column-author optimized-size" data-colname="${tinyCompress.L10nCurrentSize}" />
+        <td class="column-author savings" data-colname="${tinyCompress.L10nSavings}" />
+        <td class="column-author status" data-testid="bulk-item-status-${i}" data-colname="${tinyCompress.L10nStatus}" data-status="waiting">${tinyCompress.L10nWaiting}</td>
+      </tr>`;
+      list.append(tableRow);
+      drawNow = i;
     }
     window.totalRowsDrawn = drawNow;
   }

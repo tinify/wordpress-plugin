@@ -3,8 +3,8 @@ Contributors: TinyPNG
 Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 4.0
-Tested up to: 6.8
-Stable tag: 3.6.4
+Tested up to: 6.9
+Stable tag: 3.6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Speed up your website. Optimize your JPEG, PNG, and WebP images automatically wi
 == Description ==
 
 The best & easiest image compression plugin for WordPress. Speed up your website by compressing and converting your images with TinyPNG for WordPress. Improve your websites’ performance by significantly reducing file sizes without noticeable quality loss. Support for WebP, AVIF, JPG and PNG formats.
-Start optimizing your images today to boost SEO, improve your PageSpeed scores, save bandwidth and enhance your website’s user experience. 
+Start optimizing your images today to boost SEO, improve your PageSpeed scores, save bandwidth and enhance your website’s user experience.
 
 = Why TinyPNG? =
 
@@ -25,29 +25,29 @@ Start optimizing your images today to boost SEO, improve your PageSpeed scores, 
 * Individual image control, optimize a single image straight from your media library.
 * Preserve meta-data, choose to retain copyright metadata, creation date and GPS location in your original images.
 * Resize large images, automatically resize huge image uploads by setting a maximum width and/or height for more reasonable browser display.
-* Custom thumbnail optimization, choose which image size should be processed. 
+* Custom thumbnail optimization, choose which image size should be processed.
 * Advanced background processing, optimization run quietly in the background to speed up your workflow.
 * Multisite support, use one API key across all sites.
 * Detailed statistics, see how much file size you have saved by compressing your Media Library
-* George the Panda, our lovely mascot brings joy and hugs. 
-* and much more… 
+* George the Panda, our lovely mascot brings joy and hugs.
+* and much more…
 
-= Convert to next-gen formats like AVIF and WebP = 
+= Convert to next-gen formats like AVIF and WebP =
 
-With the TinyPNG WordPress plugin, you can easily convert your images to next-gen formats like AVIF and WebP. AVIF and WebP are modern image formats designed for the web. They are often smaller in size than older formats like JPEG and PNG, while keeping excellent image quality. 
+With the TinyPNG WordPress plugin, you can easily convert your images to next-gen formats like AVIF and WebP. AVIF and WebP are modern image formats designed for the web. They are often smaller in size than older formats like JPEG and PNG, while keeping excellent image quality.
 
-* WebP images are 25–34% smaller than JPEG (lossy) according to Google. 
-* AVIF can reduce image size by up to 50% compared to JPEG, often even beating WebP in compression. 
+* WebP images are 25–34% smaller than JPEG (lossy) according to Google.
+* AVIF can reduce image size by up to 50% compared to JPEG, often even beating WebP in compression.
 
-Google’s PageSpeed Insights and other tools strongly recommend serving images in AVIF or WebP. Most modern browsers (like Chrome, Firefox, Edge, and Safari) now fully support WebP and AVIF. That means you can safely serve these formats to most of your visitors. 
+Google’s PageSpeed Insights and other tools strongly recommend serving images in AVIF or WebP. Most modern browsers (like Chrome, Firefox, Edge, and Safari) now fully support WebP and AVIF. That means you can safely serve these formats to most of your visitors.
 
-With the TinyPNG WordPress plugin, your images can be automatically converted to AVIF or WebP when you upload them. No extra steps are required. 
+With the TinyPNG WordPress plugin, your images can be automatically converted to AVIF or WebP when you upload them. No extra steps are required.
 
-= Optimizing all your images = 
+= Optimizing all your images =
 
-You can bulk optimize your existing JPEG, PNG, and WebP images all at once by going to Media > Bulk TinyPNG. Clicking on the big button will start compressing and converting, when needed, all unoptimized images in your media library.  
+You can bulk optimize your existing JPEG, PNG, and WebP images all at once by going to Media > Bulk TinyPNG. Clicking on the big button will start compressing and converting, when needed, all unoptimized images in your media library.
 
-If you have more images than your free credits allow, the tool will show you an estimated cost to optimize your entire library. If you are interested, you can upgrade your account to the paid plan and optimize the full library all in one go. Prefer to stay on the free plan? No problem! The bulk optimization tool will simply process images until your free limit is reached.  
+If you have more images than your free credits allow, the tool will show you an estimated cost to optimize your entire library. If you are interested, you can upgrade your account to the paid plan and optimize the full library all in one go. Prefer to stay on the free plan? No problem! The bulk optimization tool will simply process images until your free limit is reached.
 
 = Compress for performance =
 
@@ -59,26 +59,26 @@ The Tinify optimization engine is more than just compression. It is built to del
 
 = Compatibility =
 
-The TinyPNG plugin is fully compatible with *WordPress Multisite*. Next to this, TinyPNG for WordPress works smoothly with most themes and plugins. Here is a list of the popular plugins that have been tested to work smoothly with TinyPNG.  
+The TinyPNG plugin is fully compatible with *WordPress Multisite*. Next to this, TinyPNG for WordPress works smoothly with most themes and plugins. Here is a list of the popular plugins that have been tested to work smoothly with TinyPNG.
 
 * [WPML](https://wpml.org/documentation/plugins-compatibility/optimize-wordpress-images-multilingual-sites/)
-* WooCommerce 
-* WP Retina 2x 
+* WooCommerce
+* WP Retina 2x
 * WP Offload
 
 = Getting Started =
 
-Install this plugin and follow the instructions to set up your account. No payment details are required.  
+Install this plugin and follow the instructions to set up your account. No payment details are required.
 
-Learn more about the plugin with these step-by-step tutorials:  
+Learn more about the plugin with these step-by-step tutorials:
 
 * [How to set up the TinyPNG WordPress plugin?](https://help.tinify.com/help/how-to-set-up-the-tinypng-wordpress-plugin)
 * [How to compress existing images with the WordPress plugin?](https://help.tinify.com/help/how-to-compress-existing-images-with-plugin)
 
 = Pricing =
-You get 500 credits per month at no cost.  
+You get 500 credits per month at no cost.
 
-With a regular WordPress installation, you can compress roughly 100 images per month. Please note that converting images to AVIF or WebP uses an additional credit per image size. This means with the conversion feature enabled, you can roughly compress and convert 50 images per month for free.  
+With a regular WordPress installation, you can compress roughly 100 images per month. Please note that converting images to AVIF or WebP uses an additional credit per image size. This means with the conversion feature enabled, you can roughly compress and convert 50 images per month for free.
 
 The exact number depends on how many thumbnail sizes are generated by your theme or plugins. You can choose which of the generated thumbnail sizes should be optimized by going to Settings > TinyPNG page. You can upgrade to a paid plan to remove the limit and compress as many images as you like.
 
@@ -139,7 +139,7 @@ Once set up you will see a message on the *Settings > TinyPNG* page. This will w
 A: In a default WordPress installation you can optimize around 100 images for free each month. WordPress creates different thumbnails of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the *Settings > TinyPNG - JPEG, PNG & WebP image compression* page before you start optimization.
 
 = Q: How much does it cost to use the plugin? =
-A: The plugin is free to use, you receive 500 free compressions each calendar month. 
+A: The plugin is free to use, you receive 500 free compressions each calendar month.
 If you need to compress more, you can upgrade to the pay-per-compression pricing. You can view the current pricing at [tinify.com](https://tinify.com/developers/pricing).
 When you use the bulk optimization tool, the plugin will first scan your media library and show you an estimated number of credits needed to optimize all uncompressed images. You can decide whether you want to upgrade your plan or stay within the free limit.
 
@@ -174,6 +174,15 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 A: When the conversion feature is enabled (to convert images to AVIF or WebP), each image will use double the number of credits: one for compression and one for format conversion.
 
 == Changelog ==
+= 3.6.7 =
+* Added support for WordPress 6.9
+
+= 3.6.6 =
+* fix: Improve compatibility with Avada page builder
+
+= 3.6.5 =
+* fix: prevent picture element when using a page builder
+
 = 3.6.4 =
 * added a guard to prevent bulk processing to requeue already processed images
 
@@ -214,7 +223,7 @@ A: When the conversion feature is enabled (to convert images to AVIF or WebP), e
 * Error when mb_strimwidth is not available resolved
 
 = 3.4.4 =
-* CSRF fix, added nonce check 
+* CSRF fix, added nonce check
 
 = 3.4.3 =
 * Removed more deprecated PHP syntax that was triggering a warning message.
