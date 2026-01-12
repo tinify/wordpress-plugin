@@ -20,7 +20,7 @@
 class Tiny_Apache_Rewrite extends Tiny_WP_Base
 {
 
-	const MARKER = 'tinify_modern_images';
+	const MARKER = 'tiny-compress-images';
 
 	/**
 	 * Generate .htaccess rewrite rules for serving WebP and AVIF images.
@@ -63,18 +63,10 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	private static function get_avif_rules()
 	{
 		$rules = array();
-
-		// AVIF rule 1: Try file with original extension appended (image.jpg.avif)
-		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/avif';
-		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.avif -f';
-		$rules[] = 'RewriteRule ^(.+)$ $1.avif [T=image/avif,L]';
-
-		// AVIF rule 2: Try file with extension replaced (image.avif)
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/avif';
 		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\\.(?:jpe?g|png|gif)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.avif -f';
 		$rules[] = 'RewriteRule (.+)\\.(?:jpe?g|png|gif)$ $1.avif [T=image/avif,L]';
-
 		return $rules;
 	}
 
@@ -86,21 +78,11 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	private static function get_webp_rules()
 	{
 		$rules = array();
-
-		// WebP rule 1: Try file with original extension appended (image.jpg.webp)
-		// Check for Chrome browser or explicit Accept header
-		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/webp [OR]';
-		$rules[] = 'RewriteCond %{HTTP_USER_AGENT} Chrome';
-		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.webp -f';
-		$rules[] = 'RewriteRule ^(.+)$ $1.webp [T=image/webp,L]';
-
-		// WebP rule 2: Try file with extension replaced (image.webp)
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/webp [OR]';
 		$rules[] = 'RewriteCond %{HTTP_USER_AGENT} Chrome';
 		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\\.(?:jpe?g|png|gif)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.webp -f';
 		$rules[] = 'RewriteRule (.+)\\.(?:jpe?g|png|gif)$ $1.webp [T=image/webp,L]';
-
 		return $rules;
 	}
 
@@ -109,22 +91,16 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	 *
 	 * @return bool True on success, false otherwise
 	 */
-	public static function install()
+	public static function install_rules()
 	{
-		if (! function_exists('insert_with_markers')) {
-			require_once ABSPATH . 'wp-admin/includes/misc.php';
-		}
-
 		$rules = self::get_rewrite_rules();
 
-		// Write to uploads directory
 		$upload_dir = wp_upload_dir();
 		if (isset($upload_dir['basedir']) && is_writable($upload_dir['basedir'])) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
 			insert_with_markers($htaccess_file, self::MARKER, $rules);
 		}
 
-		// Write to root directory
 		if (is_writable(get_home_path())) {
 			$htaccess_file = get_home_path() . '.htaccess';
 			insert_with_markers($htaccess_file, self::MARKER, $rules);
@@ -138,20 +114,14 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	 *
 	 * @return bool True on success, false otherwise
 	 */
-	public static function uninstall()
+	public static function uninstall_rules()
 	{
-		if (! function_exists('insert_with_markers')) {
-			require_once ABSPATH . 'wp-admin/includes/misc.php';
-		}
-
-		// Remove from uploads directory
 		$upload_dir = wp_upload_dir();
 		if (isset($upload_dir['basedir']) && file_exists($upload_dir['basedir'] . '/.htaccess')) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
 			insert_with_markers($htaccess_file, self::MARKER, '');
 		}
 
-		// Remove from root directory
 		if (file_exists(get_home_path() . '.htaccess')) {
 			$htaccess_file = get_home_path() . '.htaccess';
 			insert_with_markers($htaccess_file, self::MARKER, '');
