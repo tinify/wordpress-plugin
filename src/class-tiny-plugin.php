@@ -66,15 +66,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
 
+		/** isolate conversion and move this to a seperate class */
+		Tiny_Apache_Rewrite::init();
 		if ( $this->settings->get_conversion_enabled() ) {
+			$delivery_method = $this->settings->get_conversion_delivery_method();
 			/**
 			 * Controls wether the page should replace <img> with <picture> elements
 			 * converted sources.
 			 *
 			 * @since 3.7.0
 			 */
-			$should_replace = apply_filters( 'tiny_replace_with_picture', true );
-			if ( $should_replace ) {
+			if ($delivery_method === 'picture' && apply_filters( 'tiny_replace_with_picture', true ) ) {
 				new Tiny_Picture( ABSPATH, array( get_site_url() ) );
 			}
 		}

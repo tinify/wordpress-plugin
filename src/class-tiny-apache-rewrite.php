@@ -17,17 +17,57 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.\n*/
 
-class Tiny_Apache_Rewrite extends Tiny_WP_Base
+class Tiny_Apache_Rewrite
 {
-
 	const MARKER = 'tiny-compress-images';
+
+	/**
+	 * Initialize Apache Rewrite for converted images.
+	 * - install rules
+	 * - adds hook to add or remove the rules
+	 * 
+	 * @return void
+	 */
+	public static function init() {
+		add_action('update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules', 20, 3);
+	}
+
+	/**
+	 * Installs or uninstalls the htaccess rules
+	 * hooked into `update_option_tinypng_convert_format`
+	 * https://developer.wordpress.org/reference/hooks/update_option_option/
+	 * 
+	 *
+	 * @param mixed $old_value
+	 * @param mixed $value
+	 * @param string $option
+	 * @return void
+	 */
+	public static function toggle_rules( $old_value, $value, $option) {
+		$old_delivery = isset($old_value['delivery_method']) ? $old_value['delivery_method'] : null;
+		$new_delivery = isset($value['delivery_method']) ? $value['delivery_method'] : null;
+
+		if ( $old_delivery === $new_delivery ) {
+			return;
+		}
+
+		if ($old_delivery === 'htaccess' && ($new_delivery === 'picture' || $new_delivery === null)) {
+			self::uninstall_rules();
+			return;
+		}
+		if (($old_delivery === 'picture' || $old_delivery === null) && $new_delivery === 'htaccess' ) {
+			self::install_rules();
+			return;
+		}
+
+	}
 
 	/**
 	 * Generate .htaccess rewrite rules for serving WebP and AVIF images.
 	 *
 	 * @return string The .htaccess rules
 	 */
-	public static function get_rewrite_rules()
+	private static function get_rewrite_rules()
 	{
 		$rules = array(
 			'<IfModule mod_rewrite.c>',
@@ -64,9 +104,9 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	{
 		$rules = array();
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/avif';
-		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\\.(?:jpe?g|png|gif)$';
+		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png|gif)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.avif -f';
-		$rules[] = 'RewriteRule (.+)\\.(?:jpe?g|png|gif)$ $1.avif [T=image/avif,L]';
+		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png|gif)$ $1.avif [T=image/avif,L]';
 		return $rules;
 	}
 
@@ -78,11 +118,11 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	private static function get_webp_rules()
 	{
 		$rules = array();
-		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/webp [OR]';
-		$rules[] = 'RewriteCond %{HTTP_USER_AGENT} Chrome';
-		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\\.(?:jpe?g|png|gif)$';
+		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/webp';
+		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png|gif)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.webp -f';
-		$rules[] = 'RewriteRule (.+)\\.(?:jpe?g|png|gif)$ $1.webp [T=image/webp,L]';
+		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png|gif)$ $1.webp [T=image/webp,L]';
+		
 		return $rules;
 	}
 
@@ -91,7 +131,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base
 	 *
 	 * @return bool True on success, false otherwise
 	 */
-	public static function install_rules()
+	private static function install_rules()
 	{
 		$rules = self::get_rewrite_rules();
 

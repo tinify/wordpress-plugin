@@ -30,6 +30,7 @@ test.describe('conversion', () => {
     await setConversionSettings(page, {
       convert: true,
       output: 'smallest',
+      delivery: 'picture',
     });
     await uploadMedia(page, 'input-example.jpg');
 
@@ -48,6 +49,11 @@ test.describe('conversion', () => {
   });
 
   test('will display the optimized image on a page', async () => {
+    await setConversionSettings(page, {
+      convert: true,
+      output: 'smallest',
+      delivery: 'picture',
+    });
     const media = await uploadMedia(page, 'input-example.jpg');
     const postID = await newPost(
       page,
@@ -62,5 +68,32 @@ test.describe('conversion', () => {
 
     const picture = await page.locator('picture:has(source[srcset*="input-example.avif"][type="image/avif"])');
     await expect(picture).toBeVisible();
+  });
+
+  test('will serve optimized image when server side rules are configured', async () => {
+    await setConversionSettings(page, {
+      convert: true,
+      output: 'smallest',
+      delivery: 'htaccess',
+    });
+    const media = await uploadMedia(page, 'input-example.jpg');
+    const postID = await newPost(
+      page,
+      {
+        title: 'test',
+        content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${media}" alt="" class="wp-image-209"/></figure>`,
+      },
+      WPVersion
+    );
+    const imageResponsePromise = page.waitForResponse(response => 
+      // img is still jpg, but expect content type to be avif
+      response.url().includes('input-example.jpg') && response.status() === 200
+    );
+
+    await page.goto(`/?p=${postID}`);
+
+    const imgResponse = await imageResponsePromise;
+    const contentType = await imgResponse.headerValue('content-type');
+    expect(contentType).toBe('image/avif');
   });
 });
