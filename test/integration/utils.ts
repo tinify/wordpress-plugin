@@ -202,7 +202,7 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
   await plugin.getByLabel('Deactivate').click();
 }
 
-export async function setConversionSettings(page: Page, settings: { convert: boolean; output?: 'smallest' | 'webp' | 'avif' }) {
+export async function setConversionSettings(page: Page, settings: { convert: boolean; output?: 'smallest' | 'webp' | 'avif' , delivery: 'picture' | 'htaccess' }) {
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
   if (settings.convert) {
@@ -221,6 +221,12 @@ export async function setConversionSettings(page: Page, settings: { convert: boo
     }
   } else {
     await page.locator('#tinypng_conversion_convert').uncheck();
+  }
+
+  if (settings.delivery === 'htaccess') {
+    await page.getByTestId('tinypng_convert_delivery_picture').check();
+  } else {
+    await page.getByTestId('tinypng_convert_delivery_htaccess').check();
   }
 
   await page.locator('#submit').click();
