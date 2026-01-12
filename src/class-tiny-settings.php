@@ -1011,7 +1011,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	) {
 		$checked = ($current_value === $option_value ? ' checked="checked"' : '');
 		echo '<p class="tiny-radio">';
-		echo '<input type="radio" id="' . esc_attr( $option_id ) . '" name="' . $group_name .
+		echo '<input type="radio" data-testid="' . esc_attr( $option_id ) . '" ';
+		echo 'id="' . esc_attr( $option_id ) . '" name="' . $group_name .
 			'" value="' . esc_attr( $option_value ) . '" ' . $checked . '/>';
 		echo '<label for="' . esc_attr( $option_id ) . '">' . esc_html( $label );
 		echo '<span>' . esc_html( $descr ) . '</span>';
