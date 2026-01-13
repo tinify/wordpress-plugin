@@ -72,7 +72,7 @@ class Tiny_Diagnostics {
 
 		return $info;
 	}
-	
+
 	/**
 	 * Gets server information.
 	 * We have considered phpinfo but this would be a security concern
@@ -174,15 +174,15 @@ class Tiny_Diagnostics {
 	}
 
 	public function download_diagnostics() {
-		check_ajax_referer('tiny-compress', 'security');
+		check_ajax_referer( 'tiny-compress', 'security' );
 
-		if (! current_user_can('edit_posts') ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error(
 				esc_html__( 'Not allowed to download diagnostics.', 'tiny-compress-images' ),
 				403
 			);
 		}
-		
+
 		$zippath = $this->create_diagnostic_zip();
 		return $this->download_zip( $zippath );
 	}
@@ -210,7 +210,7 @@ class Tiny_Diagnostics {
 			wp_mkdir_p( $temp_dir );
 		}
 
-		$temp_path = tempnam($temp_dir, 'tiny-compress-diagnostics-' . gmdate( 'Y-m-d-His' ) );
+		$temp_path = tempnam( $temp_dir, 'tiny-compress-diagnostics-' . gmdate( 'Y-m-d-His' ) );
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $temp_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {

@@ -138,7 +138,7 @@ class Tiny_Helpers {
 			}
 		}
 
-	return false;
+		return false;
 	}
 
 	/**

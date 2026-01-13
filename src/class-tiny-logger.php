@@ -183,7 +183,11 @@ class Tiny_Logger {
 		if ( $wp_filesystem->exists( $this->log_file_path ) ) {
 			$existing_content = $wp_filesystem->get_contents( $this->log_file_path );
 		}
-		$wp_filesystem->put_contents( $this->log_file_path, $existing_content . $log_entry, FS_CHMOD_FILE );
+		$wp_filesystem->put_contents(
+			$this->log_file_path,
+			$existing_content . $log_entry,
+			FS_CHMOD_FILE
+		);
 	}
 
 	/**
@@ -238,7 +242,7 @@ class Tiny_Logger {
 
 		$htaccess_file = trailingslashit( $log_dir ) . '.htaccess';
 		if ( ! $wp_filesystem->exists( $htaccess_file ) ) {
-			$htaccess_content = "deny from all";
+			$htaccess_content = 'deny from all';
 			$wp_filesystem->put_contents( $htaccess_file, $htaccess_content, FS_CHMOD_FILE );
 		}
 	}
