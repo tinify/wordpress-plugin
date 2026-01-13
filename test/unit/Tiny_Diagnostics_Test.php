@@ -32,4 +32,23 @@ class Tiny_Diagnostics_Test extends Tiny_TestCase
 		assertArrayHasKey('tiny_info', $info);
 		assertArrayHasKey('image_sizes', $info);
 	}
+
+	public function test_will_die_when_nonce_is_invalid() {
+		$tiny_settings = new Tiny_Settings();
+		$tiny_diagnostics = new Tiny_Diagnostics($tiny_settings);
+		
+		
+		$this->wp->stub('check_ajax_referer', function($action, $query_arg) {
+			$this->assertEquals('tiny-compress', $action);
+			$this->assertEquals('security', $query_arg);
+			// mocking an invalid nonce here, it usually calls wp_die
+			throw new Exception('invalid nonce');
+		});
+		
+		try {
+			$tiny_diagnostics->download_diagnostics();
+		} catch (Exception $e) {
+			$this->assertEquals('invalid nonce', $e->getMessage());
+		}
+	}
 }

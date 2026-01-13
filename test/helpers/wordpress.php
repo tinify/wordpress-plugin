@@ -97,6 +97,8 @@ class WordPressStubs
 		$this->addMethod('get_locale');
 		$this->addMethod('wp_timezone_string');
 		$this->addMethod('update_option');
+		$this->addMethod('check_ajax_referer');
+		$this->addMethod('wp_json_encode');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -453,6 +455,17 @@ class WordPressMocks
 	 */
 	public function update_option()
 	{
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/check_ajax_referer/
+	 *
+	 * @return bool|int
+	 */
+	public function check_ajax_referer($action = -1, $query_arg = '_wpnonce', $die = true)
+	{
+		// Default mock returns 1 (valid nonce)
+		return 1;
 	}
 }
 

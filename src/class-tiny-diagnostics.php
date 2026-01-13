@@ -141,6 +141,7 @@ class Tiny_Diagnostics {
 	}
 
 	public function download_diagnostics() {
+		check_ajax_referer('tiny-compress', 'security');
 		$zippath = $this->create_diagnostic_zip();
 		return $this->download_zip( $zippath );
 	}
