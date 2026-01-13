@@ -29,6 +29,7 @@ class Tiny_Diagnostics_Test extends Tiny_TestCase
 		assertArrayHasKey('timestamp', $info);
 		assertArrayHasKey('site_info', $info);
 		assertArrayHasKey('active_plugins', $info);
+		assertArrayHasKey('server_info', $info);
 		assertArrayHasKey('tiny_info', $info);
 		assertArrayHasKey('image_sizes', $info);
 	}
