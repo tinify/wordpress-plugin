@@ -52,4 +52,47 @@ class Tiny_Diagnostics_Test extends Tiny_TestCase
 			$this->assertEquals('invalid nonce', $e->getMessage());
 		}
 	}
+
+	public function test_throws_error_when_user_lacks_permission() {
+		$tiny_settings = new Tiny_Settings();
+		$tiny_diagnostics = new Tiny_Diagnostics($tiny_settings);
+
+		$this->wp->stub('current_user_can', function($capability) {
+			$this->assertEquals('edit_posts', $capability);
+			return false;
+		});
+
+		$this->wp->stub('wp_send_json_error', function($message, $status_code) use (&$json_error_called) {
+			$this->assertStringContainsString('Not allowed', $message);
+			$this->assertEquals(403, $status_code);
+			throw new Exception('wp_send_json_error');
+		});
+
+		try {
+			$tiny_diagnostics->download_diagnostics();
+		} catch (Exception $e) {
+			$this->assertEquals('wp_send_json_error', $e->getMessage());
+		}
+	}
+
+	public function test_can_download_zip() {
+		$tiny_settings = new Tiny_Settings();
+		$tiny_diagnostics = new Tiny_Diagnostics($tiny_settings);
+
+		$this->wp->stub('current_user_can', function($capability) {
+			$this->assertEquals('edit_posts', $capability);
+			return true;
+		});
+
+		$zip_path = $tiny_diagnostics->create_diagnostic_zip();
+		$this->assertStringContainsString('tiny-compress-diagnostics', $zip_path);
+		$this->assertTrue(file_exists($zip_path), 'zip should exist at the returned path');
+		$file_size = filesize($zip_path);
+		$this->assertGreaterThan(0, $file_size, 'Zip file should have content');
+
+		// Clean up
+		if (file_exists($zip_path)) {
+			unlink($zip_path);
+		}
+	}
 }

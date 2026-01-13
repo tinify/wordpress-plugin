@@ -175,6 +175,14 @@ class Tiny_Diagnostics {
 
 	public function download_diagnostics() {
 		check_ajax_referer('tiny-compress', 'security');
+
+		if (! current_user_can('edit_posts') ) {
+			wp_send_json_error(
+				esc_html__( 'Not allowed to download diagnostics.', 'tiny-compress-images' ),
+				403
+			);
+		}
+		
 		$zippath = $this->create_diagnostic_zip();
 		return $this->download_zip( $zippath );
 	}

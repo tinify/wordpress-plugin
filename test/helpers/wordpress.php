@@ -99,6 +99,8 @@ class WordPressStubs
 		$this->addMethod('update_option');
 		$this->addMethod('check_ajax_referer');
 		$this->addMethod('wp_json_encode');
+		$this->addMethod('wp_send_json_error');
+		$this->addMethod('get_temp_dir');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -466,6 +468,36 @@ class WordPressMocks
 	{
 		// Default mock returns 1 (valid nonce)
 		return 1;
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/get_temp_dir/
+	 *
+	 * @return string
+	 */
+	public function get_temp_dir()
+	{
+		return sys_get_temp_dir();
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/wp_send_json_error/
+	 *
+	 * @return void
+	 */
+	public function wp_send_json_error($data = null, $status_code = 400)
+	{
+		// Default mock does nothing, tests should stub this
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/wp_json_encode/
+	 *
+	 * @return string
+	 */
+	public function wp_json_encode($data, $options = 0, $depth = 512)
+	{
+		return json_encode($data, $options, $depth);
 	}
 }
 
