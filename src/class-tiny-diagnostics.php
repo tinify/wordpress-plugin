@@ -204,8 +204,9 @@ class Tiny_Diagnostics {
 			);
 		}
 
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
 		$temp_dir = trailingslashit( get_temp_dir() ) . 'tiny-compress-temp';
-		if ( ! file_exists( $temp_dir ) ) {
+		if ( ! $wp_filesystem->exists( $temp_dir ) ) {
 			wp_mkdir_p( $temp_dir );
 		}
 
@@ -226,7 +227,7 @@ class Tiny_Diagnostics {
 		$log_files = $logger->get_log_files();
 
 		foreach ( $log_files as $log_file ) {
-			if ( file_exists( $log_file ) ) {
+			if ( $wp_filesystem->exists( $log_file ) ) {
 				$zip->addFile( $log_file, 'logs/' . basename( $log_file ) );
 			}
 		}
@@ -243,13 +244,14 @@ class Tiny_Diagnostics {
 	 * @param string $zip_path Path to the zip file.
 	 */
 	public static function download_zip( $zip_path ) {
-		if ( ! file_exists( $zip_path ) ) {
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( ! $wp_filesystem->exists( $zip_path ) ) {
 			wp_die( esc_html__( 'Diagnostic file not found.', 'tiny-compress-images' ) );
 		}
 
 		header( 'Content-Type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="tiny-compress-diagnostics.zip"' );
-		header( 'Content-Length: ' . filesize( $zip_path ) );
+		header( 'Content-Length: ' . $wp_filesystem->size( $zip_path ) );
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
@@ -257,8 +259,7 @@ class Tiny_Diagnostics {
 		readfile( $zip_path );
 
 		// Clean up.
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-		unlink( $zip_path );
+		$wp_filesystem->delete( $zip_path );
 
 		exit;
 	}

@@ -1,7 +1,8 @@
 <?php
 
-define('ABSPATH', dirname(dirname(__FILE__)) . '/');
+define('ABSPATH', dirname(__FILE__) . '/../');
 define('WPINC', 'wp-includes-for-tests');
+require_once dirname(__FILE__) . '/../' . WPINC . '/file.php';
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;

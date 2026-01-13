@@ -168,23 +168,22 @@ class Tiny_Logger {
 
 		// Ensure log directory exists.
 		$log_dir = dirname( $this->log_file_path );
-		if ( ! file_exists( $log_dir ) ) {
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( ! $wp_filesystem->exists( $log_dir ) ) {
 			wp_mkdir_p( $log_dir );
+			self::create_blocking_files( $log_dir );
 		}
 
 		$timestamp = current_time( 'Y-m-d H:i:s' );
 		$level_str = strtoupper( $level );
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
 		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
-		$file = fopen( $this->log_file_path, 'a' );
-		if ( $file ) {
-			if ( flock( $file, LOCK_EX ) ) {
-				fwrite( $file, $log_entry );
-				fflush( $file );
-				flock( $file, LOCK_UN );
-			}
-			fclose( $file );
+
+		$existing_content = '';
+		if ( $wp_filesystem->exists( $this->log_file_path ) ) {
+			$existing_content = $wp_filesystem->get_contents( $this->log_file_path );
 		}
+		$wp_filesystem->put_contents( $this->log_file_path, $existing_content . $log_entry, FS_CHMOD_FILE );
 	}
 
 	/**
@@ -194,16 +193,17 @@ class Tiny_Logger {
 	 * @return void
 	 */
 	private function rotate_logs() {
-		if ( ! file_exists( $this->log_file_path ) ) {
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( ! $wp_filesystem->exists( $this->log_file_path ) ) {
 			return;
 		}
 
-		$file_size = filesize( $this->log_file_path );
+		$file_size = $wp_filesystem->size( $this->log_file_path );
 		if ( $file_size < self::MAX_LOG_SIZE ) {
 			return;
 		}
 
-		unlink( $this->log_file_path );
+		$wp_filesystem->delete( $this->log_file_path );
 	}
 
 	/**
@@ -212,11 +212,35 @@ class Tiny_Logger {
 	 * @return bool True if logs were cleared successfully.
 	 */
 	public function clear_logs() {
-		if ( file_exists( $this->log_file_path ) ) {
-			return unlink( $this->log_file_path );
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( $wp_filesystem->exists( $this->log_file_path ) ) {
+			return $wp_filesystem->delete( $this->log_file_path );
 		}
 
 		return true;
+	}
+
+	/**
+	 * Creates defensive files to prevent direct access to log directory.
+	 * Adds index.html to prevent directory listing and .htaccess to block access.
+	 *
+	 * @param string $log_dir The path to the log directory.
+	 * @return void
+	 */
+	private static function create_blocking_files( $log_dir ) {
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+
+		$index_file = trailingslashit( $log_dir ) . 'index.html';
+		if ( ! $wp_filesystem->exists( $index_file ) ) {
+			$index_content = '<!-- Silence is golden -->';
+			$wp_filesystem->put_contents( $index_file, $index_content, FS_CHMOD_FILE );
+		}
+
+		$htaccess_file = trailingslashit( $log_dir ) . '.htaccess';
+		if ( ! $wp_filesystem->exists( $htaccess_file ) ) {
+			$htaccess_content = "deny from all";
+			$wp_filesystem->put_contents( $htaccess_file, $htaccess_content, FS_CHMOD_FILE );
+		}
 	}
 
 	/**
