@@ -196,24 +196,21 @@ class Tiny_Diagnostics {
 			);
 		}
 
-		$upload_dir = wp_upload_dir();
-		$temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-temp';
+		$temp_dir = trailingslashit( get_temp_dir() ) . 'tiny-compress-temp';
 		if ( ! file_exists( $temp_dir ) ) {
 			wp_mkdir_p( $temp_dir );
 		}
 
-		$zip_filename = 'tiny-compress-diagnostics-' . gmdate( 'Y-m-d-His' ) . '.zip';
-		$zip_path = trailingslashit( $temp_dir ) . $zip_filename;
+		$temp_path = tempnam($temp_dir, 'tiny-compress-diagnostics-' . gmdate( 'Y-m-d-His' ) );
 
 		$zip = new ZipArchive();
-		if ( true !== $zip->open( $zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+		if ( true !== $zip->open( $temp_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
 			return new WP_Error( 'zip_create_failed',
 				__( 'Failed to create zip file.',
 				'tiny-compress-images' )
 			);
 		}
 
-		// Add diagnostic info.
 		$info = self::collect_info();
 		$zip->addFromString( 'tiny-diagnostics.json', wp_json_encode( $info, JSON_PRETTY_PRINT ) );
 
@@ -227,7 +224,7 @@ class Tiny_Diagnostics {
 		}
 
 		$zip->close();
-		return $zip_path;
+		return $temp_path;
 	}
 
 	/**
@@ -243,7 +240,7 @@ class Tiny_Diagnostics {
 		}
 
 		header( 'Content-Type: application/zip' );
-		header( 'Content-Disposition: attachment; filename="' . basename( $zip_path ) . '"' );
+		header( 'Content-Disposition: attachment; filename="tiny-compress-diagnostics.zip"' );
 		header( 'Content-Length: ' . filesize( $zip_path ) );
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
@@ -256,29 +253,5 @@ class Tiny_Diagnostics {
 		unlink( $zip_path );
 
 		exit;
-	}
-
-	/**
-	 * Cleans up old diagnostic zip files.
-	 *
-	 * @since 3.7.0
-	 */
-	public static function cleanup_old_diagnostics() {
-		$upload_dir = wp_upload_dir();
-		$temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-temp';
-
-		if ( ! file_exists( $temp_dir ) ) {
-			return;
-		}
-
-		$files = glob( trailingslashit( $temp_dir ) . 'tiny-compress-diagnostics-*.zip' );
-		$max_age = DAY_IN_SECONDS; // 1 day.
-
-		foreach ( $files as $file ) {
-			if ( file_exists( $file ) && (time() - filemtime( $file )) > $max_age ) {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-				unlink( $file );
-			}
-		}
 	}
 }
