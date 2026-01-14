@@ -176,7 +176,7 @@ class Tiny_Diagnostics {
 	public function download_diagnostics() {
 		check_ajax_referer( 'tiny-compress', 'security' );
 
-		if ( ! current_user_can( 'edit_posts' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error(
 				esc_html__( 'Not allowed to download diagnostics.', 'tiny-compress-images' ),
 				403
