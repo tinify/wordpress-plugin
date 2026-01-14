@@ -77,7 +77,7 @@ class Tiny_Logger {
 	/**
 	 * Resets the singleton instance.
 	 * Used primarily for unit testing.
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function reset() {
