@@ -440,7 +440,7 @@ class WordPressMocks
 	 */
 	public function get_locale()
 	{
-		return 'gb_GB';
+		return 'en_GB';
 	}
 	/**
 	 * https://developer.wordpress.org/reference/functions/wp_timezone_string/
