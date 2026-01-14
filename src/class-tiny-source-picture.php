@@ -40,9 +40,7 @@ class Tiny_Source_Picture extends Tiny_Source_Base {
 
 			$alternative_sources = $this->create_alternative_sources( $source_tag_html );
 			if ( is_array( $alternative_sources ) && $alternative_sources ) {
-				foreach ( $alternative_sources as $alt ) {
-					$modified_sources[] = $alt; // no array_merge in the loop
-				}
+				$modified_sources = array_merge( $modified_sources, $alternative_sources );
 			}
 		}
 
