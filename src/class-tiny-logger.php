@@ -53,7 +53,7 @@ class Tiny_Logger {
 
 	/**
 	 * Constructor.
-
+	 * sets log_file path and log_enabled
 	 */
 	private function __construct() {
 		$this->log_file_path = $this->resolve_log_file_path();
@@ -77,6 +77,8 @@ class Tiny_Logger {
 	/**
 	 * Resets the singleton instance.
 	 * Used primarily for unit testing.
+	 * 
+	 * @return void
 	 */
 	public static function reset() {
 		self::$instance = null;
