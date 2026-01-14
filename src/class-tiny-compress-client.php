@@ -37,6 +37,13 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	 * @var int
 	 */
 	const API_TIMEOUT = 120;
+
+	/**
+	 * Connection setup timeout
+	 *
+	 * @since 3.6.8
+	 * @var int
+	 */
 	const CONNECT_TIMEOUT = 8;
 
 	private $last_error_code = 0;
