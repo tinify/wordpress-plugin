@@ -58,7 +58,7 @@ class Tiny_Diagnostics_Test extends Tiny_TestCase
 		$tiny_diagnostics = new Tiny_Diagnostics($tiny_settings);
 
 		$this->wp->stub('current_user_can', function($capability) {
-			$this->assertEquals('edit_posts', $capability);
+			$this->assertEquals('manage_options', $capability);
 			return false;
 		});
 
@@ -80,7 +80,7 @@ class Tiny_Diagnostics_Test extends Tiny_TestCase
 		$tiny_diagnostics = new Tiny_Diagnostics($tiny_settings);
 
 		$this->wp->stub('current_user_can', function($capability) {
-			$this->assertEquals('edit_posts', $capability);
+			$this->assertEquals('manage_options', $capability);
 			return true;
 		});
 
