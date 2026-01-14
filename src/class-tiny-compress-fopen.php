@@ -88,7 +88,6 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 
 		Tiny_Logger::debug('client fopen compress out', array(
 			'details' => $details,
-			'headers' => $headers,
 			'status' => $status_code,
 		));
 
