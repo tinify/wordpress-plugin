@@ -9,11 +9,7 @@ $tiny_logging_value = get_option( $tiny_logging_formfield_name );
 			<th><?php esc_html_e( 'Troubleshooting', 'tiny-compress-images' ) ?></th>
 			<td>
 				<p class="intro">
-					<?php esc_html_e(
-						'Whenever you run into issues, we can help faster if we can see what is happening.
-                        Please enable logging for a short period, reproduce the problem, then send us a message at support@tinify.com with the diagnostics file attached.',
-						'tiny-compress-images'
-					) ?>
+					<?php esc_html_e( 'Whenever you run into issues, we can help faster if we can see what is happening. Please enable logging for a short period, reproduce the problem, then send us a message at support@tinify.com with the diagnostics file attached.', 'tiny-compress-images' ) ?>
 				</p>
 				<p class="tiny-check">
 					<input type="checkbox" name="<?php echo esc_attr( $tiny_logging_formfield_name ); ?>" id="<?php echo esc_attr( $tiny_logging_formfield_id ); ?>" <?php checked( $tiny_logging_value, 'on', true ); ?>>
