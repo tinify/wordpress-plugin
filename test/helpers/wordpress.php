@@ -409,9 +409,9 @@ class WordPressMocks
 	}
 
 	/**
-	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 * https://developer.wordpress.org/reference/functions/wp_get_theme/
 	 *
-	 * @return string|null database version
+	 * @return WP_Theme Theme object. Be sure to check the object’s exists() method if you need to confirm the theme’s existence.
 	 */
 	public function wp_get_theme()
 	{
@@ -424,9 +424,9 @@ class WordPressMocks
 	}
 
 	/**
-	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 * https://developer.wordpress.org/reference/functions/get_home_url/
 	 *
-	 * @return string|null database version
+	 * @return string Home URL link with optional path appended.
 	 */
 	public function get_home_url()
 	{
@@ -434,9 +434,9 @@ class WordPressMocks
 	}
 
 	/**
-	 * https://developer.wordpress.org/reference/classes/wpdb/db_version/
+	 * https://developer.wordpress.org/reference/functions/get_locale/
 	 *
-	 * @return string|null database version
+	 * @return string The locale of the blog or from the 'locale' hook.
 	 */
 	public function get_locale()
 	{
@@ -445,14 +445,14 @@ class WordPressMocks
 	/**
 	 * https://developer.wordpress.org/reference/functions/wp_timezone_string/
 	 *
-	 * @return string|null database version
+	 * @return string PHP timezone name or a ±HH:MM offset.
 	 */
 	public function wp_timezone_string()
 	{
 		return 'timezone';
 	}
 	/**
-	 * https://developer.wordpress.org/reference/functions/wp_timezone_string/
+	 * https://developer.wordpress.org/reference/functions/update_option/
 	 *
 	 * @return void
 	 */
