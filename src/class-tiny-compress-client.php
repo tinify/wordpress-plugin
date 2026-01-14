@@ -32,6 +32,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	/**
 	 * API request timeout in seconds.
+	 * 2026-01-14 showed 99% was < 120s
 	 *
 	 * @since 3.6.8
 	 * @var int
