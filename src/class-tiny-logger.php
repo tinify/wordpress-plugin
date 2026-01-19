@@ -180,7 +180,7 @@ class Tiny_Logger {
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
 		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
 
-		error_log($log_entry, 3, $this->log_file_path);
+		error_log( $log_entry, 3, $this->log_file_path );
 	}
 
 	/**
