@@ -217,10 +217,13 @@ class Tiny_Logger {
 	 *
 	 * @return bool True if logs were cleared successfully.
 	 */
-	public function clear_logs() {
+	public static function clear_logs() {
+		$instance = self::get_instance();
+		$log_path = $instance->get_log_file_path();
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-		if ( $wp_filesystem->exists( $this->log_file_path ) ) {
-			return $wp_filesystem->delete( $this->log_file_path );
+		$file_exits = $wp_filesystem->exists( $log_path );
+		if ( $file_exits ) {
+			return $wp_filesystem->delete( $log_path );
 		}
 
 		return true;
