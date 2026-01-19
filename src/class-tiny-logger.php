@@ -110,9 +110,8 @@ class Tiny_Logger {
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
 		$instance = self::get_instance();
 		$instance->log_enabled = 'on' === $log_enabled;
-
 		if ( $instance->get_log_enabled() ) {
-			$instance->clear_logs();
+			self::clear_logs();
 		}
 
 		return $log_enabled;
@@ -181,15 +180,7 @@ class Tiny_Logger {
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
 		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
 
-		$existing_content = '';
-		if ( $wp_filesystem->exists( $this->log_file_path ) ) {
-			$existing_content = $wp_filesystem->get_contents( $this->log_file_path );
-		}
-		$wp_filesystem->put_contents(
-			$this->log_file_path,
-			$existing_content . $log_entry,
-			FS_CHMOD_FILE
-		);
+		error_log($log_entry, 3, $this->log_file_path);
 	}
 
 	/**
