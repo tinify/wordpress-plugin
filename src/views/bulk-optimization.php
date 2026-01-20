@@ -170,7 +170,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 												'a' => array(
 													'href' => array(),
 												),
-											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a target="_blank" href="https://tinypng.com/dashboard/api?type=upgrade&mail=' . str_replace( '%20', '%2B', rawurlencode( $email_address ) ) . '">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
+											) ), Tiny_Config::MONTHLY_FREE_COMPRESSIONS, esc_html__( 'image sizes', 'tiny-compress-images' ), '<a target="_blank" href="https://tinypng.com/dashboard/api?type=upgrade&mail=' . str_replace( '%20', '%2B', rawurlencode( $email_address ) ) . '&utm_source=installation&utm_medium=wordpress-plugin">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>' );
 											?></p>
 										</div>
 									</div>

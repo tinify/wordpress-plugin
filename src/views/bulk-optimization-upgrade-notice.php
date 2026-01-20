@@ -22,7 +22,7 @@
 		</p>
 	</div>
 	<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( $email_address ) ); ?>
-	<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary button-hero upgrade-account">
+	<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>&utm_source=installation&utm_medium=wordpress-plugin" target="_blank" class="button button-primary button-hero upgrade-account">
 		<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 	</a>
 	<?php if ( $remaining_credits > 0 ) { ?>

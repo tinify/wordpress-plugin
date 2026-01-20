@@ -186,7 +186,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 
 	public function add_limit_reached_notice( $email ) {
 		$encoded_email = str_replace( '%20', '%2B', rawurlencode( $email ) );
-		$url = 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email;
+		$url = 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email . '&utm_source=installation&utm_medium=wordpress-plugin';
 		$link = '<a href="' . $url . '" target="_blank">' .
 			esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 

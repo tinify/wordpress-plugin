@@ -64,7 +64,7 @@
 	<div class="update" style="display: none">
 		<h4><?php esc_html_e( 'Change your API key', 'tiny-compress-images' ); ?></h4>
 		<p class="introduction"><?php
-			$link = sprintf( '<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
+			$link = sprintf( '<a href="https://tinypng.com/dashboard/api?utm_source=installation&utm_medium=wordpress-plugin" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			/* translators: %s: link saying API dashboard */
@@ -90,7 +90,7 @@
 			<div class="button-container">
 				<div class="box">
 					<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( self::get_email_address() ) ); ?>
-					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary upgrade-account">
+					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>&utm_source=installation&utm_medium=wordpress-plugin" target="_blank" class="button button-primary upgrade-account">
 						<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 					</a>
 				</div>
