@@ -185,6 +185,10 @@ class Tiny_Image {
 	}
 
 	public function compress() {
+		Tiny_Logger::debug('compress', array(
+			'image_id' => $this->id,
+			'name' => $this->name,
+		));
 		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
 		}
@@ -212,6 +216,20 @@ class Tiny_Image {
 				$this->update_tiny_post_meta();
 				$resize = $this->settings->get_resize_options( $size_name );
 				$preserve = $this->settings->get_preserve_options( $size_name );
+				Tiny_Logger::debug('compress size', array(
+					'image_id' => $this->id,
+					'size' => $size_name,
+					'resize' => $resize,
+					'preserve' => $preserve,
+					'convert' => $convert_to,
+					'modified' => $size->modified(),
+					'filename' => $size->filename,
+					'is_duplicate' => $size->is_duplicate(),
+					'exists' => $size->exists(),
+					'has_been_compressed' => $size->has_been_compressed(),
+					'filesize' => $size->filesize(),
+					'mimetype' => $size->mimetype(),
+				));
 				try {
 					$response = $compressor->compress_file(
 						$size->filename,
@@ -227,14 +245,23 @@ class Tiny_Image {
 
 					$size->add_tiny_meta( $response );
 					$success++;
+					Tiny_Logger::debug('compress success', array(
+						'size' => $size_name,
+						'image_id' => $this->id,
+					));
 				} catch ( Tiny_Exception $e ) {
 					$size->add_tiny_meta_error( $e );
 					$failed++;
+					Tiny_Logger::error('compress failed', array(
+						'error' => $e->get_message(),
+						'size' => $size_name,
+						'image_id' => $this->id,
+					));
 				}
 				$this->add_wp_metadata( $size_name, $size );
 				$this->update_tiny_post_meta();
-			}
-		}
+			}// End if().
+		}// End foreach().
 
 		/*
 			Other plugins can hook into this action to execute custom logic
