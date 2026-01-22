@@ -62,12 +62,12 @@ class Tiny_Diagnostics {
 	 */
 	public function collect_info() {
 		$info = array(
-			'timestamp'      => current_time( 'Y-m-d H:i:s' ),
-			'site_info'      => self::get_site_info(),
-			'server_info'    => self::get_server_info(),
+			'timestamp' => current_time( 'Y-m-d H:i:s' ),
+			'site_info' => self::get_site_info(),
+			'server_info' => self::get_server_info(),
 			'active_plugins' => self::get_active_plugins(),
-			'tiny_info'      => $this->get_tiny_info(),
-			'image_sizes'    => $this->settings->get_active_tinify_sizes(),
+			'tiny_info' => $this->get_tiny_info(),
+			'image_sizes' => $this->settings->get_active_tinify_sizes(),
 		);
 
 		return $info;
@@ -88,20 +88,20 @@ class Tiny_Diagnostics {
 		global $wpdb;
 
 		return array(
-			'php_version'         => phpversion(),
-			'server_software'     => isset( $_SERVER['SERVER_SOFTWARE'] ) ?
+			'php_version' => phpversion(),
+			'server_software' => isset( $_SERVER['SERVER_SOFTWARE'] ) ?
 				sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) :
 				'Unknown',
-			'mysql_version'       => $wpdb->db_version(),
-			'max_execution_time'  => ini_get( 'max_execution_time' ),
-			'memory_limit'        => ini_get( 'memory_limit' ),
-			'post_max_size'       => ini_get( 'post_max_size' ),
+			'mysql_version' => $wpdb->db_version(),
+			'max_execution_time' => ini_get( 'max_execution_time' ),
+			'memory_limit' => ini_get( 'memory_limit' ),
+			'post_max_size' => ini_get( 'post_max_size' ),
 			'upload_max_filesize' => ini_get( 'upload_max_filesize' ),
-			'max_input_vars'      => ini_get( 'max_input_vars' ),
-			'curl_version'        => function_exists( 'curl_version' ) ?
+			'max_input_vars' => ini_get( 'max_input_vars' ),
+			'curl_version' => function_exists( 'curl_version' ) ?
 				curl_version()['version'] :
 				'Not available',
-			'disabled_functions'  => ini_get( 'disable_functions' ),
+			'disabled_functions' => ini_get( 'disable_functions' ),
 		);
 	}
 
@@ -117,15 +117,15 @@ class Tiny_Diagnostics {
 		$theme = wp_get_theme();
 
 		return array(
-			'wp_version'    => $wp_version,
-			'site_url'      => get_site_url(),
-			'home_url'      => get_home_url(),
-			'is_multisite'  => is_multisite(),
+			'wp_version' => $wp_version,
+			'site_url' => get_site_url(),
+			'home_url' => get_home_url(),
+			'is_multisite' => is_multisite(),
 			'site_language' => get_locale(),
-			'timezone'      => wp_timezone_string(),
-			'theme_name'    => $theme->get( 'Name' ),
+			'timezone' => wp_timezone_string(),
+			'theme_name' => $theme->get( 'Name' ),
 			'theme_version' => $theme->get( 'Version' ),
-			'theme_uri'     => $theme->get( 'ThemeURI' ),
+			'theme_uri' => $theme->get( 'ThemeURI' ),
 		);
 	}
 
@@ -138,15 +138,15 @@ class Tiny_Diagnostics {
 	 */
 	private static function get_active_plugins() {
 		$active_plugins = get_option( 'active_plugins', array() );
-		$plugins        = array();
+		$plugins = array();
 
 		foreach ( $active_plugins as $plugin ) {
 			$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
-			$plugins[]   = array(
-				'name'    => $plugin_data['Name'],
+			$plugins[] = array(
+				'name' => $plugin_data['Name'],
 				'version' => $plugin_data['Version'],
-				'author'  => $plugin_data['Author'],
-				'file'    => $plugin,
+				'author' => $plugin_data['Author'],
+				'file' => $plugin,
 			);
 		}
 
@@ -162,14 +162,14 @@ class Tiny_Diagnostics {
 	 */
 	private function get_tiny_info() {
 		return array(
-			'version'              => Tiny_Plugin::version(),
-			'status'               => $this->settings->get_status(),
+			'version' => Tiny_Plugin::version(),
+			'status' => $this->settings->get_status(),
 			'php_client_supported' => Tiny_PHP::client_supported(),
 
-			'compression_count'    => $this->settings->get_compression_count(),
-			'compression_timing'   => $this->settings->get_compression_timing(),
-			'conversion'           => $this->settings->get_conversion_options(),
-			'paying_state'         => $this->settings->get_paying_state(),
+			'compression_count' => $this->settings->get_compression_count(),
+			'compression_timing' => $this->settings->get_compression_timing(),
+			'conversion' => $this->settings->get_conversion_options(),
+			'paying_state' => $this->settings->get_paying_state(),
 		);
 	}
 
@@ -198,15 +198,14 @@ class Tiny_Diagnostics {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			return new WP_Error(
 				'zip_not_available',
-				__(
-					'ZipArchive class is not available on this server.',
+				__( 'ZipArchive class is not available on this server.',
 					'tiny-compress-images'
 				)
 			);
 		}
 
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-		$temp_dir      = trailingslashit( get_temp_dir() ) . 'tiny-compress-temp';
+		$temp_dir = trailingslashit( get_temp_dir() ) . 'tiny-compress-temp';
 		if ( ! $wp_filesystem->exists( $temp_dir ) ) {
 			wp_mkdir_p( $temp_dir );
 		}
@@ -215,19 +214,16 @@ class Tiny_Diagnostics {
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $temp_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
-			return new WP_Error(
-				'zip_create_failed',
-				__(
-					'Failed to create zip file.',
-					'tiny-compress-images'
-				)
+			return new WP_Error( 'zip_create_failed',
+				__( 'Failed to create zip file.',
+				'tiny-compress-images' )
 			);
 		}
 
 		$info = self::collect_info();
 		$zip->addFromString( 'tiny-diagnostics.json', wp_json_encode( $info, JSON_PRETTY_PRINT ) );
 
-		$logger    = Tiny_Logger::get_instance();
+		$logger = Tiny_Logger::get_instance();
 		$log_files = $logger->get_log_files();
 
 		foreach ( $log_files as $log_file ) {

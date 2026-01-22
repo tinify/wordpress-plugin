@@ -102,7 +102,6 @@ class WordPressStubs
 		$this->addMethod('wp_json_encode');
 		$this->addMethod('wp_send_json_error');
 		$this->addMethod('get_temp_dir');
-		$this->addMethod('esc_attr');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -500,16 +499,6 @@ class WordPressMocks
 	public function wp_json_encode($data, $options = 0, $depth = 512)
 	{
 		return json_encode($data, $options, $depth);
-	}
-
-	/**
-	 * Mocked function for https://developer.wordpress.org/reference/functions/esc_attr/
-	 *
-	 * @return string
-	 */
-	public function esc_attr($text)
-	{
-		return $text;
 	}
 }
 
