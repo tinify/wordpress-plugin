@@ -379,9 +379,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( ! empty( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 
-			Tiny_Logger::debug('blocking compress on upload', array(
-				'image_id' => $attachment_id,
-			));
+			Tiny_Logger::debug(
+				'blocking compress on upload',
+				array(
+					'image_id' => $attachment_id,
+				)
+			);
 
 			$result = $tiny_image->compress();
 			return $tiny_image->get_wp_metadata();
@@ -423,9 +426,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			set_transient( 'tiny_rpc_' . $rpc_hash, get_current_user_id(), 10 );
 		}
 
-		Tiny_Logger::debug('remote post', array(
-			'image_id' => $attachment_id,
-		));
+		Tiny_Logger::debug(
+			'remote post',
+			array(
+				'image_id' => $attachment_id,
+			)
+		);
 
 		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
 			wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
@@ -480,9 +486,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			if ( is_array( $metadata ) ) {
 				$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 
-				Tiny_Logger::debug('compress on upload', array(
-					'image_id' => $attachment_id,
-				));
+				Tiny_Logger::debug(
+					'compress on upload',
+					array(
+						'image_id' => $attachment_id,
+					)
+				);
 
 				$result = $tiny_image->compress();
 				// The wp_update_attachment_metadata call is thrown because the
@@ -549,12 +558,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		list($id, $metadata) = $response['data'];
 
-		Tiny_Logger::debug('compress from library', array(
-			'image_id' => $id,
-		));
+		Tiny_Logger::debug(
+			'compress from library',
+			array(
+				'image_id' => $id,
+			)
+		);
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
-		$result = $tiny_image->compress();
+		$result     = $tiny_image->compress();
 
 		// The wp_update_attachment_metadata call is thrown because the
 		// dimensions of the original image can change. This will then
@@ -586,11 +598,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 
-		Tiny_Logger::debug('compress from bulk', array(
-			'image_id' => $id,
-		));
+		Tiny_Logger::debug(
+			'compress from bulk',
+			array(
+				'image_id' => $id,
+			)
+		);
 
-		$result = $tiny_image->compress();
+		$result           = $tiny_image->compress();
 		$image_statistics = $tiny_image->get_statistics(
 			$this->settings->get_sizes(),
 			$this->settings->get_active_tinify_sizes()

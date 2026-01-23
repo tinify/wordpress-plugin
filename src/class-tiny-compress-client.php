@@ -156,10 +156,13 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
 
-			Tiny_Logger::error('client compress error', array(
-				'error' => $err->getMessage(),
-				'status' => $err->status,
-			));
+			Tiny_Logger::error(
+				'client compress error',
+				array(
+					'error'  => $err->getMessage(),
+					'status' => $err->status,
+				)
+			);
 
 			throw new Tiny_Exception(
 				$err->getMessage(),
@@ -196,7 +199,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		$options = $property->getValue( $client );
 
 		// Set API request timeout to prevent indefinite hanging
-		$options[ CURLOPT_TIMEOUT ] = self::API_TIMEOUT;
+		$options[ CURLOPT_TIMEOUT ]        = self::API_TIMEOUT;
 		$options[ CURLOPT_CONNECTTIMEOUT ] = self::CONNECT_TIMEOUT;
 
 		if ( TINY_DEBUG ) {
