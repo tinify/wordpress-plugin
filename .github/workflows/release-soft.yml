@@ -1,0 +1,21 @@
+# action that will update the assets/readme
+name: Plugin asset/readme update
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+jobs:
+  trunk:
+    if: github.repository == 'tinify/wordpress-plugin'
+    name: Push to trunk
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Plugin asset/readme update
+      uses: 10up/action-wordpress-plugin-asset-update@stable
+      env:
+        SLUG: <pluginslug>
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
