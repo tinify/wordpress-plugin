@@ -1,11 +1,9 @@
 # action that will update the assets/readme
 name: Plugin asset/readme update
 on:
-  pull_request:
+  push:
     branches:
       - master
-    types:
-      - closed
 jobs:
   trunk:
     if: github.repository == 'tinify/wordpress-plugin'
