@@ -1,7 +1,7 @@
 {
   "name": "tinify/tiny-compress-images",
   "description": "Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "type": "wordpress-plugin",
   "keywords": [
     "plugin"
@@ -21,9 +21,10 @@
     "mikey179/vfsstream": "~1.5",
     "mockery/mockery": "~0.9",
     "phpdocumentor/reflection-docblock": "~2.0",
-    "squizlabs/php_codesniffer": "~2.2",
+    "squizlabs/php_codesniffer": "^3.13",
     "tinify/tinify": "dev-create-key",
-    "wp-coding-standards/wpcs": "0.11"
+    "wp-coding-standards/wpcs": "^3.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.2"
   },
   "scripts": {
     "post-install-cmd": "bin/post-install",
@@ -31,7 +32,8 @@
   },
   "config": {
     "allow-plugins": {
-      "composer/installers": true
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   }
 }

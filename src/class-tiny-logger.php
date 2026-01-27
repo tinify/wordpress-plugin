@@ -35,7 +35,7 @@ class Tiny_Logger {
 
 	private static $instance = null;
 
-	private $log_enabled = null;
+	private $log_enabled   = null;
 	private $log_file_path = null;
 
 	/**
@@ -57,7 +57,7 @@ class Tiny_Logger {
 	 */
 	private function __construct() {
 		$this->log_file_path = $this->resolve_log_file_path();
-		$this->log_enabled = 'on' === get_option( 'tinypng_logging_enabled', false );
+		$this->log_enabled   = 'on' === get_option( 'tinypng_logging_enabled', false );
 	}
 
 	/**
@@ -71,7 +71,10 @@ class Tiny_Logger {
 	public static function init() {
 		add_filter(
 			'pre_update_option_tinypng_logging_enabled',
-		'Tiny_Logger::on_save_log_enabled', 10, 3 );
+			'Tiny_Logger::on_save_log_enabled',
+			10,
+			3
+		);
 	}
 
 	/**
@@ -108,7 +111,7 @@ class Tiny_Logger {
 	 * - if turn on, clear the old logs
 	 */
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
-		$instance = self::get_instance();
+		$instance              = self::get_instance();
 		$instance->log_enabled = 'on' === $log_enabled;
 		if ( $instance->get_log_enabled() ) {
 			self::clear_logs();
@@ -126,7 +129,7 @@ class Tiny_Logger {
 	 */
 	private function resolve_log_file_path() {
 		$upload_dir = wp_upload_dir();
-		$log_dir = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-logs';
+		$log_dir    = trailingslashit( $upload_dir['basedir'] ) . 'tiny-compress-logs';
 		return trailingslashit( $log_dir ) . 'tiny-compress.log';
 	}
 
@@ -168,17 +171,17 @@ class Tiny_Logger {
 		$this->rotate_logs();
 
 		// Ensure log directory exists.
-		$log_dir = dirname( $this->log_file_path );
+		$log_dir       = dirname( $this->log_file_path );
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
 		if ( ! $wp_filesystem->exists( $log_dir ) ) {
 			wp_mkdir_p( $log_dir );
 			self::create_blocking_files( $log_dir );
 		}
 
-		$timestamp = current_time( 'Y-m-d H:i:s' );
-		$level_str = strtoupper( $level );
+		$timestamp   = current_time( 'Y-m-d H:i:s' );
+		$level_str   = strtoupper( $level );
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
-		$log_entry = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
+		$log_entry   = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
 
 		error_log( $log_entry, 3, $this->log_file_path );
 	}
@@ -209,10 +212,10 @@ class Tiny_Logger {
 	 * @return bool True if logs were cleared successfully.
 	 */
 	public static function clear_logs() {
-		$instance = self::get_instance();
-		$log_path = $instance->get_log_file_path();
+		$instance      = self::get_instance();
+		$log_path      = $instance->get_log_file_path();
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-		$file_exits = $wp_filesystem->exists( $log_path );
+		$file_exits    = $wp_filesystem->exists( $log_path );
 		if ( $file_exits ) {
 			return $wp_filesystem->delete( $log_path );
 		}
