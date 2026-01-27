@@ -23,13 +23,13 @@ class Tiny_Notices extends Tiny_WP_Base {
 	private $dismissals;
 
 	protected static $incompatible_plugins = array(
-		'CheetahO Image Optimizer' => 'cheetaho-image-optimizer/cheetaho.php',
-		'EWWW Image Optimizer' => 'ewww-image-optimizer/ewww-image-optimizer.php',
-		'Imagify' => 'imagify/imagify.php',
-		'Kraken Image Optimizer' => 'kraken-image-optimizer/kraken.php',
+		'CheetahO Image Optimizer'   => 'cheetaho-image-optimizer/cheetaho.php',
+		'EWWW Image Optimizer'       => 'ewww-image-optimizer/ewww-image-optimizer.php',
+		'Imagify'                    => 'imagify/imagify.php',
+		'Kraken Image Optimizer'     => 'kraken-image-optimizer/kraken.php',
 		'ShortPixel Image Optimizer' => 'shortpixel-image-optimiser/wp-shortpixel.php',
-		'WP Smush' => 'wp-smushit/wp-smush.php',
-		'WP Smush Pro' => 'wp-smush-pro/wp-smush.php',
+		'WP Smush'                   => 'wp-smushit/wp-smush.php',
+		'WP Smush Pro'               => 'wp-smush-pro/wp-smush.php',
 	);
 
 	private static function get_option_key() {
@@ -55,7 +55,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		if ( is_array( $this->notices ) ) {
 			return;
 		}
-		$option = get_option( self::get_option_key() );
+		$option        = get_option( self::get_option_key() );
 		$this->notices = is_array( $option ) ? $option : array();
 	}
 
@@ -139,21 +139,22 @@ class Tiny_Notices extends Tiny_WP_Base {
 		if ( ! $dismissible ) {
 			$add = '</p>';
 		} elseif ( self::check_wp_version( 4.2 ) ) {
-			$add = '</p>';
+			$add   = '</p>';
 			$css[] = 'is-dismissible';
 		} else {
 			$add = '&nbsp;<a href="#" class="tiny-dismiss">' .
 				esc_html__( 'Dismiss', 'tiny-compress-images' ) . '</a></p>';
 		}
 
-		$css = implode( ' ', $css );
+		$css         = implode( ' ', $css );
 		$plugin_name = esc_html__(
 			'TinyPNG - JPEG, PNG & WebP image compression',
 			'tiny-compress-images'
 		);
 
-		add_action( 'admin_notices',
-			function() use ( $css, $name, $plugin_name, $message, $add ) {
+		add_action(
+			'admin_notices',
+			function () use ( $css, $name, $plugin_name, $message, $add ) {
 				echo '<div class="' . $css . '" data-name="' . $name . '"><p>' .
 					$plugin_name . ': ' . $message . $add . '</div>';
 			}
@@ -162,35 +163,38 @@ class Tiny_Notices extends Tiny_WP_Base {
 
 	public function api_key_missing_notice() {
 		$notice_class = 'error';
-		$notice = esc_html__(
+		$notice       = esc_html__(
 			'Please register or provide an API key to start compressing images.',
 			'tiny-compress-images'
 		);
-		$link = sprintf(
-			'<a href="options-general.php?page=tinify">%s</a>', $notice
+		$link         = sprintf(
+			'<a href="options-general.php?page=tinify">%s</a>',
+			$notice
 		);
 		$this->show( 'setting', $link, $notice_class, false );
 	}
 
 	public function get_api_key_pending_notice() {
 		$notice_class = 'notice-warning';
-		$notice = esc_html__(
+		$notice       = esc_html__(
 			'Please activate your account to start compressing images.',
 			'tiny-compress-images'
 		);
-		$link = sprintf(
-			'<a href="options-general.php?page=tinify">%s</a>', $notice
+		$link         = sprintf(
+			'<a href="options-general.php?page=tinify">%s</a>',
+			$notice
 		);
 		$this->show( 'setting', $link, $notice_class, false );
 	}
 
 	public function add_limit_reached_notice( $email ) {
 		$encoded_email = str_replace( '%20', '%2B', rawurlencode( $email ) );
-		$url = 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email;
-		$link = '<a href="' . $url . '" target="_blank">' .
+		$url           = 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email;
+		$link          = '<a href="' . $url . '" target="_blank">' .
 			esc_html__( 'TinyPNG API account', 'tiny-compress-images' ) . '</a>';
 
-		$this->add('limit-reached',
+		$this->add(
+			'limit-reached',
 			esc_html__(
 				'You have reached your free limit this month.',
 				'tiny-compress-images'
@@ -214,7 +218,8 @@ class Tiny_Notices extends Tiny_WP_Base {
 					$curlinfo = curl_version();
 					$details .= ' ' . sprintf(
 						/* translators: %s: curl version */
-						esc_html__( 'with curl %s', 'tiny-compress-images' ), $curlinfo['version']
+						esc_html__( 'with curl %s', 'tiny-compress-images' ),
+						$curlinfo['version']
 					);
 				} else {
 					$details .= ' ' . esc_html__( 'without curl', 'tiny-compress-images' );
@@ -228,16 +233,19 @@ class Tiny_Notices extends Tiny_WP_Base {
 					esc_html__(
 						'You are using an outdated platform (%s).',
 						'tiny-compress-images'
-					), $details
+					),
+					$details
 				);
 			} elseif ( ! Tiny_PHP::curl_available() ) {
 				$message = esc_html__(
-					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.', // WPCS: Needed for proper translation.
+					// phpcs:ignore Generic.Files.LineLength
+					'We noticed that cURL is not available. For the best experience we recommend to make sure cURL is available.',
 					'tiny-compress-images'
 				);
 			} elseif ( Tiny_PHP::curl_exec_disabled() ) {
 				$message = esc_html__(
-					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.', // WPCS: Needed for proper translation.
+					// phpcs:ignore Generic.Files.LineLength
+					'We noticed that curl_exec is disabled in your PHP configuration. Please update this setting for the best experience.',
 					'tiny-compress-images'
 				);
 			}
@@ -253,18 +261,19 @@ class Tiny_Notices extends Tiny_WP_Base {
 	}
 
 	private function show_incompatible_plugins( $incompatible_plugins ) {
-		$notice = '<div class="error notice tiny-notice incompatible-plugins">';
-		$notice .= '<h3>';
-		$notice .= esc_html__(
+		$notice          = '<div class="error notice tiny-notice incompatible-plugins">';
+		$notice         .= '<h3>';
+		$notice         .= esc_html__(
 			'TinyPNG - JPEG, PNG & WebP image compression',
 			'tiny-compress-images'
 		);
-		$notice .= '</h3>';
-		$notice .= '<p>';
-		$notice .= esc_html__(
-			'You have activated multiple image optimization plugins. This may lead to unexpected results. The following plugins were detected:', // WPCS: Needed for proper translation.
-			'tiny-compress-images'
-		);
+		$notice         .= '</h3>';
+		$notice         .= '<p>';
+				$notice .= esc_html__(
+					// phpcs:ignore Generic.Files.LineLength
+					'You have activated multiple image optimization plugins. This may lead to unexpected results. The following plugins were detected:',
+					'tiny-compress-images'
+				);
 		$notice .= '</p>';
 		$notice .= '<table>';
 		$notice .= '<tr><td class="bullet">•</td><td class="name">';
@@ -274,21 +283,22 @@ class Tiny_Notices extends Tiny_WP_Base {
 		);
 		$notice .= '</td><td></td></tr>';
 		foreach ( $incompatible_plugins as $name => $file ) {
-			$notice .= '<tr><td class="bullet">•</td><td class="name">';
-			$notice .= $name;
-			$notice .= '</td><td>';
-			$nonce = wp_create_nonce( 'deactivate-plugin_' . $file );
+			$notice      .= '<tr><td class="bullet">•</td><td class="name">';
+			$notice      .= $name;
+			$notice      .= '</td><td>';
+			$nonce        = wp_create_nonce( 'deactivate-plugin_' . $file );
 			$query_string = 'action=deactivate&plugin=' . $file . '&_wpnonce=' . $nonce;
-			$url = admin_url( 'plugins.php?' . $query_string );
-			$notice .= '<a class="button button-primary" href="' . $url . '">';
-			$notice .= esc_html__( 'Deactivate', 'tiny-compress-images' );
-			$notice .= '</a></td></tr>';
+			$url          = admin_url( 'plugins.php?' . $query_string );
+			$notice      .= '<a class="button button-primary" href="' . $url . '">';
+			$notice      .= esc_html__( 'Deactivate', 'tiny-compress-images' );
+			$notice      .= '</a></td></tr>';
 		}
 		$notice .= '</table>';
 		$notice .= '</div>';
 
-		add_action( 'admin_notices',
-			function() use ( $notice ) {
+		add_action(
+			'admin_notices',
+			function () use ( $notice ) {
 				echo $notice;
 			}
 		);

@@ -85,6 +85,6 @@ class Tiny_AS3CF {
 		}
 
 		$tiny_image = new Tiny_Image( $this->tiny_settings, $as3cf_item->source_id() );
-		$result = $tiny_image->compress();
+		$result     = $tiny_image->compress();
 	}
 }
