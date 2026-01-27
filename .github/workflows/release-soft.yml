@@ -3,7 +3,7 @@ name: Plugin asset/readme update
 on:
   pull_request:
     branches:
-      - main
+      - master
     types:
       - closed
 jobs:
