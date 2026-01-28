@@ -1,4 +1,4 @@
-# action that will update the assets/readme
+# on commit to master will update the assets/readme
 name: Plugin asset/readme update
 on:
   push:
@@ -12,8 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Plugin asset/readme update
-      uses: 10up/action-wordpress-plugin-asset-update@stable
+      uses: tinify/action-wordpress-plugin-asset-update@stable
       env:
-        SLUG: <pluginslug>
+        SLUG: tiny-compress-images
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
