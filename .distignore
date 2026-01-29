@@ -27,6 +27,7 @@ bin
 .github
 .wp-env.json
 .distignore
+/.wordpress-org
 
 # editor/os
 .vscode
