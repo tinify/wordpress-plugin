@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+# Script assumes release tags are formatted as MAJOR.MINOR.PATCH
+
+# https://docs.github.com/en/actions/reference/workflows-and-actions/variables
+# For workflows triggered by release, this is the release tag created.
+TAG_VERSION="${1:-${GITHUB_REF#refs/tags/}}"
+
+# Stable tag from readme.txt
+README_VERSION=$(grep -m 1 "^Stable tag:" readme.txt | awk '{print $3}')
+
+if [ "$TAG_VERSION" != "$README_VERSION" ]; then
+    echo "Error: Tag: $TAG_VERSION, readme.txt: $README_VERSION"
+    exit 1
+fi
+
+echo "Version matches git release"

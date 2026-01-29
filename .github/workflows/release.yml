@@ -17,6 +17,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+    - name: Verify version matches release tag
+      run: bin/check-version
     - name: WordPress Plugin Deploy
       id: deploy
       uses: tinify/action-wordpress-plugin-deploy@stable
