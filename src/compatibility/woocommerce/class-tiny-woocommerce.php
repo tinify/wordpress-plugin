@@ -25,36 +25,37 @@
  */
 class Tiny_WooCommerce
 {
-
-	/**
-	 * Constructor.
-	 */
 	public function __construct()
 	{
+		if (! class_exists('WooCommerce')) {
+			return;
+		}
+
 		$this->add_hooks();
 	}
 
 	private function add_hooks()
 	{
-		add_filter('tiny_skip_picture_wrap', array($this, 'skip_product_gallery_images'), 10, 2);
+		add_filter( 'tiny_replace_with_picture', array( $this, 'skip_on_product_pages' ), 10, 1 );
 	}
 
 	/**
-	 * Skip picture wrapping for WooCommerce product gallery images.
+	 * We are skipping single product pages for now.
+	 * Variation images in the product gallery are injected through JavaScript but might never
+	 * display because the sourceset takes priority over the root img. The replacement is on the image and not
+	 * on the srcset.
 	 *
-	 * Product gallery images need to remain as direct children of their parent
-	 * elements for WooCommerce's variation switcher to work correctly.
+	 * @since 3.6.9
 	 *
-	 * @param bool   $should_skip Whether to skip this image. Default false.
-	 * @param string $img         The img tag HTML.
-	 * @return bool True if the image should be skipped, false otherwise.
+	 * @param bool $should_replace Whether to replace images with picture elements.
+	 * @return bool False on product pages, otherwise unchanged.
 	 */
-	public function skip_product_gallery_images($should_skip, $img)
+	public function skip_on_product_pages( $should_replace )
 	{
-		if ($should_skip) {
-			return $should_skip;
+		if ( is_product() ) {
+			return false;
 		}
 
-		return stripos($img, 'woocommerce-product-gallery__image') !== false;
+		return $should_replace;
 	}
 }

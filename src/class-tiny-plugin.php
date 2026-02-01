@@ -72,18 +72,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
 
-		if ( $this->settings->get_conversion_enabled() ) {
-			/**
-			 * Controls wether the page should replace <img> with <picture> elements
-			 * converted sources.
-			 *
-			 * @since 3.7.0
-			 */
-			$should_replace = apply_filters( 'tiny_replace_with_picture', true );
-			if ( $should_replace ) {
-				new Tiny_Picture( ABSPATH, array( get_site_url() ) );
-			}
-		}
+		new Tiny_Picture( $this->settings, ABSPATH, array( get_site_url() ) );
+		$this->tiny_compatibility();
 	}
 
 	public function cli_init() {
@@ -236,12 +226,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function tiny_compatibility() {
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-			$tiny_wpml_compatibility = new Tiny_WPML();
+			new Tiny_WPML();
 		}
 
 		if ( Tiny_AS3CF::is_active() ) {
-			$tiny_as3cf = new Tiny_AS3CF( $this->settings );
+			new Tiny_AS3CF( $this->settings );
 		}
+
+		new Tiny_WooCommerce();
 	}
 
 	public function compress_original_retina_image( $attachment_id, $path ) {
