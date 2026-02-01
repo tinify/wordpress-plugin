@@ -180,8 +180,21 @@ class Tiny_Picture extends Tiny_WP_Base {
 		if ( ! preg_match_all( '/<img\b[^>]*>/is', $content, $matches ) ) {
 			return array();
 		}
+
 		$images = array();
 		foreach ( $matches[0] as $img ) {
+			/**
+			 * Filters whether a specific image should be skipped from picture element wrapping.
+			 *
+			 * @since 3.6.9
+			 *
+			 * @param bool   $should_skip Whether to skip this image. Default false.
+			 * @param string $img         The img tag HTML.
+			 */
+			if ( apply_filters( 'tiny_skip_picture_wrap', false, $img ) ) {
+				continue;
+			}
+
 			$images[] = new Tiny_Source_Image(
 				$img,
 				$this->base_dir,
