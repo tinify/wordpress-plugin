@@ -176,25 +176,21 @@ class Tiny_Picture extends Tiny_WP_Base {
 		// Strip <noscript> blocks to avoid altering their contents.
 		$content = preg_replace( '/<noscript\b.*?>.*?<\/noscript>/is', '', $content );
 
+		/**
+		 * Filters the HTML content before extracting images for picture element wrapping.
+		 * Useful when certain parts of the html should not be processed.
+		 *
+		 * @since 3.6.9
+		 *
+		 * @param string $content The HTML to keep searching images in
+		 */
+		$content = apply_filters( 'tiny_picture_filter_content', $content );
 		// Find all <img> tags with any attributes.
 		if ( ! preg_match_all( '/<img\b[^>]*>/is', $content, $matches ) ) {
 			return array();
 		}
-
 		$images = array();
 		foreach ( $matches[0] as $img ) {
-			/**
-			 * Filters whether a specific image should be skipped from picture element wrapping.
-			 *
-			 * @since 3.6.9
-			 *
-			 * @param bool   $should_skip Whether to skip this image. Default false.
-			 * @param string $img         The img tag HTML.
-			 */
-			if ( apply_filters( 'tiny_skip_picture_wrap', false, $img ) ) {
-				continue;
-			}
-
 			$images[] = new Tiny_Source_Image(
 				$img,
 				$this->base_dir,
