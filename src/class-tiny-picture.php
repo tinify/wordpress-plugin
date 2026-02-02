@@ -47,8 +47,8 @@ class Tiny_Picture extends Tiny_WP_Base {
 	 * @param string $base_dir       Absolute path (e.g. ABSPATH)
 	 * @param array  $domains        List of allowed domain URLs
 	 */
-	public function __construct(  $settings, $base_dir = ABSPATH, $domains = array() ) {
-		$this->settings		= $settings;
+	public function __construct( $settings, $base_dir = ABSPATH, $domains = array() ) {
+		$this->settings        = $settings;
 		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
 
@@ -68,7 +68,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 			return;
 		}
 
-		add_action( 'template_redirect', array($this, 'on_template_redirect' ) );
+		add_action( 'template_redirect', array( $this, 'on_template_redirect' ) );
 	}
 
 	public function on_template_redirect() {

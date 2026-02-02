@@ -23,19 +23,17 @@
  *
  * @since 3.6.9
  */
-class Tiny_WooCommerce
-{
-	public function __construct()
-	{
-		if (! class_exists('WooCommerce')) {
+class Tiny_WooCommerce {
+
+	public function __construct() {
+		if ( ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
 
 		$this->add_hooks();
 	}
 
-	private function add_hooks()
-	{
+	private function add_hooks() {
 		add_filter( 'tiny_replace_with_picture', array( $this, 'skip_on_product_pages' ), 10, 1 );
 	}
 
@@ -50,8 +48,7 @@ class Tiny_WooCommerce
 	 * @param bool $should_replace Whether to replace images with picture elements.
 	 * @return bool False on product pages, otherwise unchanged.
 	 */
-	public function skip_on_product_pages( $should_replace )
-	{
+	public function skip_on_product_pages( $should_replace ) {
 		if ( is_product() ) {
 			return false;
 		}
