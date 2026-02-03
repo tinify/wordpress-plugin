@@ -161,6 +161,18 @@ export async function getWPVersion(page: Page): Promise<number> {
 }
 
 /**
+ * @returns {number} retrieves the current PHP version from environment variable
+ */
+export function getPHPVersion(): number {
+  const { PHP_VERSION } = process.env;
+  if (!PHP_VERSION) {
+    throw Error('PHP_VERSION is not set');
+  }
+
+  return +PHP_VERSION;
+}
+
+/**
  * @param  {Page} page context
  * @param  {string} pluginSlug slug of the plugin, ex 'tiny-compress-images'
  */

@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { activatePlugin, clearMediaLibrary, deactivatePlugin, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, uploadMedia } from './utils';
+import { activatePlugin, clearMediaLibrary, deactivatePlugin, enableCompressionSizes, getPHPVersion, getWPVersion, setAPIKey, setCompressionTiming, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -36,9 +36,16 @@ test.describe('as3cf', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     WPVersion = await getWPVersion(page);
+    const phpVersion = getPHPVersion();
     
-    if (WPVersion < 5.5) {
-      // Skipping test as it WP Offload does not support WordPress < 5.5
+    if (WPVersion < 5.9) {
+      // Skipping test as it WP Offload does not support WordPress < 5.9
+      test.skip();
+      return;
+    }
+    
+    if (phpVersion < 81) {
+      // Skipping test as WP Offload Media requires PHP 8.1+
       test.skip();
       return;
     }
