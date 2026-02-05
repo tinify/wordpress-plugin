@@ -161,13 +161,25 @@ export async function getWPVersion(page: Page): Promise<number> {
 }
 
 /**
+ * @returns {number} retrieves the current PHP version from environment variable
+ */
+export function getPHPVersion(): number {
+  const { PHP_VERSION } = process.env;
+  if (!PHP_VERSION) {
+    throw Error('PHP_VERSION is not set');
+  }
+
+  return +PHP_VERSION;
+}
+
+/**
  * @param  {Page} page context
  * @param  {string} pluginSlug slug of the plugin, ex 'tiny-compress-images'
  */
 export async function activatePlugin(page: Page, pluginSlug: string) {
   await page.goto('/wp-admin/plugins.php');
 
-  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]');
+  const plugin = page.locator('tr[data-slug="' + pluginSlug + '"]').first();
   if (!plugin) {
     throw Error(`Plug-in ${pluginSlug} not found. Are you sure it is installed?`);
   }
@@ -192,7 +204,7 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
     return;
   }
 
-  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]');
+  const plugin = await page.locator('tr[data-slug="' + pluginSlug + '"]').first();
   const className = await plugin.getAttribute('class');
   const pluginActivated = className === 'active';
   if (!pluginActivated) {

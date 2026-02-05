@@ -25,18 +25,14 @@ class Tiny_AS3CF {
 	 * Checks wether the lite version is active
 	 */
 	public static function lite_is_active() {
-		$lite_name = 'amazon-s3-and-cloudfront/wordpress-s3.php';
-
-		return is_plugin_active( $lite_name );
+		return class_exists( 'Amazon_S3_And_CloudFront' );
 	}
 
 	/**
 	 * Checks wether the pro version is active
 	 */
 	public static function pro_is_active() {
-		$pro_name = 'amazon-s3-and-cloudfront-pro/amazon-s3-and-cloudfront-pro.php';
-
-		return is_plugin_active( $pro_name );
+		return class_exists( 'Amazon_S3_And_CloudFront_Pro' );
 	}
 
 	public function __construct( $settings ) {

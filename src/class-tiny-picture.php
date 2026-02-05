@@ -38,13 +38,18 @@ class Tiny_Picture extends Tiny_WP_Base {
 	/** @var array */
 	private $allowed_domains = array();
 
+	/** @var Tiny_Settings */
+	private $settings;
+
 	/**
 	 * Initialize the plugin.
 	 *
-	 * @param string $base_dir       Absolute path (e.g. ABSPATH)
-	 * @param array  $domains        List of allowed domain URLs
+	 * @param Tiny_Settings $settings       Tinify Settings
+	 * @param string        $base_dir       Absolute path (e.g. ABSPATH)
+	 * @param array         $domains        List of allowed domain URLs
 	 */
-	public function __construct( $base_dir = ABSPATH, $domains = array() ) {
+	public function __construct( $settings, $base_dir = ABSPATH, $domains = array() ) {
+		$this->settings        = $settings;
 		$this->base_dir        = $base_dir;
 		$this->allowed_domains = $domains;
 
@@ -64,12 +69,20 @@ class Tiny_Picture extends Tiny_WP_Base {
 			return;
 		}
 
-		add_action(
-			'template_redirect',
-			function () {
-				ob_start( array( $this, 'replace_sources' ), 1000 );
-			}
-		);
+		add_action( 'template_redirect', array( $this, 'on_template_redirect' ) );
+	}
+
+	public function on_template_redirect() {
+		$conversion_enabled = $this->settings->get_conversion_enabled();
+		if ( apply_filters( 'tiny_replace_with_picture', $conversion_enabled ) ) {
+			/**
+			 * Controls wether the page should replace <img> with <picture> elements
+			 * converted sources.
+			 *
+			 * @since 3.6.9
+			 */
+			ob_start( array( $this, 'replace_sources' ), 1000 );
+		}
 	}
 
 	public function replace_sources( $content ) {
