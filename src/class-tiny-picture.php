@@ -44,8 +44,9 @@ class Tiny_Picture extends Tiny_WP_Base {
 	/**
 	 * Initialize the plugin.
 	 *
-	 * @param string $base_dir       Absolute path (e.g. ABSPATH)
-	 * @param array  $domains        List of allowed domain URLs
+	 * @param Tiny_Settings $settings       Tinify Settings
+	 * @param string        $base_dir       Absolute path (e.g. ABSPATH)
+	 * @param array         $domains        List of allowed domain URLs
 	 */
 	public function __construct( $settings, $base_dir = ABSPATH, $domains = array() ) {
 		$this->settings        = $settings;
