@@ -1031,7 +1031,26 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 
 	public function render_format_conversion() {
-		include __DIR__ . '/views/settings-conversion.php';
+		include( dirname( __FILE__ ) . '/views/settings-conversion.php' );
+	}
+
+	private static function render_radiobutton(
+		$group_name,
+		$option_id,
+		$option_value,
+		$current_value,
+		$label,
+		$descr
+	) {
+		$checked = ($current_value === $option_value ? ' checked="checked"' : '');
+		echo '<p class="tiny-radio">';
+		echo '<input type="radio" data-testid="' . esc_attr( $option_id ) . '" ';
+		echo 'id="' . esc_attr( $option_id ) . '" name="' . $group_name .
+			'" value="' . esc_attr( $option_value ) . '" ' . $checked . '/>';
+		echo '<label for="' . esc_attr( $option_id ) . '">' . esc_html( $label );
+		echo '<span>' . esc_html( $descr ) . '</span>';
+		echo '</label>';
+		echo '</p>';
 	}
 
 	/**
@@ -1044,7 +1063,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			return;
 		}
 
-		include __DIR__ . '/views/delivery-method.php';
+		include( dirname( __FILE__ ) . '/views/delivery-method.php' );
 	}
 
 	private static function get_convert_format_option( $option, $default_value ) {
