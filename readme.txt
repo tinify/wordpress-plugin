@@ -176,6 +176,7 @@ A: When the conversion feature is enabled (to convert images to AVIF or WebP), e
 == Changelog ==
 = 3.6.12 =
 * chore: updated tiny package to 1.6.4
+* fix: resolved warning when img tag was missing src attribute
 
 = 3.6.9 =
 * fix: prevent picture element on product pages (WooCommerce)
