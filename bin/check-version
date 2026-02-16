@@ -9,9 +9,15 @@ TAG_VERSION="${1:-${GITHUB_REF#refs/tags/}}"
 
 # Stable tag from readme.txt
 README_VERSION=$(grep -m 1 "^Stable tag:" readme.txt | awk '{print $3}')
+SOURCE_VERSION=$(grep "Version:" tiny-compress-images.php | head -n 1 | cut -d ':' -f 2 | xargs)
 
 if [ "$TAG_VERSION" != "$README_VERSION" ]; then
     echo "Error: Tag: $TAG_VERSION, readme.txt: $README_VERSION"
+    exit 1
+fi
+
+if [ "$TAG_VERSION" != "$SOURCE_VERSION" ]; then
+    echo "Error: Tag: $TAG_VERSION, tiny-compress-images.php: $SOURCE_VERSION"
     exit 1
 fi
 
