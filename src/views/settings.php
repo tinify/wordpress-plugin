@@ -37,9 +37,9 @@
 						</td>
 					</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Conversion', 'tiny-compress-images' ) ?></th>
+					<th scope="row"><?php esc_html_e( 'Conversion', 'tiny-compress-images' ); ?></th>
 					<td>
-						<h4><?php esc_html_e( 'Convert files to different formats', 'tiny-compress-images' ) ?></h4>
+						<h4><?php esc_html_e( 'Convert files to different formats', 'tiny-compress-images' ); ?></h4>
 						<p class="intro">
 							<?php
 							esc_html_e(
@@ -52,7 +52,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Original image', 'tiny-compress-images' ) ?></th>
+					<th scope="row"><?php esc_html_e( 'Original image', 'tiny-compress-images' ); ?></th>
 						<td>
 							<?php $this->render_resize(); ?>
 						</td>

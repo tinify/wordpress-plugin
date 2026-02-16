@@ -9,8 +9,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-$convertopts_convert = self::get_prefixed_name( 'convert_format[convert]' );
-$convertopts_convert_id = self::get_prefixed_name( 'conversion_convert' );
+$convertopts_convert         = self::get_prefixed_name( 'convert_format[convert]' );
+$convertopts_convert_id      = self::get_prefixed_name( 'conversion_convert' );
 $convertopts_convert_checked = $this->get_conversion_enabled() ?
 	' checked="checked"' : '';
 ?>

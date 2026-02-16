@@ -10,11 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 $convertopts_convert_to_name = self::get_prefixed_name( 'convert_format[convert_to]' );
-$convertopts_convert_value = self::get_convert_format_option( 'convert_to', 'smallest' );
+$convertopts_convert_value   = self::get_convert_format_option( 'convert_to', 'smallest' );
 ?>
 <h4><?php esc_html_e( 'Conversion output', 'tiny-compress-images' ); ?></h4>
 
-<?php self::render_radiobutton(
+<?php
+self::render_radiobutton(
 	$convertopts_convert_to_name,
 	sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'smallest' ),
 	'smallest',

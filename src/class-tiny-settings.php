@@ -1031,7 +1031,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 
 	public function render_format_conversion() {
-		include( dirname( __FILE__ ) . '/views/settings-conversion.php' );
+		include __DIR__ . '/views/settings-conversion.php';
 	}
 
 	/**
@@ -1044,7 +1044,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			return;
 		}
 
-		include( dirname( __FILE__ ) . '/views/delivery-method.php' );
+		include __DIR__ . '/views/delivery-method.php';
 	}
 
 	private static function get_convert_format_option( $option, $default_value ) {

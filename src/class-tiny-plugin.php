@@ -82,7 +82,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			 *
 			 * @since 3.7.0
 			 */
-			if ($delivery_method === 'picture' && apply_filters( 'tiny_replace_with_picture', true ) ) {
+			if ( $delivery_method === 'picture' && apply_filters( 'tiny_replace_with_picture', true ) ) {
 				new Tiny_Picture( ABSPATH, array( get_site_url() ) );
 			}
 		}

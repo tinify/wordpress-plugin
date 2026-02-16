@@ -101,10 +101,10 @@ class Tiny_Server_Capabilities extends Tiny_WP_Base {
 	 */
 	public static function get_capabilities() {
 		return array(
-			'server'          => self::get_server_type(),
-			'is_apache'       => self::is_apache(),
-			'has_mod_rewrite' => self::has_mod_rewrite(),
-			'uploads_writable' => self::uploads_htaccess_writable(),
+			'server'             => self::get_server_type(),
+			'is_apache'          => self::is_apache(),
+			'has_mod_rewrite'    => self::has_mod_rewrite(),
+			'uploads_writable'   => self::uploads_htaccess_writable(),
 			'htaccess_available' => self::is_apache() &&
 				self::has_mod_rewrite() &&
 				self::uploads_htaccess_writable(),
