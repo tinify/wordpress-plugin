@@ -61,8 +61,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	}
 
 	protected function validate() {
-		$params = $this->request_options( 'GET' );
-		$url = Tiny_Config::KEYS_URL . '/' . $this->get_key();
+		$params                                = $this->request_options( 'GET' );
+		$url                                   = Tiny_Config::KEYS_URL . '/' . $this->get_key();
 		list($details, $headers, $status_code) = $this->request( $params, $url );
 
 		if ( 429 == $status_code || 400 == $status_code || 200 == $status_code ) {
@@ -83,8 +83,16 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	}
 
 	protected function compress( $input, $resize_opts, $preserve_opts, $convert_to ) {
-		$params = $this->request_options( 'POST', $input );
+		$params                                = $this->request_options( 'POST', $input );
 		list($details, $headers, $status_code) = $this->request( $params );
+
+		Tiny_Logger::debug(
+			'client fopen compress out',
+			array(
+				'details' => $details,
+				'status'  => $status_code,
+			)
+		);
 
 		$output_url = isset( $headers['location'] ) ? $headers['location'] : null;
 		if ( $status_code >= 400 && is_array( $details ) && isset( $details['error'] ) ) {
@@ -106,7 +114,10 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 			);
 		}
 
-		$params = $this->output_request_options( $resize_opts, $preserve_opts );
+		$params                               = $this->output_request_options(
+			$resize_opts,
+			$preserve_opts
+		);
 		list($output, $headers, $status_code) = $this->request( $params, $output_url );
 
 		if ( $status_code >= 400 && is_array( $output ) && isset( $output['error'] ) ) {
@@ -131,16 +142,19 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 
 		$meta = array(
-			'input' => array(
+			'input'  => array(
 				'size' => strlen( $input ),
 				'type' => Tiny_Helpers::get_mimetype( $input ),
 			),
 			'output' => array(
-				'size' => strlen( $output ),
-				'type' => $headers['content-type'],
-				'width' => intval( $headers['image-width'] ),
+				'size'   => strlen( $output ),
+				'type'   => $headers['content-type'],
+				'width'  => intval( $headers['image-width'] ),
 				'height' => intval( $headers['image-height'] ),
-				'ratio' => round( strlen( $output ) / strlen( $input ), 4 ),
+				'ratio'  => round(
+					strlen( $output ) / strlen( $input ),
+					4
+				),
 			),
 		);
 
@@ -161,11 +175,11 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				$convert_params,
 				$output_url
 			);
-			$meta['convert'] = array(
+			$meta['convert']                        = array(
 				'type' => $convert_headers['content-type'],
 				'size' => strlen( $convert_output ),
 			);
-			$convert = $convert_output;
+			$convert                                = $convert_output;
 
 		}
 
@@ -185,13 +199,13 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		}
 
 		$meta_data = stream_get_meta_data( $request );
-		$headers = $meta_data['wrapper_data'];
+		$headers   = $meta_data['wrapper_data'];
 		if ( ! is_array( $headers ) ) {
 			$headers = iterator_to_array( $headers );
 		}
 
 		$status_code = $this->parse_status_code( $headers );
-		$headers = $this->parse_headers( $headers );
+		$headers     = $this->parse_headers( $headers );
 
 		if ( isset( $headers['compression-count'] ) ) {
 			$this->compression_count = intval( $headers['compression-count'] );
@@ -248,19 +262,22 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	private function request_options( $method, $body = null, $headers = array() ) {
 		return array(
 			'http' => array(
-				'method' => $method,
-				'header' => array_merge($headers, array(
-					'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
-					'User-Agent: ' . self::identifier(),
-					'Content-Type: multipart/form-data',
-				)),
-				'content' => $body,
+				'method'          => $method,
+				'header'          => array_merge(
+					$headers,
+					array(
+						'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
+						'User-Agent: ' . self::identifier(),
+						'Content-Type: multipart/form-data',
+					)
+				),
+				'content'         => $body,
 				'follow_location' => 0,
-				'max_redirects' => 1, // Necessary for PHP 5.2
-				'ignore_errors' => true, // Apparently, a 201 is a failure
+				'max_redirects'   => 1, // Necessary for PHP 5.2
+				'ignore_errors'   => true, // Apparently, a 201 is a failure
 			),
-			'ssl' => array(
-				'cafile' => $this->get_ca_file(),
+			'ssl'  => array(
+				'cafile'      => $this->get_ca_file(),
 				'verify_peer' => true,
 			),
 		);
@@ -286,7 +303,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 	}
 
 	private static function get_ca_file() {
-		return dirname( __FILE__ ) . '/data/cacert.pem';
+		return __DIR__ . '/data/cacert.pem';
 	}
 
 	private static function decode( $text ) {
@@ -294,8 +311,8 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 		if ( null === $result ) {
 			$message = sprintf(
 				'JSON: %s [%d]',
-				(PHP_VERSION_ID >= 50500 ? json_last_error_msg() : 'Unknown error'),
-				(PHP_VERSION_ID >= 50300 ? json_last_error() : 'Error')
+				( PHP_VERSION_ID >= 50500 ? json_last_error_msg() : 'Unknown error' ),
+				( PHP_VERSION_ID >= 50300 ? json_last_error() : 'Error' )
 			);
 
 			throw new Tiny_Exception( $message, 'JsonError' );

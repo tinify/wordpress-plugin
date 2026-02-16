@@ -3,37 +3,27 @@
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 class Tiny_Settings_Ajax_Test extends Tiny_TestCase {
-	protected $subject;
 	protected $notices;
 	
 	public function set_up() {
 		parent::set_up();
-		$this->subject = new Tiny_Settings();
-		$this->notices = new Tiny_Notices();
 		
-		$this->subject->ajax_init();
 	}
+	
+	public function test_settings_ajax_init() {
+		$tiny_settings = new Tiny_Settings();
+		$tiny_settings->ajax_init();
 
-	public function test_ajax_init_should_add_actions() {
-		$this->assertEquals(array(
-				array( 'init', array( $this->subject, 'init' ) ),
-				array( 'rest_api_init', array( $this->subject, 'rest_init' ) ),
-				array( 'admin_init', array( $this->subject, 'admin_init' ) ),
-				array( 'admin_menu', array( $this->subject, 'admin_menu' ) ),
-				array( 'init', array( $this->notices, 'init' ) ),
-				array( 'rest_api_init', array( $this->notices, 'rest_init' ) ),
-				array( 'admin_init', array( $this->notices, 'admin_init' ) ),
-				array( 'admin_menu', array( $this->notices, 'admin_menu' ) ),
-				array( 'init', array( $this->notices, 'init' ) ),
-				array( 'rest_api_init', array( $this->notices, 'rest_init' ) ),
-				array( 'admin_init', array( $this->notices, 'admin_init' ) ),
-				array( 'admin_menu', array( $this->notices, 'admin_menu' ) ),
-				array( 'wp_ajax_tiny_image_sizes_notice', array( $this->subject, 'image_sizes_notice' ) ),
-				array( 'wp_ajax_tiny_account_status', array( $this->subject, 'account_status' ) ),
-				array( 'wp_ajax_tiny_settings_create_api_key', array( $this->subject, 'create_api_key' ) ),
-				array( 'wp_ajax_tiny_settings_update_api_key', array( $this->subject, 'update_api_key' ) ),
-			),
-			$this->wp->getCalls( 'add_action' )
-		);
+		WordPressStubs::assertHook('wp_ajax_tiny_image_sizes_notice', array( $tiny_settings, 'image_sizes_notice' ));
+		WordPressStubs::assertHook('wp_ajax_tiny_account_status', array( $tiny_settings, 'account_status' ));
+		WordPressStubs::assertHook('wp_ajax_tiny_settings_create_api_key', array( $tiny_settings, 'create_api_key' ));
+		WordPressStubs::assertHook('wp_ajax_tiny_settings_update_api_key', array( $tiny_settings, 'update_api_key' ));
+	}
+	
+	public function test_notices_ajax_init() {
+		$tiny_notices = new Tiny_Notices();
+		$tiny_notices->ajax_init();
+
+		WordPressStubs::assertHook('wp_ajax_tiny_dismiss_notice', array( $tiny_notices, 'dismiss' ));
 	}
 }

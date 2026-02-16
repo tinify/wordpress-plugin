@@ -1,0 +1,36 @@
+# On release tag, will deploy new release to svn
+name: Release to Wordpress.org
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy_to_wp_repository:
+    if: github.repository == 'tinify/wordpress-plugin'
+    name: Deploy to WP.org
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Verify version matches release tag
+      run: bin/check-version
+    - name: WordPress Plugin Deploy
+      id: deploy
+      uses: tinify/action-wordpress-plugin-deploy@stable
+      with:
+        generate-zip: true
+      env:
+        SLUG: tiny-compress-images
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+    - name: Upload release asset
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: ${{ github.workspace }}/tiny-compress-images.zip

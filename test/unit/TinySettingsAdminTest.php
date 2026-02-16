@@ -20,6 +20,7 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 			array( 'tinify', 'tinypng_resize_original' ),
 			array( 'tinify', 'tinypng_preserve_data' ),
 			array( 'tinify', 'tinypng_convert_format' ),
+			array( 'tinify', 'tinypng_logging_enabled' ),
 		), $this->wp->getCalls( 'register_setting' ));
 	}
 

@@ -20,18 +20,35 @@
 
 if ( ! defined( '\Tinify\VERSION' ) ) {
 	/* Load vendored client if it is not yet loaded. */
-	require_once dirname( __FILE__ ) . '/vendor/tinify/Tinify/Exception.php';
-	require_once dirname( __FILE__ ) . '/vendor/tinify/Tinify/ResultMeta.php';
-	require_once dirname( __FILE__ ) . '/vendor/tinify/Tinify/Result.php';
-	require_once dirname( __FILE__ ) . '/vendor/tinify/Tinify/Source.php';
-	require_once dirname( __FILE__ ) . '/vendor/tinify/Tinify/Client.php';
-	require_once dirname( __FILE__ ) . '/vendor/tinify/Tinify.php';
+	require_once __DIR__ . '/vendor/tinify/Tinify/Exception.php';
+	require_once __DIR__ . '/vendor/tinify/Tinify/ResultMeta.php';
+	require_once __DIR__ . '/vendor/tinify/Tinify/Result.php';
+	require_once __DIR__ . '/vendor/tinify/Tinify/Source.php';
+	require_once __DIR__ . '/vendor/tinify/Tinify/Client.php';
+	require_once __DIR__ . '/vendor/tinify/Tinify.php';
 }
 
 class Tiny_Compress_Client extends Tiny_Compress {
 
+	/**
+	 * API request timeout in seconds.
+	 * 2026-01-14 showed 99% was < 120s
+	 *
+	 * @since 3.6.8
+	 * @var int
+	 */
+	const API_TIMEOUT = 120;
+
+	/**
+	 * Connection setup timeout
+	 *
+	 * @since 3.6.8
+	 * @var int
+	 */
+	const CONNECT_TIMEOUT = 8;
+
 	private $last_error_code = 0;
-	private $last_message = '';
+	private $last_message    = '';
 	private $proxy;
 
 	protected function __construct( $api_key, $after_compress_callback ) {
@@ -92,7 +109,6 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		try {
 			$this->last_error_code = 0;
 			$this->set_request_options( \Tinify\Tinify::getClient() );
-
 			$source = \Tinify\fromBuffer( $input );
 
 			if ( $resize_opts ) {
@@ -104,17 +120,17 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			}
 
 			$compress_result = $source->result();
-			$meta = array(
-				'input' => array(
+			$meta            = array(
+				'input'  => array(
 					'size' => strlen( $input ),
 					'type' => Tiny_Helpers::get_mimetype( $input ),
 				),
 				'output' => array(
-					'size' => $compress_result->size(),
-					'type' => $compress_result->mediaType(),
-					'width' => $compress_result->width(),
+					'size'   => $compress_result->size(),
+					'type'   => $compress_result->mediaType(),
+					'width'  => $compress_result->width(),
 					'height' => $compress_result->height(),
-					'ratio' => round( $compress_result->size() / strlen( $input ), 4 ),
+					'ratio'  => round( $compress_result->size() / strlen( $input ), 4 ),
 				),
 			);
 
@@ -122,21 +138,31 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$result = array( $buffer, $meta, null );
 
 			if ( count( $convert_to ) > 0 ) {
-				$convert_source = $source->convert( array(
-					'type' => $convert_to,
-				) );
-				$convert_result = $convert_source->result();
+				$convert_source  = $source->convert(
+					array(
+						'type' => $convert_to,
+					)
+				);
+				$convert_result  = $convert_source->result();
 				$meta['convert'] = array(
 					'type' => $convert_result->mediaType(),
 					'size' => $convert_result->size(),
 				);
-				$convert_buffer = $convert_result->toBuffer();
-				$result = array( $buffer, $meta, $convert_buffer );
+				$convert_buffer  = $convert_result->toBuffer();
+				$result          = array( $buffer, $meta, $convert_buffer );
 			}
 
 			return $result;
 		} catch ( \Tinify\Exception $err ) {
 			$this->last_error_code = $err->status;
+
+			Tiny_Logger::error(
+				'client compress error',
+				array(
+					'error'  => $err->getMessage(),
+					'status' => $err->status,
+				)
+			);
 
 			throw new Tiny_Exception(
 				$err->getMessage(),
@@ -167,28 +193,34 @@ class Tiny_Compress_Client extends Tiny_Compress {
 
 	private function set_request_options( $client ) {
 		/* The client does not let us override cURL properties yet, so we have
-           to use a reflection property. */
+			to use a reflection property. */
 		$property = new ReflectionProperty( $client, 'options' );
 		$property->setAccessible( true );
 		$options = $property->getValue( $client );
 
+		// Set API request timeout to prevent indefinite hanging
+		$options[ CURLOPT_TIMEOUT ]        = self::API_TIMEOUT;
+		$options[ CURLOPT_CONNECTTIMEOUT ] = self::CONNECT_TIMEOUT;
+
 		if ( TINY_DEBUG ) {
-			$file = fopen( dirname( __FILE__ ) . '/curl.log', 'w' );
+			$file = fopen( __DIR__ . '/curl.log', 'w' );
 			if ( is_resource( $file ) ) {
 				$options[ CURLOPT_VERBOSE ] = true;
-				$options[ CURLOPT_STDERR ] = $file;
+				$options[ CURLOPT_STDERR ]  = $file;
 			}
 		}
 
 		if ( $this->proxy->is_enabled() && $this->proxy->send_through_proxy( $url ) ) {
 			$options[ CURLOPT_PROXYTYPE ] = CURLPROXY_HTTP;
-			$options[ CURLOPT_PROXY ] = $this->proxy->host();
+			$options[ CURLOPT_PROXY ]     = $this->proxy->host();
 			$options[ CURLOPT_PROXYPORT ] = $this->proxy->port();
 
 			if ( $this->proxy->use_authentication() ) {
-				$options[ CURLOPT_PROXYAUTH ] = CURLAUTH_ANY;
+				$options[ CURLOPT_PROXYAUTH ]    = CURLAUTH_ANY;
 				$options[ CURLOPT_PROXYUSERPWD ] = $this->proxy->authentication();
 			}
 		}
+
+		$property->setValue( $client, $options );
 	}
 }

@@ -361,6 +361,7 @@ abstract class Tiny_Compress_Shared_TestCase extends Tiny_TestCase
 			'headers' => array(
 				'location' => 'https://api.tinify.com/output/compressed.avif',
 				'content-type' => 'image/avif',
+				'content-length' => strlen($compressed_avif),
 				'compression-count' => 12,
 			),
 			'body' => $compressed_avif,

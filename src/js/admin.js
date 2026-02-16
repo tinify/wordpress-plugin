@@ -1,4 +1,17 @@
 (function() {
+  function downloadDiagnostics() {
+    try {
+      jQuery('#download-diagnostics-spinner').show();
+      jQuery('#tiny-download-diagnostics').attr('disabled', true);
+      const downloadURL = `${ajaxurl}?action=tiny_download_diagnostics&security=${tinyCompress.nonce}`;
+      window.location.href = downloadURL;
+    } finally {
+      jQuery('#tiny-download-diagnostics').attr('disabled', false);
+      jQuery('#download-diagnostics-spinner').hide();
+    }
+  }
+  jQuery('#tiny-download-diagnostics').click(downloadDiagnostics);
+
   function compressImage(event) {
     var element = jQuery(event.target);
     var container = element.closest('div.tiny-ajax-container');

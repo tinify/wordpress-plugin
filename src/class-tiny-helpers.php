@@ -61,9 +61,9 @@ class Tiny_Helpers {
 			return $filepath;
 		}
 
-		$dir      = $parts['dirname'];
-		$name     = $parts['filename'];
-		$sep      = DIRECTORY_SEPARATOR;
+		$dir  = $parts['dirname'];
+		$name = $parts['filename'];
+		$sep  = DIRECTORY_SEPARATOR;
 
 		if ( '.' === $dir ) {
 			return $name . '.' . $extension_new;
@@ -103,7 +103,7 @@ class Tiny_Helpers {
 	public static function get_mimetype( $input ) {
 		if ( class_exists( 'finfo' ) ) {
 			$finfo = new finfo( FILEINFO_MIME_TYPE );
-			$mime = $finfo->buffer( $input );
+			$mime  = $finfo->buffer( $input );
 			return $mime;
 		} else {
 			throw new Exception( 'finfo extension is not available.' );
@@ -139,5 +139,36 @@ class Tiny_Helpers {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Gets or initializes the WordPress filesystem instance.
+	 *
+	 * Returns the global WP_Filesystem instance, initializing it if necessary.
+	 * This helper prevents repeated initialization code throughout the plugin.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return WP_Filesystem_Base The WP_Filesystem instance.
+	 * @throws Exception If the filesystem cannot be initialized.
+	 */
+	public static function get_wp_filesystem() {
+		global $wp_filesystem;
+
+		if ( $wp_filesystem instanceof WP_Filesystem_Base ) {
+			return $wp_filesystem;
+		}
+
+		// Initialize the filesystem only if the function isn't available yet.
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+		WP_Filesystem();
+
+		if ( ! ( $wp_filesystem instanceof WP_Filesystem_Base ) ) {
+			throw new Exception( 'Unable to initialize WordPress filesystem.' );
+		}
+
+		return $wp_filesystem;
 	}
 }
