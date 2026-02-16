@@ -18,7 +18,10 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Server_Capabilities extends Tiny_WP_Base {
+/**
+ * class responsible for checking and managing server capabilities
+ */
+class Tiny_Server_Capabilities {
 
 	/**
 	 * Detect the web server software using WordPress globals.

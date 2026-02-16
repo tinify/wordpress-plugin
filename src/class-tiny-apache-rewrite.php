@@ -17,7 +17,7 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.\n*/
 
-class Tiny_Apache_Rewrite {
+class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 
 	const MARKER = 'tiny-compress-images';
 
@@ -28,7 +28,7 @@ class Tiny_Apache_Rewrite {
 	 *
 	 * @return void
 	 */
-	public static function init() {
+	public function init() {
 		add_action( 'update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules', 20, 3 );
 	}
 
