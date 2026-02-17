@@ -189,7 +189,10 @@ abstract class Tiny_Source_Base {
 		$srcsets = $this->get_image_srcsets( $original_source_html );
 		if ( empty( $srcsets ) ) {
 			// no srcset, try src attribute
-			$srcsets[] = $this->get_image_src( $original_source_html );
+			$src = $this->get_image_src( $original_source_html );
+			if ( ! empty( $src ) ) {
+				$srcsets[] = $src;
+			}
 		}
 
 		if ( empty( $srcsets ) ) {
