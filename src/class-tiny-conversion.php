@@ -18,54 +18,55 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class Tiny_Conversion extends Tiny_WP_Base
-{
-    /**
-     * @var Tiny_Settings
-     */
-    private $settings;
+class Tiny_Conversion extends Tiny_WP_Base {
 
-    /**
-     * @param $settings Tiny_Settings
-     */
-    public function __construct($settings)
-    {
-        return parent::__construct();
-        $this->$settings = $settings;
-    }
+	/**
+	 * @var Tiny_Settings plug-in settings
+	 */
+	private $settings;
 
-    /**
-     * Invoked in init hook from Tiny_WP_Base
-     */
-    public function init()
-    {
-        if ($this->settings->get_conversion_enabled()) {
-            return;
-        }
+	/**
+	 * @param Tiny_Settings $settings
+	 */
+	public function __construct( $settings ) {
+		parent::__construct();
+		$this->settings = $settings;
+	}
 
-        $this->enable_conversion();
-    }
+	/**
+	 * Invoked in init hook from Tiny_WP_Base
+	 */
+	public function init() {
+		if ( ! $this->settings->get_conversion_enabled() ) {
+			return;
+		}
 
-    /**
-     * Will check wether conversion needs to be enabled
-     * and which form of delivery should be applied.
-     * 
-     * @return void
-     */
-    function enable_conversion()
-    {
-        $delivery_method = $this->settings->get_conversion_delivery_method();
-        
-        /**
-         * Controls wether the page should replace <img> with <picture> elements
-         * converted sources.
-         *
-         * @since 3.7.0
-         */
-        if ($delivery_method === 'picture' && apply_filters('tiny_replace_with_picture', true)) {
-            new Tiny_Picture(ABSPATH, array(get_site_url()));
-        } else {
-            new Tiny_Apache_Rewrite();
-        }
-    }
+		$delivery_method = $this->settings->get_conversion_delivery_method();
+
+		$this->init_image_delivery( $delivery_method );
+	}
+
+	/**
+	 * Initializes the method of delivery for optimised images
+	 *
+	 * @param string $delivery_method 'picture' or 'htaccess'
+	 * @return void
+	 */
+	private function init_image_delivery( $delivery_method ) {
+		/**
+		 * Controls wether the page should replace <img> with <picture> elements
+		 * converted sources.
+		 *
+		 * @since 3.7.0
+		 */
+		if ( $delivery_method === 'htaccess' && Tiny_Server_Capabilities::is_apache() ) {
+			new Tiny_Apache_Rewrite();
+			return;
+		}
+
+		if ( apply_filters( 'tiny_replace_with_picture', $delivery_method === 'picture' ) ) {
+			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
+			return;
+		}
+	}
 }

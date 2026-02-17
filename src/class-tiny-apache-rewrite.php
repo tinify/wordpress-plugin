@@ -17,18 +17,31 @@
 * with this program; if not, write to the Free Software Foundation, Inc., 51
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.\n*/
 
+/**
+ * Tiny_Apache_Rewrite
+ * class responsible for the apache rules for image delivery.
+ * - toggling the rules when saving settings
+ * - inserting/removing rules from htaccess
+ *
+ * We are only updating rules when:
+ * - updating the option convert_format
+ * - (un)installing the plug-in
+ */
 class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 
+	/**
+	 * seperator when rules are inserted
+	 * @var string
+	 */
 	const MARKER = 'tiny-compress-images';
 
 	/**
 	 * Initialize Apache Rewrite for converted images.
 	 * - install rules
 	 * - adds hook to add or remove the rules
-	 *
 	 * @return void
 	 */
-	public function init() {
+	function __construct() {
 		add_action( 'update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules', 20, 3 );
 	}
 
