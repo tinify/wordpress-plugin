@@ -195,6 +195,10 @@ class Tiny_Picture extends Tiny_WP_Base {
 		}
 		$images = array();
 		foreach ( $matches[0] as $img ) {
+			// Skip images without src or srcset
+			if ( ! preg_match( '/\b(?:src|srcset)\s*=/i', $img ) ) {
+				continue;
+			}
 			$images[] = new Tiny_Source_Image(
 				$img,
 				$this->base_dir,
