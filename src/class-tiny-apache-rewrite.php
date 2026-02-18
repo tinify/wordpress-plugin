@@ -51,18 +51,18 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$new_delivery = isset( $value['delivery_method'] ) ? $value['delivery_method'] : null;
 
 		if ( $old_delivery === $new_delivery ) {
-			Tiny_Logger::debug('image delivery method has not changed');
+			Tiny_Logger::debug( 'image delivery method has not changed' );
 			return;
 		}
 
 		if ( $old_delivery === 'htaccess' && ( $new_delivery === 'picture' || $new_delivery === null ) ) {
 			self::uninstall_rules();
-			Tiny_Logger::debug('uninstalled image delivery rules');
+			Tiny_Logger::debug( 'uninstalled image delivery rules' );
 			return;
 		}
 		if ( ( $old_delivery === 'picture' || $old_delivery === null ) && $new_delivery === 'htaccess' ) {
 			self::install_rules();
-			Tiny_Logger::debug('installed image delivery rules');
+			Tiny_Logger::debug( 'installed image delivery rules' );
 			return;
 		}
 	}
@@ -73,7 +73,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 * @return string The .htaccess rules
 	 */
 	private static function get_rewrite_rules() {
-		$rules = array();
+		$rules   = array();
 		$rules[] = '<IfModule mod_rewrite.c>';
 		$rules[] = 'RewriteEngine On';
 		$rules[] = 'RewriteOptions Inherit';
@@ -85,7 +85,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 
 		$rules[] = '<IfModule mod_headers.c>';
 		$rules[] = '<FilesMatch "\.(jpe?g|png|gif)$">';
-        $rules[] = 'Header append Vary Accept';
+		$rules[] = 'Header append Vary Accept';
 		$rules[] = '</FilesMatch>';
 		$rules[] = '</IfModule>';
 

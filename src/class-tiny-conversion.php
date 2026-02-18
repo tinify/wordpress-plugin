@@ -38,11 +38,11 @@ class Tiny_Conversion extends Tiny_WP_Base {
 
 	/**
 	 * will check if conversion is enabled,
-     * if true:
+	 * if true:
 	 * - will enable the delivery method
 	 * - will add hook to toggle rules
-     * 
-     * hooked into `init`
+	 *
+	 * hooked into `init`
 	 */
 	public function init() {
 		if ( ! $this->settings->get_conversion_enabled() ) {
