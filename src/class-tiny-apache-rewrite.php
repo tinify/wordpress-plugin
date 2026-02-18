@@ -92,9 +92,8 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$rules[] = '</IfModule>';
 
 		$rules[] = '<IfModule mod_headers.c>';
-		$rules[] = 'Header append Vary Accept';
-		$rules[] = '<FilesMatch "\\.(webp|avif)$">';
-		$rules[] = 'Header set Cache-Control "max-age=31536000, public"';
+		$rules[] = '<FilesMatch "\.(jpe?g|png|gif)$">';
+        $rules[] = 'Header append Vary Accept';
 		$rules[] = '</FilesMatch>';
 		$rules[] = '</IfModule>';
 
