@@ -49,7 +49,13 @@ class Tiny_Conversion extends Tiny_WP_Base {
 			return;
 		}
 
-		add_action( 'update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules', 20, 3 );
+		add_action(
+			'update_option_tinypng_convert_format',
+			'Tiny_Apache_Rewrite::toggle_rules',
+			20,
+			3
+		);
+
 		$delivery_method = $this->settings->get_conversion_delivery_method();
 
 		$this->init_image_delivery( $delivery_method );
@@ -68,12 +74,12 @@ class Tiny_Conversion extends Tiny_WP_Base {
 		 *
 		 * @since 3.7.0
 		 */
-		if ( $delivery_method === 'htaccess' && Tiny_Server_Capabilities::is_apache() ) {
+		if ( 'htaccess' === $delivery_method && Tiny_Server_Capabilities::is_apache() ) {
 			new Tiny_Apache_Rewrite();
 			return;
 		}
 
-		if ( apply_filters( 'tiny_replace_with_picture', $delivery_method === 'picture' ) ) {
+		if ( apply_filters( 'tiny_replace_with_picture', 'picture' === $delivery_method ) ) {
 			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
 			return;
 		}
