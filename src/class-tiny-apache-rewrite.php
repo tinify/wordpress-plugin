@@ -51,19 +51,19 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$new_delivery = isset( $value['delivery_method'] ) ? $value['delivery_method'] : null;
 
 		if ( $old_delivery === $new_delivery ) {
-			Tiny_Logger::debug( 'image delivery method has not changed' );
 			return;
 		}
 
-		if ( $old_delivery === 'htaccess' && ( $new_delivery === 'picture' || $new_delivery === null ) ) {
-			self::uninstall_rules();
-			Tiny_Logger::debug( 'uninstalled image delivery rules' );
+		if ( 'htaccess' === $new_delivery ) {
+			self::install_rules();
+			Tiny_Logger::debug( 'Installed image delivery rules' );
 			return;
 		}
-		if ( ( $old_delivery === 'picture' || $old_delivery === null ) && $new_delivery === 'htaccess' ) {
-			self::install_rules();
-			Tiny_Logger::debug( 'installed image delivery rules' );
-			return;
+
+		// We only uninstall if we were previously using htaccess
+		if ( 'htaccess' === $old_delivery ) {
+			self::uninstall_rules();
+			Tiny_Logger::debug( 'Uninstalled image delivery rules' );
 		}
 	}
 
