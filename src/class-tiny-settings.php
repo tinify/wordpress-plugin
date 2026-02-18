@@ -434,7 +434,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 *
 	 * @return bool True if Apache with mod_rewrite is available, false otherwise
 	 */
-	public function is_apache_available() {
+	public static function is_apache_available() {
 		return Tiny_Server_Capabilities::is_apache() && Tiny_Server_Capabilities::has_mod_rewrite();
 	}
 
@@ -1058,8 +1058,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 * Only displays if Apache with mod_rewrite is available.
 	 */
 	public function render_delivery_method() {
-		// Only show this section if Apache is available
-		if ( ! $this->is_apache_available() ) {
+		if ( ! self::is_apache_available() ) {
 			return;
 		}
 

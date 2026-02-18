@@ -25,7 +25,7 @@
  *
  * We are only updating rules when:
  * - updating the option convert_format
- * - (un)installing the plug-in
+ * - uninstalling the plug-in
  */
 class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 

@@ -103,6 +103,8 @@ class WordPressStubs
 		$this->addMethod('wp_send_json_error');
 		$this->addMethod('get_temp_dir');
 		$this->addMethod('esc_attr');
+		$this->addMethod('get_home_path');
+		$this->addMethod('insert_with_markers');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -200,6 +202,10 @@ class WordPressStubs
 			return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR);
 		} elseif ('is_admin' === $method) {
 			return true;
+		} elseif ('get_home_path' === $method) {
+			return $this->vfs->url() . '/';
+		} elseif ('insert_with_markers' === $method) {
+			return call_user_func_array(array($mocks, $method), $args);
 		} elseif (method_exists($mocks, $method)) {
 			return call_user_func_array(array($mocks, $method), $args);
 		}
@@ -510,6 +516,28 @@ class WordPressMocks
 	public function esc_attr($text)
 	{
 		return $text;
+	}
+	
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/insert_with_markers/
+	 *
+	 * @return void
+	 */
+	public function insert_with_markers($filename, $marker, $insertion)
+	{
+		$content = file_exists($filename) ? file_get_contents($filename) : '';
+		$insertion = is_array($insertion) ? implode("\n", $insertion) : $insertion;
+		
+		$start = "# BEGIN {$marker}";
+		$end = "# END {$marker}";
+	
+		$content = preg_replace('/' . preg_quote($start, '/') . '.*?' . preg_quote($end, '/') . '\s*/s', '', $content);
+	
+		if ($insertion) {
+			$content = "{$start}\n{$insertion}\n{$end}\n" . ltrim($content);
+		}
+	
+		return file_put_contents($filename, trim($content) . "\n") !== false;
 	}
 }
 

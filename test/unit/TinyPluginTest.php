@@ -468,9 +468,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 	}
 
 	public function test_conversion_enabled_and_not_filtered()
-	{
-		$_GET = array();
-		
+	{	
 		// Mock settings with compression count
 		$mock_settings = $this->createMock(Tiny_Settings::class);
 		$mock_settings->method('get_conversion_enabled')->willReturn(true);
@@ -488,20 +486,13 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 		$settings_prop->setAccessible(true);
 		$settings_prop->setValue($tiny_plugin, $mock_settings);
 
-		// Init plugin
 		$tiny_plugin->init();
 
-		$template_redirect_registered = false;
-		foreach ($this->wp->getCalls('add_action') as $call) {
-			if ($call[0] === 'template_redirect') {
-				$template_redirect_registered = true;
-				break;
-			}
-		}
+		$tiny_picture = new Tiny_Picture( $mock_settings );
 
-		$this->assertTrue(
-			$template_redirect_registered,
-			'Expected Tiny_Picture to hook into template_redirect.'
-		);
+		// hook is registered on init
+		$this->wp->init();
+
+		WordPressStubs::assertHook('template_redirect', array($tiny_picture, 'on_template_redirect'));
 	}
 }

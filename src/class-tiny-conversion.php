@@ -18,6 +18,9 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/**
+ * class managing conversion delivery method
+ */
 class Tiny_Conversion extends Tiny_WP_Base {
 
 	/**
@@ -34,7 +37,10 @@ class Tiny_Conversion extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Invoked in init hook from Tiny_WP_Base
+	 * will check if conversion is enabled,
+     * if true, will enable the delivery method
+     * 
+     * hooked into `init`
 	 */
 	public function init() {
 		if ( ! $this->settings->get_conversion_enabled() ) {
