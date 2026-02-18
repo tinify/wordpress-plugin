@@ -47,8 +47,10 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 * @return void
 	 */
 	public static function toggle_rules( $old_value, $value, $option ) {
-		$old_delivery = isset( $old_value['delivery_method'] ) ? $old_value['delivery_method'] : null;
-		$new_delivery = isset( $value['delivery_method'] ) ? $value['delivery_method'] : null;
+		$old_delivery = isset( $old_value['delivery_method'] ) ?
+			$old_value['delivery_method'] : null;
+		$new_delivery = isset( $value['delivery_method'] ) ?
+			$value['delivery_method'] : null;
 
 		if ( $old_delivery === $new_delivery ) {
 			return;
@@ -152,7 +154,9 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 */
 	public static function uninstall_rules() {
 		$upload_dir = wp_upload_dir();
-		if ( isset( $upload_dir['basedir'] ) && file_exists( $upload_dir['basedir'] . '/.htaccess' ) ) {
+		if (
+			file_exists( $upload_dir['basedir'] . '/.htaccess' )
+		) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
 			insert_with_markers( $htaccess_file, self::MARKER, '' );
 		}
