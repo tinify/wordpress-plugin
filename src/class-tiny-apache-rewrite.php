@@ -36,16 +36,6 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	const MARKER = 'tiny-compress-images';
 
 	/**
-	 * Initialize Apache Rewrite for converted images.
-	 * - install rules
-	 * - adds hook to add or remove the rules
-	 * @return void
-	 */
-	function __construct() {
-		add_action( 'update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules', 20, 3 );
-	}
-
-	/**
 	 * Installs or uninstalls the htaccess rules
 	 * hooked into `update_option_tinypng_convert_format`
 	 * https://developer.wordpress.org/reference/hooks/update_option_option/
@@ -61,15 +51,18 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$new_delivery = isset( $value['delivery_method'] ) ? $value['delivery_method'] : null;
 
 		if ( $old_delivery === $new_delivery ) {
+			Tiny_Logger::debug('image delivery method has not changed');
 			return;
 		}
 
 		if ( $old_delivery === 'htaccess' && ( $new_delivery === 'picture' || $new_delivery === null ) ) {
 			self::uninstall_rules();
+			Tiny_Logger::debug('uninstalled image delivery rules');
 			return;
 		}
 		if ( ( $old_delivery === 'picture' || $old_delivery === null ) && $new_delivery === 'htaccess' ) {
 			self::install_rules();
+			Tiny_Logger::debug('installed image delivery rules');
 			return;
 		}
 	}
@@ -114,6 +107,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/avif';
 		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png|gif)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.avif -f';
+		$rules[] = 'RewriteCond %{QUERY_STRING} !type=original';
 		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png|gif)$ $1.avif [T=image/avif,L]';
 		return $rules;
 	}
@@ -128,6 +122,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/webp';
 		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png|gif)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.webp -f';
+		$rules[] = 'RewriteCond %{QUERY_STRING} !type=original';
 		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png|gif)$ $1.webp [T=image/webp,L]';
 
 		return $rules;
