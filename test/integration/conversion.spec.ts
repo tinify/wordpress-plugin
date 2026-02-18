@@ -85,15 +85,21 @@ test.describe('conversion', () => {
       },
       WPVersion
     );
-    const imageResponsePromise = page.waitForResponse(response => 
-      // img is still jpg, but expect content type to be avif
-      response.url().includes('input-example.jpg') && response.status() === 200
-    );
+
+    const imageResponsePromise = page.waitForResponse((response) => response.url().includes('input-example.jpg'), { timeout: 10000 });
 
     await page.goto(`/?p=${postID}`);
 
-    const imgResponse = await imageResponsePromise;
-    const contentType = await imgResponse.headerValue('content-type');
-    expect(contentType).toBe('image/avif');
+    await imageResponsePromise;
+
+    const response = await page.request.get(media, {
+      headers: {
+        Accept: 'image/avif,image/webp,*/*', // browser automatically add this
+      },
+    });
+    const buffer = await response.body();
+    const signature = buffer.toString('ascii', 0, 16);
+
+    expect(signature).toContain('ftypavif');
   });
 });

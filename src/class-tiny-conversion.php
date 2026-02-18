@@ -80,7 +80,7 @@ class Tiny_Conversion extends Tiny_WP_Base {
 		}
 
 		if ( apply_filters( 'tiny_replace_with_picture', 'picture' === $delivery_method ) ) {
-			new Tiny_Picture( ABSPATH, array( get_site_url() ) );
+			new Tiny_Picture( $this->settings, ABSPATH, array( get_site_url() ) );
 			return;
 		}
 	}
