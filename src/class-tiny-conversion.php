@@ -38,7 +38,9 @@ class Tiny_Conversion extends Tiny_WP_Base {
 
 	/**
 	 * will check if conversion is enabled,
-     * if true, will enable the delivery method
+     * if true:
+	 * - will enable the delivery method
+	 * - will add hook to toggle rules
      * 
      * hooked into `init`
 	 */
@@ -47,6 +49,7 @@ class Tiny_Conversion extends Tiny_WP_Base {
 			return;
 		}
 
+		add_action( 'update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules', 20, 3 );
 		$delivery_method = $this->settings->get_conversion_delivery_method();
 
 		$this->init_image_delivery( $delivery_method );
