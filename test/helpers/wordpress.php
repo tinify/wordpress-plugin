@@ -103,7 +103,6 @@ class WordPressStubs
 		$this->addMethod('wp_send_json_error');
 		$this->addMethod('get_temp_dir');
 		$this->addMethod('esc_attr');
-		$this->addMethod('get_home_path');
 		$this->addMethod('insert_with_markers');
 		$this->defaults();
 		$this->create_filesystem();
@@ -202,8 +201,6 @@ class WordPressStubs
 			return array('basedir' => $this->vfs->url() . '/' . self::UPLOAD_DIR, 'baseurl' => '/' . self::UPLOAD_DIR);
 		} elseif ('is_admin' === $method) {
 			return true;
-		} elseif ('get_home_path' === $method) {
-			return $this->vfs->url() . '/';
 		} elseif ('insert_with_markers' === $method) {
 			return call_user_func_array(array($mocks, $method), $args);
 		} elseif (method_exists($mocks, $method)) {

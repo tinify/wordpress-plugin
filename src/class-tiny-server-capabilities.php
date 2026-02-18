@@ -76,7 +76,7 @@ class Tiny_Server_Capabilities {
 		}
 
 		if ( function_exists( 'insert_with_markers' ) ) {
-			$htaccess = get_home_path() . '.htaccess';
+			$htaccess = wp_upload_dir() . '.htaccess';
 			return is_writable( dirname( $htaccess ) );
 		}
 

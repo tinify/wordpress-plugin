@@ -80,11 +80,10 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 * @return string The .htaccess rules
 	 */
 	private static function get_rewrite_rules() {
-		$rules = array(
-			'<IfModule mod_rewrite.c>',
-			'RewriteEngine On',
-			'RewriteOptions Inherit',
-		);
+		$rules = array();
+		$rules[] = '<IfModule mod_rewrite.c>';
+		$rules[] = 'RewriteEngine On';
+		$rules[] = 'RewriteOptions Inherit';
 
 		$rules = array_merge( $rules, self::get_avif_rules() );
 		$rules = array_merge( $rules, self::get_webp_rules() );
@@ -148,11 +147,6 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 			insert_with_markers( $htaccess_file, self::MARKER, $rules );
 		}
 
-		if ( is_writable( get_home_path() ) ) {
-			$htaccess_file = get_home_path() . '.htaccess';
-			insert_with_markers( $htaccess_file, self::MARKER, $rules );
-		}
-
 		return true;
 	}
 
@@ -165,11 +159,6 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$upload_dir = wp_upload_dir();
 		if ( isset( $upload_dir['basedir'] ) && file_exists( $upload_dir['basedir'] . '/.htaccess' ) ) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
-			insert_with_markers( $htaccess_file, self::MARKER, '' );
-		}
-
-		if ( file_exists( get_home_path() . '.htaccess' ) ) {
-			$htaccess_file = get_home_path() . '.htaccess';
 			insert_with_markers( $htaccess_file, self::MARKER, '' );
 		}
 

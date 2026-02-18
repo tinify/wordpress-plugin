@@ -51,31 +51,6 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
     }
 
     /**
-     * uninstall_rules removes htaccess rules from upload directory.
-     * - creates a htaccess file in uploads directory
-     * - run uninstall_rules
-     * - validate if rules are removed
-     */
-    function test_uninstall_rules_removes_home_dir_htaccess()
-    {
-        $home_path = $this->vfs->url() . '/';
-        $htaccess_file = $home_path . '.htaccess';
-
-        $this->wp->stub('get_home_path', function () use ($home_path) {
-            return $home_path;
-        });
-
-        file_put_contents($htaccess_file, "# BEGIN tiny-compress-images\nRewriteEngine On\n# END tiny-compress-images");
-
-        $this->assertTrue(file_exists($htaccess_file), 'htaccess should exist before uninstall');
-
-        Tiny_Apache_Rewrite::uninstall_rules();
-
-        $contents = file_get_contents($htaccess_file);
-        $this->assertStringNotContainsString('tiny-compress-images', $contents, 'htaccess should not contain plugin markers after uninstall');
-    }
-
-    /**
      * Test that uninstall_rules handles non-existent upload directory htaccess gracefully.
      */
     function test_uninstall_rules_handles_missing_upload_htaccess()
@@ -86,32 +61,6 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
-
-        // Ensure file doesn't exist
-        if (file_exists($htaccess_file)) {
-            unlink($htaccess_file);
-        }
-
-        $this->assertFalse(file_exists($htaccess_file), 'htaccess should not exist');
-
-        // Should not throw error
-        $result = Tiny_Apache_Rewrite::uninstall_rules();
-
-        $this->assertTrue($result, 'uninstall_rules should return true even when file does not exist');
-    }
-
-    /**
-     * Test that uninstall_rules handles non-existent home directory htaccess gracefully.
-     */
-    function test_uninstall_rules_handles_missing_home_htaccess()
-    {
-        $home_path = $this->vfs->url() . '/';
-        $htaccess_file = $home_path . '.htaccess';
-
-        // Mock get_home_path to return our virtual filesystem path
-        $this->wp->stub('get_home_path', function () use ($home_path) {
-            return $home_path;
-        });
 
         // Ensure file doesn't exist
         if (file_exists($htaccess_file)) {
