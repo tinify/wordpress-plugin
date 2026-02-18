@@ -233,9 +233,9 @@ export async function setConversionSettings(page: Page, settings: { convert: boo
     }
 
     if (settings.delivery === 'htaccess') {
-      await page.getByTestId('tinypng_convert_delivery_picture').check();
-    } else {
       await page.getByTestId('tinypng_convert_delivery_htaccess').check();
+    } else {
+      await page.getByTestId('tinypng_convert_delivery_picture').check();
     }
   } else {
     await page.locator('#tinypng_conversion_convert').uncheck();
