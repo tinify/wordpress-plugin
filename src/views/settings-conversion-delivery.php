@@ -35,5 +35,5 @@ $this::render_radiobutton(
 	'htaccess',
 	$tinify_delivery_value,
 	'Server rules',
-	'Adds htaccess rules to delivery the optimized image.'
+	'Adds htaccess rules to deliver the optimized image.'
 ); ?>
