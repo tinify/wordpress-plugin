@@ -108,12 +108,19 @@ class Tiny_Logger {
 	/**
 	 * Triggered when log_enabled is saved
 	 * - set the setting on the instance
-	 * - if turn on, clear the old logs
+	 * - will clear logs when turned on
+	 * 
+	 * Hooked to `pre_update_option_tinypng_logging_enabled` filter
+	 * 
+	 * @return bool true if enabled
 	 */
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
 		$instance              = self::get_instance();
-		$instance->log_enabled = 'on' === $log_enabled;
-		if ( $instance->get_log_enabled() ) {
+		$was_enabled           = 'on' === $old;
+		$is_now_enabled        = 'on' === $log_enabled;
+		$instance->log_enabled = $is_now_enabled;
+
+		if ( ! $was_enabled && $is_now_enabled ) {
 			self::clear_logs();
 		}
 
