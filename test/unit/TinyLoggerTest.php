@@ -113,4 +113,42 @@ class Tiny_Logger_Test extends Tiny_TestCase
 
 		assertTrue(filesize($logger->get_log_file_path()) < 1048576, 'log file rotated and less than 1MB');
 	}
+
+	public function test_clears_logs_when_turned_on() {		
+		$log_dir_path = 'wp-content/uploads/tiny-compress-logs';
+		vfsStream::newDirectory($log_dir_path)->at($this->vfs);
+		$log_dir = $this->vfs->getChild($log_dir_path);
+		vfsStream::newFile('tiny-compress.log')
+			->withContent('Some existing log content')
+			->at($log_dir);
+		
+		$logger = Tiny_Logger::get_instance();
+		$log_path = $logger->get_log_file_path();
+		
+		assertTrue(file_exists($log_path), 'log file should exist');
+		
+		Tiny_Logger::on_save_log_enabled( 'on', 'off', null );
+
+		assertFalse( file_exists($log_path), 'log file should be deleted after turning on logging' );
+	}
+
+	public function test_keeps_logs_when_unchanged() {		
+		$log_dir_path = 'wp-content/uploads/tiny-compress-logs';
+		vfsStream::newDirectory($log_dir_path)->at($this->vfs);
+		$log_dir = $this->vfs->getChild($log_dir_path);
+		vfsStream::newFile('tiny-compress.log')
+			->withContent('Some existing log content')
+			->at($log_dir);
+		
+		$logger = Tiny_Logger::get_instance();
+		$log_path = $logger->get_log_file_path();
+		
+		assertTrue(file_exists($log_path), 'log file should exist');
+		
+		Tiny_Logger::on_save_log_enabled( 'on', 'on', null );
+
+		assertTrue( file_exists($log_path), 'log file should be deleted after turning on logging' );
+
+		unlink($log_path);
+	}
 }
