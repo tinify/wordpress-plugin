@@ -40,6 +40,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function __construct() {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
+		new Tiny_Conversion( $this->settings );
 	}
 
 	public function set_compressor( $compressor ) {
@@ -72,7 +73,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
 
-		new Tiny_Picture( $this->settings, ABSPATH, array( get_site_url() ) );
 		$this->tiny_compatibility();
 	}
 
