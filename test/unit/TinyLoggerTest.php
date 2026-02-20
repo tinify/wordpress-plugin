@@ -147,7 +147,7 @@ class Tiny_Logger_Test extends Tiny_TestCase
 		
 		Tiny_Logger::on_save_log_enabled( 'on', 'on', null );
 
-		assertTrue( file_exists($log_path), 'log file should be deleted after turning on logging' );
+		assertTrue( file_exists($log_path), 'log file should still exist when settings remain unchanged' );
 
 		unlink($log_path);
 	}
