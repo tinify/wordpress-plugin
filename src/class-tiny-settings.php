@@ -429,15 +429,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return self::get_convert_format_option( 'delivery_method', 'picture' );
 	}
 
-	/**
-	 * Check if Apache with mod_rewrite is available.
-	 *
-	 * @return bool True if Apache with mod_rewrite is available, false otherwise
-	 */
-	public static function is_apache_available() {
-		return Tiny_Server_Capabilities::is_apache() && Tiny_Server_Capabilities::has_mod_rewrite();
-	}
-
 	private function setup_incomplete_checks() {
 		if ( ! $this->get_api_key() ) {
 			$this->notices->api_key_missing_notice();
@@ -1053,16 +1044,33 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 	}
 
+
 	/**
-	 * Render the delivery method settings view.
-	 * Only displays if Apache with mod_rewrite is available.
+	 * @return bool true if apache with mod_rewrite loaded
+	 */
+	private static function can_render_delivery_method() {
+		global $is_apache;
+		if ( ! $is_apache ) {
+			return false;
+		}
+
+		if ( ! function_exists( 'apache_mod_loaded' ) ) {
+			return false;
+		}
+
+		$modules = apache_get_modules();
+		return in_array( 'mod_rewrite', $modules, true );
+	}
+
+	/**
+	 * If possible, render the delivery method settings view.
 	 */
 	public function render_delivery_method() {
-		if ( ! self::is_apache_available() ) {
+		if ( ! self::can_render_delivery_method() ) {
 			return;
 		}
 
-		include __DIR__ . '/views/delivery-method.php';
+		include __DIR__ . '/views/settings-conversion-delivery.php';
 	}
 
 	private static function get_convert_format_option( $option, $default_value ) {

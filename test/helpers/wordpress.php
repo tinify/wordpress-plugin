@@ -104,6 +104,8 @@ class WordPressStubs
 		$this->addMethod('get_temp_dir');
 		$this->addMethod('esc_attr');
 		$this->addMethod('insert_with_markers');
+		$this->addMethod('esc_html_e');
+		$this->addMethod('esc_html');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -511,6 +513,26 @@ class WordPressMocks
 	 * @return string
 	 */
 	public function esc_attr($text)
+	{
+		return $text;
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/esc_html_e/
+	 *
+	 * @return string
+	 */
+	public function esc_html_e($text, $domain)
+	{
+		echo $text;
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/esc_html/
+	 *
+	 * @return string
+	 */
+	public function esc_html($text)
 	{
 		return $text;
 	}

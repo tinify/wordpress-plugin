@@ -416,4 +416,20 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 			$this->subject->get_preserve_options( Tiny_Image::ORIGINAL )
 		);
 	}
+
+	public function test_will_not_render_delivery_if_apache_is_unavailable() {
+		$GLOBALS['is_apache'] = false;
+		ob_start();
+		$this->subject->render_delivery_method();
+		$output = ob_get_clean();
+		$this->assertEmpty( $output );
+	}
+
+	public function test_will_render_delivery_if_apache_is_available() {
+		$GLOBALS['is_apache'] = true;
+		ob_start();
+		$this->subject->render_delivery_method();
+		$output = ob_get_clean();
+		$this->assertStringContainsString( 'Conversion delivery', $output );
+	}
 }
