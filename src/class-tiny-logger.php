@@ -109,9 +109,9 @@ class Tiny_Logger {
 	 * Triggered when log_enabled is saved
 	 * - set the setting on the instance
 	 * - will clear logs when turned on
-	 * 
+	 *
 	 * Hooked to `pre_update_option_tinypng_logging_enabled` filter
-	 * 
+	 *
 	 * @return bool true if enabled
 	 */
 	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
