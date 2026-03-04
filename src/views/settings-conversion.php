@@ -21,9 +21,7 @@ $convertopts_convert_disabled            = self::get_conversion_enabled() ? '' :
 		class="<?php echo esc_attr( $convertopts_convert_subfields_classname ); ?>"
 		id="<?php echo esc_attr( $convertopts_convert_to_id ); ?>"
 		<?php echo esc_html( $convertopts_convert_disabled ); ?>>
-		<?php
-		require __DIR__ . '/settings-conversion-output.php';
-		require __DIR__ . '/settings-conversion-delivery.php';
-		?>
+		<?php require __DIR__ . '/settings-conversion-output.php'; ?>
+		<?php self::render_delivery_method(); ?>
 	</fieldset>
 </div>
