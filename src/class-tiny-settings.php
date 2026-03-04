@@ -1054,7 +1054,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			return false;
 		}
 
-		if ( ! function_exists( 'apache_mod_loaded' ) || ! function_exists( 'apache_get_modules' ) ) {
+		if (
+			! function_exists( 'apache_mod_loaded' ) ||
+			! function_exists( 'apache_get_modules' )
+		) {
 			return false;
 		}
 
