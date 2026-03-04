@@ -10,9 +10,8 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
      */
     function test_plugin_init_will_add_hook()
     {
-        $mock_capabilities = Mockery::mock('alias:Tiny_Server_Capabilities');
-        $mock_capabilities->shouldReceive('is_apache')->andReturn(true);
-
+        $GLOBALS['is_apache'] = false;
+        
         $mock_settings = $this->createMock(Tiny_Settings::class);
         $mock_settings->method('get_conversion_enabled')->willReturn(true);
         $mock_settings->method('get_conversion_delivery_method')->willReturn('htaccess');

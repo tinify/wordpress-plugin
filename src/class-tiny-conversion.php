@@ -68,13 +68,14 @@ class Tiny_Conversion extends Tiny_WP_Base {
 	 * @return void
 	 */
 	private function init_image_delivery( $delivery_method ) {
+		global $is_apache;
 		/**
 		 * Controls wether the page should replace <img> with <picture> elements
 		 * converted sources.
 		 *
 		 * @since 3.7.0
 		 */
-		if ( 'htaccess' === $delivery_method && Tiny_Server_Capabilities::is_apache() ) {
+		if ( 'htaccess' === $delivery_method && $is_apache ) {
 			new Tiny_Apache_Rewrite();
 			return;
 		}
