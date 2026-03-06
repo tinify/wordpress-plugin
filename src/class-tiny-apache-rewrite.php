@@ -57,15 +57,15 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		}
 
 		if ( 'htaccess' === $new_delivery ) {
-			self::install_rules();
-			Tiny_Logger::debug( 'Installed image delivery rules' );
+			$installed = self::install_rules();
+			Tiny_Logger::debug( 'htaccess rules installed: ' . $installed );
 			return;
 		}
 
 		// We only uninstall if we were previously using htaccess
 		if ( 'htaccess' === $old_delivery ) {
-			self::uninstall_rules();
-			Tiny_Logger::debug( 'Uninstalled image delivery rules' );
+			$uninstalled = self::uninstall_rules();
+			Tiny_Logger::debug( 'htaccess rules uninstaled: ' . $uninstalled );
 		}
 	}
 
@@ -137,14 +137,13 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 */
 	private static function install_rules() {
 		$rules = self::get_rewrite_rules();
-
 		$upload_dir = wp_upload_dir();
 		if ( isset( $upload_dir['basedir'] ) && is_writable( $upload_dir['basedir'] ) ) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
-			insert_with_markers( $htaccess_file, self::MARKER, $rules );
+			return insert_with_markers( $htaccess_file, self::MARKER, $rules );
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -158,9 +157,9 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 			file_exists( $upload_dir['basedir'] . '/.htaccess' )
 		) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
-			insert_with_markers( $htaccess_file, self::MARKER, '' );
+			return insert_with_markers( $htaccess_file, self::MARKER, '' );
 		}
 
-		return true;
+		return false;
 	}
 }
