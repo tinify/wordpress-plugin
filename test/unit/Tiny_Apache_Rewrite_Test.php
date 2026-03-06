@@ -43,14 +43,15 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
 
         $this->assertTrue(file_exists($htaccess_file), 'htaccess should exist before uninstall');
 
-        Tiny_Apache_Rewrite::uninstall_rules();
+        $uninstalled = Tiny_Apache_Rewrite::uninstall_rules();
 
         $contents = file_get_contents($htaccess_file);
         $this->assertStringNotContainsString('tiny-compress-images', $contents, 'htaccess should not contain tinify anymore');
+        $this->assertTrue($uninstalled, 'htaccess rules have been removed');
     }
 
     /**
-     * Test that uninstall_rules handles non-existent upload directory htaccess gracefully.
+     * Tests when htaccess file does not exist, it will return false
      */
     function test_uninstall_rules_handles_missing_upload_htaccess()
     {
@@ -70,7 +71,7 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
 
         // Should not throw error
         $result = Tiny_Apache_Rewrite::uninstall_rules();
-
-        $this->assertTrue($result, 'uninstall_rules should return true even when file does not exist');
+        
+        $this->assertFalse($result, 'uninstall_rules should return false when file does not exist');
     }
 }
