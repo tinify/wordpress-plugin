@@ -136,7 +136,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 * @return bool True on success, false otherwise
 	 */
 	private static function install_rules() {
-		$rules = self::get_rewrite_rules();
+		$rules      = self::get_rewrite_rules();
 		$upload_dir = wp_upload_dir();
 		if ( isset( $upload_dir['basedir'] ) && is_writable( $upload_dir['basedir'] ) ) {
 			$htaccess_file = $upload_dir['basedir'] . '/.htaccess';
