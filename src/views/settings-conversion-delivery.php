@@ -19,6 +19,15 @@ $tinify_delivery_value = self::get_conversion_delivery_method();
 
 <h4><?php esc_html_e( 'Conversion delivery', 'tiny-compress-images' ); ?></h4>
 
+<?php $this::render_radiobutton(
+	$tinify_delivery_name,
+	$tinify_delivery_option_htaccess,
+	'htaccess',
+	$tinify_delivery_value,
+	'Server rules (recommended)',
+	'Adds htaccess rules to deliver the optimized image.'
+); ?>
+
 <?php
 $this::render_radiobutton(
 	$tinify_delivery_name,
@@ -29,11 +38,3 @@ $this::render_radiobutton(
 	'Uses HTML <picture> tags with multiple <source> elements.'
 );
 ?>
-<?php $this::render_radiobutton(
-	$tinify_delivery_name,
-	$tinify_delivery_option_htaccess,
-	'htaccess',
-	$tinify_delivery_value,
-	'Server rules (recommended)',
-	'Adds htaccess rules to deliver the optimized image.'
-); ?>
