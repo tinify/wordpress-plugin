@@ -86,7 +86,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$rules[] = '</IfModule>';
 
 		$rules[] = '<IfModule mod_headers.c>';
-		$rules[] = '<FilesMatch "\.(jpe?g|png|gif)$">';
+		$rules[] = '<FilesMatch "\.(jpe?g|png)$">';
 		$rules[] = 'Header append Vary Accept';
 		$rules[] = '</FilesMatch>';
 		$rules[] = '</IfModule>';
@@ -107,10 +107,10 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	private static function get_avif_rules() {
 		$rules   = array();
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/avif';
-		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png|gif)$';
+		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.avif -f';
 		$rules[] = 'RewriteCond %{QUERY_STRING} !type=original';
-		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png|gif)$ $1.avif [T=image/avif,L]';
+		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png)$ $1.avif [T=image/avif,L]';
 		return $rules;
 	}
 
@@ -122,10 +122,10 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	private static function get_webp_rules() {
 		$rules   = array();
 		$rules[] = 'RewriteCond %{HTTP_ACCEPT} image/webp';
-		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png|gif)$';
+		$rules[] = 'RewriteCond %{REQUEST_URI} ^(.+)\.(?:jpe?g|png)$';
 		$rules[] = 'RewriteCond %{DOCUMENT_ROOT}/%1.webp -f';
 		$rules[] = 'RewriteCond %{QUERY_STRING} !type=original';
-		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png|gif)$ $1.webp [T=image/webp,L]';
+		$rules[] = 'RewriteRule (.+)\.(?:jpe?g|png)$ $1.webp [T=image/webp,L]';
 
 		return $rules;
 	}
