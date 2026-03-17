@@ -420,6 +420,15 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return array( 'image/avif', 'image/webp' );
 	}
 
+	/**
+	 * Retrieve the image delivery method.
+	 *
+	 * @return string The delivery method: 'picture' or 'htaccess'. Default is 'picture'.
+	 */
+	public function get_conversion_delivery_method() {
+		return self::get_convert_format_option( 'delivery_method', 'picture' );
+	}
+
 	private function setup_incomplete_checks() {
 		if ( ! $this->get_api_key() ) {
 			$this->notices->api_key_missing_notice();
@@ -1013,93 +1022,58 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 
 	public function render_format_conversion() {
-		echo '<div class="conversion-options">';
-
-		$convertopts_convert         = self::get_prefixed_name( 'convert_format[convert]' );
-		$convertopts_convert_id      = self::get_prefixed_name( 'conversion_convert' );
-		$convertopts_convert_checked = $this->get_conversion_enabled() ?
-			' checked="checked"' : '';
-
-		echo '<p class="tiny-check">';
-		echo '<input type="checkbox" id="' . $convertopts_convert_id . '" ';
-		echo 'name="' . $convertopts_convert . '" ';
-		echo 'value="on"' . $convertopts_convert_checked . '/>';
-		echo '<label for="' . $convertopts_convert_id . '">' .
-			esc_html__( 'Generate optimized image formats', 'tiny-compress-images' ) .
-			'</label>';
-		echo '</p>';
-
-		$convertopts_convert_to_name             =
-			self::get_prefixed_name( 'convert_format[convert_to]' );
-		$convertopts_convert_subfields_classname =
-		self::get_prefixed_name( 'convert_fields' );
-		$convertopts_convert_to_id               = self::get_prefixed_name( 'convert_convert_to' );
-		$convertopts_convert_value               =
-			self::get_convert_format_option( 'convert_to', 'smallest' );
-		$convertopts_convert_disabled            =
-			self::get_conversion_enabled() ? '' : ' disabled="disabled"';
-		echo sprintf(
-			'<fieldset class="%s" id="%s" %s>',
-			$convertopts_convert_subfields_classname,
-			$convertopts_convert_to_id,
-			$convertopts_convert_disabled
-		);
-		echo '<h4>' . __( 'Conversion output', 'tiny-compress-images' ) . '</h4>';
-		self::render_convert_to_radiobutton(
-			$convertopts_convert_to_name,
-			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'smallest' ),
-			'smallest',
-			$convertopts_convert_value,
-			__( 'Convert to smallest file type (Recommended)', 'tiny-compress-images' ),
-			__(
-				'We will calculate what is the best format for your image.',
-				'tiny-compress-images'
-			)
-		);
-		self::render_convert_to_radiobutton(
-			$convertopts_convert_to_name,
-			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'webp' ),
-			'webp',
-			$convertopts_convert_value,
-			__( 'Convert to WebP', 'tiny-compress-images' ),
-			__(
-				'WebP balances a small file size with good visual quality, 
-				supporting transparency and animation.',
-				'tiny-compress-images'
-			)
-		);
-		self::render_convert_to_radiobutton(
-			$convertopts_convert_to_name,
-			sprintf( self::get_prefixed_name( 'convert_convert_to_%s' ), 'avif' ),
-			'avif',
-			$convertopts_convert_value,
-			__( 'Convert to AVIF', 'tiny-compress-images' ),
-			__(
-				'AVIF delivers even better compression and image quality than WebP.
-			 Browser support is not as good as WebP.',
-				'tiny-compress-images'
-			)
-		);
-		echo '</fieldset>';
-		echo '</div>';
+		include __DIR__ . '/views/settings-conversion.php';
 	}
 
-	private static function render_convert_to_radiobutton(
-		$name,
-		$id,
-		$value,
-		$current,
+	private static function render_radiobutton(
+		$group_name,
+		$option_id,
+		$option_value,
+		$current_value,
 		$label,
 		$descr
 	) {
-		$checked = ( $current === $value ? ' checked="checked"' : '' );
+		$checked = ( $current_value === $option_value ? ' checked="checked"' : '' );
 		echo '<p class="tiny-radio">';
-		echo '<input type="radio" id="' . $id . '" name="' . $name .
-			'" value="' . $value . '" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label;
-		echo '<span>' . $descr . '</span>';
+		echo '<input type="radio" data-testid="' . esc_attr( $option_id ) . '" ';
+		echo 'id="' . esc_attr( $option_id ) . '" name="' . $group_name .
+			'" value="' . esc_attr( $option_value ) . '" ' . $checked . '/>';
+		echo '<label for="' . esc_attr( $option_id ) . '">' . esc_html( $label );
+		echo '<span>' . esc_html( $descr ) . '</span>';
 		echo '</label>';
 		echo '</p>';
+	}
+
+
+	/**
+	 * @return bool true if apache with mod_rewrite loaded
+	 */
+	private static function can_render_delivery_method() {
+		global $is_apache;
+		if ( ! $is_apache ) {
+			return false;
+		}
+
+		if (
+			! function_exists( 'apache_mod_loaded' ) ||
+			! function_exists( 'apache_get_modules' )
+		) {
+			return false;
+		}
+
+		$modules = apache_get_modules();
+		return in_array( 'mod_rewrite', $modules, true );
+	}
+
+	/**
+	 * If possible, render the delivery method settings view.
+	 */
+	public function render_delivery_method() {
+		if ( ! self::can_render_delivery_method() ) {
+			return;
+		}
+
+		include __DIR__ . '/views/settings-conversion-delivery.php';
 	}
 
 	private static function get_convert_format_option( $option, $default_value ) {

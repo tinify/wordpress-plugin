@@ -416,4 +416,58 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 			$this->subject->get_preserve_options( Tiny_Image::ORIGINAL )
 		);
 	}
+
+	public function test_will_not_render_delivery_if_apache_is_unavailable() {
+		$GLOBALS['is_apache'] = false;
+		ob_start();
+		$this->subject->render_delivery_method();
+		$output = ob_get_clean();
+		$this->assertEmpty( $output );
+	}
+
+	public function test_will_not_render_delivery_apache_mod_loaded_is_unavailable() {
+		$GLOBALS['is_apache'] = true;
+		ob_start();
+		$this->subject->render_delivery_method();
+		$output = ob_get_clean();
+		$this->assertEmpty( $output );
+	}
+
+	/**
+	 * we are defining the apache functions here so run in a seperate process to not affect other tests
+     * @runInSeparateProcess
+     */
+	public function test_will_not_render_delivery_if_apache_get_modules_is_unavailable() {
+		$GLOBALS['is_apache'] = true;
+
+		if (!function_exists('apache_mod_loaded')) {
+			function apache_mod_loaded() {};
+		}
+		
+		ob_start();
+		$this->subject->render_delivery_method();
+		$output = ob_get_clean();
+		$this->assertEmpty( $output );
+	}
+
+	/**
+     * @runInSeparateProcess
+     */
+	public function test_will_render_delivery() {
+		$GLOBALS['is_apache'] = true;
+		if (!function_exists('apache_mod_loaded')) {
+			function apache_mod_loaded() {};
+		}
+		if (!function_exists('apache_get_modules')) {
+			function apache_get_modules() {
+				return array('mod_rewrite');
+			}
+		}
+		ob_start();
+		$this->subject->render_delivery_method();
+		$output = ob_get_clean();
+		$this->assertStringContainsString( 'Conversion delivery', $output );
+
+
+	}
 }
