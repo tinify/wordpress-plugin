@@ -661,85 +661,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		echo '</p>';
 	}
 
-	public function render_resize() {
-		$strong = array(
-			'strong' => array(),
-		);
-
-		echo '<div class="tiny-resize-unavailable" style="display: none">';
-		esc_html_e(
-			'Enable compression of the original image size for more options.',
-			'tiny-compress-images'
-		);
-		echo '</div>';
-
-		$id      = self::get_prefixed_name( 'resize_original_enabled' );
-		$name    = self::get_prefixed_name( 'resize_original[enabled]' );
-		$checked = ( $this->get_resize_enabled() ? ' checked="checked"' : '' );
-
-		$label = esc_html__(
-			'Resize the original image',
-			'tiny-compress-images'
-		);
-
-		echo '<div class="tiny-resize-available">';
-		echo '<input  type="checkbox" id="' . $id . '" name="' . $name .
-			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label><br>';
-
-			echo '<div class="tiny-resize-available tiny-resize-resolution">';
-		echo '<span>';
-			echo wp_kses(
-				__(
-					// phpcs:ignore Generic.Files.LineLength
-					'<strong>Save space</strong> by setting a maximum width and height for all images uploaded.',
-					'tiny-compress-images'
-				),
-				$strong
-			);
-		echo '<br>';
-			echo wp_kses(
-				__(
-					// phpcs:ignore Generic.Files.LineLength
-					'Resizing takes <strong>1 additional compression</strong> for each image that is larger.',
-					'tiny-compress-images'
-				),
-				$strong
-			);
-		echo '</span>';
-		echo '<div class="tiny-resize-inputs">';
-		printf( '%s: ', esc_html__( 'Max Width', 'tiny-compress-images' ) );
-		$this->render_resize_input( 'width' );
-		printf( '%s: ', esc_html__( 'Max Height', 'tiny-compress-images' ) );
-		$this->render_resize_input( 'height' );
-		echo '</div></div></div>';
-
-		$this->render_preserve_input(
-			'creation',
-			esc_html__(
-				'Preserve creation date and time in the original image',
-				'tiny-compress-images'
-			)
-		);
-
-		$this->render_preserve_input(
-			'copyright',
-			esc_html__(
-				'Preserve copyright information in the original image',
-				'tiny-compress-images'
-			)
-		);
-
-		$this->render_preserve_input(
-			'location',
-			esc_html__(
-				'Preserve GPS location in the original image',
-				'tiny-compress-images'
-			) . ' ' .
-				esc_html__( '(JPEG only)', 'tiny-compress-images' )
-		);
-	}
-
 	public function render_compression_timing_radiobutton(
 		$name,
 		$label,
@@ -776,25 +697,24 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_preserve_input( $name, $description ) {
-		echo '<p class="tiny-preserve">';
-		$id      = sprintf( self::get_prefixed_name( 'preserve_data_%s' ), $name );
-		$field   = sprintf( self::get_prefixed_name( 'preserve_data[%s]' ), $name );
-		$checked = ( $this->get_preserve_enabled( $name ) ? ' checked="checked"' : '' );
-		$label   = esc_html( $description, 'tiny-compress-images' );
-		echo '<input type="checkbox" id="' . $id . '" name="' . $field .
-			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
-		echo '<br>';
-		echo '</p>';
+		$data = array(
+			'id'      => sprintf( self::get_prefixed_name( 'preserve_data_%s' ), $name ),
+			'field'   => sprintf( self::get_prefixed_name( 'preserve_data[%s]' ), $name ),
+			'checked' => $this->get_preserve_enabled( $name ) ? 'checked' : '',
+			'label'   => $description,
+		);
+		include plugin_dir_path( __FILE__ ) . 'views/settings-original-image-preserve.php';
 	}
 
-	public function render_resize_input( $name ) {
-		$id       = sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name );
-		$field    = sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name );
+	public function render_resize_input( $name, $label ) {
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
-		$value    = isset( $settings[ $name ] ) ? $settings[ $name ] : '2048';
-		echo '<input type="number" id="' . $id . '" name="' . $field .
-			'" value="' . $value . '" size="5" />';
+		$data = array(
+			'id' => sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name ),
+			'field' => sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name ),
+			'value' => isset( $settings[ $name ] ) ? $settings[ $name ] : '2048',
+			'label' => $label,
+		);
+		include plugin_dir_path( __FILE__ ) . 'views/settings-original-image-original.php';
 	}
 
 	public function get_compression_count() {
