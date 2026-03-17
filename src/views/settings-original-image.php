@@ -28,8 +28,7 @@ $strong = array(
 				id="<?php echo esc_attr( $resize_original_enabled_id ); ?>"
 				name="<?php echo esc_attr( $resize_original_enabled_name ); ?>"
 				value="on"
-				<?php checked( $resize_original_enabled ); ?>
-			/>
+				<?php checked( $resize_original_enabled ); ?> />
 			<label for="<?php echo esc_attr( $resize_original_enabled_id ); ?>">
 				<?php
 				esc_html_e(
@@ -46,7 +45,7 @@ $strong = array(
 							'<strong>Save space</strong> by setting a maximum width and height for all images uploaded.',
 							'tiny-compress-images'
 						),
-						$strong,
+						$strong
 					);
 					?>
 					<br>
@@ -56,19 +55,19 @@ $strong = array(
 							'Resizing takes <strong>1 additional compression</strong> for each image that is larger.',
 							'tiny-compress-images'
 						),
-						$strong,
+						$strong
 					);
 					?>
 				</span>
 
 				<div class="tiny-resize-inputs">
-					<?php esc_html_e( 'Max Width', 'tiny-compress-images' ); ?>: 
+					<?php esc_html_e( 'Max Width', 'tiny-compress-images' ); ?>:
 					<?php $this->render_resize_input( 'width' ); ?>
-					<?php esc_html_e( 'Max Height', 'tiny-compress-images' ); ?>: 
+					<?php esc_html_e( 'Max Height', 'tiny-compress-images' ); ?>:
 					<?php $this->render_resize_input( 'height' ); ?>
 				</div>
 			</div>
-				
+
 			<?php
 			$this->render_preserve_input(
 				'creation',
