@@ -700,19 +700,18 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$data = array(
 			'id'      => sprintf( self::get_prefixed_name( 'preserve_data_%s' ), $name ),
 			'field'   => sprintf( self::get_prefixed_name( 'preserve_data[%s]' ), $name ),
-			'checked' => $this->get_preserve_enabled( $name ) ? 'checked' : '',
+			'checked' => $this->get_preserve_enabled( $name ),
 			'label'   => $description,
 		);
 		include plugin_dir_path( __FILE__ ) . 'views/settings-original-image-preserve.php';
 	}
 
-	public function render_resize_input( $name, $label ) {
+	public function render_resize_input( $name ) {
 		$settings = get_option( self::get_prefixed_name( 'resize_original' ) );
-		$data = array(
-			'id' => sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name ),
+		$data     = array(
+			'id'    => sprintf( self::get_prefixed_name( 'resize_original_%s' ), $name ),
 			'field' => sprintf( self::get_prefixed_name( 'resize_original[%s]' ), $name ),
 			'value' => isset( $settings[ $name ] ) ? $settings[ $name ] : '2048',
-			'label' => $label,
 		);
 		include plugin_dir_path( __FILE__ ) . 'views/settings-original-image-original.php';
 	}
