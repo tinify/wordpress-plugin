@@ -222,8 +222,8 @@ class Tiny_Image {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
 				$backup_created = $this->create_backup( $size_name, $size->filename );
-				$resize   = $this->settings->get_resize_options( $size_name );
-				$preserve = $this->settings->get_preserve_options( $size_name );
+				$resize         = $this->settings->get_resize_options( $size_name );
+				$preserve       = $this->settings->get_preserve_options( $size_name );
 				Tiny_Logger::debug(
 					'compress size',
 					array(
@@ -239,7 +239,7 @@ class Tiny_Image {
 						'has_been_compressed' => $size->has_been_compressed(),
 						'filesize'            => $size->filesize(),
 						'mimetype'            => $size->mimetype(),
-						'backup'			  => $backup_created,
+						'backup'              => $backup_created,
 					)
 				);
 				try {
@@ -610,7 +610,7 @@ class Tiny_Image {
 
 	/**
 	 * creates a backup of the image as <originalfile>.bak.<extension>
-	 * 
+	 *
 	 * @param string $size_name name of the size
 	 * @param string $filepath path to file that needs backup
 	 * @return bool true when backup is created
@@ -619,10 +619,15 @@ class Tiny_Image {
 		if ( ! $this->needs_backup( $size_name ) ) {
 			return false;
 		}
-		
-		$fileinfo = pathinfo($filepath);
-		$backup_file = $fileinfo['dirname'] . '/' . $fileinfo['filename'] . '.bak.' . $fileinfo['extension'];
-		
+
+		$fileinfo    = pathinfo( $filepath );
+		$backup_file = sprintf(
+			'%s/%s.bak%s',
+			$fileinfo['dirname'],
+			$fileinfo['filename'],
+			$fileinfo['extension']
+		);
+
 		return copy( $filepath, $backup_file );
 	}
 
