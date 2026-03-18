@@ -51,12 +51,7 @@
 						<?php $this->render_format_conversion(); ?>
 					</td>
 				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'Original image', 'tiny-compress-images' ); ?></th>
-						<td>
-							<?php $this->render_resize(); ?>
-						</td>
-					</tr>
+				<?php require plugin_dir_path( __FILE__ ) . 'settings-original-image.php'; ?>
 				</tbody>
 			</table>
 			
