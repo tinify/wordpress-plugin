@@ -70,6 +70,13 @@ $strong = array(
 
 			<?php
 			$this->render_preserve_input(
+				'image',
+				esc_html__(
+					'Make a backup of the original image',
+					'tiny-compress-images'
+				)
+			);
+			$this->render_preserve_input(
 				'creation',
 				esc_html__(
 					'Preserve creation date and time in the original image',
