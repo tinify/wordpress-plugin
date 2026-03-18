@@ -282,6 +282,14 @@ class WordPressStubs
 			->at($dir);
 	}
 
+	/**
+	 * Creates images on the virtual disk for testing
+	 * @param null|array array of size => bytes to create, file will be named $name-$size.png
+	 * @param int bytes of image
+	 * @param string path to image
+	 * @param string name of the image
+	 * @return void
+	 */
 	public function createImages($sizes = null, $original_size = 12345, $path = '14/01', $name = 'test')
 	{
 		vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
@@ -309,6 +317,13 @@ class WordPressStubs
 		}
 	}
 
+	/**
+	 * creates image meta data for testing
+	 *
+	 * @param string $path directory of the file in UPLOAD_DIR
+	 * @param string $name name of the file without extension
+	 * @return array object containing metadata
+	 */
 	public function getTestMetadata($path = '14/01', $name = 'test')
 	{
 		$metadata = array(
