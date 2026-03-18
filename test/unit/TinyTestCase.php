@@ -40,6 +40,11 @@ class Tiny_PHP {
 }
 
 abstract class Tiny_TestCase extends TestCase {
+	/**
+	 * WordPress stubs
+	 *
+	 * @var \WordPressStubs
+	 */
 	protected $wp;
 	protected $vfs;
 
