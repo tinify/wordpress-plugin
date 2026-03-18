@@ -622,8 +622,8 @@ class Tiny_Image {
 
 		$fileinfo    = pathinfo( $filepath );
 		$backup_file = sprintf(
-			'%s/%s.bak.%s',
-			$fileinfo['dirname'],
+			'%s%s.bak.%s',
+			trailingslashit($fileinfo['dirname']),
 			$fileinfo['filename'],
 			$fileinfo['extension']
 		);
