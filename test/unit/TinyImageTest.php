@@ -334,4 +334,66 @@ class Tiny_Image_Test extends Tiny_TestCase {
 			file_exists( $this->vfs->url() . '/wp-content/uploads/' . $input_dir . '/' . $input_name . '.bak.png' ) ,
 			'backup of file should be created');
 	}
+
+	public function test_will_not_backup_other_sizes() {
+		$this->wp->addOption('tinypng_backup', array(
+			'enabled' => 'on',
+		));
+		$this->wp->addOption('tinypng_sizes', array(
+			'thumbnail' => 'on',
+		));
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/png';
+		});
+
+		$input_dir = '26/03';
+		$input_name = 'testforbackup';
+		$this->wp->createImages(array(
+			'thumbnail' => 1000,
+		), 1000, $input_dir, $input_name);
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$settings->set_compressor($mock_compressor);
+
+		$metadata = $this->wp->getTestMetadata($input_dir, $input_name);
+		$tinyimg = new Tiny_Image($settings, 999, $metadata);
+		$tinyimg->compress();
+
+		$this->assertFalse(
+			file_exists( $this->vfs->url() . '/wp-content/uploads/' . $input_dir . '/' . $input_name . '.bak.png' ) ,
+			'backup of original should not exist');
+
+		$this->assertFalse(
+			file_exists( $this->vfs->url() . '/wp-content/uploads/' . $input_dir . '/' . $input_name . '-thumbnail.bak.png' ) ,
+			'backup of thumbnail should not exist');
+	}
+
+	public function test_will_not_backup_when_disabled() {
+		$this->wp->addOption('tinypng_backup', array(
+			'enabled' => false,
+		));
+		$this->wp->addOption('tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'on',
+		));
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/png';
+		});
+
+		$input_dir = '26/03';
+		$input_name = 'testforbackup';
+		$this->wp->createImages(array(), 1000, $input_dir, $input_name);
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$settings->set_compressor($mock_compressor);
+
+		$metadata = $this->wp->getTestMetadata($input_dir, $input_name);
+		$tinyimg = new Tiny_Image($settings, 999, $metadata);
+		$tinyimg->compress();
+
+		$this->assertFalse(
+			file_exists( $this->vfs->url() . '/wp-content/uploads/' . $input_dir . '/' . $input_name . '.bak.png' ) ,
+			'backup of original should not exist');
+	}
 }

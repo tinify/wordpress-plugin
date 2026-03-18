@@ -284,10 +284,10 @@ class WordPressStubs
 
 	/**
 	 * Creates images on the virtual disk for testing
-	 * @param null|array array of size => bytes to create, file will be named $name-$size.png
-	 * @param int bytes of image
-	 * @param string path to image
-	 * @param string name of the image
+	 * @param null|array $sizes Array of size => bytes to create, file will be named $name-$size.png
+	 * @param int $original_size Bytes of image
+	 * @param string $path Path to image
+	 * @param string $name Name of the image
 	 * @return void
 	 */
 	public function createImages($sizes = null, $original_size = 12345, $path = '14/01', $name = 'test')
