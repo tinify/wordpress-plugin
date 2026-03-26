@@ -214,7 +214,7 @@ export async function deactivatePlugin(page: Page, pluginSlug: string) {
   await plugin.getByLabel('Deactivate').click();
 }
 
-export async function setConversionSettings(page: Page, settings: { convert: boolean; output?: 'smallest' | 'webp' | 'avif'; delivery: 'picture' | 'htaccess' }) {
+export async function setConversionSettings(page: Page, settings: { convert: boolean; output?: 'smallest' | 'webp' | 'avif'; delivery?: 'picture' | 'htaccess' }) {
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
   if (settings.convert) {
