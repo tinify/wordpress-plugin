@@ -8,6 +8,11 @@ services:
       - '8100:80'
     volumes:
       - ../test/mock-tinypng-webservice:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
     networks:
       - tinify
 
