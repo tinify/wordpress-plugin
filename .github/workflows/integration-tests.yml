@@ -45,6 +45,16 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Cache Localstack Image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./config/Dockerfile-localstack
+          tags: localstack/localstack:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
