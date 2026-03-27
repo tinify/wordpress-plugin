@@ -93,11 +93,6 @@ EOF
 echo "Activating tinify.."
 docker compose -f config/docker-compose.yml run --rm wpcli wp plugin activate tiny-compress-images --allow-root
 
-if [ "$WORDPRESS_VERSION_ENV" -ge 55 ]; then
-  echo "Installing compatible plugins for WordPress ${WORDPRESS_PORT}.."
-  docker compose -f config/docker-compose.yml run --rm --user 33 wpcli wp plugin install amazon-s3-and-cloudfront --activate --allow-root || exit 1
-fi
-
 MAX_ATTEMPTS=10
 ATTEMPT=0
 until curl -s --head --fail "http://localhost:${WORDPRESS_PORT}" >/dev/null; do
