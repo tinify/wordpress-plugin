@@ -1,13 +1,4 @@
 services:
-  localstack:
-    image: localstack/localstack
-    volumes:
-      - './localstack-init.sh:/etc/localstack/init/ready.d/init-aws.sh'
-    ports:
-      - 4566:4566
-    networks:
-      - tinify
-
   tinify-mock-api:
     image: tinify-mock-api
     build:

@@ -45,16 +45,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Cache Localstack Image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: ./config/Dockerfile-localstack
-          tags: localstack/localstack:latest
-          load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
@@ -95,7 +85,6 @@ jobs:
         run: npm run test:playwright
         env:
           WORDPRESS_PORT: 80${{ matrix.wp }}
-          PHP_VERSION: ${{ matrix.php }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
