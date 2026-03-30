@@ -34,7 +34,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 	 *
 	 * @var int
 	 */
-	private $compressions_for_feedback = 5;
+	private $compressions_for_feedback = 10;
 
 	/**
 	 * Tiny_Notices constructor.
@@ -334,7 +334,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 	 *
 	 * @return void
 	 */
-	function feedback_notice() {
+	private function feedback_notice() {
 		if ( ! isset( $this->dismissals['feedback'] ) &&
 			$this->settings->get_compression_count() > $this->compressions_for_feedback
 		) {
@@ -342,7 +342,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		}
 	}
 
-	function feedback_notice_show() {
+	private function feedback_notice_show() {
 		include __DIR__ . '/views/notice-feedback.php';
 	}
 }
