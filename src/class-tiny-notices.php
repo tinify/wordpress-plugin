@@ -102,6 +102,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 	public function show_notices() {
 		$this->incompatible_plugins_notice();
 		$this->outdated_platform_notice();
+		$this->feedback_notice();
 	}
 
 	public function add( $name, $message ) {
@@ -302,5 +303,20 @@ class Tiny_Notices extends Tiny_WP_Base {
 				echo $notice;
 			}
 		);
+	}
+
+	/**
+	 * Checks if the feedback notice should be displayed and hooks it to admin_notices.
+	 *
+	 * @return void
+	 */
+	function feedback_notice() {
+		if ( ! isset( $this->dismissals[ 'feedback' ] ) ) {
+			add_action('admin_notices', array( $this, 'feedback_notice_show' ) );
+		}
+	}
+
+	function feedback_notice_show() {
+		include __DIR__ . '/views/notice-feedback.php';
 	}
 }
