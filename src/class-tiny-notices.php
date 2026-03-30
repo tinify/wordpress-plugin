@@ -22,6 +22,30 @@ class Tiny_Notices extends Tiny_WP_Base {
 	private $notices;
 	private $dismissals;
 
+	/**
+	 * Tiny_Settings instance.
+	 *
+	 * @var Tiny_Settings
+	 */
+	private $settings;
+
+	/**
+	 * The number of compressions required before showing the feedback notice.
+	 *
+	 * @var int
+	 */
+	private $compressions_for_feedback = 5;
+
+	/**
+	 * Tiny_Notices constructor.
+	 *
+	 * @param Tiny_Settings $settings The settings instance.
+	 */
+	public function __construct( $settings ) {
+		parent::__construct();
+		$this->settings = $settings;
+	}
+
 	protected static $incompatible_plugins = array(
 		'CheetahO Image Optimizer'   => 'cheetaho-image-optimizer/cheetaho.php',
 		'EWWW Image Optimizer'       => 'ewww-image-optimizer/ewww-image-optimizer.php',
@@ -311,8 +335,10 @@ class Tiny_Notices extends Tiny_WP_Base {
 	 * @return void
 	 */
 	function feedback_notice() {
-		if ( ! isset( $this->dismissals[ 'feedback' ] ) ) {
-			add_action('admin_notices', array( $this, 'feedback_notice_show' ) );
+		if ( ! isset( $this->dismissals['feedback'] ) &&
+			$this->settings->get_compression_count() > $this->compressions_for_feedback
+		) {
+			add_action( 'admin_notices', array( $this, 'feedback_notice_show' ) );
 		}
 	}
 
