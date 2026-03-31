@@ -55,6 +55,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						} elseif ( 0 == $stats['available-unoptimized-sizes'] ) {
 							/* translators: %s: friendly user name */
 							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
+							echo '<br />';
 							require __DIR__ . '/request-review.php';
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
 							if ( $percentage_of_files > 75 ) {
