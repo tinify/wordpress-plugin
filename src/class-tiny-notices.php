@@ -342,7 +342,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		}
 	}
 
-	private function feedback_notice_show() {
+	public function feedback_notice_show() {
 		include __DIR__ . '/views/notice-feedback.php';
 	}
 }
