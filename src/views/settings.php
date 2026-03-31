@@ -56,8 +56,8 @@
 			</table>
 			
 			<?php require plugin_dir_path( __FILE__ ) . 'settings-diagnostics.php'; ?>
-			
-			<p><?php echo Tiny_Plugin::request_review(); ?></p>
+			<?php require __DIR__ . 'request-review.php'; ?>
+
 			<p class="submit">
 				<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_html_e( 'Save Changes', 'tiny-compress-images' ); ?>">
 			</p>
