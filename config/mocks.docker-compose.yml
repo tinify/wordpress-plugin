@@ -1,13 +1,4 @@
 services:
-  localstack:
-    image: localstack/localstack
-    volumes:
-      - './localstack-init.sh:/etc/localstack/init/ready.d/init-aws.sh'
-    ports:
-      - 4566:4566
-    networks:
-      - tinify
-
   tinify-mock-api:
     image: tinify-mock-api
     build:
@@ -17,6 +8,11 @@ services:
       - '8100:80'
     volumes:
       - ../test/mock-tinypng-webservice:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
     networks:
       - tinify
 
