@@ -6,6 +6,8 @@ The plugin provides several hooks to let you extend or modify its behavior.
 
 - [updated_tiny_postmeta](updated_tiny_postmeta.md) — Triggered when tinify meta data has been updated
 - [tiny_image_after_compression](tiny_image_after_compression.md) — Triggered after successful optimization.
+- [tiny_image_size_before_compression](tiny_image_size_before_compression.md) — Triggered before optimizing an image size.
+
 
 ## Filters
 

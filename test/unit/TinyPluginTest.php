@@ -3,7 +3,9 @@
 require_once dirname(__FILE__) . '/TinyTestCase.php';
 
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\content\LargeFileContent;
+
+use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertTrue;
 
 class Tiny_Plugin_Test extends Tiny_TestCase
 {
@@ -494,5 +496,39 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 		$this->wp->init();
 
 		WordPressStubs::assertHook('template_redirect', array($tiny_picture, 'on_template_redirect'));
+	}
+
+	public function test_init_adds_backup_image_size_action() {
+		$tiny_plugin = new Tiny_Plugin();
+		$tiny_plugin->init();
+
+		// assert that backup is hooked into `tiny_image_size_before_compression`
+		WordPressStubs::assertHook('tiny_image_size_before_compression', array($tiny_plugin, 'backup_image_size'));
+	}
+
+	public function test_will_copy_original_file_on_backup() {
+		$this->wp->createImage( 37857, '2026/04', 'testfile.png' );
+		$og_file_path = $this->vfs->url() . '/wp-content/uploads/2026/04/testfile.png';
+		$expected_backup = $this->vfs->url() . '/wp-content/uploads/tinify_backup/2026/04/testfile.png';
+
+		$tiny_plugin = new Tiny_Plugin();
+
+		$ref = new \ReflectionClass($tiny_plugin);
+		$settings_prop = $ref->getProperty('settings');
+		$settings_prop->setAccessible(true);
+		$mock_settings = $this->createMock(Tiny_Settings::class);
+		$mock_settings->method('get_backup_enabled')->willReturn(true);
+		$settings_prop->setValue($tiny_plugin, $mock_settings);
+
+		$tiny_plugin->backup_image_size(1, 0, $og_file_path);
+
+		assertTrue(file_exists($expected_backup), 'expected backup to be created');
+	}
+
+	public function test_when_not_original_will_not_backup() {
+		$tiny_plugin = new Tiny_Plugin();
+		$created = $tiny_plugin->backup_image_size(1, 'thumbnail', 'filepath');
+
+		assertFalse($created, 'expected backup not te be created');
 	}
 }

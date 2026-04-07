@@ -67,6 +67,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'delete_attachment', $this->get_method( 'clean_attachment' ), 10, 2 );
 
+		add_action(
+			'tiny_image_size_before_compression',
+			$this->get_method( 'backup_image_size' ),
+			10,
+			3
+		);
+
 		load_plugin_textdomain(
 			self::NAME,
 			false,
@@ -859,6 +866,43 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
+	}
+
+	/**
+	 * Creates a backup of an image size before compression.
+	 *
+	 * Hooked to the `tiny_image_size_before_compression` action. Only creates
+	 * a backup for the original image size when the backup setting is enabled.
+	 * The backup is stored under {upload_dir}/tinify_backup/, preserving the
+	 * original path structure relative to the uploads base directory.
+	 *
+	 * @since 3.6.8
+	 *
+	 * @param int        $image_id  The attachment ID.
+	 * @param int|string $size_name The image size name. 0 for the original.
+	 * @param string     $filepath  The file path to the image to be backed up.
+	 * @return bool      return true on backup created
+	 */
+	public function backup_image_size( $image_id, $size_name, $filepath ) {
+		if ( ! Tiny_Image::is_original( $size_name ) ) {
+			return false;
+		}
+
+		if ( ! $this->settings->get_backup_enabled() ) {
+			return false;
+		}
+
+		$upload_dir    = wp_upload_dir();
+		$upload_base   = trailingslashit( $upload_dir['basedir'] );
+		$relative_path = ltrim( str_replace( $upload_base, '', $filepath ), '/' );
+		$backup_file   = $upload_base . 'tinify_backup/' . $relative_path;
+		$backup_dir    = dirname( $backup_file );
+
+		if ( ! wp_mkdir_p( $backup_dir ) ) {
+			return false;
+		}
+
+		return copy( $filepath, $backup_file );
 	}
 
 	public static function request_review() {

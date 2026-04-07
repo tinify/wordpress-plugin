@@ -353,7 +353,7 @@ class WordPressStubs
 	 */
 	public static function assertHook($hookname, $expected_args = null)
 	{
-		$hooks = array('add_action', 'add_filter');
+		$hooks = array('add_action', 'add_filter', 'do_action', 'apply_filters');
 		$found = false;
 
 		foreach ($hooks as $method) {
@@ -416,7 +416,7 @@ class WordPressMocks
 	 */
 	public function wp_mkdir_p($dir)
 	{
-		mkdir($dir, 0755, true);
+		return mkdir($dir, 0755, true) || is_dir($dir);
 	}
 
 	/**
