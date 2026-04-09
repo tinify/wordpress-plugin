@@ -196,6 +196,19 @@ class Tiny_Image {
 				'name'     => $this->name,
 			)
 		);
+
+		/**
+		 * Fires before an image is sent for compression.
+		 *
+		 * @since 3.6.8
+		 *
+		 * @param int   The attachment ID
+		 */
+		do_action(
+			'tiny_image_before_compression',
+			$this->id
+		);
+
 		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
 			return;
 		}
@@ -221,22 +234,6 @@ class Tiny_Image {
 			if ( ! $size->is_duplicate() ) {
 				$size->add_tiny_meta_start();
 				$this->update_tiny_post_meta();
-
-				/**
-				 * Fires before an image size is sent for compression.
-				 *
-				 * @since 3.6.8
-				 *
-				 * @param int        $attachment_id  The attachment ID.
-				 * @param int|string $size_name The image size name. 0 for the original.
-				 * @param string     $filepath  The file path to the image being compressed.
-				 */
-				do_action(
-					'tiny_image_size_before_compression',
-					$this->id,
-					$size_name,
-					$size->filename
-				);
 
 				$resize   = $this->settings->get_resize_options( $size_name );
 				$preserve = $this->settings->get_preserve_options( $size_name );
