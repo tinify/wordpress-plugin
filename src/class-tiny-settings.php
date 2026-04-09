@@ -359,8 +359,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	/**
 	 * Retrieves the preserve options for the original image
 	 *
-	 * @param string - size name
-	 * @return false|array<string> false if size is not original, otherwise array of preserved keys
+	 * @param string $size_name Name of the size
+	 * @return array<string>|false false if size is not original, otherwise array of preserved keys
 	 */
 	public function get_preserve_options( $size_name ) {
 		if ( ! Tiny_Image::is_original( $size_name ) ) {

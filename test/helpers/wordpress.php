@@ -284,7 +284,7 @@ class WordPressStubs
 
 	/**
 	 * Creates images on the virtual disk for testing
-	 * @param null|array $sizes Array of size => bytes to create, file will be named $name-$size.png
+	 * @param null|array $sizes Array of size name (array key) => bytes to create; each file will be named "$name-<size name>.png"
 	 * @param int $original_size Bytes of image
 	 * @param string $path Path to image
 	 * @param string $name Name of the image
@@ -322,7 +322,7 @@ class WordPressStubs
 	 *
 	 * @param string $path directory of the file in UPLOAD_DIR
 	 * @param string $name name of the file without extension
-	 * @return array object containing metadata
+	 * @return array metadata array
 	 */
 	public function getTestMetadata($path = '14/01', $name = 'test')
 	{
