@@ -240,6 +240,11 @@ abstract class Tiny_Source_Base {
 						$source_attr_parts[ $attr ] = $attr_value;
 					}
 				}
+			} else {
+				$sizes_value = $this->get_attribute_value( $original_source_html, 'sizes' );
+				if ( $sizes_value ) {
+					$source_attr_parts['sizes'] = $sizes_value;
+				}
 			}
 
 			$source_attr_parts['type'] = $mimetype;
