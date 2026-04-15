@@ -72,7 +72,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 		/* translators: %s: friendly user name */
 		printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
 		echo ' ';
-		echo Tiny_Plugin::request_review();
+		require __DIR__ . '/request-review.php';
 		?>
 	</p>
 </div>

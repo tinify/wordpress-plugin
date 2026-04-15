@@ -220,7 +220,7 @@ test.describe('compression', () => {
     // Since 4.2 it is no longer a link but a button.
     const isButton = WPVersion >= 4.2;
     if (isButton) {
-      await page.getByRole('button', { name: 'Dismiss this notice.' }).click();
+      await page.locator('.error.notice').getByRole('button', { name: 'Dismiss this notice.' }).click();
     } else {
       await page.getByRole('link', { name: 'Dismiss' }).click();
     }
