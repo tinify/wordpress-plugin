@@ -63,8 +63,11 @@ class Tiny_Bulk_Optimization {
 	private static function wpdb_retrieve_images_and_metadata( $start_id ) {
 		global $wpdb;
 
-		// Retrieve posts that have "_wp_attachment_metadata" image metadata
-		// and optionally contain "tiny_compress_images" metadata.
+		/**
+		 * Retrieve posts that have "_wp_attachment_metadata" image metadata
+		 * and optionally contain "tiny_compress_images" metadata.
+		 * Prevents returning the same image multiple times by grouping by filename.
+		 */
 		$sql_start_id = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
 		$query        =
 			"SELECT
@@ -90,6 +93,7 @@ class Tiny_Bulk_Optimization {
 					$wpdb->posts.post_mime_type = 'image/png' OR
 					$wpdb->posts.post_mime_type = 'image/webp'
 				)
+			GROUP BY wp_postmeta_file.meta_value
 			ORDER BY ID DESC
 			LIMIT " . self::PAGING_SIZE;
 

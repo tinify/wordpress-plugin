@@ -99,7 +99,6 @@ class Tiny_Cli_Test extends Tiny_TestCase
 					'file' => '2025/07/test.png',
 					'sizes' => array()
 				)),
-				'unique_attachment_name' => '2025/07/test.png',
 				'tiny_meta_value' => ''
 			)
 		);
