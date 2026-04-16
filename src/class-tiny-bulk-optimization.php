@@ -63,20 +63,23 @@ class Tiny_Bulk_Optimization {
 	private static function wpdb_retrieve_images_and_metadata( $start_id ) {
 		global $wpdb;
 
-		// Retrieve posts that have "_wp_attachment_metadata" image metadata
-		// and optionally contain "tiny_compress_images" metadata.
+		/**
+		 * Retrieve posts that have "_wp_attachment_metadata" image metadata
+		 * and optionally contain "tiny_compress_images" metadata.
+		 * Prevents returning the same image multiple times by grouping by filename.
+		 */
 		$sql_start_id = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
 		$query        =
 			"SELECT
 				$wpdb->posts.ID,
 				$wpdb->posts.post_title,
 				$wpdb->postmeta.meta_value,
-				wp_postmeta_file.meta_value AS unique_attachment_name,
 				wp_postmeta_tiny.meta_value AS tiny_meta_value
 			FROM $wpdb->posts
-			LEFT JOIN $wpdb->postmeta
+			INNER JOIN $wpdb->postmeta
 				ON $wpdb->posts.ID = $wpdb->postmeta.post_id
-			LEFT JOIN $wpdb->postmeta AS wp_postmeta_file
+				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
+			INNER JOIN $wpdb->postmeta AS wp_postmeta_file
 				ON $wpdb->posts.ID = wp_postmeta_file.post_id
 					AND wp_postmeta_file.meta_key = '_wp_attached_file'
 			LEFT JOIN $wpdb->postmeta AS wp_postmeta_tiny
@@ -90,8 +93,7 @@ class Tiny_Bulk_Optimization {
 					$wpdb->posts.post_mime_type = 'image/png' OR
 					$wpdb->posts.post_mime_type = 'image/webp'
 				)
-				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
-			GROUP BY unique_attachment_name
+			GROUP BY wp_postmeta_file.meta_value
 			ORDER BY ID DESC
 			LIMIT " . self::PAGING_SIZE;
 
