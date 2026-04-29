@@ -184,15 +184,15 @@ class Tiny_Helpers {
 	* @param string $needle   The substring to search for in the `$haystack`.
 	* @return bool True if `$haystack` starts with `$needle`, otherwise false.
 	*/
-	public static function str_starts_with($haystack, $needle) {
-		if ( function_exists('str_starts_with') ) {
-			return str_starts_with($haystack, $needle);
+	public static function str_starts_with( $haystack, $needle ) {
+		if ( function_exists( 'str_starts_with' ) ) {
+			return str_starts_with( $haystack, $needle );
 		}
 
 		if ( '' === $needle ) {
 			return true;
 		}
-		
+
 		return 0 === strpos( $haystack, $needle );
 	}
 }
