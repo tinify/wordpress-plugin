@@ -14,10 +14,7 @@ export async function uploadMedia(page: Page, file: string): Promise<UploadMedia
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
   await Promise.all([
-    page.waitForResponse(response =>
-      response.url().includes('/wp-admin/async-upload.php') ||
-      response.url().includes('/wp-admin/upload.php')
-    ),
+    page.waitForURL('**upload.php**', { waitUntil: 'load' }),
     page.locator('#html-upload').click(),
   ]);
 
