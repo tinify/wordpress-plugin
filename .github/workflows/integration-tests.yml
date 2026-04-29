@@ -17,11 +17,11 @@ jobs:
         include:
           - { wp: 46, php: 56 }
           - { wp: 46, php: 70 }
-          - { wp: 57, php: 73 }
           - { wp: 60, php: 74 }
           - { wp: 63, php: 80 }
           - { wp: 67, php: 82 }
           - { wp: 69, php: 83 }
+          - { wp: 70, php: 84 }
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
