@@ -67,6 +67,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		add_action( 'delete_attachment', $this->get_method( 'clean_attachment' ), 10, 2 );
 
+		add_action(
+			'tiny_image_before_compression',
+			$this->get_method( 'backup_original_image' ),
+			10,
+			1
+		);
+
 		load_plugin_textdomain(
 			self::NAME,
 			false,
@@ -861,6 +868,64 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image->delete_converted_image();
 	}
 
+	/**
+	 * Creates a backup of an image size before compression.
+	 *
+	 * Hooked to the `tiny_image_before_compression` action. Only creates
+	 * a backup for the original image size when the backup setting is enabled.
+	 * The backup is stored under {upload_dir}/tinify_backup/, preserving the
+	 * original path structure relative to the uploads base directory.
+	 *
+	 * relative path conversion from "_wp_relative_upload_path".
+	 *
+	 * @since 3.6.8
+	 *
+	 * @param int       $attachment_id The ID of the attachment
+	 * @return bool             return true on backup created
+	 */
+	public function backup_original_image( $attachment_id ) {
+		if ( ! $this->settings->get_backup_enabled() ) {
+			return false;
+		}
+
+		$tiny_image     = new Tiny_Image( $this->settings, $attachment_id );
+		$original_image = $tiny_image->get_image_size();
+
+		$file_path  = $original_image->filename;
+		$upload_dir = wp_upload_dir();
+		if ( Tiny_Helpers::str_starts_with( $file_path, $upload_dir['basedir'] ) ) {
+			$file_path = str_replace( $upload_dir['basedir'], '', $original_image->filename );
+			$file_path = ltrim( $file_path, '/' );
+		}
+
+		$upload_base = trailingslashit( $upload_dir['basedir'] );
+		$backup_file = $upload_base . 'tinify_backup/' . $file_path;
+
+		if ( file_exists( $backup_file ) ) {
+			return false;
+		}
+
+		$backup_dir = dirname( $backup_file );
+
+		if ( ! wp_mkdir_p( $backup_dir ) ) {
+			return false;
+		}
+
+		return copy( $original_image->filename, $backup_file );
+	}
+
+	public static function request_review() {
+		$review_url    =
+			'https://wordpress.org/support/plugin/tiny-compress-images/reviews/#new-post';
+		$review_block  = esc_html__( 'Enjoying TinyPNG?', 'tiny-compress-images' );
+		$review_block .= ' ';
+		$review_block .= sprintf(
+			'<a href="%s" target="_blank">%s</a>',
+			esc_url( $review_url ),
+			esc_html__( 'Write a review', 'tiny-compress-images' )
+		);
+		return $review_block;
+	}
 
 	public function mark_image_as_compressed() {
 		$response = $this->validate_ajax_attachment_request();

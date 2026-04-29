@@ -282,6 +282,14 @@ class WordPressStubs
 			->at($dir);
 	}
 
+	/**
+	 * Creates images on the virtual disk for testing
+	 * @param null|array $sizes Array of size name (array key) => bytes to create; each file will be named "$name-<size name>.png"
+	 * @param int $original_size Bytes of image
+	 * @param string $path Path to image
+	 * @param string $name Name of the image
+	 * @return void
+	 */
 	public function createImages($sizes = null, $original_size = 12345, $path = '14/01', $name = 'test')
 	{
 		vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
@@ -309,6 +317,13 @@ class WordPressStubs
 		}
 	}
 
+	/**
+	 * creates image meta data for testing
+	 *
+	 * @param string $path directory of the file in UPLOAD_DIR
+	 * @param string $name name of the file without extension
+	 * @return array metadata array
+	 */
 	public function getTestMetadata($path = '14/01', $name = 'test')
 	{
 		$metadata = array(
@@ -338,6 +353,7 @@ class WordPressStubs
 	 */
 	public static function assertHook($hookname, $expected_args = null)
 	{
+
 		$found = self::findHook($hookname, $expected_args);
 
 		$message = is_null($expected_args)
@@ -366,7 +382,7 @@ class WordPressStubs
 
 	private static function findHook($hookname, $expected_args = null)
 	{
-		$hooks = array('add_action', 'add_filter');
+		$hooks = array('add_action', 'add_filter', 'do_action', 'apply_filters');
 		$found = false;
 
 		foreach ($hooks as $method) {
@@ -425,7 +441,7 @@ class WordPressMocks
 	 */
 	public function wp_mkdir_p($dir)
 	{
-		mkdir($dir, 0755, true);
+		return mkdir($dir, 0755, true) || is_dir($dir);
 	}
 
 	/**
@@ -486,9 +502,7 @@ class WordPressMocks
 	 *
 	 * @return void
 	 */
-	public function update_option()
-	{
-	}
+	public function update_option() {}
 
 	/**
 	 * Mocked function for https://developer.wordpress.org/reference/functions/check_ajax_referer/
@@ -560,7 +574,7 @@ class WordPressMocks
 	{
 		return $text;
 	}
-	
+
 	/**
 	 * Mocked function for https://developer.wordpress.org/reference/functions/insert_with_markers/
 	 *
@@ -570,16 +584,16 @@ class WordPressMocks
 	{
 		$content = file_exists($filename) ? file_get_contents($filename) : '';
 		$insertion = is_array($insertion) ? implode("\n", $insertion) : $insertion;
-		
+
 		$start = "# BEGIN {$marker}";
 		$end = "# END {$marker}";
-	
+
 		$content = preg_replace('/' . preg_quote($start, '/') . '.*?' . preg_quote($end, '/') . '\s*/s', '', $content);
-	
+
 		if ($insertion) {
 			$content = "{$start}\n{$insertion}\n{$end}\n" . ltrim($content);
 		}
-	
+
 		return file_put_contents($filename, trim($content) . "\n") !== false;
 	}
 }

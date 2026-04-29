@@ -306,4 +306,5 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		// second call should be only with image/webp because first call was a image/webp
 		$this->assertEquals(array('image/webp'), $compress_calls[1]['convert_to']);
 	}
+
 }

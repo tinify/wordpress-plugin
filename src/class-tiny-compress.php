@@ -96,7 +96,7 @@ abstract class Tiny_Compress {
 	/**
 	 * Compresses a single file
 	 *
-	 * @param [type] $file
+	 * @param string $file path to file
 	 * @param array $resize_opts
 	 * @param array $preserve_opts
 	 * @param array{ string } conversion options
