@@ -3,13 +3,23 @@ import { Page } from '@playwright/test';
 
 export const BASE_URL = `http://localhost:${process.env.WORDPRESS_PORT}`;
 
-export async function uploadMedia(page: Page, file: string): Promise<string> {
+interface UploadMediaResponse {
+  imageURL: string;
+  attachmentID: string;
+}
+export async function uploadMedia(page: Page, file: string): Promise<UploadMediaResponse> {
   await page.goto('/wp-admin/media-new.php?browser-uploader');
   const fileChooserPromise = page.waitForEvent('filechooser');
   await page.getByLabel('Upload').click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, `../fixtures/${file}`));
-  await Promise.all([page.waitForURL('**/wp-admin/upload.php**', { waitUntil: 'load' }), page.locator('#html-upload').click()]);
+  await Promise.all([
+    page.waitForResponse(response =>
+      response.url().includes('/wp-admin/async-upload.php') ||
+      response.url().includes('/wp-admin/upload.php')
+    ),
+    page.locator('#html-upload').click(),
+  ]);
 
   await page.goto('/wp-admin/upload.php?mode=list');
 
@@ -20,9 +30,16 @@ export async function uploadMedia(page: Page, file: string): Promise<string> {
 
   const rowID = await row.getAttribute('id');
   const attachmentID = rowID?.split('-')[1];
+  if (!attachmentID) {
+    throw Error('unable to find attachmentID');
+  }
   await Promise.all([page.waitForURL(new RegExp(`/wp-admin/post\\.php\\?post=${attachmentID}&action=edit$`), { waitUntil: 'load' }), page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`)]);
 
-  return page.locator('input[name="attachment_url"]').inputValue();
+  const imageURL = await page.locator('input[name="attachment_url"]').inputValue();
+  return {
+    imageURL,
+    attachmentID
+  };
 }
 
 export async function clearMediaLibrary(page: Page) {
