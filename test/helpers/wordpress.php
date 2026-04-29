@@ -353,6 +353,35 @@ class WordPressStubs
 	 */
 	public static function assertHook($hookname, $expected_args = null)
 	{
+
+		$found = self::findHook($hookname, $expected_args);
+
+		$message = is_null($expected_args)
+			? sprintf('Expected hook "%s" to be called.', $hookname)
+			: sprintf('Expected hook "%s" to be called with the given arguments.', $hookname);
+
+		Assert::assertTrue($found, $message);
+	}
+
+	/**
+	 * Testhelper to assert a hook has NOT been registered.
+	 *
+	 * @param string $hookname name of the filter or action
+	 * @param mixed  $expected_args arguments to the hook
+	 */
+	public static function assertNotHook($hookname, $expected_args = null)
+	{
+		$found = self::findHook($hookname, $expected_args);
+
+		$message = is_null($expected_args)
+			? sprintf('Expected hook "%s" NOT to be called.', $hookname)
+			: sprintf('Expected hook "%s" NOT to be called with the given arguments.', $hookname);
+
+		Assert::assertFalse($found, $message);
+	}
+
+	private static function findHook($hookname, $expected_args = null)
+	{
 		$hooks = array('add_action', 'add_filter', 'do_action', 'apply_filters');
 		$found = false;
 
@@ -378,11 +407,7 @@ class WordPressStubs
 			}
 		}
 
-		$message = is_null($expected_args)
-			? sprintf('Expected hook "%s" to be called.', $hookname)
-			: sprintf('Expected hook "%s" to be called with the given arguments.', $hookname);
-
-		Assert::assertTrue($found, $message);
+		return $found;
 	}
 }
 
@@ -477,9 +502,7 @@ class WordPressMocks
 	 *
 	 * @return void
 	 */
-	public function update_option()
-	{
-	}
+	public function update_option() {}
 
 	/**
 	 * Mocked function for https://developer.wordpress.org/reference/functions/check_ajax_referer/
@@ -551,7 +574,7 @@ class WordPressMocks
 	{
 		return $text;
 	}
-	
+
 	/**
 	 * Mocked function for https://developer.wordpress.org/reference/functions/insert_with_markers/
 	 *
@@ -561,16 +584,16 @@ class WordPressMocks
 	{
 		$content = file_exists($filename) ? file_get_contents($filename) : '';
 		$insertion = is_array($insertion) ? implode("\n", $insertion) : $insertion;
-		
+
 		$start = "# BEGIN {$marker}";
 		$end = "# END {$marker}";
-	
+
 		$content = preg_replace('/' . preg_quote($start, '/') . '.*?' . preg_quote($end, '/') . '\s*/s', '', $content);
-	
+
 		if ($insertion) {
 			$content = "{$start}\n{$insertion}\n{$end}\n" . ltrim($content);
 		}
-	
+
 		return file_put_contents($filename, trim($content) . "\n") !== false;
 	}
 }

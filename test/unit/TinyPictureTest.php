@@ -367,6 +367,21 @@ class Tiny_Picture_Test extends Tiny_TestCase
     }
 
     /**
+     * sizes attribute on <img> also have to be set  to <source> elements
+     */
+    public function test_img_sizes_attribute_is_propagated_to_sources() {
+        $this->wp->createImage(1000, '2026/04', 'test-320w.webp');
+        $this->wp->createImage(1000, '2026/04', 'test-640w.webp');
+        $this->wp->createImage(1000, '2026/04', 'test.webp');
+
+        $input = '<img srcset="/wp-content/uploads/2026/04/test-320w.jpg 320w, /wp-content/uploads/2026/04/test-640w.jpg 640w" sizes="(max-width: 600px) 320px, 640px" src="/wp-content/uploads/2026/04/test.jpg">';
+        $expected = '<picture><source srcset="/wp-content/uploads/2026/04/test-320w.webp 320w, /wp-content/uploads/2026/04/test-640w.webp 640w" sizes="(max-width: 600px) 320px, 640px" type="image/webp" /><img srcset="/wp-content/uploads/2026/04/test-320w.jpg 320w, /wp-content/uploads/2026/04/test-640w.jpg 640w" sizes="(max-width: 600px) 320px, 640px" src="/wp-content/uploads/2026/04/test.jpg"></picture>';
+        $output = $this->tiny_picture->replace_sources($input);
+
+        $this->assertSame($expected, $output);
+    }
+
+    /**
      * Images with only a srcset are valid and will be wrapped
      */
     public function test_image_with_only_srcset() {
