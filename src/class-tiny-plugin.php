@@ -875,7 +875,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * a backup for the original image size when the backup setting is enabled.
 	 * The backup is stored under {upload_dir}/tinify_backup/, preserving the
 	 * original path structure relative to the uploads base directory.
-	 * 
+	 *
 	 * relative path conversion from "_wp_relative_upload_path".
 	 *
 	 * @since 3.6.8
@@ -891,15 +891,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image     = new Tiny_Image( $this->settings, $attachment_id );
 		$original_image = $tiny_image->get_image_size();
 
-		$file_path = $original_image->filename;
-		$upload_dir    = wp_upload_dir();
+		$file_path  = $original_image->filename;
+		$upload_dir = wp_upload_dir();
 		if ( str_starts_with( $file_path, $upload_dir['basedir'] ) ) {
 			$file_path = str_replace( $upload_dir['basedir'], '', $original_image->filename );
-			$file_path = ltrim($file_path, '/' );
+			$file_path = ltrim( $file_path, '/' );
 		}
 
-		$upload_base   = trailingslashit( $upload_dir['basedir'] );
-		$backup_file   = $upload_base . 'tinify_backup/' . $file_path;
+		$upload_base = trailingslashit( $upload_dir['basedir'] );
+		$backup_file = $upload_base . 'tinify_backup/' . $file_path;
 
 		if ( file_exists( $backup_file ) ) {
 			return false;
