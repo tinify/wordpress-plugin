@@ -893,7 +893,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$file_path  = $original_image->filename;
 		$upload_dir = wp_upload_dir();
-		if ( str_starts_with( $file_path, $upload_dir['basedir'] ) ) {
+		if ( Tiny_Helpers::str_starts_with( $file_path, $upload_dir['basedir'] ) ) {
 			$file_path = str_replace( $upload_dir['basedir'], '', $original_image->filename );
 			$file_path = ltrim( $file_path, '/' );
 		}

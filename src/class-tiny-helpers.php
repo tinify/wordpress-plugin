@@ -171,4 +171,28 @@ class Tiny_Helpers {
 
 		return $wp_filesystem;
 	}
+
+	/**
+	* Polyfill for `str_starts_with()` function added in PHP 8.0.
+	*
+	* Performs a case-sensitive check indicating if
+	* the haystack begins with needle.
+	*
+	* @since 5.9.0
+	*
+	* @param string $haystack The string to search in.
+	* @param string $needle   The substring to search for in the `$haystack`.
+	* @return bool True if `$haystack` starts with `$needle`, otherwise false.
+	*/
+	public static function str_starts_with($haystack, $needle) {
+		if ( function_exists('str_starts_with') ) {
+			return str_starts_with($haystack, $needle);
+		}
+
+		if ( '' === $needle ) {
+			return true;
+		}
+		
+		return 0 === strpos( $haystack, $needle );
+	}
 }
