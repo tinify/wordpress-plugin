@@ -242,7 +242,13 @@ class Tiny_Image_Size {
 
 	public function delete_converted_image_size() {
 		if ( $this->converted_image_exists() ) {
-			unlink( $this->meta['convert']['path'] );
+			$upload_dir = wp_upload_dir();
+			$convert_real_path = realpath( $this->meta['convert']['path'] );
+			$real_basedir = realpath( $upload_dir['basedir'] );
+
+			if ( $convert_real_path && str_starts_with( $convert_real_path, $real_basedir ) ) {
+				unlink( $convert_real_path );
+			}
 		}
 	}
 
