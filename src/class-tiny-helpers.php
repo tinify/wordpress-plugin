@@ -171,7 +171,7 @@ class Tiny_Helpers {
 
 		return $wp_filesystem;
 	}
-	
+
 	/**
 	* Polyfill for `str_starts_with()` function added in PHP 8.0.
 	*

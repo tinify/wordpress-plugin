@@ -242,7 +242,7 @@ class Tiny_Image_Size {
 
 	/**
 	 * Deletes the converted image file for this image size.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function delete_converted_image_size() {
@@ -255,7 +255,11 @@ class Tiny_Image_Size {
 
 		if (
 			$convert_real_path &&
-			Tiny_Helpers::str_starts_with( $convert_real_path, trailingslashit( $real_basedir ) ) ) {
+			Tiny_Helpers::str_starts_with(
+				$convert_real_path,
+				trailingslashit( $real_basedir )
+			)
+		) {
 			unlink( $convert_real_path );
 		}
 	}
