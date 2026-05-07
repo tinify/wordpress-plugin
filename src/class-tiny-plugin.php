@@ -861,6 +861,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image->delete_converted_image();
 	}
 
+	/**
+	 * Runs on uninstall
+	 *
+	 * @return void
+	 */
+	public static function uninstall() {
+		Tiny_Apache_Rewrite::uninstall_rules();
+	}
 
 	public function mark_image_as_compressed() {
 		$response = $this->validate_ajax_attachment_request();

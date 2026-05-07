@@ -38,3 +38,8 @@ if ( Tiny_PHP::client_supported() ) {
 }
 
 $tiny_plugin = new Tiny_Plugin();
+
+register_uninstall_hook(
+	__FILE__,
+	array( 'Tiny_Plugin', 'uninstall' )
+);

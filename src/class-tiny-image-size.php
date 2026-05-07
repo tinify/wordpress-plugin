@@ -240,9 +240,27 @@ class Tiny_Image_Size {
 		return $this->_duplicate_of_size;
 	}
 
+	/**
+	 * Deletes the converted image file for this image size.
+	 *
+	 * @return void
+	 */
 	public function delete_converted_image_size() {
-		if ( $this->converted_image_exists() ) {
-			unlink( $this->meta['convert']['path'] );
+		if ( ! $this->converted_image_exists() ) {
+			return;
+		}
+		$upload_dir        = wp_upload_dir();
+		$convert_real_path = realpath( $this->meta['convert']['path'] );
+		$real_basedir      = realpath( $upload_dir['basedir'] );
+
+		if (
+			$convert_real_path &&
+			Tiny_Helpers::str_starts_with(
+				$convert_real_path,
+				trailingslashit( $real_basedir )
+			)
+		) {
+			unlink( $convert_real_path );
 		}
 	}
 
