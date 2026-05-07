@@ -242,6 +242,100 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 	}
 
 	/**
+	 * Deletes the converted file when it exists within the upload directory.
+	 * sidenote: we cannot use vfs as realpath prevents virtual file paths.
+	 */
+	public function test_delete_converted_image_size_deletes_file_within_upload_dir() {
+		$tmp_dir    = sys_get_temp_dir() . '/tiny-test-' . uniqid();
+		$upload_dir = $tmp_dir . '/uploads';
+		$file_path  = $upload_dir . '/image.webp';
+		mkdir( $upload_dir, 0755, true );
+		file_put_contents( $file_path, 'webp content' );
+
+		$this->wp->stub( 'wp_upload_dir', function () use ( $upload_dir ) {
+			return array( 'basedir' => $upload_dir );
+		} );
+
+		$image_size                  = new Tiny_Image_Size( $file_path );
+		$image_size->meta['convert'] = array(
+			'path' => $file_path,
+			'type' => 'image/webp',
+			'size' => 100,
+		);
+
+		$image_size->delete_converted_image_size();
+
+		$this->assertFalse( file_exists( $file_path ) );
+		rmdir( $upload_dir );
+		rmdir( $tmp_dir );
+	}
+
+	/**
+	 * Does not delete a file that lives outside the upload directory.
+	 */
+	public function test_delete_converted_image_size_does_not_delete_file_outside_upload_dir() {
+		$tmp_dir     = sys_get_temp_dir() . '/tiny-test-' . uniqid();
+		$upload_dir  = $tmp_dir . '/uploads';
+		$outside_dir = $tmp_dir . '/outside';
+		$file_path   = $outside_dir . '/wp-config.php';
+		mkdir( $upload_dir, 0755, true );
+		mkdir( $outside_dir, 0755, true );
+		file_put_contents( $file_path, 'my wp config' );
+
+		$this->wp->stub( 'wp_upload_dir', function () use ( $upload_dir ) {
+			return array( 'basedir' => $upload_dir );
+		} );
+
+		$image_size                  = new Tiny_Image_Size( $file_path );
+		$image_size->meta['convert'] = array(
+			'path' => $file_path,
+			'type' => 'image/webp',
+			'size' => 100,
+		);
+
+		$image_size->delete_converted_image_size();
+
+		$this->assertTrue( file_exists( $file_path ), 'file outside upload dir should not be deleted');
+		unlink( $file_path );
+		rmdir( $outside_dir );
+		rmdir( $upload_dir );
+		rmdir( $tmp_dir );
+	}
+
+	/**
+	 * Does not delete a file in a sibling directory whose name starts with the upload dir name.
+	 * This validates the trailingslashit() protection against sibling-directory bypass.
+	 */
+	public function test_delete_converted_image_size_does_not_delete_file_in_sibling_directory() {
+		$tmp_dir     = sys_get_temp_dir() . '/tiny-test-' . uniqid();
+		$upload_dir  = $tmp_dir . '/uploads';
+		$sibling_dir = $tmp_dir . '/uploads-evil';
+		$file_path   = $sibling_dir . '/shell.webp';
+		mkdir( $upload_dir, 0755, true );
+		mkdir( $sibling_dir, 0755, true );
+		file_put_contents( $file_path, 'malicious content' );
+
+		$this->wp->stub( 'wp_upload_dir', function () use ( $upload_dir ) {
+			return array( 'basedir' => $upload_dir );
+		} );
+
+		$image_size                  = new Tiny_Image_Size( $file_path );
+		$image_size->meta['convert'] = array(
+			'path' => $file_path,
+			'type' => 'image/webp',
+			'size' => 100,
+		);
+
+		$image_size->delete_converted_image_size();
+
+		$this->assertTrue( file_exists( $file_path ) );
+		unlink( $file_path );
+		rmdir( $sibling_dir );
+		rmdir( $upload_dir );
+		rmdir( $tmp_dir );
+	}
+
+	/**
 	 * Users can still mark an image as converted when compression has already been done.
 	 */
 	public function test_when_compressed_but_unconverted_will_add_convert_meta()
