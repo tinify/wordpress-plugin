@@ -130,4 +130,44 @@ public function test_is_pagebuilder_request_returns_false_for_non_pagebuilder_ke
     $this->assertFalse(Tiny_Helpers::is_pagebuilder_request());
     $_GET = array();
 }
+
+public function test_str_starts_with_returns_true_when_haystack_starts_with_needle()
+{
+    $this->assertTrue(Tiny_Helpers::str_starts_with('hello world', 'hello'));
+}
+
+public function test_str_starts_with_returns_false_when_needle_is_not_at_start()
+{
+    $this->assertFalse(Tiny_Helpers::str_starts_with('hello world', 'world'));
+}
+
+public function test_str_starts_with_returns_true_for_empty_needle()
+{
+    $this->assertTrue(Tiny_Helpers::str_starts_with('hello', ''));
+}
+
+public function test_str_starts_with_returns_true_when_both_are_empty()
+{
+    $this->assertTrue(Tiny_Helpers::str_starts_with('', ''));
+}
+
+public function test_str_starts_with_returns_false_when_needle_is_longer_than_haystack()
+{
+    $this->assertFalse(Tiny_Helpers::str_starts_with('hi', 'hello'));
+}
+
+public function test_str_starts_with_is_case_sensitive()
+{
+    $this->assertFalse(Tiny_Helpers::str_starts_with('Hello', 'hello'));
+}
+
+public function test_str_starts_with_returns_true_for_path_within_upload_dir()
+{
+    $this->assertTrue(Tiny_Helpers::str_starts_with('/var/www/uploads/image.webp', '/var/www/uploads/'));
+}
+
+public function test_str_starts_with_returns_false_for_sibling_directory_with_shared_prefix()
+{
+    $this->assertFalse(Tiny_Helpers::str_starts_with('/var/www/uploads-evil/shell.webp', '/var/www/uploads/'));
+}
 }

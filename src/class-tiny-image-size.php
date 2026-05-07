@@ -255,7 +255,7 @@ class Tiny_Image_Size {
 
 		if (
 			$convert_real_path &&
-			str_starts_with( $convert_real_path, trailingslashit( $real_basedir ) ) ) {
+			Tiny_Helpers::str_starts_with( $convert_real_path, trailingslashit( $real_basedir ) ) ) {
 			unlink( $convert_real_path );
 		}
 	}
