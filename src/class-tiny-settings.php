@@ -98,7 +98,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} catch ( Tiny_Exception $e ) {
 			$this->notices->show(
 				'compressor_exception',
-				esc_html( $e->getMessage(), 'tiny-compress-images' ),
+				esc_html( $e->getMessage() ),
 				'error',
 				false
 			);
@@ -379,7 +379,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $height > 0 ) {
 			$options['height'] = $height;
 		}
-		return sizeof( $options ) >= 2 ? $options : false;
+		return count( $options ) >= 2 ? $options : false;
 	}
 
 	/**
@@ -687,8 +687,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 
 		$id    = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
-		$label = esc_html( $label, 'tiny-compress-images' );
-		$desc  = esc_html( $desc, 'tiny-compress-images' );
+		$label = esc_html( $label );
+		$desc  = esc_html( $desc );
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
 			'" value="' . $value . '" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
