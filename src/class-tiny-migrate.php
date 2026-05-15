@@ -97,6 +97,8 @@ class Tiny_Migrate {
 			return false;
 		}
 
-		return true;
+		// A return value of 0 means there was nothing to migrate, which is valid
+ 		// for fresh installs or databases that were already migrated.
+		return false !== $result;;
 	}
 }
