@@ -9,7 +9,11 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 	public function set_up()
 	{
 		parent::set_up();
-		$this->wp->stub('update', 1);
+		// migration test logs error in stdout so swallow error logs
+		ini_set('error_log', '/dev/null');
+		$this->wp->stub('update', function() {
+			return 1;
+		});
 	}
 
 	/**
@@ -69,10 +73,7 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 
 		Tiny_Migrate::run();
 
-		$option_calls = $this->wp->getCalls('update_option');
-		$version_updates = array_filter($option_calls, function($call) { return $call[0] === Tiny_Migrate::DB_VERSION_OPTION; });
-
-		$this->assertEmpty($version_updates, 'Should not re-save the version if already current.');
+		$this->assertEmpty($this->wp->getCalls('update_option'), 'Should not call update_option at all when version is already current.');
 	}
 
 	public function test_run_sets_backoff_transient_when_migration_fails()

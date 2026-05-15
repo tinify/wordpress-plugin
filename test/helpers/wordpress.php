@@ -153,10 +153,7 @@ class WordPressStubs
 		}
 		// Allow explicit stubs to override defaults/behaviors
 		if (isset($this->stubs[$method]) && $this->stubs[$method]) {
-			if (is_callable($this->stubs[$method])) {
-				return call_user_func_array($this->stubs[$method], $args);
-			}
-			return $this->stubs[$method];
+			return call_user_func_array($this->stubs[$method], $args);
 		}
 		if ('add_filter' === $method) {
 			$tag = isset($args[0]) ? $args[0] : '';
