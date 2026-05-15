@@ -38,7 +38,7 @@ if ( Tiny_PHP::client_supported() ) {
 	require dirname( __FILE__ ) . '/src/class-tiny-compress-fopen.php';
 }
 
-Tiny_Migrate::run();
+add_action( 'plugins_loaded', array( 'Tiny_Migrate', 'run' ) );
 
 $tiny_plugin = new Tiny_Plugin();
 
