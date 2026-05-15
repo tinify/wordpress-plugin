@@ -98,7 +98,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			}
 
 			throw new Tiny_Exception(
-				$err->getMessage(),
+				esc_html( $err->getMessage() ),
 				get_class( $err ),
 				$err->status
 			);
@@ -165,7 +165,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			);
 
 			throw new Tiny_Exception(
-				$err->getMessage(),
+				esc_html( $err->getMessage() ),
 				get_class( $err ),
 				$err->status
 			);
@@ -184,7 +184,7 @@ class Tiny_Compress_Client extends Tiny_Compress {
 			$this->last_error_code = $err->status;
 
 			throw new Tiny_Exception(
-				$err->getMessage(),
+				esc_html( $err->getMessage() ),
 				get_class( $err ),
 				$err->status
 			);
