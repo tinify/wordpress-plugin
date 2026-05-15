@@ -22,7 +22,7 @@
  * Handles sequential database migrations for the TinyPNG plugin.
  *
  * Each migration method targets a specific version and is only executed
- * once per site, tracked via the `tinypng_db_version` option.
+ * once per site, tracked via the `DB_VERSION_OPTION` constant.
  *
  * @since 3.7.0
  */
