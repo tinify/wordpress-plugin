@@ -72,7 +72,7 @@ class Tiny_Logger {
 			'pre_update_option_tinypng_logging_enabled',
 			'Tiny_Logger::on_save_log_enabled',
 			10,
-			3
+			2
 		);
 	}
 
@@ -113,7 +113,7 @@ class Tiny_Logger {
 	 *
 	 * @return bool true if enabled
 	 */
-	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
+	public static function on_save_log_enabled( $log_enabled, $old ) {
 		$instance              = self::get_instance();
 		$was_enabled           = 'on' === $old;
 		$is_now_enabled        = 'on' === $log_enabled;
