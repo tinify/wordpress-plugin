@@ -62,7 +62,7 @@ class Tiny_AS3CF {
 	 * Registers hooks required for the AS3CF integration.
 	 */
 	public function add_hooks() {
-		add_action( 'as3cf_pre_upload_object', array( $this, 'as3cf_before_offload' ), 10, 2 );
+		add_action( 'as3cf_pre_upload_object', array( $this, 'as3cf_before_offload' ), 10, 1 );
 	}
 
 	/**
@@ -72,10 +72,9 @@ class Tiny_AS3CF {
 	 *
 	 * Will handle file before file is possibly offloaded
 	 *
-	 * @param Item  $as3cf_item
-	 * @param array $args
+	 * @param mixed $as3cf_item
 	 */
-	public function as3cf_before_offload( $as3cf_item, $args ) {
+	public function as3cf_before_offload( $as3cf_item ) {
 		if ( ! $this->tiny_settings->auto_compress_enabled() ) {
 			return;
 		}
