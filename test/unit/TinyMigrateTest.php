@@ -51,6 +51,18 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		$this->assertOptionWasUpdated(Tiny_Migrate::DB_VERSION_OPTION, Tiny_Migrate::DB_VERSION);
 	}
 
+	public function test_run_does_not_update_db_version_when_migration_fails()
+	{
+		$this->wp->stub('update', function() { return false; });
+
+		Tiny_Migrate::run();
+
+		$option_calls = $this->wp->getCalls('update_option');
+		$version_updates = array_filter($option_calls, fn($call) => $call[0] === Tiny_Migrate::DB_VERSION_OPTION);
+
+		$this->assertEmpty($version_updates, 'Should not update DB version when migration fails.');
+	}
+
 	public function test_run_does_not_update_option_if_unnecessary()
 	{
 		$this->wp->addOption(Tiny_Migrate::DB_VERSION_OPTION, Tiny_Migrate::DB_VERSION);
