@@ -56,6 +56,7 @@ class WordPressStubs
 	private $calls;
 	private $stubs;
 	private $filters;
+	public $postmeta = 'wp_postmeta';
 
 	public function __construct($vfs)
 	{
@@ -98,6 +99,7 @@ class WordPressStubs
 		$this->addMethod('get_locale');
 		$this->addMethod('wp_timezone_string');
 		$this->addMethod('update_option');
+		$this->addMethod('update');
 		$this->addMethod('check_ajax_referer');
 		$this->addMethod('wp_json_encode');
 		$this->addMethod('wp_send_json_error');
@@ -144,7 +146,10 @@ class WordPressStubs
 		}
 		// Allow explicit stubs to override defaults/behaviors
 		if (isset($this->stubs[$method]) && $this->stubs[$method]) {
-			return call_user_func_array($this->stubs[$method], $args);
+			if (is_callable($this->stubs[$method])) {
+				return call_user_func_array($this->stubs[$method], $args);
+			}
+			return $this->stubs[$method];
 		}
 		if ('add_filter' === $method) {
 			$tag = isset($args[0]) ? $args[0] : '';
