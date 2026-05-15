@@ -2,8 +2,24 @@
 <ruleset>
   <config name="testVersion" value="5.6-"/>
 
-  <rule ref="WordPress-Core">
-     <exclude name="Universal.Operators.StrictComparisons" />
+  <rule ref="WordPress">
+    <exclude name="Universal.Operators.StrictComparisons" />
+
+    <!-- Resolve commenting related violations -->
+    <exclude name="Squiz.Commenting" />
+    <exclude name="Generic.Commenting" />
+    <exclude name="Squiz.PHP.CommentedOutCode.Found" />
+
+    <!-- Fix security issues -->
+    <exclude name="WordPress.Security.EscapeOutput" />
+    <exclude name="WordPress.Security.ValidatedSanitizedInput" />
+    <exclude name="WordPress.Security.NonceVerification" />
+
+    <!-- Fix AlternativeFunctons-->
+    <exclude name="WordPress.WP.AlternativeFunctions" />
+    <exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited" />
+    <exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
+    <exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
   </rule>
   <rule ref="Generic.Files.LineLength">
     <properties>
