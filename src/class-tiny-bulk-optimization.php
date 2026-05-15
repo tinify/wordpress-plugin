@@ -42,7 +42,7 @@ class Tiny_Bulk_Optimization {
 				if ( isset( $last_image['ID'] ) ) {
 					$last_image_id = $last_image['ID'];
 				}
-			} while ( sizeof( $result ) == self::PAGING_SIZE );
+			} while ( count( $result ) == self::PAGING_SIZE );
 		} else {
 			$stats = self::populate_optimization_statistics( $settings, $result, $stats );
 		}
@@ -104,7 +104,7 @@ class Tiny_Bulk_Optimization {
 		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 		$conversion_enabled  = $settings->get_conversion_enabled();
 
-		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
+		for ( $i = 0; $i < count( $result ); $i++ ) {
 			$wp_metadata   = unserialize( (string) $result[ $i ]['meta_value'] );
 			$tiny_metadata = isset( $result[ $i ]['tiny_meta_value'] ) ?
 				unserialize( (string) $result[ $i ]['tiny_meta_value'] ) :
