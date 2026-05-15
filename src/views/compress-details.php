@@ -105,7 +105,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<?php } ?>
 		<?php if ( $error ) { ?>
 			<span class="message error_message">
-				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error, 'tiny-compress-images' ); ?>
+				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error ); ?>
 			</span>
 			<br>
 		<?php } ?>
