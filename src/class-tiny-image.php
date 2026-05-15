@@ -473,7 +473,7 @@ class Tiny_Image {
 
 	public function get_statistics( $active_sizes, $active_tinify_sizes ) {
 		if ( $this->statistics ) {
-			error_log( 'Strangely the image statistics are asked for again.' );
+			Tiny_Logger::error( 'Strangely the image statistics are asked for again.' );
 			return $this->statistics;
 		}
 
