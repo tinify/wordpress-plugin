@@ -64,8 +64,8 @@ class Tiny_Migrate {
 			return;
 		}
 
-		if ( $stored_version < 1 ) {
-			self::migrate_meta_key_to_private();
+		if ( $stored_version < 1 && ! self::migrate_meta_key_to_private() ) {
+			return;
 		}
 
 		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
