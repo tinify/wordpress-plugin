@@ -50,7 +50,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
 							echo ' ';
 							esc_html_e( 'You do not seem to have uploaded any JPEG, PNG or WebP images yet.', 'tiny-compress-images' );
-						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
+						} elseif ( 0 == count( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimized-sizes'] ) {
 							/* translators: %s: friendly user name */
@@ -115,7 +115,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 								<div class="tooltip">
 									<span class="dashicons dashicons-info"></span>
 									<div class="tip">
-										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
+										<?php if ( $stats['uploaded-images'] > 0 && count( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
 											<p>
 												<?php
 												printf(
@@ -132,12 +132,12 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 										<?php } ?>
 										<p>
 											<?php
-											if ( 0 == sizeof( $active_tinify_sizes ) ) {
+											if ( 0 == count( $active_tinify_sizes ) ) {
 												esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 											} else {
 												esc_html_e( 'These sizes are currently activated for optimization:', 'tiny-compress-images' );
 												echo '<ul>';
-												for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
+												for ( $i = 0; $i < count( $active_tinify_sizes ); ++$i ) {
 													$name = $active_tinify_sizes[ $i ];
 													if ( '0' == $name ) {
 														echo '<li>- ' . esc_html__( 'Original image', 'tiny-compress-images' ) . '</li>';
@@ -150,7 +150,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											?>
 										</p>
 										<p>
-										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
+										<?php if ( count( $active_tinify_sizes ) > 0 ) { ?>
 											<?php
 											printf(
 												wp_kses(
