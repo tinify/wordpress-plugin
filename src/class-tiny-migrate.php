@@ -29,13 +29,15 @@
 class Tiny_Migrate {
 
 	/**
-	 * The target version for the database. Not the same as plug-in version.
-	 * This will be incremented on every new migration.
+	 * The current database schema version.
+	 *
+	 * Increment this integer by 1 each time a new migration is added.
+	 * This is independent of the plugin version.
 	 *
 	 * @since 3.7.0
-	 * @var string
+	 * @var int
 	 */
-	const DB_VERSION = '3.7.0';
+	const DB_VERSION = 1;
 
 	/**
 	 * WordPress option key used to track the applied database version.
@@ -57,13 +59,13 @@ class Tiny_Migrate {
 	 * @return void
 	 */
 	public static function run() {
-		$stored_version = get_option( self::DB_VERSION_OPTION, '0' );
+		$stored_version = (int) get_option( self::DB_VERSION_OPTION, 0 );
 
-		if ( version_compare( $stored_version, self::DB_VERSION, '>=' ) ) {
+		if ( $stored_version >= self::DB_VERSION ) {
 			return;
 		}
 
-		if ( version_compare( $stored_version, '3.7.0', '<' ) ) {
+		if ( $stored_version < 1 ) {
 			self::migrate_370();
 		}
 
