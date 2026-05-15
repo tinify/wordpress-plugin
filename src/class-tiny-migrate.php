@@ -79,7 +79,7 @@ class Tiny_Migrate {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	private static function migrate_meta_key_to_private() {
 		global $wpdb;
@@ -96,5 +96,7 @@ class Tiny_Migrate {
 		if ( false === $result ) {
 			return false;
 		}
+
+		return true;
 	}
 }
