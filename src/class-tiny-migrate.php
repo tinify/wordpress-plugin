@@ -85,12 +85,16 @@ class Tiny_Migrate {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->update(
+		$result = $wpdb->update(
 			$wpdb->postmeta,
 			array( 'meta_key' => '_tiny_compress_images' ),
 			array( 'meta_key' => 'tiny_compress_images' ),
 			array( '%s' ),
 			array( '%s' )
 		);
+
+		if ( false === $result ) {
+			return false;
+		}
 	}
 }
