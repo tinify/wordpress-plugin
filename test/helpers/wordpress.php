@@ -2,6 +2,7 @@
 
 define('ABSPATH', dirname(__FILE__) . '/../');
 define('WPINC', 'wp-includes-for-tests');
+define('HOUR_IN_SECONDS', 3600);
 require_once dirname(__FILE__) . '/../' . WPINC . '/file.php';
 
 use org\bovigo\vfs\vfsStream;
@@ -53,9 +54,12 @@ class WordPressStubs
 	private $admin_initFunctions;
 	private $options;
 	private $metadata;
+	private $transients;
 	private $calls;
 	private $stubs;
 	private $filters;
+	public $postmeta = 'wp_postmeta';
+	public $last_error = '';
 
 	public function __construct($vfs)
 	{
@@ -98,6 +102,10 @@ class WordPressStubs
 		$this->addMethod('get_locale');
 		$this->addMethod('wp_timezone_string');
 		$this->addMethod('update_option');
+		$this->addMethod('update');
+		$this->addMethod('get_transient');
+		$this->addMethod('set_transient');
+		$this->addMethod('delete_transient');
 		$this->addMethod('check_ajax_referer');
 		$this->addMethod('wp_json_encode');
 		$this->addMethod('wp_send_json_error');
@@ -122,6 +130,7 @@ class WordPressStubs
 		$this->admin_initFunctions = array();
 		$this->options = new WordPressOptions();
 		$this->metadata = array();
+		$this->transients = array();
 		$this->filters = array();
 		$GLOBALS['_wp_additional_image_sizes'] = array();
 	}
@@ -185,6 +194,18 @@ class WordPressStubs
 		}
 		if ('translate' === $method) {
 			return $args[0];
+	} elseif ('get_transient' === $method) {
+			$key = isset($args[0]) ? $args[0] : '';
+			return isset($this->transients[$key]) ? $this->transients[$key] : false;
+		} elseif ('set_transient' === $method) {
+			$key = isset($args[0]) ? $args[0] : '';
+			$value = isset($args[1]) ? $args[1] : '';
+			$this->transients[$key] = $value;
+			return true;
+		} elseif ('delete_transient' === $method) {
+			$key = isset($args[0]) ? $args[0] : '';
+			unset($this->transients[$key]);
+			return true;
 		} elseif ('get_option' === $method) {
 			return call_user_func_array(array($this->options, 'get'), $args);
 		} elseif ('get_post_meta' === $method) {
@@ -222,6 +243,11 @@ class WordPressStubs
 	public function addOption($key, $value)
 	{
 		$this->options->set($key, $value);
+	}
+
+	public function addTransient($key, $value)
+	{
+		$this->transients[$key] = $value;
 	}
 
 	public function addImageSize($size, $values)

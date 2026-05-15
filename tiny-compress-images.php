@@ -10,6 +10,7 @@
  */
 
 require dirname( __FILE__ ) . '/src/config/class-tiny-config.php';
+require dirname( __FILE__ ) . '/src/class-tiny-migrate.php';
 require dirname( __FILE__ ) . '/src/class-tiny-helpers.php';
 require dirname( __FILE__ ) . '/src/class-tiny-php.php';
 require dirname( __FILE__ ) . '/src/class-tiny-wp-base.php';
@@ -36,6 +37,8 @@ if ( Tiny_PHP::client_supported() ) {
 } else {
 	require dirname( __FILE__ ) . '/src/class-tiny-compress-fopen.php';
 }
+
+add_action( 'plugins_loaded', array( 'Tiny_Migrate', 'run' ) );
 
 $tiny_plugin = new Tiny_Plugin();
 

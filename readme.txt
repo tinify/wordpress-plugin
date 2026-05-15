@@ -174,6 +174,9 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 A: When the conversion feature is enabled (to convert images to AVIF or WebP), each image will use double the number of credits: one for compression and one for format conversion.
 
 == Changelog ==
+= 3.7.0 =
+* chore: migrated meta key from `tiny_compress_images` to `_tiny_compress_images`
+
 = 3.6.14 =
 * fix: added check for valid path before deleting converted image
 * fix: use hook uninstall_plugin instead of uninstall.php to prevent dependency deletion
