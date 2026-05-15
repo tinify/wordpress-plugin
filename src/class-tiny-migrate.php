@@ -49,7 +49,7 @@ class Tiny_Migrate {
 	/**
 	 * When migration fails, will pause migration for an hour
 	 * when the key exists in memory
-	 * 
+	 *
 	 * @since 3.7.0
 	 * @var string
 	 */
@@ -99,7 +99,6 @@ class Tiny_Migrate {
 				// transient key to hold migrations exists so exit early
 				return;
 			}
-
 
 			if ( ! call_user_func( $migration ) ) {
 				set_transient( self::MIGRATION_BACKOFF_KEY, 1, HOUR_IN_SECONDS );
