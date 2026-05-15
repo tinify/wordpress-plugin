@@ -82,7 +82,11 @@ class Tiny_Migrate {
 		}
 
 		foreach ( self::migrations() as $version => $migration ) {
-			if ( $stored_version < $version && ! call_user_func( $migration ) ) {
+			if ( $stored_version >= $version ) {
+				continue;
+			}
+
+			if ( ! call_user_func( $migration ) ) {
 				return;
 			}
 		}
@@ -98,7 +102,7 @@ class Tiny_Migrate {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @return boolean
+	 * @return bool True on success or when there is nothing to migrate, false on DB error.
 	 */
 	private static function migrate_meta_key_to_private() {
 		global $wpdb;
@@ -113,11 +117,13 @@ class Tiny_Migrate {
 		);
 
 		if ( false === $result ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( 'Tinify: failed to migrate meta key. DB error: ' . $wpdb->last_error );
 			return false;
 		}
 
 		// A return value of 0 means there was nothing to migrate, which is valid
- 		// for fresh installs or databases that were already migrated.
-		return false !== $result;;
+		// for fresh installs or databases that were already migrated.
+		return false !== $result;
 	}
 }
