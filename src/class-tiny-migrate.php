@@ -47,6 +47,23 @@ class Tiny_Migrate {
 	const DB_VERSION_OPTION = 'tinypng_db_version';
 
 	/**
+	 * Returns an ordered map of migrations keyed by version number.
+	 *
+	 * Each entry maps a version integer to a callable that performs the
+	 * corresponding migration. Add new entries in ascending version order.
+	 * Increment `DB_VERSION` when adding a new migration.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return array<int, callable> Ordered map of version to migration callable.
+	 */
+	private static function migrations() {
+		return array(
+			1 => array( self::class, 'migrate_meta_key_to_private' ),
+		);
+	}
+
+	/**
 	 * Runs all pending migrations in version order.
 	 *
 	 * Compares the stored database version against each known migration
@@ -64,8 +81,10 @@ class Tiny_Migrate {
 			return;
 		}
 
-		if ( $stored_version < 1 && ! self::migrate_meta_key_to_private() ) {
-			return;
+		foreach ( self::migrations() as $version => $migration ) {
+			if ( $stored_version < $version && ! call_user_func( $migration ) ) {
+				return;
+			}
 		}
 
 		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );

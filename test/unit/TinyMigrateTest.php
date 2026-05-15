@@ -19,7 +19,7 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 	{
 		$calls = $this->wp->getCalls('update_option');
 		foreach ($calls as $call) {
-			if (($call[0] ?? null) === $option && ($call[1] ?? null) === $value) {
+			if (isset($call[0], $call[1]) && $call[0] === $option && $call[1] === $value) {
 				return $this->assertTrue(true);
 			}
 		}
@@ -45,8 +45,8 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		list($table, $data, $where) = $update_calls[0];
 
 		$this->assertEquals('wp_postmeta', $table);
-		$this->assertEquals(['meta_key' => '_tiny_compress_images'], $data);
-		$this->assertEquals(['meta_key' => 'tiny_compress_images'], $where);
+		$this->assertEquals(array('meta_key' => '_tiny_compress_images'), $data);
+		$this->assertEquals(array('meta_key' => 'tiny_compress_images'), $where);
 
 		$this->assertOptionWasUpdated(Tiny_Migrate::DB_VERSION_OPTION, Tiny_Migrate::DB_VERSION);
 	}
@@ -58,7 +58,7 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		Tiny_Migrate::run();
 
 		$option_calls = $this->wp->getCalls('update_option');
-		$version_updates = array_filter($option_calls, fn($call) => $call[0] === Tiny_Migrate::DB_VERSION_OPTION);
+		$version_updates = array_filter($option_calls, function($call) { return $call[0] === Tiny_Migrate::DB_VERSION_OPTION; });
 
 		$this->assertEmpty($version_updates, 'Should not update DB version when migration fails.');
 	}
@@ -70,7 +70,7 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		Tiny_Migrate::run();
 
 		$option_calls = $this->wp->getCalls('update_option');
-		$version_updates = array_filter($option_calls, fn($call) => $call[0] === Tiny_Migrate::DB_VERSION_OPTION);
+		$version_updates = array_filter($option_calls, function($call) { return $call[0] === Tiny_Migrate::DB_VERSION_OPTION; });
 
 		$this->assertEmpty($version_updates, 'Should not re-save the version if already current.');
 	}
