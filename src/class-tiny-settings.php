@@ -48,6 +48,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -55,6 +56,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -62,6 +64,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 
 		add_action(
@@ -89,6 +92,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
