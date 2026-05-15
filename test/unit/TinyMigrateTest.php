@@ -74,4 +74,27 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 
 		$this->assertEmpty($version_updates, 'Should not re-save the version if already current.');
 	}
+
+	public function test_run_sets_backoff_transient_when_migration_fails()
+	{
+		$this->wp->stub('update', function() { return false; });
+
+		Tiny_Migrate::run();
+
+		$set_transient_calls = $this->wp->getCalls('set_transient');
+		$this->assertCount(1, $set_transient_calls, 'A backoff transient should be set after a failed migration.');
+		$this->assertEquals(Tiny_Migrate::MIGRATION_BACKOFF_KEY, $set_transient_calls[0][0]);
+		$this->assertEquals(HOUR_IN_SECONDS, $set_transient_calls[0][2]);
+	}
+
+	public function test_run_skips_migration_when_backoff_transient_is_set()
+	{
+		$this->wp->stub('get_transient', function($key) {
+			return Tiny_Migrate::MIGRATION_BACKOFF_KEY === $key ? 1 : false;
+		});
+
+		Tiny_Migrate::run();
+
+		$this->assertCount(0, $this->wp->getCalls('update'), 'DB update should not be attempted during the backoff period.');
+	}
 }
