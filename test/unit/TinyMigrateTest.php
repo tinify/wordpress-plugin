@@ -9,7 +9,6 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 	public function set_up()
 	{
 		parent::set_up();
-		$this->wp->postmeta = 'wp_postmeta';
 		$this->wp->stub('update', 1);
 	}
 
