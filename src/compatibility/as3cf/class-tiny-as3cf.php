@@ -44,11 +44,11 @@ class Tiny_AS3CF {
 	 * Will verify if either the Lite or Pro version of AS3CF is active.
 	 */
 	public static function is_active() {
-		return Tiny_AS3CF::pro_is_active() || Tiny_AS3CF::lite_is_active();
+		return self::pro_is_active() || self::lite_is_active();
 	}
 
 	public static function remove_local_files_setting_enabled() {
-		if ( ! Tiny_AS3CF::is_active() ) {
+		if ( ! self::is_active() ) {
 			return false;
 		}
 		$settings = get_option( 'tantan_wordpress_s3' );

@@ -221,7 +221,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	protected static function get_intermediate_size( $size ) {
-		/* Inspired by
+		/*
+		Inspired by
 		http://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes */
 		global $_wp_additional_image_sizes;
 
@@ -789,14 +790,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 				if ( $this->get_api_key_pending() ) {
 					$this->clear_api_key_pending();
 				}
-			} else {
-				if ( $this->get_api_key_pending() ) {
+			} elseif ( $this->get_api_key_pending() ) {
 					$status->ok      = true;
 					$status->pending = true;
 					$status->message = (
 						'An email has been sent to activate your account'
 					);
-				}
 			}
 			include __DIR__ . '/views/account-status-connected.php';
 		}

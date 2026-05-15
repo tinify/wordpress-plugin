@@ -51,23 +51,21 @@
 					$compressions
 				);
 			}
-		} else {
-			if ( isset( $status->message ) ) {
+		} elseif ( isset( $status->message ) ) {
 				echo esc_html__( 'Error', 'tiny-compress-images' ) . ': ';
 				echo esc_html( $status->message, 'tiny-compress-images' );
-			} else {
-				esc_html_e(
-					'API status could not be checked, enable cURL for more information',
-					'tiny-compress-images'
-				);
-			}
+		} else {
+			esc_html_e(
+				'API status could not be checked, enable cURL for more information',
+				'tiny-compress-images'
+			);
 		} // End if().
 		?>
 		</p>
 		<p>
 		<?php
 		if ( defined( 'TINY_API_KEY' ) ) {
-			echo sprintf(
+			printf(
 				/* translators: %s: wp-config.php */
 				esc_html__(
 					'The API key has been configured in %s',

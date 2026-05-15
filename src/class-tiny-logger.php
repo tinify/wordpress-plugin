@@ -22,7 +22,6 @@
 /**
  * Handles logging of plugin events to file.
  *
- *
  * @since 3.7.0
  */
 class Tiny_Logger {

@@ -51,7 +51,8 @@ class Tiny_Image {
 		}
 
 		if ( ! is_array( $this->wp_metadata ) || ! isset( $this->wp_metadata['file'] ) ) {
-			/* No file metadata found, this might be another plugin messing with
+			/*
+			No file metadata found, this might be another plugin messing with
 				metadata. Simply ignore this! */
 			return;
 		}
@@ -63,7 +64,8 @@ class Tiny_Image {
 			$path_prefix .= $path_info['dirname'] . '/';
 		}
 
-		/* Do not use pathinfo for getting the filename.
+		/*
+		Do not use pathinfo for getting the filename.
 			It doesn't work when the filename starts with a special character. */
 		$path_parts                    = explode( '/', $this->wp_metadata['file'] );
 		$this->name                    = end( $path_parts );

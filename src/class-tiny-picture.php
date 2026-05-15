@@ -109,7 +109,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	private function replace_img_sources( $content ) {
 		$image_sources = $this->filter_images( $content );
 		foreach ( $image_sources as $image_source ) {
-			$content = Tiny_Picture::replace_image( $content, $image_source );
+			$content = self::replace_image( $content, $image_source );
 		}
 		return $content;
 	}
@@ -145,7 +145,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	/**
 	 * Will add additional sourcesets to picture elements.
 	 *
-	 * @param string $content the full page content
+	 * @param string              $content the full page content
 	 * @param Tiny_Source_Picture $source the picture element
 	 *
 	 * @return string the updated content including augmented picture elements
@@ -159,7 +159,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	/**
 	 * Will replace img elements with picture elements that (possibly) have additional formats.
 	 *
-	 * @param string $content the full page content
+	 * @param string            $content the full page content
 	 * @param Tiny_Source_Image $source the picture element
 	 *
 	 * @return string the updated content including augmented picture elements

@@ -31,6 +31,7 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 
 	/**
 	 * seperator when rules are inserted
+	 *
 	 * @var string
 	 */
 	const MARKER = 'tiny-compress-images';
@@ -40,9 +41,8 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 * hooked into `update_option_tinypng_convert_format`
 	 * https://developer.wordpress.org/reference/hooks/update_option_option/
 	 *
-	 *
-	 * @param mixed $old_value
-	 * @param mixed $value
+	 * @param mixed  $old_value
+	 * @param mixed  $value
 	 * @param string $option
 	 * @return void
 	 */
