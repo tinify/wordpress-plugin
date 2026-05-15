@@ -32,7 +32,6 @@ class Tiny_Migrate {
 	 * The current database schema version.
 	 *
 	 * Increment this integer by 1 each time a new migration is added.
-	 * This is independent of the plugin version.
 	 *
 	 * @since 3.7.0
 	 * @var int
@@ -66,7 +65,7 @@ class Tiny_Migrate {
 		}
 
 		if ( $stored_version < 1 ) {
-			self::migrate_370();
+			self::migrate_meta_key_to_private();
 		}
 
 		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
@@ -82,7 +81,7 @@ class Tiny_Migrate {
 	 *
 	 * @return void
 	 */
-	private static function migrate_370() {
+	private static function migrate_meta_key_to_private() {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
