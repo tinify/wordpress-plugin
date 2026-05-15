@@ -4,7 +4,7 @@
 		<?php
 		if ( $status->ok ) {
 			if ( isset( $status->message ) ) {
-				echo esc_html( $status->message, 'tiny-compress-images' );
+				echo esc_html( $status->message );
 			} else {
 				esc_html_e( 'Your account is connected', 'tiny-compress-images' );
 			}
@@ -53,7 +53,7 @@
 			}
 		} elseif ( isset( $status->message ) ) {
 				echo esc_html__( 'Error', 'tiny-compress-images' ) . ': ';
-				echo esc_html( $status->message, 'tiny-compress-images' );
+				echo esc_html( $status->message );
 		} else {
 			esc_html_e(
 				'API status could not be checked, enable cURL for more information',
