@@ -22,7 +22,6 @@
 /**
  * Handles logging of plugin events to file.
  *
- *
  * @since 3.7.0
  */
 class Tiny_Logger {
@@ -73,7 +72,7 @@ class Tiny_Logger {
 			'pre_update_option_tinypng_logging_enabled',
 			'Tiny_Logger::on_save_log_enabled',
 			10,
-			3
+			2
 		);
 	}
 
@@ -114,7 +113,7 @@ class Tiny_Logger {
 	 *
 	 * @return bool true if enabled
 	 */
-	public static function on_save_log_enabled( $log_enabled, $old, $option ) {
+	public static function on_save_log_enabled( $log_enabled, $old ) {
 		$instance              = self::get_instance();
 		$was_enabled           = 'on' === $old;
 		$is_now_enabled        = 'on' === $log_enabled;
@@ -190,6 +189,7 @@ class Tiny_Logger {
 		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
 		$log_entry   = "[{$timestamp}] [{$level_str}] {$message}{$context_str}" . PHP_EOL;
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		error_log( $log_entry, 3, $this->log_file_path );
 	}
 

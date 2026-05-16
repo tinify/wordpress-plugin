@@ -32,7 +32,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public static function version() {
-		/* Avoid using get_plugin_data() because it is not loaded early enough
+		/*
+		Avoid using get_plugin_data() because it is not loaded early enough
 			in xmlrpc.php. */
 		return self::VERSION;
 	}
@@ -111,7 +112,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'mark_image_as_compressed' )
 		);
 
-		/* When touching any functionality linked to image compressions when
+		/*
+		When touching any functionality linked to image compressions when
 			uploading images make sure it also works with XML-RPC. See README. */
 		add_filter(
 			'wp_ajax_nopriv_tiny_rpc',
@@ -788,7 +790,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			true
 		);
 
-		/* This might be deduplicated with the admin script localization, but
+		/*
+		This might be deduplicated with the admin script localization, but
 			the order of including scripts is sometimes different. So in that
 			case we need to make sure that the order of inclusion is correc.t */
 		wp_localize_script(
@@ -850,6 +853,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * Will clean up converted files (if any) when the original is deleted
 	 *
 	 * Hooked to the `delete_attachment` action.
+	 *
 	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
 	 *
 	 * @param [int] $post_id

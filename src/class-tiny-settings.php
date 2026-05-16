@@ -48,6 +48,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -55,6 +56,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -62,6 +64,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 
 		add_action(
@@ -89,6 +92,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -98,7 +102,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} catch ( Tiny_Exception $e ) {
 			$this->notices->show(
 				'compressor_exception',
-				esc_html( $e->getMessage(), 'tiny-compress-images' ),
+				esc_html( $e->getMessage() ),
 				'error',
 				false
 			);
@@ -221,7 +225,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	protected static function get_intermediate_size( $size ) {
-		/* Inspired by
+		/*
+		Inspired by
 		http://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes */
 		global $_wp_additional_image_sizes;
 
@@ -378,7 +383,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $height > 0 ) {
 			$options['height'] = $height;
 		}
-		return sizeof( $options ) >= 2 ? $options : false;
+		return count( $options ) >= 2 ? $options : false;
 	}
 
 	/**
@@ -686,8 +691,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 
 		$id    = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
-		$label = esc_html( $label, 'tiny-compress-images' );
-		$desc  = esc_html( $desc, 'tiny-compress-images' );
+		$label = esc_html( $label );
+		$desc  = esc_html( $desc );
 		echo '<input type="radio" id="' . $id . '" name="' . $name .
 			'" value="' . $value . '" ' . $checked . '/>';
 		echo '<label for="' . $id . '">' . $label . '</label>';
@@ -789,14 +794,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 				if ( $this->get_api_key_pending() ) {
 					$this->clear_api_key_pending();
 				}
-			} else {
-				if ( $this->get_api_key_pending() ) {
+			} elseif ( $this->get_api_key_pending() ) {
 					$status->ok      = true;
 					$status->pending = true;
 					$status->message = (
 						'An email has been sent to activate your account'
 					);
-				}
 			}
 			include __DIR__ . '/views/account-status-connected.php';
 		}

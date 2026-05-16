@@ -105,7 +105,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 		<?php } ?>
 		<?php if ( $error ) { ?>
 			<span class="message error_message">
-				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error, 'tiny-compress-images' ); ?>
+				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error ); ?>
 			</span>
 			<br>
 		<?php } ?>
@@ -166,7 +166,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 					echo '<td>';
 					echo '<span title="' . esc_html( basename( (string) $size->filename ) ) . '">';
 					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
-					echo '</span>' . ' ';
+					echo '</span>';
 					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->missing() && ( Tiny_Settings::wr2x_active() || ! Tiny_Image::is_retina( $size_name ) ) ) {

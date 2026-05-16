@@ -44,11 +44,11 @@ class Tiny_AS3CF {
 	 * Will verify if either the Lite or Pro version of AS3CF is active.
 	 */
 	public static function is_active() {
-		return Tiny_AS3CF::pro_is_active() || Tiny_AS3CF::lite_is_active();
+		return self::pro_is_active() || self::lite_is_active();
 	}
 
 	public static function remove_local_files_setting_enabled() {
-		if ( ! Tiny_AS3CF::is_active() ) {
+		if ( ! self::is_active() ) {
 			return false;
 		}
 		$settings = get_option( 'tantan_wordpress_s3' );
@@ -62,7 +62,7 @@ class Tiny_AS3CF {
 	 * Registers hooks required for the AS3CF integration.
 	 */
 	public function add_hooks() {
-		add_action( 'as3cf_pre_upload_object', array( $this, 'as3cf_before_offload' ), 10, 2 );
+		add_action( 'as3cf_pre_upload_object', array( $this, 'as3cf_before_offload' ), 10, 1 );
 	}
 
 	/**
@@ -72,10 +72,9 @@ class Tiny_AS3CF {
 	 *
 	 * Will handle file before file is possibly offloaded
 	 *
-	 * @param Item  $as3cf_item
-	 * @param array $args
+	 * @param mixed $as3cf_item
 	 */
-	public function as3cf_before_offload( $as3cf_item, $args ) {
+	public function as3cf_before_offload( $as3cf_item ) {
 		if ( ! $this->tiny_settings->auto_compress_enabled() ) {
 			return;
 		}

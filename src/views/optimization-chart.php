@@ -33,7 +33,7 @@ div.tiny-optimization-chart div.value {
 <?php if ( isset( $stats ) ) { ?>
 	@keyframes shwoosh {
 		from {
-			stroke-dasharray: <?php echo '0' . ' ' . $chart['circle-size']; ?>
+			stroke-dasharray: <?php echo '0 ' . $chart['circle-size']; ?>
 		}
 		to {
 			stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size']; ?>
