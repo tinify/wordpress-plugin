@@ -23,11 +23,11 @@ class Tiny_Image_Size {
 	public $meta = array();
 
 	/* Used more than once and not trivial, so we are memoizing these */
-	private $_exists;
-	private $_file_size;
-	private $_mime_type;
-	private $_duplicate         = false;
-	private $_duplicate_of_size = '';
+	private $exists;
+	private $file_size;
+	private $mime_type;
+	private $duplicate         = false;
+	private $duplicate_of_size = '';
 
 	public function __construct( $filename = null ) {
 		$this->filename = $filename;
@@ -119,33 +119,33 @@ class Tiny_Image_Size {
 	}
 
 	public function filesize() {
-		if ( is_null( $this->_file_size ) ) {
+		if ( is_null( $this->file_size ) ) {
 			if ( $this->exists() ) {
-				$this->_file_size = filesize( $this->filename );
+				$this->file_size = filesize( $this->filename );
 			} else {
-				$this->_file_size = 0;
+				$this->file_size = 0;
 			}
 		}
-		return $this->_file_size;
+		return $this->file_size;
 	}
 
 	public function mimetype() {
-		if ( is_null( $this->_mime_type ) ) {
+		if ( is_null( $this->mime_type ) ) {
 			if ( $this->exists() ) {
 				$file             = file_get_contents( $this->filename );
-				$this->_mime_type = Tiny_Helpers::get_mimetype( $file );
+				$this->mime_type = Tiny_Helpers::get_mimetype( $file );
 			} else {
-				$this->_mime_type = 'application/octet-stream';
+				$this->mime_type = 'application/octet-stream';
 			}
 		}
-		return $this->_mime_type;
+		return $this->mime_type;
 	}
 
 	public function exists() {
-		if ( is_null( $this->_exists ) ) {
-			$this->_exists = $this->filename && file_exists( $this->filename );
+		if ( is_null( $this->exists ) ) {
+			$this->exists = $this->filename && file_exists( $this->filename );
 		}
-		return $this->_exists;
+		return $this->exists;
 	}
 
 	private function same_size() {
@@ -211,7 +211,7 @@ class Tiny_Image_Size {
 
 	public function uncompressed() {
 		return $this->exists() &&
-			! $this->is_duplicate() &&
+			! $this->isduplicate() &&
 			! ( isset( $this->meta['output'] ) && $this->same_size() );
 	}
 
@@ -227,17 +227,17 @@ class Tiny_Image_Size {
 		);
 	}
 
-	public function mark_duplicate( $duplicate_size_name ) {
-		$this->_duplicate         = true;
-		$this->_duplicate_of_size = $duplicate_size_name;
+	public function markduplicate( $duplicate_size_name ) {
+		$this->duplicate         = true;
+		$this->duplicate_of_size = $duplicate_size_name;
 	}
 
-	public function is_duplicate() {
-		return $this->_duplicate;
+	public function isduplicate() {
+		return $this->duplicate;
 	}
 
 	public function duplicate_of_size() {
-		return $this->_duplicate_of_size;
+		return $this->duplicate_of_size;
 	}
 
 	/**
