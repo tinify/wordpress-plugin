@@ -266,7 +266,7 @@ class Tiny_Compress_Fopen extends Tiny_Compress {
 				'header'          => array_merge(
 					$headers,
 					array(
-						'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ),
+						'Authorization: Basic ' . base64_encode( 'api:' . $this->api_key ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Base64 encoding is required.
 						'User-Agent: ' . self::identifier(),
 						'Content-Type: multipart/form-data',
 					)
