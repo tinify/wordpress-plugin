@@ -177,7 +177,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 						echo '<em>' . esc_html__( '(WP Retina 2x)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->resized() ) {
 						/* translators: %1$dx%2$d: resized image width x height */
-						printf( '<em>' . esc_html__( '(resized to %1$dx%2$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
+						printf( '<em>' . esc_html__( ' (resized to %1$dx%2$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
 					}
 					echo '</td>';
 
