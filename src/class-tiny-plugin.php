@@ -699,7 +699,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$location = add_query_arg( 'm', $_REQUEST['m'], $location );
 		}
 
-		wp_redirect( admin_url( $location ) );
+		wp_safe_redirect( admin_url( $location ) );
 		exit();
 	}
 
