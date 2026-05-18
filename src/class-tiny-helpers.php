@@ -29,7 +29,7 @@ class Tiny_Helpers {
 	 * We can use mb_strlen & mb_substr as WordPress provides a compat function for
 	 * it if mbstring php module is not installed.
 	 *
-	 * @param string $text the text
+	 * @param string  $text the text
 	 * @param integer $length the maximum length of the string
 	 * @return string the truncated string
 	 */
@@ -173,17 +173,17 @@ class Tiny_Helpers {
 	}
 
 	/**
-	* Polyfill for `str_starts_with()` function added in PHP 8.0.
-	*
-	* Performs a case-sensitive check indicating if
-	* the haystack begins with needle.
-	*
-	* @since 5.9.0
-	*
-	* @param string $haystack The string to search in.
-	* @param string $needle   The substring to search for in the `$haystack`.
-	* @return bool True if `$haystack` starts with `$needle`, otherwise false.
-	*/
+	 * Polyfill for `str_starts_with()` function added in PHP 8.0.
+	 *
+	 * Performs a case-sensitive check indicating if
+	 * the haystack begins with needle.
+	 *
+	 * @since 5.9.0
+	 *
+	 * @param string $haystack The string to search in.
+	 * @param string $needle   The substring to search for in the `$haystack`.
+	 * @return bool True if `$haystack` starts with `$needle`, otherwise false.
+	 */
 	public static function str_starts_with( $haystack, $needle ) {
 		if ( function_exists( 'str_starts_with' ) ) {
 			return str_starts_with( $haystack, $needle );

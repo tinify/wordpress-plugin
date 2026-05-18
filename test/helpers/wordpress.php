@@ -106,6 +106,7 @@ class WordPressStubs
 		$this->addMethod('insert_with_markers');
 		$this->addMethod('esc_html_e');
 		$this->addMethod('esc_html');
+		$this->addMethod('maybe_unserialize');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -581,6 +582,15 @@ class WordPressMocks
 		}
 	
 		return file_put_contents($filename, trim($content) . "\n") !== false;
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/maybe_unserialize/
+	 *
+	 * @return mixed
+	 */
+	public function maybe_unserialize($value) {
+		return unserialize($value);
 	}
 }
 

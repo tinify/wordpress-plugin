@@ -42,7 +42,8 @@ class Tiny_Bulk_Optimization {
 				if ( isset( $last_image['ID'] ) ) {
 					$last_image_id = $last_image['ID'];
 				}
-			} while ( sizeof( $result ) == self::PAGING_SIZE );
+				$result_count = count( $result );
+			} while ( self::PAGING_SIZE == $result_count );
 		} else {
 			$stats = self::populate_optimization_statistics( $settings, $result, $stats );
 		}
@@ -104,10 +105,11 @@ class Tiny_Bulk_Optimization {
 		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 		$conversion_enabled  = $settings->get_conversion_enabled();
 
-		for ( $i = 0; $i < sizeof( $result ); $i++ ) {
-			$wp_metadata   = unserialize( (string) $result[ $i ]['meta_value'] );
+		$result_count = count( $result );
+		for ( $i = 0; $i < $result_count; $i++ ) {
+			$wp_metadata   = maybe_unserialize( (string) $result[ $i ]['meta_value'] );
 			$tiny_metadata = isset( $result[ $i ]['tiny_meta_value'] ) ?
-				unserialize( (string) $result[ $i ]['tiny_meta_value'] ) :
+				maybe_unserialize( (string) $result[ $i ]['tiny_meta_value'] ) :
 				array();
 			if ( ! is_array( $tiny_metadata ) ) {
 				$tiny_metadata = array();

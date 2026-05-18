@@ -192,7 +192,8 @@ class Tiny_Compress_Client extends Tiny_Compress {
 	}
 
 	private function set_request_options( $client ) {
-		/* The client does not let us override cURL properties yet, so we have
+		/*
+		The client does not let us override cURL properties yet, so we have
 			to use a reflection property. */
 		$property = new ReflectionProperty( $client, 'options' );
 		$property->setAccessible( true );
