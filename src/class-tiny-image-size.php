@@ -211,7 +211,7 @@ class Tiny_Image_Size {
 
 	public function uncompressed() {
 		return $this->exists() &&
-			! $this->isduplicate() &&
+			! $this->is_duplicate() &&
 			! ( isset( $this->meta['output'] ) && $this->same_size() );
 	}
 
@@ -227,12 +227,12 @@ class Tiny_Image_Size {
 		);
 	}
 
-	public function markduplicate( $duplicate_size_name ) {
+	public function mark_duplicate( $duplicate_size_name ) {
 		$this->duplicate         = true;
 		$this->duplicate_of_size = $duplicate_size_name;
 	}
 
-	public function isduplicate() {
+	public function is_duplicate() {
 		return $this->duplicate;
 	}
 
