@@ -165,7 +165,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 					<?php
 					echo '<td>';
 					echo '<span title="' . esc_html( basename( (string) $size->filename ) ) . '">';
-					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
+					echo ( Tiny_Image::is_original( $size_name ) ? esc_html__( 'Original ', 'tiny-compress-images' ) : esc_html( ucfirst( rtrim( $size_name, '_wr2x' ) ) ) );
 					echo '</span>';
 					if ( ! array_key_exists( $size_name, $active_sizes ) && ! Tiny_Image::is_retina( $size_name ) ) {
 						echo '<em>' . esc_html__( '(not in use)', 'tiny-compress-images' ) . '</em>';
@@ -177,7 +177,7 @@ if ( ! empty( $_REQUEST['ids'] ) ) {
 						echo '<em>' . esc_html__( '(WP Retina 2x)', 'tiny-compress-images' ) . '</em>';
 					} elseif ( $size->resized() ) {
 						/* translators: %1$dx%2$d: resized image width x height */
-						printf( '<em>' . esc_html__( ' (resized to %1$dx%2$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
+						printf( '<em>' . esc_html__( '(resized to %1$dx%2$d)', 'tiny-compress-images' ) . '</em>', $size->meta['output']['width'], $size->meta['output']['height'] );
 					}
 					echo '</td>';
 
