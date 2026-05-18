@@ -137,7 +137,8 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											} else {
 												esc_html_e( 'These sizes are currently activated for optimization:', 'tiny-compress-images' );
 												echo '<ul>';
-												for ( $i = 0; $i < count( $active_tinify_sizes ); ++$i ) {
+												$active_tinify_sizes_count = count( $active_tinify_sizes );
+												for ( $i = 0; $i < $active_tinify_sizes_count; ++$i ) {
 													$name = $active_tinify_sizes[ $i ];
 													if ( '0' == $name ) {
 														echo '<li>- ' . esc_html__( 'Original image', 'tiny-compress-images' ) . '</li>';

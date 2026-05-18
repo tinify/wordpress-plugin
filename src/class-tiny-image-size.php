@@ -132,7 +132,7 @@ class Tiny_Image_Size {
 	public function mimetype() {
 		if ( is_null( $this->mime_type ) ) {
 			if ( $this->exists() ) {
-				$file             = file_get_contents( $this->filename );
+				$file            = file_get_contents( $this->filename );
 				$this->mime_type = Tiny_Helpers::get_mimetype( $file );
 			} else {
 				$this->mime_type = 'application/octet-stream';
