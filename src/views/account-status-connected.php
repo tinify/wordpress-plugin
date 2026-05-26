@@ -1,3 +1,16 @@
+<?php
+/**
+ * Account status connected view.
+ *
+ * Account connection status.
+ * @var object $status {
+ *     @type bool        $ok      Whether the API connection is successful.
+ *     @type bool        $pending Whether the connection is pending activation.
+ *     @type string|null $message Optional status message.
+ * }
+ * @var string $key The API key.
+ */
+?>
 <div class="tiny-account-status" id="tiny-account-status" data-state="complete">
 	<div class="status <?php echo $status->ok ? ( $status->pending ? 'status-pending' : 'status-success' ) : 'status-failure'; ?>">
 		<p class="status"><span>
@@ -39,7 +52,7 @@
 						),
 						$strong
 					),
-					$remaining_credits
+					intval( $remaining_credits )
 				);
 			} elseif ( ! $status->pending ) {
 				printf(
@@ -48,7 +61,7 @@
 						'You have made %s compressions this month.',
 						'tiny-compress-images'
 					),
-					$compressions
+					intval( $compressions )
 				);
 			}
 		} elseif ( isset( $status->message ) ) {
@@ -92,7 +105,15 @@
 					'Enter your API key. If you have lost your key, go to your %s to retrieve it.',
 					'tiny-compress-images'
 				),
-				$link
+				wp_kses(
+					$link,
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				)
 			);
 			?>
 		</p>
@@ -115,7 +136,7 @@
 			<div class="button-container">
 				<div class="box">
 					<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( self::get_email_address() ) ); ?>
-					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary upgrade-account">
+					<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email ); ?>" target="_blank" class="button button-primary upgrade-account">
 						<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 					</a>
 				</div>

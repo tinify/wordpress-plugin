@@ -1,3 +1,13 @@
+<?php
+/**
+ * Bulk optimization upgrade notice view.
+ *
+ * Upgrade notice shown when free plan credits are insufficient.
+ *
+ * @var string $email_address
+ * @var int    $remaining_credits
+ */
+?>
 <div class="upgrade-account-notice">
 	<div class="introduction">
 		<p>
@@ -14,7 +24,7 @@
 					),
 					$strong
 				),
-				$remaining_credits
+				intval( $remaining_credits )
 			);
 			?>
 		</p>
@@ -28,7 +38,7 @@
 		</p>
 	</div>
 	<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( $email_address ) ); ?>
-	<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary button-hero upgrade-account">
+	<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email ); ?>" target="_blank" class="button button-primary button-hero upgrade-account">
 		<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 	</a>
 	<?php if ( $remaining_credits > 0 ) { ?>
