@@ -1,5 +1,5 @@
 <?php
-// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped - exceptions are handled on client usage in views
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 /*
 * Tiny Compress Images - WordPress plugin.
 * Copyright (C) 2015-2018 Tinify B.V.
