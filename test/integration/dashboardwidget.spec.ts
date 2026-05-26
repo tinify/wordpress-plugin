@@ -30,7 +30,7 @@ test.describe('dashboardwidget', () => {
 
     await page.goto('/wp-admin/index.php');
     await expect(
-      page.getByText('Hi Admin, you haven’t compressed any images in your media library. If you like you can to optimize your whole library in one go with the bulk optimization page.')
+      page.getByText(`Hi Admin, you haven't compressed any images in your media library. If you like you can to optimize your whole library in one go with the bulk optimization page.`)
     ).toBeVisible();
   });
 
