@@ -500,8 +500,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$description,
 			'background',
-			$checked,
-			false
+			$checked
 		);
 
 		$id      = self::get_prefixed_name( 'auto_compress_enabled' );
@@ -521,8 +520,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$description,
 			'auto',
-			$checked,
-			false
+			$checked
 		);
 
 		$id      = self::get_prefixed_name( 'auto_compress_disabled' );
@@ -542,8 +540,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$description,
 			'manual',
-			$checked,
-			false
+			$checked
 		);
 
 		echo '</div>';
