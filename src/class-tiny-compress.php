@@ -109,15 +109,18 @@ abstract class Tiny_Compress {
 		$convert_to = array()
 	) {
 		if ( $this->get_key() == null ) {
-			throw new Tiny_Exception( esc_html( self::KEY_MISSING ), 'KeyError' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- not used in output
+			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
 		}
 
 		if ( ! file_exists( $file ) ) {
-			throw new Tiny_Exception( esc_html( self::FILE_MISSING ), 'FileError' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- not used in output
+			throw new Tiny_Exception( self::FILE_MISSING, 'FileError' );
 		}
 
 		if ( ! is_writable( $file ) ) {
-			throw new Tiny_Exception( esc_html( self::WRITE_ERROR ), 'FileError' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- not used in output
+			throw new Tiny_Exception( self::WRITE_ERROR, 'FileError' );
 		}
 
 		if ( ! $this->needs_resize( $file, $resize_opts ) ) {
