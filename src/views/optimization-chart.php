@@ -22,34 +22,34 @@ $chart['dash-array-size'] = $chart['percentage'] / 100 * $chart['circle-size'];
 <style>
 
 div.tiny-optimization-chart svg circle.main {
-	stroke-width: <?php echo $chart['dash-stroke']; ?>;
-	stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size']; ?>;
+	stroke-width: <?php echo esc_attr( $chart['dash-stroke'] ); ?>;
+	stroke-dasharray: <?php echo esc_attr( $chart['dash-array-size'] ) . ' ' . esc_attr( $chart['circle-size'] ); ?>;
 }
 
 div.tiny-optimization-chart div.value {
-	min-width: <?php echo $chart['size']; ?>px;
+	min-width: <?php echo esc_attr( $chart['size'] ); ?>px;
 }
 
 <?php if ( isset( $stats ) ) { ?>
 	@keyframes shwoosh {
 		from {
-			stroke-dasharray: <?php echo '0 ' . $chart['circle-size']; ?>
+			stroke-dasharray: <?php echo '0 ' . esc_attr( $chart['circle-size'] ); ?>
 		}
 		to {
-			stroke-dasharray: <?php echo $chart['dash-array-size'] . ' ' . $chart['circle-size']; ?>
+			stroke-dasharray: <?php echo esc_attr( $chart['dash-array-size'] ) . ' ' . esc_attr( $chart['circle-size'] ); ?>
 		}
 	}
 <?php } ?>
 
 </style>
 
-<div id="optimization-chart" class="tiny-optimization-chart" data-full-circle-size="<?php echo $chart['circle-size']; ?>" data-percentage-factor="<?php echo $chart['main-radius']; ?>" >
-	<svg width="<?php echo $chart['size']; ?>" height="<?php echo $chart['size']; ?>">
-		<circle class="main" transform="rotate(-90, <?php echo $chart['center']; ?>, <?php echo $chart['center']; ?>)" r="<?php echo $chart['main-radius']; ?>" cx="<?php echo $chart['center']; ?>" cy="<?php echo $chart['center']; ?>"/>
-		<circle class="inner" r="<?php echo $chart['inner-radius']; ?>" cx="<?php echo $chart['center']; ?>" cy="<?php echo $chart['center']; ?>" />
+<div id="optimization-chart" class="tiny-optimization-chart" data-full-circle-size="<?php echo esc_attr( $chart['circle-size'] ); ?>" data-percentage-factor="<?php echo esc_attr( $chart['main-radius'] ); ?>" >
+	<svg width="<?php echo esc_attr( $chart['size'] ); ?>" height="<?php echo esc_attr( $chart['size'] ); ?>">
+		<circle class="main" transform="rotate(-90, <?php echo esc_attr( $chart['center'] ); ?>, <?php echo esc_attr( $chart['center'] ); ?>)" r="<?php echo esc_attr( $chart['main-radius'] ); ?>" cx="<?php echo esc_attr( $chart['center'] ); ?>" cy="<?php echo esc_attr( $chart['center'] ); ?>"/>
+		<circle class="inner" r="<?php echo esc_attr( $chart['inner-radius'] ); ?>" cx="<?php echo esc_attr( $chart['center'] ); ?>" cy="<?php echo esc_attr( $chart['center'] ); ?>" />
 	</svg>
 	<div class="value">
-		<div class="percentage" id="savings-percentage"><span><?php echo $chart['percentage']; ?></span>%</div>
+		<div class="percentage" id="savings-percentage"><span><?php echo esc_html( $chart['percentage'] ); ?></span>%</div>
 		<div class="label" ><?php esc_html_e( 'savings', 'tiny-compress-images' ); ?></div>
 	</div>
 </div>

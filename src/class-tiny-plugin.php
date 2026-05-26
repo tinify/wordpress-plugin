@@ -547,7 +547,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function compress_image_from_library() {
 		$response = $this->validate_ajax_attachment_request();
 		if ( isset( $response['error'] ) ) {
-			echo $response['error'];
+			echo esc_html( $response['error'] );
 			exit();
 		}
 		list($id, $metadata) = $response['data'];
@@ -570,7 +570,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		// anymore, so other plugins are less likely to be triggered.
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
-		echo $this->render_compress_details( $tiny_image );
+		$this->render_compress_details( $tiny_image );
 
 		exit();
 	}
@@ -656,14 +656,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$response = $this->validate_ajax_attachment_request();
 
 		if ( isset( $response['error'] ) ) {
-			echo $response['error'];
+			echo esc_html( $response['error'] );
 			exit();
 		}
 		list($id, $metadata) = $response['data'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 
-		echo $this->render_compress_details( $tiny_image );
+		$this->render_compress_details( $tiny_image );
 
 		exit();
 	}
@@ -877,7 +877,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function mark_image_as_compressed() {
 		$response = $this->validate_ajax_attachment_request();
 		if ( isset( $response['error'] ) ) {
-			echo $response['error'];
+			echo esc_html( $response['error'] );
 			exit();
 		}
 
@@ -885,7 +885,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
 		$tiny_image->mark_as_compressed();
 
-		echo $this->render_compress_details( $tiny_image );
+		$this->render_compress_details( $tiny_image );
 
 		exit();
 	}

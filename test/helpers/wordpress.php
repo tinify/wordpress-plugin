@@ -103,6 +103,7 @@ class WordPressStubs
 		$this->addMethod('wp_send_json_error');
 		$this->addMethod('get_temp_dir');
 		$this->addMethod('esc_attr');
+		$this->addMethod('checked');
 		$this->addMethod('insert_with_markers');
 		$this->addMethod('esc_html_e');
 		$this->addMethod('esc_html');
@@ -540,6 +541,22 @@ class WordPressMocks
 	public function esc_attr($text)
 	{
 		return $text;
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/checked/
+	 *
+	 * @return string
+	 */
+	public function checked($checked, $current = true, $display = true)
+	{
+		$result = ((string) $checked === (string) $current) ? " checked='checked'" : '';
+
+		if ($display) {
+			echo $result;
+		}
+
+		return $result;
 	}
 
 	/**

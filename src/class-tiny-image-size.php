@@ -231,7 +231,6 @@ class Tiny_Image_Size {
 		$this->duplicate         = true;
 		$this->duplicate_of_size = $duplicate_size_name;
 	}
-
 	public function is_duplicate() {
 		return $this->duplicate;
 	}
