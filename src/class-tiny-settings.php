@@ -460,7 +460,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 					),
 				)
 			),
-			$link
+			wp_kses(
+				$link,
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			)
 		);
 		echo '</div>';
 	}
@@ -470,14 +477,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'When should new images be compressed?',
 			'tiny-compress-images'
 		);
-		echo '<h4>' . $heading . '</h4>';
+		echo '<h4>' . esc_html( $heading ) . '</h4>';
 		echo '<div class="optimization-options">';
 
 		$name               = self::get_prefixed_name( 'compression_timing' );
 		$compression_timing = $this->get_compression_timing();
 
 		$id      = self::get_prefixed_name( 'background_compress_enabled' );
-		$checked = ( 'background' === $compression_timing ? ' checked="checked"' : '' );
+		$checked = ( 'background' === $compression_timing );
 
 		$label       = esc_html__(
 			'Compress new images in the background (Recommended)',
@@ -498,7 +505,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 
 		$id      = self::get_prefixed_name( 'auto_compress_enabled' );
-		$checked = ( 'auto' === $compression_timing ? ' checked="checked"' : '' );
+		$checked = ( 'auto' === $compression_timing );
 
 		$label       = esc_html__(
 			'Compress new images during upload',
@@ -519,7 +526,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		);
 
 		$id      = self::get_prefixed_name( 'auto_compress_disabled' );
-		$checked = ( 'manual' === $compression_timing ? ' checked="checked"' : '' );
+		$checked = ( 'manual' === $compression_timing );
 
 		$label       = esc_html__(
 			'Do not compress new images automatically',
@@ -543,8 +550,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function render_sizes() {
+		$dummy_size_name = self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' );
 		echo '<input type="hidden" name="' .
-			self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' ) . '" value="on"/>';
+			esc_attr( $dummy_size_name ) . '" value="on"/>';
 
 		foreach ( $this->get_sizes() as $size => $option ) {
 			$this->render_size_checkboxes( $size, $option );
@@ -568,7 +576,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	private function render_size_checkboxes( $size, $option ) {
 		$id      = self::get_prefixed_name( "sizes_$size" );
 		$name    = self::get_prefixed_name( 'sizes[' . $size . ']' );
-		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
+		$checked = ! empty( $option['tinify'] );
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
 				esc_html__(
@@ -592,9 +600,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				. ' - ' . $width . 'x' . $height;
 		}
 		echo '<p>';
-		echo '<input type="checkbox" id="' . $id . '" name="' . $name .
-			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) .
+			'" value="on"' . checked( $checked, true, false ) . '/>';
+		echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
 		echo '</p>';
 	}
 
@@ -646,7 +654,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 					),
 					$strong
 				),
-				$free_images_per_month
+				esc_html( $free_images_per_month )
 			);
 
 			if ( self::wr2x_active() ) {
@@ -683,7 +691,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.',
 				'tiny-compress-images'
 			);
-			echo $message;
+			echo esc_html( $message );
 			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
@@ -693,11 +701,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$id    = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
 		$label = esc_html( $label );
 		$desc  = esc_html( $desc );
-		echo '<input type="radio" id="' . $id . '" name="' . $name .
-			'" value="' . $value . '" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<input type="radio" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) .
+			'" value="' . esc_attr( $value ) . '"' . checked( $checked, true, false ) . '/>';
+		echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
 		echo '<br>';
-		echo '<span>' . $desc . '</span>';
+		echo '<span>' . esc_html( $desc ) . '</span>';
 		echo '</p>';
 	}
 
@@ -955,11 +963,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$label,
 		$descr
 	) {
-		$checked = ( $current_value === $option_value ? ' checked="checked"' : '' );
+		$checked = ( $current_value === $option_value );
 		echo '<p class="tiny-radio">';
 		echo '<input type="radio" data-testid="' . esc_attr( $option_id ) . '" ';
-		echo 'id="' . esc_attr( $option_id ) . '" name="' . $group_name .
-			'" value="' . esc_attr( $option_value ) . '" ' . $checked . '/>';
+		echo 'id="' . esc_attr( $option_id ) . '" name="' . esc_attr( $group_name ) .
+			'" value="' . esc_attr( $option_value ) . '"' . checked( $checked, true, false ) . '/>';
 		echo '<label for="' . esc_attr( $option_id ) . '">' . esc_html( $label );
 		echo '<span>' . esc_html( $descr ) . '</span>';
 		echo '</label>';
