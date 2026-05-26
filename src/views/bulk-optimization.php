@@ -194,7 +194,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 													),
 												)
 											),
-											'<a href="' . esc_html( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
+											'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
 										)
 										?>
 										</p>
@@ -255,7 +255,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									),
 								)
 							),
-							'<a href="' . esc_html( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
+							'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
 						)
 						?>
 					</div>
