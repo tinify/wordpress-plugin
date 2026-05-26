@@ -1,6 +1,6 @@
 <?php
 /**
- * Settings form to configure an accou t
+ * Settings form to configure an account
  *
  * @var string  $key
  */
