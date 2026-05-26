@@ -1,3 +1,10 @@
+<?php
+/**
+ * Settings form to configure an accou t
+ *
+ * @var string  $key
+ */
+?>
 <div class="tiny-account-status" id="tiny-account-status" data-state="missing">
 	<div class="update">
 		<h4><?php esc_html_e( 'Configure your account', 'tiny-compress-images' ); ?></h4>
@@ -11,13 +18,12 @@
 			esc_html_e( 'Enter your API key.', 'tiny-compress-images' );
 			echo ' ';
 
-			printf(
-				/* translators: %s: link saying TinyPNG developer section */
-				esc_html__(
-					'If needed you can go to the %s to retrieve it.',
-					'tiny-compress-images'
-				),
-				$link
+			echo wp_kses_post(
+				sprintf(
+					/* translators: %s: link saying TinyPNG developer section */
+					__( 'If needed you can go to the %s to retrieve it.', 'tiny-compress-images' ),
+					$link
+				)
 			);
 			?>
 		</p>
