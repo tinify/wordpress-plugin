@@ -2,7 +2,7 @@
 /**
  * Loading indicator on media overview page
  *
- * @var Tiny_image  $tiny_image
+ * @var Tiny_Image  $tiny_image
  */
 ?>
 <div class="details-container" data-status="compressing" data-id="<?php echo esc_attr( $tiny_image->get_id() ); ?>">
