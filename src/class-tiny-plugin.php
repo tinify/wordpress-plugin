@@ -614,7 +614,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
-		$current_library_size = intval( $_POST['current_size'] );
+		$current_library_size = isset( $_POST['current_size'] ) ?
+			intval( wp_unslash( $_POST['current_size'] ) )
+			: 0;
 		$size_after           = $image_statistics['compressed_total_size'];
 		$new_library_size     = $current_library_size + $size_after - $size_before;
 
