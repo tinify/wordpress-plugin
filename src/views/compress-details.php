@@ -24,7 +24,8 @@ ksort( $size_exists );
 
 $images_to_compress = array();
 if ( ! empty( $_REQUEST['ids'] ) ) {
-	$images_to_compress = array_map( 'intval', explode( '-', $_REQUEST['ids'] ) );
+	$request_ids        = sanitize_text_field( wp_unslash( $_REQUEST['ids'] ) );
+	$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
 }
 ?>
 <div class="details-container">
