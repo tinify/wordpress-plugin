@@ -837,7 +837,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'message' => 'This feature requires certain user capabilities',
 			);
 		} elseif ( $compressor->can_create_key() ) {
-			if ( ! isset( $_POST['name'] ) || ! $_POST['name'] ) {
+			if ( empty( $_POST['name'] ) ) {
 				$status = (object) array(
 					'ok'      => false,
 					'message' => __(
@@ -849,7 +849,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				exit();
 			}
 
-			if ( ! isset( $_POST['email'] ) || ! $_POST['email'] ) {
+			if ( empty( $_POST['email'] ) ) {
 				$status = (object) array(
 					'ok'      => false,
 					'message' => __(
@@ -870,9 +870,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$identifier = 'WordPress plugin for ' . $site;
 				$link       = $this->get_absolute_url();
 				$compressor->create_key(
-					$_POST['email'],
+					sanitize_email( wp_unslash( $_POST['email'] ) ),
 					array(
-						'name'       => $_POST['name'],
+						'name'       => sanitize_text_field( wp_unslash( $_POST['name'] ) ),
 						'identifier' => $identifier,
 						'link'       => $link,
 					)
