@@ -905,24 +905,27 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function update_api_key() {
-		$key = $_POST['key'];
 		if ( ! $this->check_ajax_referer() ) {
 			exit;
 		}
+
+		$key = null;
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok'      => false,
 				'message' => 'This feature requires certain user capabilities',
 			);
-		} elseif ( empty( $key ) ) {
+		} elseif ( empty( $_POST['key'] ) ) {
 			/* Always save if key is blank, so the key can be deleted. */
 			$status = (object) array(
 				'ok'      => true,
 				'message' => null,
 			);
 		} else {
+			$key    = sanitize_key( wp_unslash( $_POST['key'] ) );
 			$status = Tiny_Compress::create( $key )->get_status();
 		}
+
 		if ( $status->ok ) {
 			update_option( self::get_prefixed_name( 'api_key_pending' ), false );
 			update_option( self::get_prefixed_name( 'api_key' ), $key );
