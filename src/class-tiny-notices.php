@@ -153,7 +153,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 			exit();
 		}
 		$this->load_dismissals();
-		$notice_name = sanitize_key(wp_unslash($_POST['name']));
+		$notice_name                      = sanitize_key( wp_unslash( $_POST['name'] ) );
 		$this->dismissals[ $notice_name ] = true;
 		$this->save_dismissals();
 		echo json_encode( true );
