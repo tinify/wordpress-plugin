@@ -670,8 +670,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function media_library_bulk_action() {
 		$valid_actions = array( 'tiny_bulk_action', 'tiny_bulk_mark_compressed' );
-		$action        = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
-		$action2       = isset( $_REQUEST['action2'] ) ? $_REQUEST['action2'] : '';
+		$action        = isset( $_REQUEST['action'] ) ?
+			sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+		$action2       = isset( $_REQUEST['action2'] ) ?
+			sanitize_key( wp_unslash( $_REQUEST['action2'] ) ) : '';
 
 		if (
 			! in_array( $action, $valid_actions, true ) &&
@@ -679,24 +681,35 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		) {
 			return;
 		}
-		if ( empty( $_REQUEST['media'] ) || ( ! $_REQUEST['media'] ) ) {
+		$media = isset( $_REQUEST['media'] ) ?
+			array_map( 'intval', wp_unslash( (array) $_REQUEST['media'] ) )
+			: array();
+		if ( empty( $media ) ) {
 			$_REQUEST['action'] = '';
 			return;
 		}
 		check_admin_referer( 'bulk-media' );
-		$ids      = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
+		$ids      = implode( '-', $media );
 		$location = 'upload.php?mode=list&ids=' . $ids;
 
-		$location = add_query_arg( 'action', $_REQUEST['action'], $location );
+		$location = add_query_arg( 'action', $action, $location );
 
 		if ( ! empty( $_REQUEST['paged'] ) ) {
 			$location = add_query_arg( 'paged', absint( $_REQUEST['paged'] ), $location );
 		}
 		if ( ! empty( $_REQUEST['s'] ) ) {
-			$location = add_query_arg( 's', $_REQUEST['s'], $location );
+			$location = add_query_arg(
+				's',
+				sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ),
+				$location
+			);
 		}
 		if ( ! empty( $_REQUEST['m'] ) ) {
-			$location = add_query_arg( 'm', $_REQUEST['m'], $location );
+			$location = add_query_arg(
+				'm',
+				sanitize_text_field( wp_unslash( $_REQUEST['m'] ) ),
+				$location
+			);
 		}
 
 		wp_safe_redirect( admin_url( $location ) );
