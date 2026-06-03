@@ -164,7 +164,9 @@ class Tiny_Image_Test extends Tiny_TestCase {
 			'image_sizes_compressed' => 3,
 			'available_uncompressed_sizes' => 1,
 			'image_sizes_converted' => 0,
-			'available_unconverted_sizes' => 4
+			'available_unconverted_sizes' => 4,
+			'image_sizes_optimized' => 3,
+			'available_unoptimized_sizes' => 1,
 		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
 	}
 
