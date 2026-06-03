@@ -437,15 +437,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function process_rpc_request() {
 		if (
 			empty( $_POST['tiny_rpc_action'] ) ||
-			empty( $_POST['tiny_rpc_hash'] ) ||
-			32 !== strlen( $_POST['tiny_rpc_hash'] )
+			empty( $_POST['tiny_rpc_hash'] )
 		) {
 			exit();
 		}
 
-		$rpc_hash = sanitize_key( $_POST['tiny_rpc_hash'] );
-		$user_id  = absint( get_transient( 'tiny_rpc_' . $rpc_hash ) );
-		$user     = $user_id ? get_userdata( $user_id ) : false;
+		$rpc_hash = sanitize_key( wp_unslash( $_POST['tiny_rpc_hash'] ) );
+		if ( 32 !== strlen( $rpc_hash ) ) {
+			exit();
+		}
+
+		$user_id = absint( get_transient( 'tiny_rpc_' . $rpc_hash ) );
+		$user    = $user_id ? get_userdata( $user_id ) : false;
 
 		/* We no longer need the transient. */
 		delete_transient( 'tiny_rpc_' . $rpc_hash );
@@ -460,7 +463,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 
 		/* Now that everything is checked, perform the actual action. */
-		$action = $_POST['tiny_rpc_action'];
+		$action = sanitize_key( wp_unslash( $_POST['tiny_rpc_action'] ) );
 		unset(
 			$_POST['action'],
 			$_POST['tiny_rpc_action'],
@@ -471,12 +474,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function compress_on_upload() {
-		if ( ! wp_verify_nonce( $_POST['_ajax_nonce'], 'new_media-' . $_POST['attachment_id'] ) ) {
+		$nonce         = isset( $_POST['_ajax_nonce'] ) ?
+			sanitize_key( wp_unslash( $_POST['_ajax_nonce'] ) ) : '';
+		$attachment_id = isset( $_POST['attachment_id'] ) ?
+			intval( wp_unslash( $_POST['attachment_id'] ) ) : 0;
+
+		if ( ! wp_verify_nonce( $nonce, 'new_media-' . $attachment_id ) ) {
 			exit;
 		}
 		if ( current_user_can( 'upload_files' ) ) {
-			$attachment_id = intval( $_POST['attachment_id'] );
-			$metadata      = $_POST['metadata'];
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$metadata = isset( $_POST['metadata'] ) ? wp_unslash( $_POST['metadata'] ) : array();
 			if ( is_array( $metadata ) ) {
 				$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 
