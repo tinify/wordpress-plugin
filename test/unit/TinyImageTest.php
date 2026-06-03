@@ -156,8 +156,40 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_get_statistics() {
-		$active_sizes = $this->settings->get_sizes();
-		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+			$this->wp->addOption( 'tinypng_convert_format', array(
+				'convert'    => 'off',
+			) );
+			$settings = new Tiny_Settings();
+			$subject  = new Tiny_Image( $settings, 1, $this->json( '_wp_attachment_metadata' ) );
+		
+			$active_sizes        = $settings->get_sizes();
+			$active_tinify_sizes = $settings->get_active_tinify_sizes();
+			$stats               = $subject->get_statistics( $active_sizes, $active_tinify_sizes );
+		
+			$this->assertEquals( array(
+				'initial_total_size' => 360542,
+				'compressed_total_size' => 328670,
+				'image_sizes_compressed' => 3,
+				'available_uncompressed_sizes' => 1,
+				'image_sizes_converted' => 0,
+				'available_unconverted_sizes' => 4,
+				'image_sizes_optimized' => 3,
+				'available_unoptimized_sizes' => 1,
+			), $stats);
+	}
+
+	public function test_get_statistics_with_conversion_enabled() {
+		$this->wp->addOption( 'tinypng_convert_format', array(
+			'convert'    => 'on',
+			'convert_to' => 'smallest',
+		) );
+		$settings = new Tiny_Settings();
+		$subject  = new Tiny_Image( $settings, 1, $this->json( '_wp_attachment_metadata' ) );
+	
+		$active_sizes        = $settings->get_sizes();
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		$stats               = $subject->get_statistics( $active_sizes, $active_tinify_sizes );
+		
 		$this->assertEquals( array(
 			'initial_total_size' => 360542,
 			'compressed_total_size' => 328670,
@@ -165,9 +197,9 @@ class Tiny_Image_Test extends Tiny_TestCase {
 			'available_uncompressed_sizes' => 1,
 			'image_sizes_converted' => 0,
 			'available_unconverted_sizes' => 4,
-			'image_sizes_optimized' => 3,
-			'available_unoptimized_sizes' => 1,
-		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
+			'image_sizes_optimized' => 0,
+			'available_unoptimized_sizes' => 4,
+		), $stats);
 	}
 
 	public function test_get_image_sizes_available_for_compression_when_file_modified() {
