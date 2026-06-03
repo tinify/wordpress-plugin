@@ -535,7 +535,8 @@ class Tiny_Image {
 				$needs_conversion  = $conversion_enabled && $size->unconverted();
 				if ( $needs_compression || $needs_conversion ) {
 					++$this->statistics['available_unoptimized_sizes'];
-				} elseif ( $size->compressed() && ( ! $conversion_enabled || $size->has_been_converted() ) ) {
+				} elseif ( $size->compressed() && ( ! $conversion_enabled
+					|| $size->has_been_converted() ) ) {
 					++$this->statistics['image_sizes_optimized'];
 				}
 			}
