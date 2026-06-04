@@ -10,9 +10,6 @@
     <exclude name="Generic.Commenting" />
     <exclude name="Squiz.PHP.CommentedOutCode.Found" />
 
-    <!-- Fix security issues -->
-    <exclude name="WordPress.Security.NonceVerification" />
-
     <!-- Fix AlternativeFunctons-->
     <exclude name="WordPress.WP.AlternativeFunctions" />
     <exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited" />
