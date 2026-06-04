@@ -301,7 +301,6 @@
     eventOn('click', 'button.tiny-mark-as-compressed', onClickButtonMarkAsCompressed);
 
     setPropOf('button.tiny-compress', 'disabled', null);
-    
     compressImageSelection();
     watchCompressingImages();
 
@@ -335,18 +334,18 @@
       const selectedCount = compressWr2x ? totalSelectedSizes - 1 : totalSelectedSizes;
 
       const separator = ajaxurl.includes('?') ? '&' : '?';
-      let image_count_url = `${ajaxurl}${separator}action=tiny_image_sizes_notice&image_sizes_selected=${selectedCount}&_ajax_nonce=${tinyCompress.nonce}`;
+      let imageCountUrl = `${ajaxurl}${separator}action=tiny_image_sizes_notice&image_sizes_selected=${selectedCount}&_ajax_nonce=${tinyCompress.nonce}`;
 
       const resizeOriginalChecked = document.querySelector('#tinypng_resize_original_enabled')?.checked;
       const compressOriginalChecked = document.querySelector('#tinypng_sizes_0')?.checked;
       if (resizeOriginalChecked && compressOriginalChecked) {
-        image_count_url += '&resize_original=true';
+        imageCountUrl += '&resize_original=true';
       }
       if (compressWr2x) {
-        image_count_url += '&compress_wr2x=true';
+        imageCountUrl += '&compress_wr2x=true';
       }
       try {
-        const sizeDescriptionHtml = await fetch(image_count_url).then(r => r.text());
+        const sizeDescriptionHtml = await fetch(imageCountUrl).then(r => r.text());
         document.querySelector('#tiny-image-sizes-notice').innerHTML = sizeDescriptionHtml;
       } catch (err) {
         document.querySelector('#tiny-image-sizes-notice').innerHTML = '';
@@ -355,7 +354,6 @@
     }
 
     eventOn('click', 'input[name*=tinypng_sizes], #tinypng_resize_original_enabled', refreshSizeDescriptionNotice);
-    
     eventOn('click', '#tinypng_auto_compress_enabled', updateSettings);
     jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(updateSettings);
     updateSettings();
