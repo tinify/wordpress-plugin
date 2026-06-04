@@ -161,8 +161,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	public function image_sizes_notice() {
 		if ( current_user_can( 'manage_options' ) ) {
+			$selected_sizes = isset( $_GET['image_sizes_selected'] ) ?
+				intval( $_GET['image_sizes_selected'] ) : 0;
 			$this->render_size_checkboxes_description(
-				$_GET['image_sizes_selected'],
+				$selected_sizes,
 				isset( $_GET['resize_original'] ),
 				isset( $_GET['compress_wr2x'] ),
 				self::get_conversion_enabled()
@@ -835,7 +837,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'message' => 'This feature requires certain user capabilities',
 			);
 		} elseif ( $compressor->can_create_key() ) {
-			if ( ! isset( $_POST['name'] ) || ! $_POST['name'] ) {
+			if ( empty( $_POST['name'] ) ) {
 				$status = (object) array(
 					'ok'      => false,
 					'message' => __(
@@ -847,7 +849,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				exit();
 			}
 
-			if ( ! isset( $_POST['email'] ) || ! $_POST['email'] ) {
+			if ( empty( $_POST['email'] ) ) {
 				$status = (object) array(
 					'ok'      => false,
 					'message' => __(
@@ -868,9 +870,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$identifier = 'WordPress plugin for ' . $site;
 				$link       = $this->get_absolute_url();
 				$compressor->create_key(
-					$_POST['email'],
+					sanitize_email( wp_unslash( $_POST['email'] ) ),
 					array(
-						'name'       => $_POST['name'],
+						'name'       => sanitize_text_field( wp_unslash( $_POST['name'] ) ),
 						'identifier' => $identifier,
 						'link'       => $link,
 					)
@@ -903,24 +905,27 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function update_api_key() {
-		$key = $_POST['key'];
 		if ( ! $this->check_ajax_referer() ) {
 			exit;
 		}
+
+		$key = null;
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok'      => false,
 				'message' => 'This feature requires certain user capabilities',
 			);
-		} elseif ( empty( $key ) ) {
+		} elseif ( empty( $_POST['key'] ) ) {
 			/* Always save if key is blank, so the key can be deleted. */
 			$status = (object) array(
 				'ok'      => true,
 				'message' => null,
 			);
 		} else {
+			$key    = sanitize_text_field( wp_unslash( $_POST['key'] ) );
 			$status = Tiny_Compress::create( $key )->get_status();
 		}
+
 		if ( $status->ok ) {
 			update_option( self::get_prefixed_name( 'api_key_pending' ), false );
 			update_option( self::get_prefixed_name( 'api_key' ), $key );
