@@ -2,6 +2,19 @@
 
 require_once dirname(__FILE__) . '/TinyTestCase.php';
 
+class Tiny_Picture_Overrides extends Tiny_Picture {
+    /**
+     * filter_has_var looks for immutable $_GET
+     * so unit tests cannot set the $_GET.
+     * 
+     * isset( $_GET ) is similar to filter_has_var
+     * but allows us to mutate.
+     */
+	protected static function has_get_var( $key ) {
+		return isset( $_GET[ $key ] );
+	}
+}
+
 class Tiny_Picture_Test extends Tiny_TestCase
 {
 
@@ -337,7 +350,7 @@ class Tiny_Picture_Test extends Tiny_TestCase
         });
         
         $settings = new Tiny_Settings();
-        $tiny_picture = new Tiny_Picture($settings, $this->vfs->url(), array('https://www.tinifytest.com'));
+        $tiny_picture = new Tiny_Picture_Overrides($settings, $this->vfs->url(), array('https://www.tinifytest.com'));
 
         $template_redirect_registered = false;
         foreach ($this->wp->getCalls('add_action') as $call) {
