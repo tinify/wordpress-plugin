@@ -827,9 +827,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-		if ( ! check_ajax_referer( 'tiny-compress', '_nonce' ) ) {
-			exit;
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
 		$compressor = $this->get_compressor();
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
@@ -905,9 +904,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function update_api_key() {
-		if ( ! check_ajax_referer( 'tiny-compress', '_nonce' ) ) {
-			exit;
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
 
 		$key = null;
 		if ( ! current_user_can( 'manage_options' ) ) {

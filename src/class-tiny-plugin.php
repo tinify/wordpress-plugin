@@ -517,9 +517,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *               or success array ['data' => [$id, $metadata]]
 	 */
 	private function validate_ajax_attachment_request() {
-		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ) {
-			exit();
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
 		if ( ! current_user_can( 'upload_files' ) ) {
 			return array(
 				'error' => esc_html__(
@@ -658,7 +657,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_optimization_statistics() {
-		if ( $this->check_ajax_referer() && current_user_can( 'upload_files' ) ) {
+		if ( check_ajax_referer( 'tiny-compress', '_nonce', false ) && current_user_can( 'upload_files' ) ) {
 			$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 			echo json_encode( $stats );
 		}
