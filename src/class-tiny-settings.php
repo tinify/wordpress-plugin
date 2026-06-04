@@ -922,7 +922,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'message' => null,
 			);
 		} else {
-			$key    = sanitize_key( wp_unslash( $_POST['key'] ) );
+			$key    = sanitize_text_field( wp_unslash( $_POST['key'] ) );
 			$status = Tiny_Compress::create( $key )->get_status();
 		}
 
