@@ -345,9 +345,13 @@
       if (compressWr2x) {
         image_count_url += '&compress_wr2x=true';
       }
-
-      const sizeDescriptionHtml = await fetch(image_count_url).then(r => r.text());
-      document.querySelector('#tiny-image-sizes-notice').innerHTML = sizeDescriptionHtml;
+      try {
+        const sizeDescriptionHtml = await fetch(image_count_url).then(r => r.text());
+        document.querySelector('#tiny-image-sizes-notice').innerHTML = sizeDescriptionHtml;
+      } catch (err) {
+        document.querySelector('#tiny-image-sizes-notice').innerHTML = '';
+        console.error(err);
+      }
     }
 
     eventOn('click', 'input[name*=tinypng_sizes], #tinypng_resize_original_enabled', refreshSizeDescriptionNotice);
