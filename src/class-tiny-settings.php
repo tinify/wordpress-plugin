@@ -827,7 +827,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-		if ( ! $this->check_ajax_referer() ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce' ) ) {
 			exit;
 		}
 		$compressor = $this->get_compressor();
