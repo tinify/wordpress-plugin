@@ -160,7 +160,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function image_sizes_notice() {
-		if ( current_user_can( 'manage_options' ) && check_ajax_referer( 'tiny-compress' ) ) {
+		check_ajax_referer( 'tiny-compress' );
+
+		if ( current_user_can( 'manage_options' ) ) {
 			$selected_sizes = isset( $_GET['image_sizes_selected'] ) ?
 				intval( $_GET['image_sizes_selected'] ) : 0;
 			$this->render_size_checkboxes_description(
