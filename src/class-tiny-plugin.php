@@ -517,7 +517,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *               or success array ['data' => [$id, $metadata]]
 	 */
 	private function validate_ajax_attachment_request() {
-		if ( ! $this->check_ajax_referer() ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ) {
 			exit();
 		}
 		if ( ! current_user_can( 'upload_files' ) ) {
@@ -614,11 +614,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
+		// Nonce verified in validate_ajax_attachment_request().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$current_library_size = isset( $_POST['current_size'] ) ?
 			intval( wp_unslash( $_POST['current_size'] ) )
 			: 0;
-		$size_after           = $image_statistics['compressed_total_size'];
-		$new_library_size     = $current_library_size + $size_after - $size_before;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		$size_after       = $image_statistics['compressed_total_size'];
+		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message']                = $tiny_image->get_latest_error();
 		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];

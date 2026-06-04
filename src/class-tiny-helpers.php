@@ -133,7 +133,7 @@ class Tiny_Helpers {
 		);
 
 		foreach ( $pagebuilder_keys as $key ) {
-			if ( filter_has_var(INPUT_GET, $key ) ) {
+			if ( filter_has_var( INPUT_GET, $key ) ) {
 				return true;
 			}
 		}
