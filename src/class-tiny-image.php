@@ -483,6 +483,10 @@ class Tiny_Image {
 		$this->statistics['available_uncompressed_sizes'] = 0;
 		$this->statistics['image_sizes_converted']        = 0;
 		$this->statistics['available_unconverted_sizes']  = 0;
+		$this->statistics['image_sizes_optimized']        = 0;
+		$this->statistics['available_unoptimized_sizes']  = 0;
+
+		$conversion_enabled = $this->settings->get_conversion_enabled();
 
 		foreach ( $this->sizes as $size_name => $size ) {
 			// skip duplicates or inactive sizes
@@ -525,6 +529,15 @@ class Tiny_Image {
 					++$this->statistics['image_sizes_converted'];
 				} else {
 					++$this->statistics['available_unconverted_sizes'];
+				}
+
+				$needs_compression = $size->uncompressed();
+				$needs_conversion  = $conversion_enabled && $size->unconverted();
+				if ( $needs_compression || $needs_conversion ) {
+					++$this->statistics['available_unoptimized_sizes'];
+				} elseif ( $size->compressed() && ( ! $conversion_enabled
+					|| $size->has_been_converted() ) ) {
+					++$this->statistics['image_sizes_optimized'];
 				}
 			}
 		}// End foreach().

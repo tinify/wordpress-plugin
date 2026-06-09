@@ -39,6 +39,8 @@ class Tiny_Image_Empty_Test extends Tiny_TestCase {
 			'available_uncompressed_sizes' => 4,
 			'available_unconverted_sizes' => 4,
 			'image_sizes_converted' => 0,
+			'image_sizes_optimized' => 0,
+			'available_unoptimized_sizes' => 4
 		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
 	}
 }

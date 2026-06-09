@@ -156,16 +156,76 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_get_statistics() {
-		$active_sizes = $this->settings->get_sizes();
-		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
+			$this->wp->addOption( 'tinypng_convert_format', array(
+				'convert'    => 'off',
+			) );
+			$settings = new Tiny_Settings();
+			$subject  = new Tiny_Image( $settings, 1, $this->json( '_wp_attachment_metadata' ) );
+		
+			$active_sizes        = $settings->get_sizes();
+			$active_tinify_sizes = $settings->get_active_tinify_sizes();
+			$stats               = $subject->get_statistics( $active_sizes, $active_tinify_sizes );
+		
+			$this->assertEquals( array(
+				'initial_total_size' => 360542,
+				'compressed_total_size' => 328670,
+				'image_sizes_compressed' => 3,
+				'available_uncompressed_sizes' => 1,
+				'image_sizes_converted' => 0,
+				'available_unconverted_sizes' => 4,
+				'image_sizes_optimized' => 3,
+				'available_unoptimized_sizes' => 1,
+			), $stats);
+	}
+
+	public function test_get_statistics_with_conversion_enabled() {
+		$this->wp->addOption( 'tinypng_convert_format', array(
+			'convert'    => 'on',
+			'convert_to' => 'smallest',
+		) );
+		$settings = new Tiny_Settings();
+		$subject  = new Tiny_Image( $settings, 1, $this->json( '_wp_attachment_metadata' ) );
+	
+		$active_sizes        = $settings->get_sizes();
+		$active_tinify_sizes = $settings->get_active_tinify_sizes();
+		$stats               = $subject->get_statistics( $active_sizes, $active_tinify_sizes );
+		
 		$this->assertEquals( array(
 			'initial_total_size' => 360542,
 			'compressed_total_size' => 328670,
 			'image_sizes_compressed' => 3,
 			'available_uncompressed_sizes' => 1,
 			'image_sizes_converted' => 0,
-			'available_unconverted_sizes' => 4
-		), $this->subject->get_statistics( $active_sizes, $active_tinify_sizes ) );
+			'available_unconverted_sizes' => 4,
+			'image_sizes_optimized' => 0,
+			'available_unoptimized_sizes' => 4,
+		), $stats);
+	}
+
+	public function test_image_sizes_optimized_is_independent_of_image_sizes_compressed_when_conversion_is_pending() {
+		$this->wp->addOption( 'tinypng_convert_format', array(
+			'convert'    => 'on',
+			'convert_to' => 'smallest',
+		) );
+		$settings = new Tiny_Settings();
+		$subject  = new Tiny_Image( $settings, 1, $this->json( '_wp_attachment_metadata' ) );
+
+		$stats = $subject->get_statistics(
+			$settings->get_sizes(),
+			$settings->get_active_tinify_sizes()
+		);
+
+		$this->assertEquals( 3, $stats['image_sizes_compressed'],
+			'Three sizes have been compressed.'
+		);
+		$this->assertEquals( 0, $stats['image_sizes_optimized'],
+			'No sizes count as fully optimized because conversion has not been done but has been enabled.'
+		);
+		$this->assertNotEquals(
+			$stats['image_sizes_compressed'],
+			$stats['image_sizes_optimized'],
+			'the number of compressed images should not be equal to the number of optimized images.'
+		);
 	}
 
 	public function test_get_image_sizes_available_for_compression_when_file_modified() {

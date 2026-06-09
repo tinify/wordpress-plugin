@@ -625,7 +625,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$result['message']                = $tiny_image->get_latest_error();
 		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
 		$result['image_sizes_converted']  = $image_statistics['image_sizes_converted'];
-		$result['image_sizes_optimized']  = $image_statistics['image_sizes_compressed'];
+		$result['image_sizes_optimized']  = $image_statistics['image_sizes_optimized'];
 
 		$result['initial_total_size'] = size_format(
 			$image_statistics['initial_total_size'],
