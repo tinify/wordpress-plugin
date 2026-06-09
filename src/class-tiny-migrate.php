@@ -48,7 +48,7 @@ class Tiny_Migrate {
 
 	/**
 	 * When migration fails, will pause migration for an hour
-	 * when the key exists in memory
+	 * as long as the key exists in transient
 	 *
 	 * @since 3.7.0
 	 * @var string
