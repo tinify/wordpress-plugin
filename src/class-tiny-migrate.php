@@ -122,25 +122,26 @@ class Tiny_Migrate {
 	private static function migrate_meta_key_to_private() {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$result = $wpdb->update(
-			$wpdb->postmeta,
-			array( 'meta_key' => '_tiny_compress_images' ),
-			array( 'meta_key' => 'tiny_compress_images' ),
-			array( '%s' ),
-			array( '%s' )
-		);
+		$batch_size = 2500;
+		do {
+			$query =
+				"UPDATE $wpdb->postmeta
+				SET meta_key = '_tiny_compress_images'
+				WHERE meta_key = 'tiny_compress_images'
+				LIMIT " . $batch_size;
 
-		if ( false === $result ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( 'Tinify: failed to migrate meta key. DB error: ' . $wpdb->last_error );
-			return false;
-		}
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Renames a fixed internal meta key in fixed-size batches; only internal constants are interpolated.
+			$result = $wpdb->query( $query );
 
+			if ( false === $result ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'Tinify: failed to migrate meta key. DB error: ' . $wpdb->last_error );
+				return false;
+			}
+		} while ( $batch_size === (int) $result );
+		
 		wp_cache_flush();
 
-		// A return value of 0 means there was nothing to migrate, which is valid
-		// for fresh installs or databases that were already migrated.
-		return false !== $result;
+		return true;
 	}
 }
