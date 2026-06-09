@@ -764,19 +764,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	private function render_compress_details( $tiny_image ) {
 		$images_to_compress = array();
 
-		if ( ! empty( $_REQUEST['ids'] ) ) {
-			if (
-				! isset( $_REQUEST['_tiny_nonce'] ) ||
-				! wp_verify_nonce(
-					sanitize_key( wp_unslash( $_REQUEST['_tiny_nonce'] ) ),
-					'tiny-bulk-ids'
-				)
-			) {
-				return;
-			}
+		if ( ! empty( $_GET['ids'] ) ) {
+			$nonce = isset( $_GET['_tiny_nonce'] ) ? sanitize_key( wp_unslash( $_GET['_tiny_nonce'] ) ) : '';
 
-			$request_ids        = sanitize_text_field( wp_unslash( $_REQUEST['ids'] ) );
-			$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
+			if ( $nonce && wp_verify_nonce( $nonce, 'tiny-bulk-ids' ) ) {
+ 				$request_ids        = sanitize_text_field( wp_unslash( $_GET['ids'] ) );
+ 				$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
+ 			}
 		}
 
 		$in_progress = $tiny_image->filter_image_sizes( 'in_progress' );
