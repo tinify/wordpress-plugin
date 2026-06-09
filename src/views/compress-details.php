@@ -2,8 +2,9 @@
 /**
  * Compression details on media overview page.
  *
- * @var Tiny_Plugin $this       The plugin instance.
- * @var Tiny_Image  $tiny_image The image being compressed.
+ * @var Tiny_Plugin $this               The plugin instance.
+ * @var Tiny_Image  $tiny_image         The image being compressed.
+ * @var int[]       $images_to_compress The IDs that are being compressed
  */
 
 $available_sizes              = array_keys( $this->settings->get_sizes() );
@@ -22,11 +23,6 @@ $size_active = array_fill_keys( $active_tinify_sizes, true );
 $size_exists = array_fill_keys( $available_sizes, true );
 ksort( $size_exists );
 
-$images_to_compress = array();
-if ( ! empty( $_REQUEST['ids'] ) ) {
-	$request_ids        = sanitize_text_field( wp_unslash( $_REQUEST['ids'] ) );
-	$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
-}
 ?>
 <div class="details-container">
 	<div class="details">

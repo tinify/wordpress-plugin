@@ -517,9 +517,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *               or success array ['data' => [$id, $metadata]]
 	 */
 	private function validate_ajax_attachment_request() {
-		if ( ! $this->check_ajax_referer() ) {
-			exit();
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
 		if ( ! current_user_can( 'upload_files' ) ) {
 			return array(
 				'error' => esc_html__(
@@ -614,11 +613,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
+		// Nonce verified in validate_ajax_attachment_request().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$current_library_size = isset( $_POST['current_size'] ) ?
 			intval( wp_unslash( $_POST['current_size'] ) )
 			: 0;
-		$size_after           = $image_statistics['compressed_total_size'];
-		$new_library_size     = $current_library_size + $size_after - $size_before;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		$size_after       = $image_statistics['compressed_total_size'];
+		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message']                = $tiny_image->get_latest_error();
 		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
@@ -655,7 +657,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_optimization_statistics() {
-		if ( $this->check_ajax_referer() && current_user_can( 'upload_files' ) ) {
+		if ( check_ajax_referer( 'tiny-compress', '_nonce', false ) &&
+			current_user_can( 'upload_files' ) ) {
 			$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 			echo json_encode( $stats );
 		}
@@ -703,6 +706,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$location = 'upload.php?mode=list&ids=' . $ids;
 
 		$location = add_query_arg( 'action', $action, $location );
+		$location = add_query_arg( '_tiny_nonce', wp_create_nonce( 'tiny-bulk-ids' ), $location );
 
 		if ( ! empty( $_REQUEST['paged'] ) ) {
 			$location = add_query_arg( 'paged', absint( $_REQUEST['paged'] ), $location );
@@ -758,6 +762,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	private function render_compress_details( $tiny_image ) {
+		$images_to_compress = array();
+
+		if ( ! empty( $_GET['ids'] ) ) {
+			$nonce = isset( $_GET['_tiny_nonce'] ) ?
+				sanitize_key( wp_unslash( $_GET['_tiny_nonce'] ) ) : '';
+
+			if ( $nonce && wp_verify_nonce( $nonce, 'tiny-bulk-ids' ) ) {
+				$request_ids        = sanitize_text_field( wp_unslash( $_GET['ids'] ) );
+				$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
+			}
+		}
+
 		$in_progress = $tiny_image->filter_image_sizes( 'in_progress' );
 		if ( count( $in_progress ) > 0 ) {
 			include __DIR__ . '/views/compress-details-processing.php';
@@ -816,7 +832,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		/*
 		This might be deduplicated with the admin script localization, but
 			the order of including scripts is sometimes different. So in that
-			case we need to make sure that the order of inclusion is correc.t */
+			case we need to make sure that the order of inclusion is correct. */
 		wp_localize_script(
 			self::NAME . '_dashboard_widget',
 			'tinyCompressDashboard',

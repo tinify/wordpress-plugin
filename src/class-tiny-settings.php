@@ -160,6 +160,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function image_sizes_notice() {
+		check_ajax_referer( 'tiny-compress' );
+
 		if ( current_user_can( 'manage_options' ) ) {
 			$selected_sizes = isset( $_GET['image_sizes_selected'] ) ?
 				intval( $_GET['image_sizes_selected'] ) : 0;
@@ -827,9 +829,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-		if ( ! $this->check_ajax_referer() ) {
-			exit;
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
 		$compressor = $this->get_compressor();
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
@@ -905,9 +906,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function update_api_key() {
-		if ( ! $this->check_ajax_referer() ) {
-			exit;
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
 
 		$key = null;
 		if ( ! current_user_can( 'manage_options' ) ) {

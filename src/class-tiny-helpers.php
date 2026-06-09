@@ -112,36 +112,6 @@ class Tiny_Helpers {
 
 
 	/**
-	 * Checks wether a user is viewing from a page builder
-	 *
-	 * @since 3.6.5
-	 */
-	public static function is_pagebuilder_request() {
-		$pagebuilder_keys = array(
-			'fl_builder', // Beaver Builder
-			'et_fb', // Divi Builder
-			'bricks', // Bricks Builder
-			'breakdance', // Breakdance Builder
-			'breakdance_browser', // Breakdance Builder
-			'ct_builder', // Oxygen Builder
-			'fb-edit', // Avada Live Builder
-			'builder', // Avada Live Builder
-			'spio_no_cdn', // Site Origin
-			'tatsu', // Tatsu Builder
-			'tve', // Thrive Architect
-			'tcbf', // Thrive Architect
-		);
-
-		foreach ( $pagebuilder_keys as $key ) {
-			if ( isset( $_GET[ $key ] ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Gets or initializes the WordPress filesystem instance.
 	 *
 	 * Returns the global WP_Filesystem instance, initializing it if necessary.
