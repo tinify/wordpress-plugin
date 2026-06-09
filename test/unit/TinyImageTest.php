@@ -202,6 +202,32 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		), $stats);
 	}
 
+	public function test_image_sizes_optimized_is_independent_of_image_sizes_compressed_when_conversion_is_pending() {
+		$this->wp->addOption( 'tinypng_convert_format', array(
+			'convert'    => 'on',
+			'convert_to' => 'smallest',
+		) );
+		$settings = new Tiny_Settings();
+		$subject  = new Tiny_Image( $settings, 1, $this->json( '_wp_attachment_metadata' ) );
+
+		$stats = $subject->get_statistics(
+			$settings->get_sizes(),
+			$settings->get_active_tinify_sizes()
+		);
+
+		$this->assertEquals( 3, $stats['image_sizes_compressed'],
+			'Three sizes have been compressed.'
+		);
+		$this->assertEquals( 0, $stats['image_sizes_optimized'],
+			'No sizes count as fully optimized because conversion has not been done but has been enabled.'
+		);
+		$this->assertNotEquals(
+			$stats['image_sizes_compressed'],
+			$stats['image_sizes_optimized'],
+			'the number of compressed images should not be equal to the number of optimized images.'
+		);
+	}
+
 	public function test_get_image_sizes_available_for_compression_when_file_modified() {
 		$active_sizes = $this->settings->get_sizes();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
