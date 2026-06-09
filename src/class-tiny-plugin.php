@@ -765,7 +765,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$images_to_compress = array();
 
 		if ( ! empty( $_GET['ids'] ) ) {
-			$nonce = isset( $_GET['_tiny_nonce'] ) ? sanitize_key( wp_unslash( $_GET['_tiny_nonce'] ) ) : '';
+			$nonce = isset( $_GET['_tiny_nonce'] ) ?
+				sanitize_key( wp_unslash( $_GET['_tiny_nonce'] ) ) : '';
 
 			if ( $nonce && wp_verify_nonce( $nonce, 'tiny-bulk-ids' ) ) {
 				$request_ids        = sanitize_text_field( wp_unslash( $_GET['ids'] ) );
