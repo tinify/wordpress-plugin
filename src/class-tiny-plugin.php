@@ -768,9 +768,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$nonce = isset( $_GET['_tiny_nonce'] ) ? sanitize_key( wp_unslash( $_GET['_tiny_nonce'] ) ) : '';
 
 			if ( $nonce && wp_verify_nonce( $nonce, 'tiny-bulk-ids' ) ) {
- 				$request_ids        = sanitize_text_field( wp_unslash( $_GET['ids'] ) );
- 				$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
- 			}
+				$request_ids        = sanitize_text_field( wp_unslash( $_GET['ids'] ) );
+				$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
+			}
 		}
 
 		$in_progress = $tiny_image->filter_image_sizes( 'in_progress' );
@@ -831,7 +831,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		/*
 		This might be deduplicated with the admin script localization, but
 			the order of including scripts is sometimes different. So in that
-			case we need to make sure that the order of inclusion is correc.t */
+			case we need to make sure that the order of inclusion is correct. */
 		wp_localize_script(
 			self::NAME . '_dashboard_widget',
 			'tinyCompressDashboard',
