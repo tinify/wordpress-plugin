@@ -83,7 +83,7 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 	{
 		$this->wp->updateMetadata(1, Tiny_Config::META_KEY, array('size' => 'current'));
 
-		$this->assertEquals(array('size' => 'current'), Tiny_Migrate::get_tiny_metadata(1));
+		$this->assertEquals(array('size' => 'current'), Tiny_Image::get_tiny_metadata(1));
 	}
 
 	public function test_get_tiny_metadata_falls_back_to_legacy_key_before_migration()
@@ -92,7 +92,7 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		// not run yet (or is still in flight / backed off).
 		$this->wp->updateMetadata(1, Tiny_Config::LEGACY_META_KEY, array('size' => 'legacy'));
 
-		$this->assertEquals(array('size' => 'legacy'), Tiny_Migrate::get_tiny_metadata(1));
+		$this->assertEquals(array('size' => 'legacy'), Tiny_Image::get_tiny_metadata(1));
 	}
 
 	public function test_get_tiny_metadata_prefers_current_key_over_legacy()
@@ -100,12 +100,12 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		$this->wp->updateMetadata(1, Tiny_Config::LEGACY_META_KEY, array('size' => 'legacy'));
 		$this->wp->updateMetadata(1, Tiny_Config::META_KEY, array('size' => 'current'));
 
-		$this->assertEquals(array('size' => 'current'), Tiny_Migrate::get_tiny_metadata(1));
+		$this->assertEquals(array('size' => 'current'), Tiny_Image::get_tiny_metadata(1));
 	}
 
 	public function test_get_tiny_metadata_returns_empty_when_no_metadata_exists()
 	{
-		$this->assertEmpty(Tiny_Migrate::get_tiny_metadata(1));
+		$this->assertEmpty(Tiny_Image::get_tiny_metadata(1));
 	}
 
 	public function test_run_flushes_object_cache_after_migrating()
