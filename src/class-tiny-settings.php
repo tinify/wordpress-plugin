@@ -305,6 +305,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$this->tinify_sizes[] = $size;
 			}
 		}
+
+		/*
+			When the original is enabled, also include the unscaled original.
+			WordPress stores an unscaled copy of any uploaded image that exceeds
+			the big_image_size_threshold (default 2560 px). Images without such
+			a copy will simply skip this size in filter_image_sizes(). */
+		if ( in_array( Tiny_Image::ORIGINAL, $this->tinify_sizes, true ) ) {
+			$this->tinify_sizes[] = Tiny_Image::ORIGINAL_UNSCALED;
+		}
+
 		return $this->tinify_sizes;
 	}
 
@@ -353,7 +363,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_preserve_options( $size_name ) {
-		if ( ! Tiny_Image::is_original( $size_name ) ) {
+		if ( ! Tiny_Image::is_original( $size_name ) && ! Tiny_Image::is_original_unscaled( $size_name ) ) {
 			return false;
 		}
 		$options  = array();

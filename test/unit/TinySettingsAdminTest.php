@@ -242,6 +242,26 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		);
 	}
 
+	public function test_get_active_tinify_sizes_includes_original_unscaled_when_original_is_active() {
+		$this->wp->addOption( 'tinypng_sizes', array( Tiny_Image::ORIGINAL => 'on' ) );
+
+		$sizes = $this->subject->get_active_tinify_sizes();
+
+		$this->assertContains( Tiny_Image::ORIGINAL, $sizes );
+		$this->assertContains( Tiny_Image::ORIGINAL_UNSCALED, $sizes );
+	}
+
+	public function test_get_active_tinify_sizes_excludes_original_unscaled_when_original_is_inactive() {
+		$this->wp->addOption( 'tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'off',
+			'medium'             => 'on',
+		) );
+
+		$sizes = $this->subject->get_active_tinify_sizes();
+
+		$this->assertNotContains( Tiny_Image::ORIGINAL_UNSCALED, $sizes );
+	}
+
 	public function test_get_resize_enabled_should_return_true_if_enabled() {
 		$this->wp->addOption( 'tinypng_resize_original', array(
 			'enabled' => 'on',

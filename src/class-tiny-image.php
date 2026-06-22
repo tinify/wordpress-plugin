@@ -19,7 +19,8 @@
 */
 
 class Tiny_Image {
-	const ORIGINAL = 0;
+	const ORIGINAL          = 0;
+	const ORIGINAL_UNSCALED = 'original_unscaled';
 
 	/** @var Tiny_Settings */
 	private $settings;
@@ -71,6 +72,12 @@ class Tiny_Image {
 		$this->name                    = end( $path_parts );
 		$filename                      = $path_prefix . $this->name;
 		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
+
+		if ( isset( $this->wp_metadata['original_image'] ) ) {
+			$this->sizes[ self::ORIGINAL_UNSCALED ] = new Tiny_Image_Size(
+				$path_prefix . $this->wp_metadata['original_image']
+			);
+		}
 
 		// Ensure 'sizes' exists and is an array to prevent PHP Warnings
 		$sizes = isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] )
@@ -548,6 +555,10 @@ class Tiny_Image {
 
 	public static function is_original( $size ) {
 		return self::ORIGINAL === $size;
+	}
+
+	public static function is_original_unscaled( $size ) {
+		return self::ORIGINAL_UNSCALED === $size;
 	}
 
 	public static function is_retina( $size ) {
