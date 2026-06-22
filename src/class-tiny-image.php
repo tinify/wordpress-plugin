@@ -162,7 +162,7 @@ class Tiny_Image {
 
 	private function parse_tiny_metadata( $tiny_metadata = null ) {
 		if ( is_null( $tiny_metadata ) ) {
-			$tiny_metadata = Tiny_Image::get_tiny_metadata( $this->id );
+			$tiny_metadata = self::get_tiny_metadata( $this->id );
 		}
 		if ( $tiny_metadata ) {
 			foreach ( $tiny_metadata as $size => $meta ) {
