@@ -9,8 +9,6 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 	public function set_up()
 	{
 		parent::set_up();
-		// migration test logs error in stdout so swallow error logs
-		ini_set('error_log', '/dev/null');
 		$this->wp->stub('query', function() {
 			return 1;
 		});
