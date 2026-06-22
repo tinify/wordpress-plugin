@@ -139,7 +139,7 @@ class Tiny_Migrate {
 				return false;
 			}
 		} while ( $batch_size === (int) $result );
-		
+
 		wp_cache_flush();
 
 		return true;

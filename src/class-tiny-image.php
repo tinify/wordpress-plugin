@@ -141,7 +141,7 @@ class Tiny_Image {
 
 	/**
 	 * Will retrieve compression meta data for the given post_id.
-	 * 
+	 *
 	 * As migrations on large libraries can take longer, we will fall back on
 	 * the legacy key on migrating. We can remove the LEGACY_META_KEY on 3.8.0.
 	 *
