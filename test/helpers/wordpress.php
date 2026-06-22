@@ -103,6 +103,8 @@ class WordPressStubs
 		$this->addMethod('wp_timezone_string');
 		$this->addMethod('update_option');
 		$this->addMethod('update');
+		$this->addMethod('query');
+		$this->addMethod('wp_cache_flush');
 		$this->addMethod('get_transient');
 		$this->addMethod('set_transient');
 		$this->addMethod('delete_transient');
