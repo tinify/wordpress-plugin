@@ -2,7 +2,9 @@
 
 define('ABSPATH', dirname(__FILE__) . '/../');
 define('WPINC', 'wp-includes-for-tests');
-define('HOUR_IN_SECONDS', 3600);
+if (! defined('HOUR_IN_SECONDS')) {
+	define('HOUR_IN_SECONDS', 3600);
+}
 require_once dirname(__FILE__) . '/../' . WPINC . '/file.php';
 
 use org\bovigo\vfs\vfsStream;
