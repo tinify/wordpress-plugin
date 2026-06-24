@@ -557,6 +557,15 @@ class Tiny_Image {
 		return self::ORIGINAL === $size;
 	}
 
+
+	/**
+	 * Check wether given $size is the original_unscaled image size.
+	 *
+	 * @since 3.6.14
+	 *
+	 * @param string $size the size descriptor
+	 * @return bool true if size is the original unscaled image
+	 */
 	public static function is_original_unscaled( $size ) {
 		return self::ORIGINAL_UNSCALED === $size;
 	}
