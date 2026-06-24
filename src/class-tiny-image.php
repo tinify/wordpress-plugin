@@ -75,7 +75,7 @@ class Tiny_Image {
 
 		if ( isset( $this->wp_metadata['original_image'] ) ) {
 			$this->sizes[ self::ORIGINAL_UNSCALED ] = new Tiny_Image_Size(
-				$path_prefix . $this->wp_metadata['original_image']
+				$path_prefix . wp_basename( $this->wp_metadata['original_image'] )
 			);
 		}
 
@@ -91,7 +91,7 @@ class Tiny_Image {
 				// Add to sanitized metadata
 				$sanitized_sizes[ $size_name ] = $size_info;
 				$this->sizes[ $size_name ]     = new Tiny_Image_Size(
-					$path_prefix . $size_info['file']
+					$path_prefix . wp_basename( $size_info['file'] )
 				);
 			}
 		}
