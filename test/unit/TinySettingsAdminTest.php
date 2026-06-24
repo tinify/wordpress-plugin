@@ -40,6 +40,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 				'height' => null,
 				'tinify' => true,
 			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => true,
+			),
 			'thumbnail' => array(
 				'width' => 150,
 				'height' => 150,
@@ -96,6 +101,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 				'height' => null,
 				'tinify' => true,
 			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => true,
+			),
 			'thumbnail' => array(
 				'width' => 150,
 				'height' => 150,
@@ -139,6 +149,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 				'height' => null,
 				'tinify' => false,
 			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => false,
+			),
 			'thumbnail' => array(
 				'width' => 150,
 				'height' => 150,
@@ -166,6 +181,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		$this->subject->get_sizes();
 		$this->assertEquals(array(
 			0 => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => true,
+			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
 				'width' => null,
 				'height' => null,
 				'tinify' => true,
