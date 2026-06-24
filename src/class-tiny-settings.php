@@ -272,7 +272,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$original_tinify = ! is_array( $setting ) ||
 			( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] );
 		$this->sizes     = array(
-			$size => array(
+			$size                         => array(
 				'width'  => null,
 				'height' => null,
 				'tinify' => $original_tinify,
@@ -363,7 +363,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_preserve_options( $size_name ) {
-		if ( ! Tiny_Image::is_original( $size_name ) && ! Tiny_Image::is_original_unscaled( $size_name ) ) {
+		if ( ! Tiny_Image::is_original( $size_name ) &&
+			! Tiny_Image::is_original_unscaled( $size_name )
+		) {
 			return false;
 		}
 		$options  = array();
