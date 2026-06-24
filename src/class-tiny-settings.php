@@ -568,6 +568,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			esc_attr( $dummy_size_name ) . '" value="on"/>';
 
 		foreach ( $this->get_sizes() as $size => $option ) {
+			if ( Tiny_Image::is_original_unscaled( $size) ) {
+				// unscaled is selected implicitly by original size
+				continue;
+			}
 			$this->render_size_checkboxes( $size, $option );
 		}
 		if ( self::wr2x_active() ) {
