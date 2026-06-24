@@ -253,10 +253,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Retrieves image sizes as a map of size and width, height and tinify meta data
-	 * The first entry will always be '0', aka the original uploaded image.
+	 * Retrieves image sizes as a map of size and width, height and tinify meta data.
 	 *
-	 * @return array{string: array{width: int|null, height: int|null, tinify: array{}}} $sizes
+	 * The first entry will always be '0' (the original uploaded image), the second
+	 * will always be 'original_unscaled' (the unscaled copy WordPress stores for images
+	 * that exceed the big_image_size_threshold). Both entries share the same tinify setting.
+	 *
+	 * @return array<int|string, array{width: int|null, height: int|null, tinify: bool}>
 	 */
 	public function get_sizes() {
 		if ( is_array( $this->sizes ) ) {
@@ -265,13 +268,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$setting = get_option( self::get_prefixed_name( 'sizes' ) );
 
-		$size        = Tiny_Image::ORIGINAL;
-		$this->sizes = array(
+		$size            = Tiny_Image::ORIGINAL;
+		$original_tinify = ! is_array( $setting ) ||
+			( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] );
+		$this->sizes     = array(
 			$size => array(
 				'width'  => null,
 				'height' => null,
-				'tinify' => ! is_array( $setting ) ||
-					( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] ),
+				'tinify' => $original_tinify,
+			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width'  => null,
+				'height' => null,
+				'tinify' => $original_tinify,
 			),
 		);
 
@@ -304,15 +313,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 			if ( $values['tinify'] ) {
 				$this->tinify_sizes[] = $size;
 			}
-		}
-
-		/*
-			When the original is enabled, also include the unscaled original.
-			WordPress stores an unscaled copy of any uploaded image that exceeds
-			the big_image_size_threshold (default 2560 px). Images without such
-			a copy will simply skip this size in filter_image_sizes(). */
-		if ( in_array( Tiny_Image::ORIGINAL, $this->tinify_sizes, true ) ) {
-			$this->tinify_sizes[] = Tiny_Image::ORIGINAL_UNSCALED;
 		}
 
 		return $this->tinify_sizes;
