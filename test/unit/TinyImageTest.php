@@ -17,7 +17,7 @@ class Tiny_Image_Test extends Tiny_TestCase {
 	}
 
 	public function test_tiny_post_meta_key_may_never_change() {
-		$this->assertEquals( '61b16225f107e6f0a836bf19d47aa0fd912f8925', sha1( Tiny_Config::META_KEY ) );
+		$this->assertEquals( '438fc52ce17b9aedf0cf70dea52d5551affba59a', sha1( Tiny_Config::META_KEY ) );
 	}
 
 	public function test_update_wp_metadata_should_not_update_with_no_resized_original() {

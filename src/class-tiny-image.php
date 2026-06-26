@@ -141,9 +141,30 @@ class Tiny_Image {
 		return $filenames;
 	}
 
+	/**
+	 * Will retrieve compression meta data for the given post_id.
+	 *
+	 * As migrations on large libraries can take longer, we will fall back on
+	 * the legacy key on migrating. We can remove the LEGACY_META_KEY on 3.8.0.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int $post_id Attachment ID.
+	 * @return mixed The stored tiny metadata, or '' when none exists.
+	 */
+	public static function get_tiny_metadata( $post_id ) {
+		$tiny_metadata = get_post_meta( $post_id, Tiny_Config::META_KEY, true );
+
+		if ( empty( $tiny_metadata ) ) {
+			$tiny_metadata = get_post_meta( $post_id, Tiny_Config::LEGACY_META_KEY, true );
+		}
+
+		return $tiny_metadata;
+	}
+
 	private function parse_tiny_metadata( $tiny_metadata = null ) {
 		if ( is_null( $tiny_metadata ) ) {
-			$tiny_metadata = get_post_meta( $this->id, Tiny_Config::META_KEY, true );
+			$tiny_metadata = self::get_tiny_metadata( $this->id );
 		}
 		if ( $tiny_metadata ) {
 			foreach ( $tiny_metadata as $size => $meta ) {
