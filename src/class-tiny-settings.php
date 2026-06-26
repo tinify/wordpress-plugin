@@ -253,10 +253,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Retrieves image sizes as a map of size and width, height and tinify meta data
-	 * The first entry will always be '0', aka the original uploaded image.
+	 * Retrieves image sizes as a map of size and width, height and tinify meta data.
 	 *
-	 * @return array{string: array{width: int|null, height: int|null, tinify: array{}}} $sizes
+	 * The first entry will always be '0' (the original uploaded image), the second
+	 * will always be 'original_unscaled' (the unscaled copy WordPress stores for images
+	 * that exceed the big_image_size_threshold). Both entries share the same tinify setting.
+	 *
+	 * @return array<int|string, array{width: int|null, height: int|null, tinify: bool}>
 	 */
 	public function get_sizes() {
 		if ( is_array( $this->sizes ) ) {
@@ -265,13 +268,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$setting = get_option( self::get_prefixed_name( 'sizes' ) );
 
-		$size        = Tiny_Image::ORIGINAL;
-		$this->sizes = array(
-			$size => array(
+		$size            = Tiny_Image::ORIGINAL;
+		$original_tinify = ! is_array( $setting ) ||
+			( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] );
+		$this->sizes     = array(
+			$size                         => array(
 				'width'  => null,
 				'height' => null,
-				'tinify' => ! is_array( $setting ) ||
-					( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] ),
+				'tinify' => $original_tinify,
+			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width'  => null,
+				'height' => null,
+				'tinify' => $original_tinify,
 			),
 		);
 
@@ -305,6 +314,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$this->tinify_sizes[] = $size;
 			}
 		}
+
 		return $this->tinify_sizes;
 	}
 
@@ -353,7 +363,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function get_preserve_options( $size_name ) {
-		if ( ! Tiny_Image::is_original( $size_name ) ) {
+		if ( ! Tiny_Image::is_original( $size_name ) &&
+			! Tiny_Image::is_original_unscaled( $size_name )
+		) {
 			return false;
 		}
 		$options  = array();
@@ -556,6 +568,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			esc_attr( $dummy_size_name ) . '" value="on"/>';
 
 		foreach ( $this->get_sizes() as $size => $option ) {
+			if ( Tiny_Image::is_original_unscaled( $size ) ) {
+				// unscaled is selected implicitly by original size
+				continue;
+			}
 			$this->render_size_checkboxes( $size, $option );
 		}
 		if ( self::wr2x_active() ) {

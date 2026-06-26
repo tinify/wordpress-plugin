@@ -19,7 +19,8 @@
 */
 
 class Tiny_Image {
-	const ORIGINAL = 0;
+	const ORIGINAL          = 0;
+	const ORIGINAL_UNSCALED = 'original_unscaled';
 
 	/** @var Tiny_Settings */
 	private $settings;
@@ -72,6 +73,12 @@ class Tiny_Image {
 		$filename                      = $path_prefix . $this->name;
 		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
 
+		if ( isset( $this->wp_metadata['original_image'] ) ) {
+			$this->sizes[ self::ORIGINAL_UNSCALED ] = new Tiny_Image_Size(
+				$path_prefix . wp_basename( $this->wp_metadata['original_image'] )
+			);
+		}
+
 		// Ensure 'sizes' exists and is an array to prevent PHP Warnings
 		$sizes = isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] )
 		? $this->wp_metadata['sizes']
@@ -84,7 +91,7 @@ class Tiny_Image {
 				// Add to sanitized metadata
 				$sanitized_sizes[ $size_name ] = $size_info;
 				$this->sizes[ $size_name ]     = new Tiny_Image_Size(
-					$path_prefix . $size_info['file']
+					$path_prefix . wp_basename( $size_info['file'] )
 				);
 			}
 		}
@@ -569,6 +576,19 @@ class Tiny_Image {
 
 	public static function is_original( $size ) {
 		return self::ORIGINAL === $size;
+	}
+
+
+	/**
+	 * Check wether given $size is the original_unscaled image size.
+	 *
+	 * @since 3.6.14
+	 *
+	 * @param string $size the size descriptor
+	 * @return bool true if size is the original unscaled image
+	 */
+	public static function is_original_unscaled( $size ) {
+		return self::ORIGINAL_UNSCALED === $size;
 	}
 
 	public static function is_retina( $size ) {

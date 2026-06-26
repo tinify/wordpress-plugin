@@ -120,6 +120,7 @@ class WordPressStubs
 		$this->addMethod('esc_html_e');
 		$this->addMethod('esc_html');
 		$this->addMethod('maybe_unserialize');
+		$this->addMethod('wp_basename');
 		$this->defaults();
 		$this->create_filesystem();
 	}
@@ -561,6 +562,18 @@ class WordPressMocks
 	public function wp_json_encode($data, $options = 0, $depth = 512)
 	{
 		return json_encode($data, $options, $depth);
+	}
+
+	/**
+	 * Mocked function for https://developer.wordpress.org/reference/functions/wp_basename/
+	 *
+	 * @param string $path     File path.
+	 * @param string $suffix   Optional. If the filename ends in suffix, this will be cut. Default empty string.
+	 * @return string Trailing name component of the path.
+	 */
+	public function wp_basename($path, $suffix = '')
+	{
+		return urldecode(basename(str_replace(array('%2F', '%2f'), '/', urlencode($path)), $suffix));
 	}
 
 	/**

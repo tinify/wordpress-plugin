@@ -181,13 +181,13 @@ test.describe('settings', () => {
 
     await page.locator('#submit').click();
 
-    await expect(page.getByText('With these settings you can compress at least 125 images for free each month.')).toBeVisible();
+    await expect(page.getByText('With these settings you can compress at least 100 images for free each month.')).toBeVisible();
   });
 
   test('update free compressions', async () => {
     await enableCompressionSizes(page, ['0', 'thumbnail', 'large'], false);
 
-    await expect(page.getByText('With these settings you can compress at least 166 images for free each month.')).toBeVisible();
+    await expect(page.getByText('With these settings you can compress at least 125 images for free each month.')).toBeVisible();
   });
 
   test('show no compressions', async () => {
