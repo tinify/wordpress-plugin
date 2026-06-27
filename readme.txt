@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 4.0
 Tested up to: 7.0
-Stable tag: 3.6.14
+Stable tag: 3.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,7 @@ A: When the conversion feature is enabled (to convert images to AVIF or WebP), e
 == Changelog ==
 = 3.7.0 =
 * chore: migrated meta key from `tiny_compress_images` to `_tiny_compress_images`
+* feat: when original is set to be compressed, it will also compress images filtered by big_image_size_threshold.
 
 = 3.6.14 =
 * fix: added check for valid path before deleting converted image
