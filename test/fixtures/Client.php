@@ -19,7 +19,6 @@ class Client {
 	function __construct( $key, $appIdentifier = null ) {
 		$userAgent = join( ' ', array_filter( array( self::userAgent(), $appIdentifier ) ) );
 		$this->options = array(
-			CURLOPT_BINARYTRANSFER => true,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_HEADER => true,
 			CURLOPT_USERPWD => $key ? ('api:' . $key) : null,

@@ -18,7 +18,7 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION         = '3.6.8';
+	const VERSION         = '3.6.14';
 	const MEDIA_COLUMN    = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
@@ -32,7 +32,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public static function version() {
-		/* Avoid using get_plugin_data() because it is not loaded early enough
+		/*
+		Avoid using get_plugin_data() because it is not loaded early enough
 			in xmlrpc.php. */
 		return self::VERSION;
 	}
@@ -118,7 +119,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'mark_image_as_compressed' )
 		);
 
-		/* When touching any functionality linked to image compressions when
+		/*
+		When touching any functionality linked to image compressions when
 			uploading images make sure it also works with XML-RPC. See README. */
 		add_filter(
 			'wp_ajax_nopriv_tiny_rpc',
@@ -442,15 +444,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function process_rpc_request() {
 		if (
 			empty( $_POST['tiny_rpc_action'] ) ||
-			empty( $_POST['tiny_rpc_hash'] ) ||
-			32 !== strlen( $_POST['tiny_rpc_hash'] )
+			empty( $_POST['tiny_rpc_hash'] )
 		) {
 			exit();
 		}
 
-		$rpc_hash = sanitize_key( $_POST['tiny_rpc_hash'] );
-		$user_id  = absint( get_transient( 'tiny_rpc_' . $rpc_hash ) );
-		$user     = $user_id ? get_userdata( $user_id ) : false;
+		$rpc_hash = sanitize_key( wp_unslash( $_POST['tiny_rpc_hash'] ) );
+		if ( 32 !== strlen( $rpc_hash ) ) {
+			exit();
+		}
+
+		$user_id = absint( get_transient( 'tiny_rpc_' . $rpc_hash ) );
+		$user    = $user_id ? get_userdata( $user_id ) : false;
 
 		/* We no longer need the transient. */
 		delete_transient( 'tiny_rpc_' . $rpc_hash );
@@ -465,7 +470,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 
 		/* Now that everything is checked, perform the actual action. */
-		$action = $_POST['tiny_rpc_action'];
+		$action = sanitize_key( wp_unslash( $_POST['tiny_rpc_action'] ) );
 		unset(
 			$_POST['action'],
 			$_POST['tiny_rpc_action'],
@@ -476,12 +481,17 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function compress_on_upload() {
-		if ( ! wp_verify_nonce( $_POST['_ajax_nonce'], 'new_media-' . $_POST['attachment_id'] ) ) {
+		$nonce         = isset( $_POST['_ajax_nonce'] ) ?
+			sanitize_key( wp_unslash( $_POST['_ajax_nonce'] ) ) : '';
+		$attachment_id = isset( $_POST['attachment_id'] ) ?
+			intval( wp_unslash( $_POST['attachment_id'] ) ) : 0;
+
+		if ( ! wp_verify_nonce( $nonce, 'new_media-' . $attachment_id ) ) {
 			exit;
 		}
 		if ( current_user_can( 'upload_files' ) ) {
-			$attachment_id = intval( $_POST['attachment_id'] );
-			$metadata      = $_POST['metadata'];
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$metadata = isset( $_POST['metadata'] ) ? wp_unslash( $_POST['metadata'] ) : array();
 			if ( is_array( $metadata ) ) {
 				$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 
@@ -514,9 +524,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 *               or success array ['data' => [$id, $metadata]]
 	 */
 	private function validate_ajax_attachment_request() {
-		if ( ! $this->check_ajax_referer() ) {
-			exit();
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
 		if ( ! current_user_can( 'upload_files' ) ) {
 			return array(
 				'error' => esc_html__(
@@ -552,7 +561,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function compress_image_from_library() {
 		$response = $this->validate_ajax_attachment_request();
 		if ( isset( $response['error'] ) ) {
-			echo $response['error'];
+			echo esc_html( $response['error'] );
 			exit();
 		}
 		list($id, $metadata) = $response['data'];
@@ -575,7 +584,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		// anymore, so other plugins are less likely to be triggered.
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
-		echo $this->render_compress_details( $tiny_image );
+		$this->render_compress_details( $tiny_image );
 
 		exit();
 	}
@@ -611,14 +620,19 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
-		$current_library_size = intval( $_POST['current_size'] );
-		$size_after           = $image_statistics['compressed_total_size'];
-		$new_library_size     = $current_library_size + $size_after - $size_before;
+		// Nonce verified in validate_ajax_attachment_request().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$current_library_size = isset( $_POST['current_size'] ) ?
+			intval( wp_unslash( $_POST['current_size'] ) )
+			: 0;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		$size_after       = $image_statistics['compressed_total_size'];
+		$new_library_size = $current_library_size + $size_after - $size_before;
 
 		$result['message']                = $tiny_image->get_latest_error();
 		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
 		$result['image_sizes_converted']  = $image_statistics['image_sizes_converted'];
-		$result['image_sizes_optimized']  = $image_statistics['image_sizes_compressed'];
+		$result['image_sizes_optimized']  = $image_statistics['image_sizes_optimized'];
 
 		$result['initial_total_size'] = size_format(
 			$image_statistics['initial_total_size'],
@@ -650,7 +664,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_optimization_statistics() {
-		if ( $this->check_ajax_referer() && current_user_can( 'upload_files' ) ) {
+		if ( check_ajax_referer( 'tiny-compress', '_nonce', false ) &&
+			current_user_can( 'upload_files' ) ) {
 			$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 			echo json_encode( $stats );
 		}
@@ -661,22 +676,24 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$response = $this->validate_ajax_attachment_request();
 
 		if ( isset( $response['error'] ) ) {
-			echo $response['error'];
+			echo esc_html( $response['error'] );
 			exit();
 		}
 		list($id, $metadata) = $response['data'];
 
 		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
 
-		echo $this->render_compress_details( $tiny_image );
+		$this->render_compress_details( $tiny_image );
 
 		exit();
 	}
 
 	public function media_library_bulk_action() {
 		$valid_actions = array( 'tiny_bulk_action', 'tiny_bulk_mark_compressed' );
-		$action        = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
-		$action2       = isset( $_REQUEST['action2'] ) ? $_REQUEST['action2'] : '';
+		$action        = isset( $_REQUEST['action'] ) ?
+			sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+		$action2       = isset( $_REQUEST['action2'] ) ?
+			sanitize_key( wp_unslash( $_REQUEST['action2'] ) ) : '';
 
 		if (
 			! in_array( $action, $valid_actions, true ) &&
@@ -684,27 +701,39 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		) {
 			return;
 		}
-		if ( empty( $_REQUEST['media'] ) || ( ! $_REQUEST['media'] ) ) {
+		$media = isset( $_REQUEST['media'] ) ?
+			array_map( 'intval', wp_unslash( (array) $_REQUEST['media'] ) )
+			: array();
+		if ( empty( $media ) ) {
 			$_REQUEST['action'] = '';
 			return;
 		}
 		check_admin_referer( 'bulk-media' );
-		$ids      = implode( '-', array_map( 'intval', $_REQUEST['media'] ) );
+		$ids      = implode( '-', $media );
 		$location = 'upload.php?mode=list&ids=' . $ids;
 
-		$location = add_query_arg( 'action', $_REQUEST['action'], $location );
+		$location = add_query_arg( 'action', $action, $location );
+		$location = add_query_arg( '_tiny_nonce', wp_create_nonce( 'tiny-bulk-ids' ), $location );
 
 		if ( ! empty( $_REQUEST['paged'] ) ) {
 			$location = add_query_arg( 'paged', absint( $_REQUEST['paged'] ), $location );
 		}
 		if ( ! empty( $_REQUEST['s'] ) ) {
-			$location = add_query_arg( 's', $_REQUEST['s'], $location );
+			$location = add_query_arg(
+				's',
+				sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ),
+				$location
+			);
 		}
 		if ( ! empty( $_REQUEST['m'] ) ) {
-			$location = add_query_arg( 'm', $_REQUEST['m'], $location );
+			$location = add_query_arg(
+				'm',
+				sanitize_text_field( wp_unslash( $_REQUEST['m'] ) ),
+				$location
+			);
 		}
 
-		wp_redirect( admin_url( $location ) );
+		wp_safe_redirect( admin_url( $location ) );
 		exit();
 	}
 
@@ -740,6 +769,18 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	private function render_compress_details( $tiny_image ) {
+		$images_to_compress = array();
+
+		if ( ! empty( $_GET['ids'] ) ) {
+			$nonce = isset( $_GET['_tiny_nonce'] ) ?
+				sanitize_key( wp_unslash( $_GET['_tiny_nonce'] ) ) : '';
+
+			if ( $nonce && wp_verify_nonce( $nonce, 'tiny-bulk-ids' ) ) {
+				$request_ids        = sanitize_text_field( wp_unslash( $_GET['ids'] ) );
+				$images_to_compress = array_map( 'intval', explode( '-', $request_ids ) );
+			}
+		}
+
 		$in_progress = $tiny_image->filter_image_sizes( 'in_progress' );
 		if ( count( $in_progress ) > 0 ) {
 			include __DIR__ . '/views/compress-details-processing.php';
@@ -795,9 +836,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			true
 		);
 
-		/* This might be deduplicated with the admin script localization, but
+		/*
+		This might be deduplicated with the admin script localization, but
 			the order of including scripts is sometimes different. So in that
-			case we need to make sure that the order of inclusion is correc.t */
+			case we need to make sure that the order of inclusion is correct. */
 		wp_localize_script(
 			self::NAME . '_dashboard_widget',
 			'tinyCompressDashboard',
@@ -857,6 +899,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * Will clean up converted files (if any) when the original is deleted
 	 *
 	 * Hooked to the `delete_attachment` action.
+	 *
 	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
 	 *
 	 * @param [int] $post_id
@@ -927,10 +970,19 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $review_block;
 	}
 
+	/*
+	 * Runs on uninstall
+	 *
+	 * @return void
+	 */
+	public static function uninstall() {
+		Tiny_Apache_Rewrite::uninstall_rules();
+	}
+
 	public function mark_image_as_compressed() {
 		$response = $this->validate_ajax_attachment_request();
 		if ( isset( $response['error'] ) ) {
-			echo $response['error'];
+			echo esc_html( $response['error'] );
 			exit();
 		}
 
@@ -938,7 +990,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
 		$tiny_image->mark_as_compressed();
 
-		echo $this->render_compress_details( $tiny_image );
+		$this->render_compress_details( $tiny_image );
 
 		exit();
 	}

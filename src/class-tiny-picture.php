@@ -65,11 +65,60 @@ class Tiny_Picture extends Tiny_WP_Base {
 			return;
 		}
 
-		if ( Tiny_Helpers::is_pagebuilder_request() ) {
+		if ( static::is_pagebuilder_request() ) {
 			return;
 		}
 
 		add_action( 'template_redirect', array( $this, 'on_template_redirect' ) );
+	}
+
+	/**
+	 * Checks whether the current request originates from a page builder.
+	 *
+	 * Detects known page builder query parameters to prevent picture-element
+	 * injection from interfering with builder previews.
+	 *
+	 * @since 3.6.5
+	 *
+	 * @return bool True if a page builder query parameter is present.
+	 */
+	protected static function is_pagebuilder_request() {
+		$pagebuilder_keys = array(
+			'fl_builder',        // Beaver Builder
+			'et_fb',             // Divi Builder
+			'bricks',            // Bricks Builder
+			'breakdance',        // Breakdance Builder
+			'breakdance_browser', // Breakdance Builder
+			'ct_builder',        // Oxygen Builder
+			'fb-edit',           // Avada Live Builder
+			'builder',           // Avada Live Builder
+			'spio_no_cdn',       // Site Origin
+			'tatsu',             // Tatsu Builder
+			'tve',               // Thrive Architect
+			'tcbf',              // Thrive Architect
+		);
+
+		foreach ( $pagebuilder_keys as $key ) {
+			if ( static::has_get_var( $key ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks whether a GET variable exists in the original request.
+	 *
+	 * Wraps filter_has_var() to allow overriding in tests via late static binding.
+	 *
+	 * @since 3.6.5
+	 *
+	 * @param string $key The query string key to check.
+	 * @return bool True if the key exists in the original GET request.
+	 */
+	protected static function has_get_var( $key ) {
+		return filter_has_var( INPUT_GET, $key );
 	}
 
 	public function on_template_redirect() {
@@ -109,7 +158,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	private function replace_img_sources( $content ) {
 		$image_sources = $this->filter_images( $content );
 		foreach ( $image_sources as $image_source ) {
-			$content = Tiny_Picture::replace_image( $content, $image_source );
+			$content = self::replace_image( $content, $image_source );
 		}
 		return $content;
 	}
@@ -145,7 +194,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	/**
 	 * Will add additional sourcesets to picture elements.
 	 *
-	 * @param string $content the full page content
+	 * @param string              $content the full page content
 	 * @param Tiny_Source_Picture $source the picture element
 	 *
 	 * @return string the updated content including augmented picture elements
@@ -159,7 +208,7 @@ class Tiny_Picture extends Tiny_WP_Base {
 	/**
 	 * Will replace img elements with picture elements that (possibly) have additional formats.
 	 *
-	 * @param string $content the full page content
+	 * @param string            $content the full page content
 	 * @param Tiny_Source_Image $source the picture element
 	 *
 	 * @return string the updated content including augmented picture elements

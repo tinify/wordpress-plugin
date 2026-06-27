@@ -41,6 +41,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 				'height' => null,
 				'tinify' => true,
 			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => true,
+			),
 			'thumbnail' => array(
 				'width' => 150,
 				'height' => 150,
@@ -97,6 +102,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 				'height' => null,
 				'tinify' => true,
 			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => true,
+			),
 			'thumbnail' => array(
 				'width' => 150,
 				'height' => 150,
@@ -140,6 +150,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 				'height' => null,
 				'tinify' => false,
 			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => false,
+			),
 			'thumbnail' => array(
 				'width' => 150,
 				'height' => 150,
@@ -167,6 +182,11 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		$this->subject->get_sizes();
 		$this->assertEquals(array(
 			0 => array(
+				'width' => null,
+				'height' => null,
+				'tinify' => true,
+			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
 				'width' => null,
 				'height' => null,
 				'tinify' => true,
@@ -241,6 +261,26 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 			),
 			$sizes['additional_size_no_width']
 		);
+	}
+
+	public function test_get_active_tinify_sizes_includes_original_unscaled_when_original_is_active() {
+		$this->wp->addOption( 'tinypng_sizes', array( Tiny_Image::ORIGINAL => 'on' ) );
+
+		$sizes = $this->subject->get_active_tinify_sizes();
+
+		$this->assertContains( Tiny_Image::ORIGINAL, $sizes );
+		$this->assertContains( Tiny_Image::ORIGINAL_UNSCALED, $sizes );
+	}
+
+	public function test_get_active_tinify_sizes_excludes_original_unscaled_when_original_is_inactive() {
+		$this->wp->addOption( 'tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'off',
+			'medium'             => 'on',
+		) );
+
+		$sizes = $this->subject->get_active_tinify_sizes();
+
+		$this->assertNotContains( Tiny_Image::ORIGINAL_UNSCALED, $sizes );
 	}
 
 	public function test_get_resize_enabled_should_return_true_if_enabled() {

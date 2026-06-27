@@ -8,8 +8,8 @@ test.describe.configure({ mode: 'serial' });
 let page: Page;
 let WPVersion = 0;
 
-function viewImage(page: Page, file: string) {
-  page.getByLabel(`“${file}” (Edit)`).click();
+function viewImage(page: Page, attachmentID: string) {
+  return page.goto(`/wp-admin/post.php?post=${attachmentID}&action=edit`);
 }
 
 test.describe('compression', () => {
@@ -112,9 +112,9 @@ test.describe('compression', () => {
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['medium', 'large']);
 
-    await uploadMedia(page, 'input-example.jpg');
+    const { attachmentID } = await uploadMedia(page, 'input-example.jpg');
 
-    await viewImage(page, 'input-example');
+    await viewImage(page, attachmentID);
 
     // thickbox is used to show modal window so wait until it is loaded
     await page.waitForLoadState('networkidle');
@@ -145,7 +145,7 @@ test.describe('compression', () => {
     await setCompressionTiming(page, 'manual');
     await enableCompressionSizes(page, ['medium', 'large']);
     await setAPIKey(page, 'JPG123');
-    
+
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
@@ -176,11 +176,10 @@ test.describe('compression', () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['medium']);
-    await uploadMedia(page, 'input-example.jpg');
+    const { attachmentID } = await uploadMedia(page, 'input-example.jpg');
     await enableCompressionSizes(page, ['medium', 'thumbnail']);
 
-    await page.goto('/wp-admin/upload.php');
-    await viewImage(page, 'input-example');
+    await viewImage(page, attachmentID);
 
     await expect(page.getByText('1 size compressed')).toBeVisible();
     await expect(page.getByText('1 size to be compressed')).toBeVisible();
@@ -242,6 +241,7 @@ test.describe('compression', () => {
       preserveCopyright: false,
       preserveGPS: false,
     });
+
     await uploadMedia(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php');
@@ -266,10 +266,9 @@ test.describe('compression', () => {
       preserveGPS: false,
     });
 
-    await uploadMedia(page, 'input-example.jpg');
+    const { attachmentID } = await uploadMedia(page, 'input-example.jpg');
 
-    await page.goto('/wp-admin/upload.php');
-    await viewImage(page, 'input-example');
+    await viewImage(page, attachmentID);
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*300\s*(x|×|by)\s*200.*/;
@@ -311,10 +310,9 @@ test.describe('compression', () => {
       preserveGPS: false,
     });
 
-    await uploadMedia(page, 'input-example.jpg');
+    const { attachmentID } = await uploadMedia(page, 'input-example.jpg');
 
-    await page.goto('/wp-admin/upload.php');
-    await viewImage(page, 'input-example');
+    await viewImage(page, attachmentID);
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*300\s*(x|×|by)\s*200.*/;
@@ -358,10 +356,8 @@ test.describe('compression', () => {
       preserveGPS: false,
     });
 
-    await uploadMedia(page, 'input-example.jpg');
-
-    await page.goto('/wp-admin/upload.php');
-    await viewImage(page, 'input-example');
+    const { attachmentID } = await uploadMedia(page, 'input-example.jpg');
+    await viewImage(page, attachmentID);
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*1080\s*(x|×|by)\s*720.*/;
@@ -396,9 +392,8 @@ test.describe('compression', () => {
       preserveCopyright: false,
       preserveGPS: false,
     });
-    await uploadMedia(page, 'input-example.jpg');
-    await page.goto('/wp-admin/upload.php');
-    await viewImage(page, 'input-example');
+    const { attachmentID } = await uploadMedia(page, 'input-example.jpg');
+    await viewImage(page, attachmentID);
 
     const dimensionText = await page.locator('.misc-pub-section.misc-pub-dimensions').textContent();
     const shouldMatch = /.*1080\s*(x|×|by)\s*720.*/;
@@ -501,19 +496,19 @@ test.describe('compression', () => {
     await setCompressionTiming(page, 'manual');
     await enableCompressionSizes(page, ['0', 'medium']);
     await uploadMedia(page, 'input-example.jpg');
-    
+
     await page.goto('/wp-admin/upload.php');
 
     await page.getByRole('button', { name: 'Mark as Compressed' }).click();
     await expect(page.getByText('2 sizes compressed')).toBeVisible();
     await expect(page.getByText('2 sizes converted')).toBeVisible();
   });
-  
+
   test('will mark multiple attachments as compressed', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'manual');
     await enableCompressionSizes(page, ['0', 'medium']);
-    
+
     await uploadMedia(page, 'input-example.jpg');
     await uploadMedia(page, 'input-example.png');
 

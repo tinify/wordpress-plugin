@@ -301,7 +301,6 @@
     eventOn('click', 'button.tiny-mark-as-compressed', onClickButtonMarkAsCompressed);
 
     setPropOf('button.tiny-compress', 'disabled', null);
-    
     compressImageSelection();
     watchCompressingImages();
 
@@ -329,29 +328,33 @@
       });
     }
 
-    eventOn('click', 'input[name*=tinypng_sizes], #tinypng_resize_original_enabled', function() {
-      /* Unfortunately, we need some additional information to display
-         the correct notice. */
-      var totalSelectedSizes = jQuery('input[name*=tinypng_sizes]:checked').length;
-      var compressWr2x = propOf('#tinypng_sizes_wr2x', 'checked');
+    async function refreshSizeDescriptionNotice() {
+      const totalSelectedSizes = document.querySelectorAll('input[name*=tinypng_sizes]:checked').length;
+      const compressWr2x = document.querySelector('#tinypng_sizes_wr2x')?.checked ?? false;
+      const selectedCount = compressWr2x ? totalSelectedSizes - 1 : totalSelectedSizes;
+
+      const separator = ajaxurl.includes('?') ? '&' : '?';
+      let imageCountUrl = `${ajaxurl}${separator}action=tiny_image_sizes_notice&image_sizes_selected=${selectedCount}&_ajax_nonce=${tinyCompress.nonce}`;
+
+      const resizeOriginalChecked = document.querySelector('#tinypng_resize_original_enabled')?.checked;
+      const compressOriginalChecked = document.querySelector('#tinypng_sizes_0')?.checked;
+      if (resizeOriginalChecked && compressOriginalChecked) {
+        imageCountUrl += '&resize_original=true';
+      }
       if (compressWr2x) {
-        totalSelectedSizes--;
+        imageCountUrl += '&compress_wr2x=true';
       }
-
-      var image_count_url = ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_image_sizes_notice&image_sizes_selected=' + totalSelectedSizes;
-      if (propOf('#tinypng_resize_original_enabled', 'checked') && propOf('#tinypng_sizes_0', 'checked')) {
-        image_count_url += '&resize_original=true';
+      try {
+        const sizeDescriptionHtml = await fetch(imageCountUrl).then(r => r.text());
+        document.querySelector('#tiny-image-sizes-notice').innerHTML = sizeDescriptionHtml;
+      } catch (err) {
+        document.querySelector('#tiny-image-sizes-notice').innerHTML = '';
+        console.error(err);
       }
-      if (compressWr2x) {
-        image_count_url += '&compress_wr2x=true';
-      }
-      jQuery('#tiny-image-sizes-notice').load(image_count_url);
-    });
+    }
 
-    eventOn('click', '#tinypng_auto_compress_enabled', function() {
-      updateSettings();
-    });
-
+    eventOn('click', 'input[name*=tinypng_sizes], #tinypng_resize_original_enabled', refreshSizeDescriptionNotice);
+    eventOn('click', '#tinypng_auto_compress_enabled', updateSettings);
     jQuery('#tinypng_sizes_0, #tinypng_resize_original_enabled').click(updateSettings);
     updateSettings();
   }

@@ -148,12 +148,13 @@ class Tiny_Notices extends Tiny_WP_Base {
 	}
 
 	public function dismiss() {
-		if ( empty( $_POST['name'] ) || ! $this->check_ajax_referer() ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) || empty( $_POST['name'] ) ) {
 			echo json_encode( false );
 			exit();
 		}
 		$this->load_dismissals();
-		$this->dismissals[ $_POST['name'] ] = true;
+		$notice_name                      = sanitize_key( wp_unslash( $_POST['name'] ) );
+		$this->dismissals[ $notice_name ] = true;
 		$this->save_dismissals();
 		echo json_encode( true );
 		exit();
@@ -172,7 +173,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		}
 
 		$css         = implode( ' ', $css );
-		$plugin_name = esc_html__(
+		$plugin_name = __(
 			'TinyPNG - JPEG, PNG & WebP image compression',
 			'tiny-compress-images'
 		);
@@ -180,8 +181,9 @@ class Tiny_Notices extends Tiny_WP_Base {
 		add_action(
 			'admin_notices',
 			function () use ( $css, $name, $plugin_name, $message, $add ) {
-				echo '<div class="' . $css . '" data-name="' . $name . '"><p>' .
-					$plugin_name . ': ' . $message . $add . '</div>';
+				echo '<div class="' . esc_attr( $css ) . '" data-name="' .
+					esc_attr( $name ) . '"><p>' . esc_html( $plugin_name ) .
+					': ' . wp_kses_post( $message ) . wp_kses_post( $add ) . '</div>';
 			}
 		);
 	}
@@ -324,7 +326,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		add_action(
 			'admin_notices',
 			function () use ( $notice ) {
-				echo $notice;
+				echo wp_kses_post( $notice );
 			}
 		);
 	}

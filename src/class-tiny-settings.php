@@ -48,6 +48,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -55,6 +56,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -62,6 +64,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 
 		add_action(
@@ -89,6 +92,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		try {
 			$this->init_compressor();
 		} catch ( Tiny_Exception $e ) {
+			Tiny_Logger::error( $e->getMessage() );
 		}
 	}
 
@@ -98,7 +102,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} catch ( Tiny_Exception $e ) {
 			$this->notices->show(
 				'compressor_exception',
-				esc_html( $e->getMessage(), 'tiny-compress-images' ),
+				esc_html( $e->getMessage() ),
 				'error',
 				false
 			);
@@ -159,9 +163,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function image_sizes_notice() {
+		check_ajax_referer( 'tiny-compress' );
+
 		if ( current_user_can( 'manage_options' ) ) {
+			$selected_sizes = isset( $_GET['image_sizes_selected'] ) ?
+				intval( $_GET['image_sizes_selected'] ) : 0;
 			$this->render_size_checkboxes_description(
-				$_GET['image_sizes_selected'],
+				$selected_sizes,
 				isset( $_GET['resize_original'] ),
 				isset( $_GET['compress_wr2x'] ),
 				self::get_conversion_enabled()
@@ -224,7 +232,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	protected static function get_intermediate_size( $size ) {
-		/* Inspired by
+		/*
+		Inspired by
 		http://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes */
 		global $_wp_additional_image_sizes;
 
@@ -247,10 +256,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Retrieves image sizes as a map of size and width, height and tinify meta data
-	 * The first entry will always be '0', aka the original uploaded image.
+	 * Retrieves image sizes as a map of size and width, height and tinify meta data.
 	 *
-	 * @return array{string: array{width: int|null, height: int|null, tinify: array{}}} $sizes
+	 * The first entry will always be '0' (the original uploaded image), the second
+	 * will always be 'original_unscaled' (the unscaled copy WordPress stores for images
+	 * that exceed the big_image_size_threshold). Both entries share the same tinify setting.
+	 *
+	 * @return array<int|string, array{width: int|null, height: int|null, tinify: bool}>
 	 */
 	public function get_sizes() {
 		if ( is_array( $this->sizes ) ) {
@@ -259,13 +271,19 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 		$setting = get_option( self::get_prefixed_name( 'sizes' ) );
 
-		$size        = Tiny_Image::ORIGINAL;
-		$this->sizes = array(
-			$size => array(
+		$size            = Tiny_Image::ORIGINAL;
+		$original_tinify = ! is_array( $setting ) ||
+			( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] );
+		$this->sizes     = array(
+			$size                         => array(
 				'width'  => null,
 				'height' => null,
-				'tinify' => ! is_array( $setting ) ||
-					( isset( $setting[ $size ] ) && 'on' === $setting[ $size ] ),
+				'tinify' => $original_tinify,
+			),
+			Tiny_Image::ORIGINAL_UNSCALED => array(
+				'width'  => null,
+				'height' => null,
+				'tinify' => $original_tinify,
 			),
 		);
 
@@ -299,6 +317,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$this->tinify_sizes[] = $size;
 			}
 		}
+
 		return $this->tinify_sizes;
 	}
 
@@ -363,7 +382,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 * @return array<string>|false false if size is not original, otherwise array of preserved keys
 	 */
 	public function get_preserve_options( $size_name ) {
-		if ( ! Tiny_Image::is_original( $size_name ) ) {
+		if ( ! Tiny_Image::is_original( $size_name ) &&
+			! Tiny_Image::is_original_unscaled( $size_name )
+		) {
 			return false;
 		}
 		$options  = array();
@@ -397,7 +418,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		if ( $height > 0 ) {
 			$options['height'] = $height;
 		}
-		return sizeof( $options ) >= 2 ? $options : false;
+		return count( $options ) >= 2 ? $options : false;
 	}
 
 	/**
@@ -474,7 +495,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 					),
 				)
 			),
-			$link
+			wp_kses(
+				$link,
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			)
 		);
 		echo '</div>';
 	}
@@ -484,14 +512,14 @@ class Tiny_Settings extends Tiny_WP_Base {
 			'When should new images be compressed?',
 			'tiny-compress-images'
 		);
-		echo '<h4>' . $heading . '</h4>';
+		echo '<h4>' . esc_html( $heading ) . '</h4>';
 		echo '<div class="optimization-options">';
 
 		$name               = self::get_prefixed_name( 'compression_timing' );
 		$compression_timing = $this->get_compression_timing();
 
 		$id      = self::get_prefixed_name( 'background_compress_enabled' );
-		$checked = ( 'background' === $compression_timing ? ' checked="checked"' : '' );
+		$checked = ( 'background' === $compression_timing );
 
 		$label       = esc_html__(
 			'Compress new images in the background (Recommended)',
@@ -507,12 +535,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$description,
 			'background',
-			$checked,
-			false
+			$checked
 		);
 
 		$id      = self::get_prefixed_name( 'auto_compress_enabled' );
-		$checked = ( 'auto' === $compression_timing ? ' checked="checked"' : '' );
+		$checked = ( 'auto' === $compression_timing );
 
 		$label       = esc_html__(
 			'Compress new images during upload',
@@ -528,12 +555,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$description,
 			'auto',
-			$checked,
-			false
+			$checked
 		);
 
 		$id      = self::get_prefixed_name( 'auto_compress_disabled' );
-		$checked = ( 'manual' === $compression_timing ? ' checked="checked"' : '' );
+		$checked = ( 'manual' === $compression_timing );
 
 		$label       = esc_html__(
 			'Do not compress new images automatically',
@@ -549,18 +575,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 			$label,
 			$description,
 			'manual',
-			$checked,
-			false
+			$checked
 		);
 
 		echo '</div>';
 	}
 
 	public function render_sizes() {
+		$dummy_size_name = self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' );
 		echo '<input type="hidden" name="' .
-			self::get_prefixed_name( 'sizes[' . self::DUMMY_SIZE . ']' ) . '" value="on"/>';
+			esc_attr( $dummy_size_name ) . '" value="on"/>';
 
 		foreach ( $this->get_sizes() as $size => $option ) {
+			if ( Tiny_Image::is_original_unscaled( $size ) ) {
+				// unscaled is selected implicitly by original size
+				continue;
+			}
 			$this->render_size_checkboxes( $size, $option );
 		}
 		if ( self::wr2x_active() ) {
@@ -582,7 +612,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	private function render_size_checkboxes( $size, $option ) {
 		$id      = self::get_prefixed_name( "sizes_$size" );
 		$name    = self::get_prefixed_name( 'sizes[' . $size . ']' );
-		$checked = ( $option['tinify'] ? ' checked="checked"' : '' );
+		$checked = ! empty( $option['tinify'] );
 		if ( Tiny_Image::is_original( $size ) ) {
 			$label = esc_html__( 'Original image', 'tiny-compress-images' ) . ' (' .
 				esc_html__(
@@ -606,9 +636,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				. ' - ' . $width . 'x' . $height;
 		}
 		echo '<p>';
-		echo '<input type="checkbox" id="' . $id . '" name="' . $name .
-			'" value="on" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
+		echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) .
+			'" value="on"' . checked( $checked, true, false ) . '/>';
+		echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
 		echo '</p>';
 	}
 
@@ -660,7 +690,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 					),
 					$strong
 				),
-				$free_images_per_month
+				esc_html( $free_images_per_month )
 			);
 
 			if ( self::wr2x_active() ) {
@@ -697,7 +727,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'For compression to work you will need to configure WP Offload S3 to keep a copy of the images on the server.',
 				'tiny-compress-images'
 			);
-			echo $message;
+			echo esc_html( $message );
 			echo '</p></div>';
 			echo '<p class="tiny-radio disabled">';
 		} else {
@@ -705,13 +735,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 
 		$id    = sprintf( self::get_prefixed_name( 'compression_timing_%s' ), $value );
-		$label = esc_html( $label, 'tiny-compress-images' );
-		$desc  = esc_html( $desc, 'tiny-compress-images' );
-		echo '<input type="radio" id="' . $id . '" name="' . $name .
-			'" value="' . $value . '" ' . $checked . '/>';
-		echo '<label for="' . $id . '">' . $label . '</label>';
+		$label = esc_html( $label );
+		$desc  = esc_html( $desc );
+		echo '<input type="radio" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) .
+			'" value="' . esc_attr( $value ) . '"' . checked( $checked, true, false ) . '/>';
+		echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
 		echo '<br>';
-		echo '<span>' . $desc . '</span>';
+		echo '<span>' . esc_html( $desc ) . '</span>';
 		echo '</p>';
 	}
 
@@ -808,14 +838,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 				if ( $this->get_api_key_pending() ) {
 					$this->clear_api_key_pending();
 				}
-			} else {
-				if ( $this->get_api_key_pending() ) {
+			} elseif ( $this->get_api_key_pending() ) {
 					$status->ok      = true;
 					$status->pending = true;
 					$status->message = (
 						'An email has been sent to activate your account'
 					);
-				}
 			}
 			include __DIR__ . '/views/account-status-connected.php';
 		}
@@ -836,9 +864,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function create_api_key() {
-		if ( ! $this->check_ajax_referer() ) {
-			exit;
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
 		$compressor = $this->get_compressor();
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
@@ -846,7 +873,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				'message' => 'This feature requires certain user capabilities',
 			);
 		} elseif ( $compressor->can_create_key() ) {
-			if ( ! isset( $_POST['name'] ) || ! $_POST['name'] ) {
+			if ( empty( $_POST['name'] ) ) {
 				$status = (object) array(
 					'ok'      => false,
 					'message' => __(
@@ -858,7 +885,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				exit();
 			}
 
-			if ( ! isset( $_POST['email'] ) || ! $_POST['email'] ) {
+			if ( empty( $_POST['email'] ) ) {
 				$status = (object) array(
 					'ok'      => false,
 					'message' => __(
@@ -879,9 +906,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$identifier = 'WordPress plugin for ' . $site;
 				$link       = $this->get_absolute_url();
 				$compressor->create_key(
-					$_POST['email'],
+					sanitize_email( wp_unslash( $_POST['email'] ) ),
 					array(
-						'name'       => $_POST['name'],
+						'name'       => sanitize_text_field( wp_unslash( $_POST['name'] ) ),
 						'identifier' => $identifier,
 						'link'       => $link,
 					)
@@ -914,24 +941,25 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function update_api_key() {
-		$key = $_POST['key'];
-		if ( ! $this->check_ajax_referer() ) {
-			exit;
-		}
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+
+		$key = null;
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$status = (object) array(
 				'ok'      => false,
 				'message' => 'This feature requires certain user capabilities',
 			);
-		} elseif ( empty( $key ) ) {
+		} elseif ( empty( $_POST['key'] ) ) {
 			/* Always save if key is blank, so the key can be deleted. */
 			$status = (object) array(
 				'ok'      => true,
 				'message' => null,
 			);
 		} else {
+			$key    = sanitize_text_field( wp_unslash( $_POST['key'] ) );
 			$status = Tiny_Compress::create( $key )->get_status();
 		}
+
 		if ( $status->ok ) {
 			update_option( self::get_prefixed_name( 'api_key_pending' ), false );
 			update_option( self::get_prefixed_name( 'api_key' ), $key );
@@ -971,11 +999,11 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$label,
 		$descr
 	) {
-		$checked = ( $current_value === $option_value ? ' checked="checked"' : '' );
+		$checked = ( $current_value === $option_value );
 		echo '<p class="tiny-radio">';
 		echo '<input type="radio" data-testid="' . esc_attr( $option_id ) . '" ';
-		echo 'id="' . esc_attr( $option_id ) . '" name="' . $group_name .
-			'" value="' . esc_attr( $option_value ) . '" ' . $checked . '/>';
+		echo 'id="' . esc_attr( $option_id ) . '" name="' . esc_attr( $group_name ) .
+			'" value="' . esc_attr( $option_value ) . '"' . checked( $checked, true, false ) . '/>';
 		echo '<label for="' . esc_attr( $option_id ) . '">' . esc_html( $label );
 		echo '<span>' . esc_html( $descr ) . '</span>';
 		echo '</label>';

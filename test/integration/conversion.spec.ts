@@ -54,12 +54,12 @@ test.describe('conversion', () => {
       output: 'smallest',
       delivery: 'picture',
     });
-    const media = await uploadMedia(page, 'input-example.jpg');
+    const { imageURL } = await uploadMedia(page, 'input-example.jpg');
     const postID = await newPost(
       page,
       {
         title: 'test',
-        content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${media}" alt="" class="wp-image-209"/></figure>`,
+        content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${imageURL}" alt="" class="wp-image-209"/></figure>`,
       },
       WPVersion
     );
@@ -76,12 +76,12 @@ test.describe('conversion', () => {
       output: 'smallest',
       delivery: 'htaccess',
     });
-    const media = await uploadMedia(page, 'input-example.jpg');
+    const { imageURL } = await uploadMedia(page, 'input-example.jpg');
     const postID = await newPost(
       page,
       {
         title: 'test',
-        content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${media}" alt="" class="wp-image-209"/></figure>`,
+        content: `<figure class="wp-block-image size-large" id="tinytest"><img src="${imageURL}" alt="" class="wp-image-209"/></figure>`,
       },
       WPVersion
     );
@@ -92,7 +92,7 @@ test.describe('conversion', () => {
 
     await imageResponsePromise;
 
-    const response = await page.request.get(media, {
+    const response = await page.request.get(imageURL, {
       headers: {
         Accept: 'image/avif,image/webp,*/*', // browser automatically add this
       },

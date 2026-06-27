@@ -1,17 +1,18 @@
 <?php
 
-if (! defined('TINY_DEBUG')) {
-	define('TINY_DEBUG', null);
+if ( ! defined( 'TINY_DEBUG' ) ) {
+	define( 'TINY_DEBUG', null );
 }
 
-class Tiny_Config
-{
+class Tiny_Config {
 	/* URL is only used by fopen driver. */
-	const SHRINK_URL = 'http://tinify-mock-api/shrink';
-	const KEYS_URL = 'http://tinify-mock-api/keys';
+	const SHRINK_URL                = 'http://tinify-mock-api/shrink';
+	const KEYS_URL                  = 'http://tinify-mock-api/keys';
 	const MONTHLY_FREE_COMPRESSIONS = 500;
-	const META_KEY = 'tiny_compress_images';
+	const META_KEY                  = '_tiny_compress_images';
+	const LEGACY_META_KEY           = 'tiny_compress_images';
 }
+
 
 // ajax hook to delete all attachments as doing it via UI is flaky
 add_action( 'wp_ajax_clear_media_library', 'clear_media_library' );

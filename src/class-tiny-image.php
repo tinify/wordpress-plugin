@@ -19,7 +19,8 @@
 */
 
 class Tiny_Image {
-	const ORIGINAL = 0;
+	const ORIGINAL          = 0;
+	const ORIGINAL_UNSCALED = 'original_unscaled';
 
 	/** @var Tiny_Settings */
 	private $settings;
@@ -51,7 +52,8 @@ class Tiny_Image {
 		}
 
 		if ( ! is_array( $this->wp_metadata ) || ! isset( $this->wp_metadata['file'] ) ) {
-			/* No file metadata found, this might be another plugin messing with
+			/*
+			No file metadata found, this might be another plugin messing with
 				metadata. Simply ignore this! */
 			return;
 		}
@@ -63,12 +65,19 @@ class Tiny_Image {
 			$path_prefix .= $path_info['dirname'] . '/';
 		}
 
-		/* Do not use pathinfo for getting the filename.
+		/*
+		Do not use pathinfo for getting the filename.
 			It doesn't work when the filename starts with a special character. */
 		$path_parts                    = explode( '/', $this->wp_metadata['file'] );
 		$this->name                    = end( $path_parts );
 		$filename                      = $path_prefix . $this->name;
 		$this->sizes[ self::ORIGINAL ] = new Tiny_Image_Size( $filename );
+
+		if ( isset( $this->wp_metadata['original_image'] ) ) {
+			$this->sizes[ self::ORIGINAL_UNSCALED ] = new Tiny_Image_Size(
+				$path_prefix . wp_basename( $this->wp_metadata['original_image'] )
+			);
+		}
 
 		// Ensure 'sizes' exists and is an array to prevent PHP Warnings
 		$sizes = isset( $this->wp_metadata['sizes'] ) && is_array( $this->wp_metadata['sizes'] )
@@ -82,7 +91,7 @@ class Tiny_Image {
 				// Add to sanitized metadata
 				$sanitized_sizes[ $size_name ] = $size_info;
 				$this->sizes[ $size_name ]     = new Tiny_Image_Size(
-					$path_prefix . $size_info['file']
+					$path_prefix . wp_basename( $size_info['file'] )
 				);
 			}
 		}
@@ -139,9 +148,30 @@ class Tiny_Image {
 		return $filenames;
 	}
 
+	/**
+	 * Will retrieve compression meta data for the given post_id.
+	 *
+	 * As migrations on large libraries can take longer, we will fall back on
+	 * the legacy key on migrating. We can remove the LEGACY_META_KEY on 3.8.0.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int $post_id Attachment ID.
+	 * @return mixed The stored tiny metadata, or '' when none exists.
+	 */
+	public static function get_tiny_metadata( $post_id ) {
+		$tiny_metadata = get_post_meta( $post_id, Tiny_Config::META_KEY, true );
+
+		if ( empty( $tiny_metadata ) ) {
+			$tiny_metadata = get_post_meta( $post_id, Tiny_Config::LEGACY_META_KEY, true );
+		}
+
+		return $tiny_metadata;
+	}
+
 	private function parse_tiny_metadata( $tiny_metadata = null ) {
 		if ( is_null( $tiny_metadata ) ) {
-			$tiny_metadata = get_post_meta( $this->id, Tiny_Config::META_KEY, true );
+			$tiny_metadata = self::get_tiny_metadata( $this->id );
 		}
 		if ( $tiny_metadata ) {
 			foreach ( $tiny_metadata as $size => $meta ) {
@@ -485,7 +515,7 @@ class Tiny_Image {
 
 	public function get_statistics( $active_sizes, $active_tinify_sizes ) {
 		if ( $this->statistics ) {
-			error_log( 'Strangely the image statistics are asked for again.' );
+			Tiny_Logger::error( 'Strangely the image statistics are asked for again.' );
 			return $this->statistics;
 		}
 
@@ -495,6 +525,10 @@ class Tiny_Image {
 		$this->statistics['available_uncompressed_sizes'] = 0;
 		$this->statistics['image_sizes_converted']        = 0;
 		$this->statistics['available_unconverted_sizes']  = 0;
+		$this->statistics['image_sizes_optimized']        = 0;
+		$this->statistics['available_unoptimized_sizes']  = 0;
+
+		$conversion_enabled = $this->settings->get_conversion_enabled();
 
 		foreach ( $this->sizes as $size_name => $size ) {
 			// skip duplicates or inactive sizes
@@ -538,6 +572,15 @@ class Tiny_Image {
 				} else {
 					++$this->statistics['available_unconverted_sizes'];
 				}
+
+				$needs_compression = $size->uncompressed();
+				$needs_conversion  = $conversion_enabled && $size->unconverted();
+				if ( $needs_compression || $needs_conversion ) {
+					++$this->statistics['available_unoptimized_sizes'];
+				} elseif ( $size->compressed() && ( ! $conversion_enabled
+					|| $size->has_been_converted() ) ) {
+					++$this->statistics['image_sizes_optimized'];
+				}
 			}
 		}// End foreach().
 
@@ -547,6 +590,19 @@ class Tiny_Image {
 
 	public static function is_original( $size ) {
 		return self::ORIGINAL === $size;
+	}
+
+
+	/**
+	 * Check wether given $size is the original_unscaled image size.
+	 *
+	 * @since 3.6.14
+	 *
+	 * @param string $size the size descriptor
+	 * @return bool true if size is the original unscaled image
+	 */
+	public static function is_original_unscaled( $size ) {
+		return self::ORIGINAL_UNSCALED === $size;
 	}
 
 	public static function is_retina( $size ) {

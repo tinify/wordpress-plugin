@@ -1,10 +1,23 @@
+<?php
+/**
+ * Account status connected view.
+ *
+ * Account connection status.
+ * @var object $status {
+ *     @type bool        $ok      Whether the API connection is successful.
+ *     @type bool        $pending Whether the connection is pending activation.
+ *     @type string|null $message Optional status message.
+ * }
+ * @var string $key The API key.
+ */
+?>
 <div class="tiny-account-status" id="tiny-account-status" data-state="complete">
 	<div class="status <?php echo $status->ok ? ( $status->pending ? 'status-pending' : 'status-success' ) : 'status-failure'; ?>">
 		<p class="status"><span>
 		<?php
 		if ( $status->ok ) {
 			if ( isset( $status->message ) ) {
-				echo esc_html( $status->message, 'tiny-compress-images' );
+				echo esc_html( $status->message );
 			} else {
 				esc_html_e( 'Your account is connected', 'tiny-compress-images' );
 			}
@@ -39,7 +52,7 @@
 						),
 						$strong
 					),
-					$remaining_credits
+					intval( $remaining_credits )
 				);
 			} elseif ( ! $status->pending ) {
 				printf(
@@ -48,26 +61,24 @@
 						'You have made %s compressions this month.',
 						'tiny-compress-images'
 					),
-					$compressions
+					intval( $compressions )
 				);
 			}
-		} else {
-			if ( isset( $status->message ) ) {
+		} elseif ( isset( $status->message ) ) {
 				echo esc_html__( 'Error', 'tiny-compress-images' ) . ': ';
-				echo esc_html( $status->message, 'tiny-compress-images' );
-			} else {
-				esc_html_e(
-					'API status could not be checked, enable cURL for more information',
-					'tiny-compress-images'
-				);
-			}
+				echo esc_html( $status->message );
+		} else {
+			esc_html_e(
+				'API status could not be checked, enable cURL for more information',
+				'tiny-compress-images'
+			);
 		} // End if().
 		?>
 		</p>
 		<p>
 		<?php
 		if ( defined( 'TINY_API_KEY' ) ) {
-			echo sprintf(
+			printf(
 				/* translators: %s: wp-config.php */
 				esc_html__(
 					'The API key has been configured in %s',
@@ -94,7 +105,15 @@
 					'Enter your API key. If you have lost your key, go to your %s to retrieve it.',
 					'tiny-compress-images'
 				),
-				$link
+				wp_kses(
+					$link,
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				)
 			);
 			?>
 		</p>
@@ -117,7 +136,7 @@
 			<div class="button-container">
 				<div class="box">
 					<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( self::get_email_address() ) ); ?>
-					<a href="https://tinypng.com/dashboard/api?type=upgrade&mail=<?php echo $encoded_email; ?>" target="_blank" class="button button-primary upgrade-account">
+					<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email ); ?>" target="_blank" class="button button-primary upgrade-account">
 						<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 					</a>
 				</div>

@@ -1,5 +1,12 @@
 <?php
-$link = "<a href='" . admin_url( 'upload.php?page=tiny-bulk-optimization' ) . "'>" . esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>';
+
+/**
+ * Dashboard Widget
+ *
+ * @var array       $admin_colors
+ *
+ */
+$link = '<a href="' . esc_url( admin_url( 'upload.php?page=tiny-bulk-optimization' ) ) . '">' . esc_html__( 'bulk optimization', 'tiny-compress-images' ) . '</a>';
 ?>
 <style type="text/css" >
 div#tinypng_dashboard_widget div.description {
@@ -9,7 +16,7 @@ div#tinypng_dashboard_widget div#optimization-chart {
 	display: none;
 }
 div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
-	stroke: <?php echo $admin_colors[2]; ?>;
+	stroke: <?php echo esc_attr( $admin_colors[2] ); ?>;
 }
 </style>
 
@@ -25,7 +32,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 	<p>
 		<?php
 		/* translators: %s: friendly user name */
-		printf( esc_html__( 'Hi %s, you haven’t compressed any images in your media library.', 'tiny-compress-images' ), $this->friendly_user_name() );
+		printf( esc_html__( 'Hi %s, you haven\'t compressed any images in your media library.', 'tiny-compress-images' ), esc_html( $this->friendly_user_name() ) );
 		echo ' ';
 		printf(
 			wp_kses(
@@ -37,7 +44,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 					),
 				)
 			),
-			$link
+			wp_kses( $link, array( 'a' => array( 'href' => array() ) ) )
 		);
 		?>
 	</p>
@@ -46,7 +53,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 	<p>
 		<?php
 		/* translators: %s: friendly user name */
-		printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
+		printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), esc_html( $this->friendly_user_name() ) );
 		echo ' ';
 		/* translators: %s: number of optimizable sizes and number of uploaded images */
 		printf( esc_html__( 'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.', 'tiny-compress-images' ), '<span id="unoptimized-sizes"></span>', '<span id="uploaded-images"></span>' );
@@ -61,7 +68,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 					),
 				)
 			),
-			$link
+			wp_kses( $link, array( 'a' => array( 'href' => array() ) ) )
 		);
 		?>
 	</p>
@@ -70,7 +77,7 @@ div#tinypng_dashboard_widget div#optimization-chart svg circle.main {
 	<p>
 		<?php
 		/* translators: %s: friendly user name */
-		printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
+		printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), esc_html( $this->friendly_user_name() ) );
 		echo ' ';
 		require __DIR__ . '/request-review.php';
 		?>

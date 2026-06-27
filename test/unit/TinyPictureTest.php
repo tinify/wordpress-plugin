@@ -2,6 +2,21 @@
 
 require_once dirname(__FILE__) . '/TinyTestCase.php';
 
+class Tiny_Picture_Overrides extends Tiny_Picture
+{
+    /**
+     * filter_has_var() looks for immutable $_GET,
+     * so unit tests cannot set $_GET.
+     *
+     * isset( $_GET[ $key ] ) is similar to filter_has_var(),
+     * but allows us to mutate it in tests.
+     */
+    protected static function has_get_var($key)
+    {
+        return isset($_GET[$key]);
+    }
+}
+
 class Tiny_Picture_Test extends Tiny_TestCase
 {
 
@@ -331,13 +346,13 @@ class Tiny_Picture_Test extends Tiny_TestCase
     public function test_does_not_register_hooks_when_pagebuilder_request()
     {
         $_GET = array('fl_builder' => '1');
-        
+
         $this->wp->stub('is_admin', function () {
             return false;
         });
-        
+
         $settings = new Tiny_Settings();
-        $tiny_picture = new Tiny_Picture($settings, $this->vfs->url(), array('https://www.tinifytest.com'));
+        $tiny_picture = new Tiny_Picture_Overrides($settings, $this->vfs->url(), array('https://www.tinifytest.com'));
 
         $template_redirect_registered = false;
         foreach ($this->wp->getCalls('add_action') as $call) {
@@ -351,14 +366,15 @@ class Tiny_Picture_Test extends Tiny_TestCase
             $template_redirect_registered,
             'Tiny_Picture should not register template_redirect hook when pagebuilder is active'
         );
-        
+
         $_GET = array();
     }
 
     /**
      * images that have no src or srcset will be unchanged
      */
-    public function test_image_without_src() {
+    public function test_image_without_src()
+    {
         $input = '<img alt="no source">';
         $expected = '<img alt="no source">';
         $output = $this->tiny_picture->replace_sources($input);
@@ -369,7 +385,8 @@ class Tiny_Picture_Test extends Tiny_TestCase
     /**
      * sizes attribute on <img> also have to be set  to <source> elements
      */
-    public function test_img_sizes_attribute_is_propagated_to_sources() {
+    public function test_img_sizes_attribute_is_propagated_to_sources()
+    {
         $this->wp->createImage(1000, '2026/04', 'test-320w.webp');
         $this->wp->createImage(1000, '2026/04', 'test-640w.webp');
         $this->wp->createImage(1000, '2026/04', 'test.webp');
@@ -384,7 +401,8 @@ class Tiny_Picture_Test extends Tiny_TestCase
     /**
      * Images with only a srcset are valid and will be wrapped
      */
-    public function test_image_with_only_srcset() {
+    public function test_image_with_only_srcset()
+    {
         $this->wp->createImage(37857, '2025/09', 'test_250x250.webp');
 
         $input = '<img srcset="/wp-content/uploads/2025/09/test_250x250.png 350w" alt="no source but has srcset">';

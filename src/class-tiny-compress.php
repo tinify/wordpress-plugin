@@ -96,9 +96,9 @@ abstract class Tiny_Compress {
 	/**
 	 * Compresses a single file
 	 *
-	 * @param string $file path to file
-	 * @param array $resize_opts
-	 * @param array $preserve_opts
+	 * @param string                             $file
+	 * @param array                              $resize_opts
+	 * @param array                              $preserve_opts
 	 * @param array{ string } conversion options
 	 * @return void
 	 */
@@ -109,14 +109,17 @@ abstract class Tiny_Compress {
 		$convert_to = array()
 	) {
 		if ( $this->get_key() == null ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- not used in output
 			throw new Tiny_Exception( self::KEY_MISSING, 'KeyError' );
 		}
 
 		if ( ! file_exists( $file ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- not used in output
 			throw new Tiny_Exception( self::FILE_MISSING, 'FileError' );
 		}
 
 		if ( ! is_writable( $file ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- not used in output
 			throw new Tiny_Exception( self::WRITE_ERROR, 'FileError' );
 		}
 
@@ -141,7 +144,7 @@ abstract class Tiny_Compress {
 		try {
 			file_put_contents( $file, $output );
 		} catch ( Exception $e ) {
-			throw new Tiny_Exception( $e->getMessage(), 'FileError' );
+			throw new Tiny_Exception( esc_html( $e->getMessage() ), 'FileError' );
 		}
 
 		if ( $convert_output ) {
@@ -153,7 +156,7 @@ abstract class Tiny_Compress {
 			try {
 				file_put_contents( $converted_filepath, $convert_output );
 			} catch ( Exception $e ) {
-				throw new Tiny_Exception( $e->getMessage(), 'FileError' );
+				throw new Tiny_Exception( esc_html( $e->getMessage() ), 'FileError' );
 			}
 			$details['convert']['path'] = $converted_filepath;
 		}

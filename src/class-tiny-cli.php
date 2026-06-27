@@ -52,7 +52,6 @@ class Tiny_Cli {
 	 *      optimize all unprocessed images
 	 *      wp tiny optimize
 	 *
-	 *
 	 * @param array $args
 	 * @param array $assoc_args
 	 * @return void

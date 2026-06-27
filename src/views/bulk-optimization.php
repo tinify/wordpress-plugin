@@ -1,31 +1,49 @@
+<?php
+/**
+ * Bulk optimization view.
+ *
+ * @var array       $admin_colors
+ * @var array       $stats
+ * @var array       $active_tinify_sizes
+ * @var float       $estimated_costs
+ * @var string      $email_address
+ * @var bool        $is_on_free_plan
+ * @var int         $remaining_credits
+ * @var Tiny_Plugin $this
+ */
+
+$total_sizes   = $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'];
+$settings_url  = admin_url( 'options-general.php?page=tinify' );
+$friendly_name = $this->friendly_user_name();
+?>
 <style>
 
 /* Admin color scheme colors */
 
 div.tiny-bulk-optimization div.available div.tooltip span.dashicons {
-	color: <?php echo $admin_colors[3]; ?>;
+	color: <?php echo esc_attr( $admin_colors[3] ); ?>;
 }
 div.tiny-bulk-optimization div.savings div.tiny-optimization-chart div.value {
-	color: <?php echo $admin_colors[2]; ?>;
+	color: <?php echo esc_attr( $admin_colors[2] ); ?>;
 }
 div.tiny-bulk-optimization div.savings div.tiny-optimization-chart svg circle.main {
-	stroke: <?php echo $admin_colors[2]; ?>;
+	stroke: <?php echo esc_attr( $admin_colors[2] ); ?>;
 }
 div.tiny-bulk-optimization div.savings table td.emphasize {
-	color: <?php echo $admin_colors[2]; ?>;
+	color: <?php echo esc_attr( $admin_colors[2] ); ?>;
 }
 div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progress {
-	background-color: <?php echo $admin_colors[0]; ?>;
+	background-color: <?php echo esc_attr( $admin_colors[0] ); ?>;
 	background-image: linear-gradient(
 		-63deg,
-		<?php echo $admin_colors[0]; ?> 0%,
-		<?php echo $admin_colors[0]; ?> 25%,
-		<?php echo $admin_colors[1]; ?> 25%,
-		<?php echo $admin_colors[1]; ?> 50%,
-		<?php echo $admin_colors[0]; ?> 50%,
-		<?php echo $admin_colors[0]; ?> 75%,
-		<?php echo $admin_colors[1]; ?> 75%,
-		<?php echo $admin_colors[1]; ?> 100%
+		<?php echo esc_attr( $admin_colors[0] ); ?> 0%,
+		<?php echo esc_attr( $admin_colors[0] ); ?> 25%,
+		<?php echo esc_attr( $admin_colors[1] ); ?> 25%,
+		<?php echo esc_attr( $admin_colors[1] ); ?> 50%,
+		<?php echo esc_attr( $admin_colors[0] ); ?> 50%,
+		<?php echo esc_attr( $admin_colors[0] ); ?> 75%,
+		<?php echo esc_attr( $admin_colors[1] ); ?> 75%,
+		<?php echo esc_attr( $admin_colors[1] ); ?> 100%
 	);
 }
 
@@ -41,33 +59,33 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 					<h3><?php esc_html_e( 'Available Images', 'tiny-compress-images' ); ?></h3>
 					<p>
 						<?php
-						if ( 0 == $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'] ) {
+						if ( 0 == $total_sizes ) {
 							$percentage = 0;
 						} else {
-							$percentage_of_files = round( $stats['optimized-image-sizes'] / ( $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'] ) * 100, 2 );
+							$percentage_of_files = round( $stats['optimized-image-sizes'] / $total_sizes * 100, 2 );
 						}
 						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimized-sizes'] ) {
 							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
 							echo ' ';
 							esc_html_e( 'You do not seem to have uploaded any JPEG, PNG or WebP images yet.', 'tiny-compress-images' );
-						} elseif ( 0 == sizeof( $active_tinify_sizes ) ) {
+						} elseif ( 0 == count( $active_tinify_sizes ) ) {
 							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 						} elseif ( 0 == $stats['available-unoptimized-sizes'] ) {
 							/* translators: %s: friendly user name */
-							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), $this->friendly_user_name() );
+							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), esc_html( $friendly_name ) );
 							echo '<br />';
 							require __DIR__ . '/request-review.php';
 						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
 							if ( $percentage_of_files > 75 ) {
 								/* translators: %s: friendly user name */
-								printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), $this->friendly_user_name() );
+									printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), esc_html( $friendly_name ) );
 							} else {
 								/* translators: %s: friendly user name */
-								printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), $this->friendly_user_name() );
+									printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), esc_html( $friendly_name ) );
 							}
 							echo ' ';
 								/* translators: %1$d%2$s: percentage optimised */
-								printf( esc_html__( '%1$d%2$s of your image library is optimized.', 'tiny-compress-images' ), $percentage_of_files, '%' );
+									printf( esc_html__( '%1$d%2$s of your image library is optimized.', 'tiny-compress-images' ), absint( $percentage_of_files ), '%' );
 							echo ' ';
 							/* translators: %s: bulk optimization title */
 							printf( esc_html__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), esc_html__( 'bulk optimization', 'tiny-compress-images' ) );
@@ -95,7 +113,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									?>
 								</h3>
 								<span id="uploaded-images">
-									<?php echo $stats['uploaded-images']; ?>
+									<?php echo esc_html( $stats['uploaded-images'] ); ?>
 								</span>
 							</td>
 							<td class="item">
@@ -110,12 +128,12 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									?>
 								</h3>
 								<span id="optimizable-image-sizes">
-									<?php echo $stats['available-unoptimized-sizes']; ?>
+									<?php echo esc_html( $stats['available-unoptimized-sizes'] ); ?>
 								</span>
 								<div class="tooltip">
 									<span class="dashicons dashicons-info"></span>
 									<div class="tip">
-										<?php if ( $stats['uploaded-images'] > 0 && sizeof( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
+										<?php if ( $stats['uploaded-images'] > 0 && count( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
 											<p>
 												<?php
 												printf(
@@ -124,20 +142,21 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 														'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.',
 														'tiny-compress-images'
 													),
-													$stats['available-unoptimized-sizes'],
-													$stats['uploaded-images']
+													esc_html( $stats['available-unoptimized-sizes'] ),
+													esc_html( $stats['uploaded-images'] )
 												);
 												?>
 											</p>
 										<?php } ?>
 										<p>
 											<?php
-											if ( 0 == sizeof( $active_tinify_sizes ) ) {
+											if ( 0 == count( $active_tinify_sizes ) ) {
 												esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
 											} else {
 												esc_html_e( 'These sizes are currently activated for optimization:', 'tiny-compress-images' );
 												echo '<ul>';
-												for ( $i = 0; $i < sizeof( $active_tinify_sizes ); ++$i ) {
+												$active_tinify_sizes_count = count( $active_tinify_sizes );
+												for ( $i = 0; $i < $active_tinify_sizes_count; ++$i ) {
 													$name = $active_tinify_sizes[ $i ];
 													if ( '0' == $name ) {
 														echo '<li>- ' . esc_html__( 'Original image', 'tiny-compress-images' ) . '</li>';
@@ -150,7 +169,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 											?>
 										</p>
 										<p>
-										<?php if ( sizeof( $active_tinify_sizes ) > 0 ) { ?>
+										<?php if ( count( $active_tinify_sizes ) > 0 ) { ?>
 											<?php
 											printf(
 												wp_kses(
@@ -175,7 +194,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 													),
 												)
 											),
-											'<a href=' . admin_url( 'options-general.php?page=tinify' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>'
+											'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
 										)
 										?>
 										</p>
@@ -212,9 +231,9 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 														),
 													)
 												),
-												Tiny_Config::MONTHLY_FREE_COMPRESSIONS,
+												(int) Tiny_Config::MONTHLY_FREE_COMPRESSIONS,
 												esc_html__( 'image sizes', 'tiny-compress-images' ),
-												'<a target="_blank" href="https://tinypng.com/dashboard/api?type=upgrade&mail=' . str_replace( '%20', '%2B', rawurlencode( $email_address ) ) . '">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>'
+												'<a target="_blank" href="' . esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . str_replace( '%20', '%2B', rawurlencode( $email_address ) ) ) . '">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>'
 											);
 											?>
 											</p>
@@ -236,7 +255,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 									),
 								)
 							),
-							'<a href=' . admin_url( 'options-general.php?page=tinify' ) . '>' . __( 'here', 'tiny-compress-images' ) . '</a>'
+							'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
 						)
 						?>
 					</div>
@@ -255,23 +274,23 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 						<table>
 							<tr>
 								<td id="optimized-image-sizes" class="value emphasize">
-									<?php echo $stats['optimized-image-sizes']; ?>
+									<?php echo esc_html( $stats['optimized-image-sizes'] ); ?>
 								</td>
 								<td class="description">
-									<?php echo _n( 'image size optimized', 'image sizes optimized', $stats['optimized-image-sizes'], 'tiny-compress-images' ); ?>
+									<?php echo esc_html( _n( 'image size optimized', 'image sizes optimized', $stats['optimized-image-sizes'], 'tiny-compress-images' ) ); ?>
 								</td>
 							</tr>
 							<tr>
-								<td id="unoptimized-library-size" class="value" data-bytes="<?php echo $stats['unoptimized-library-size']; ?>" >
-									<?php echo ( $stats['unoptimized-library-size'] ? size_format( $stats['unoptimized-library-size'], 2 ) : '-' ); ?>
+								<td id="unoptimized-library-size" class="value" data-bytes="<?php echo esc_attr( $stats['unoptimized-library-size'] ); ?>" >
+									<?php echo esc_html( $stats['unoptimized-library-size'] ? size_format( $stats['unoptimized-library-size'], 2 ) : '-' ); ?>
 								</td>
 								<td class="description">
 									<?php esc_html_e( 'initial size', 'tiny-compress-images' ); ?>
 								</td>
 							</tr>
 							<tr>
-								<td id="optimized-library-size" class="value emphasize" data-bytes="<?php echo $stats['optimized-library-size']; ?>" class="green">
-									<?php echo ( $stats['optimized-library-size'] ? size_format( $stats['optimized-library-size'], 2 ) : '-' ); ?>
+								<td id="optimized-library-size" class="value emphasize" data-bytes="<?php echo esc_attr( $stats['optimized-library-size'] ); ?>" class="green">
+									<?php echo esc_html( $stats['optimized-library-size'] ? size_format( $stats['optimized-library-size'], 2 ) : '-' ); ?>
 								</td>
 								<td class="description">
 									<?php esc_html_e( 'current size', 'tiny-compress-images' ); ?>
@@ -284,13 +303,13 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 		</div>
 		<?php $show_notice = $is_on_free_plan && $stats['available-unoptimized-sizes'] > $remaining_credits; ?>
 		<div class="optimize">
-			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes']; ?>" data-amount-optimized="0" style="<?php echo $show_notice ? 'display:none;' : ''; ?>">
+			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo esc_attr( $total_sizes ); ?>" data-amount-optimized="0" style="<?php echo $show_notice ? 'display:none;' : ''; ?>">
 				<div id="progress-size" class="progress">
 				</div>
 				<div class="numbers" >
-					<span id="optimized-so-far"><?php echo $stats['optimized-image-sizes']; ?></span>
-					/
-					<span><?php echo $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes']; ?></span>
+				<span id="optimized-so-far"><?php echo esc_html( $stats['optimized-image-sizes'] ); ?></span>
+				/
+				<span><?php echo esc_html( $total_sizes ); ?></span>
 					<span id="percentage"></span>
 				</div>
 			</div>
