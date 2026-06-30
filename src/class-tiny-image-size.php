@@ -254,7 +254,7 @@ class Tiny_Image_Size {
 
 		if (
 			$convert_real_path &&
-			Tiny_Helpers::str_starts_with(
+			str_starts_with(
 				$convert_real_path,
 				trailingslashit( $real_basedir )
 			)
