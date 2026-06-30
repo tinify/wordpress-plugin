@@ -502,7 +502,7 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 		$tiny_plugin = new Tiny_Plugin();
 		$tiny_plugin->init();
 
-		// assert that backup is hooked into `tiny_image_size_before_compression`
+		// assert that backup is hooked into `tiny_image_before_compression`
 		WordPressStubs::assertHook('tiny_image_before_compression', array($tiny_plugin, 'backup_original_image'));
 	}
 

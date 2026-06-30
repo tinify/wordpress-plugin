@@ -1,4 +1,4 @@
-# tiny_image_size_before_compression
+# tiny_image_before_compression
 
 Action that is done before compressing an single image size.
 
