@@ -18,7 +18,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Verify version matches release tag
-      run: bin/check-version
+      run: bin/check-version ${{ github.event.release.tag_name }}
     - name: WordPress Plugin Deploy
       id: deploy
       uses: tinify/action-wordpress-plugin-deploy@stable
