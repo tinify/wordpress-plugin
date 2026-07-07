@@ -1,6 +1,6 @@
 # tiny_image_before_compression
 
-Action that is done before compressing an single image size.
+Action that is done before compressing an single attachment
 
 **Location:** `src/class-tiny-image.php`  
 **Since:** 3.7.0
@@ -12,7 +12,7 @@ Action that is done before compressing an single image size.
 ## Example
 
 ```php
-add_filter(
+do_action(
 	'tiny_image_before_compression',
 	function ( $id ) {
 		// notify system of compression
