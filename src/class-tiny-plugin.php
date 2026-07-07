@@ -963,7 +963,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			return false;
 		}
 
-		return copy( $original_image->filename, $backup_file );
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		return $wp_filesystem->copy( $original_image->filename, $backup_file );
 	}
 
 	public static function request_review() {
