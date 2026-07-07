@@ -980,7 +980,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $review_block;
 	}
 
-	/*
+	/**
 	 * Runs on uninstall
 	 *
 	 * @return void
