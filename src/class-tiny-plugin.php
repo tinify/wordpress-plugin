@@ -953,7 +953,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$upload_base = trailingslashit( $upload_dir['basedir'] );
 		$backup_file = $upload_base . 'tinify_backup/' . $file_path;
 
-		if ( file_exists( $backup_file ) ) {
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+
+		if ( $wp_filesystem->exists( $backup_file ) ) {
 			return false;
 		}
 
@@ -963,7 +965,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			return false;
 		}
 
-		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
 		return $wp_filesystem->copy( $original_image->filename, $backup_file );
 	}
 
