@@ -227,6 +227,10 @@ class Tiny_Image {
 			)
 		);
 
+		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
+			return;
+		}
+
 		/**
 		 * Fires before an image is sent for compression.
 		 *
@@ -238,10 +242,6 @@ class Tiny_Image {
 			'tiny_image_before_compression',
 			$this->id
 		);
-
-		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
-			return;
-		}
 
 		$success = 0;
 		$failed  = 0;
