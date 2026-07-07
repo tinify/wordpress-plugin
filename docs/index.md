@@ -7,3 +7,4 @@ Welcome to the developer documentation of the Tinify WordPress plugin.
 - [Hooks](hooks/index.md)
   - [Actions](hooks/index.md#actions)
   - [Filters](filters/index.md#filters)
+- [CLI](cli/index.md)
