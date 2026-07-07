@@ -12,7 +12,7 @@ Action that is done before compressing an single attachment
 ## Example
 
 ```php
-do_action(
+add_action(
 	'tiny_image_before_compression',
 	function ( $id ) {
 		// notify system of compression
