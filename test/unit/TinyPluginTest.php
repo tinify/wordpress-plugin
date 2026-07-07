@@ -596,4 +596,34 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 		$expected_backup = $this->vfs->url() . '/wp-content/uploads/tinify_backup/wp-content/uploads/2026/04/testfile.png';
 		assertTrue(file_exists($expected_backup), 'expected backup at path preserving the upload dir segment');
 	}
+
+	public function test_will_backup_unscaled_original_when_exists() {
+		$this->wp->createImage( 37857, '2026/04', 'testfile.png' );
+		$this->wp->createImage( 37857, '2026/04', 'testfile-scaled.png' );
+		$expected_backup = $this->vfs->url() . '/wp-content/uploads/tinify_backup/2026/04/testfile-scaled.png';
+
+		$tiny_plugin = new Tiny_Plugin();
+
+		$ref = new \ReflectionClass($tiny_plugin);
+		$settings_prop = $ref->getProperty('settings');
+		$settings_prop->setAccessible(true);
+		$mock_settings = $this->createMock(Tiny_Settings::class);
+		$mock_settings->method('get_backup_enabled')->willReturn(true);
+		$settings_prop->setValue($tiny_plugin, $mock_settings);
+
+		$this->wp->stub('wp_get_attachment_metadata', function ($i) {
+			return array(
+				'width' => 1256,
+				'height' => 1256,
+				'file' => '2026/04/testfile.png',
+				'original_image' => 'testfile-scaled.png',
+				'sizes' => array(),
+			);
+		});
+
+		$backup_made = $tiny_plugin->backup_original_image(1);
+
+		assertTrue($backup_made, 'expected backup of unscaled original to be made');
+		assertTrue(file_exists($expected_backup), 'expected backup of unscaled original to be created');
+	}
 }
