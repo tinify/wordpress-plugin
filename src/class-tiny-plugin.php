@@ -919,9 +919,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * The backup is stored under {upload_dir}/tinify_backup/, preserving the
 	 * original path structure relative to the uploads base directory.
 	 *
-	 * relative path conversion from "_wp_relative_upload_path".
+	 * When an unscaled original exists, that is backed up instead of the
+	 * scaled version.
 	 *
-	 * @since 3.6.8
+	 * @since 3.7.0
 	 *
 	 * @param int       $attachment_id The ID of the attachment
 	 * @return bool             return true on backup created
@@ -931,8 +932,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			return false;
 		}
 
-		$tiny_image     = new Tiny_Image( $this->settings, $attachment_id );
-		$original_image = $tiny_image->get_image_size();
+		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
+
+		$original_image = $tiny_image->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
+		if ( null === $original_image ) {
+			$original_image = $tiny_image->get_image_size();
+		}
+
+		if ( null === $original_image ) {
+			return false;
+		}
 
 		$file_path  = $original_image->filename;
 		$upload_dir = wp_upload_dir();
