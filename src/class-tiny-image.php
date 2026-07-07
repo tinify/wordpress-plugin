@@ -230,9 +230,9 @@ class Tiny_Image {
 		/**
 		 * Fires before an image is sent for compression.
 		 *
-		 * @since 3.6.8
+		 * @since 3.7.0
 		 *
-		 * @param int   The attachment ID
+		 * @param int $attachment_id The attachment ID
 		 */
 		do_action(
 			'tiny_image_before_compression',
