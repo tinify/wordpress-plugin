@@ -327,6 +327,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return ! $compression_timing;
 	}
 
+	/**
+	 * Checks if backup is enabled.
+	 * backup is enabled when original will be compressed and setting is on.
+	 *
+	 * @return bool true if backup is enabled
+	 */
 	public function get_backup_enabled() {
 		$sizes = $this->get_sizes();
 		if ( ! $sizes[ Tiny_Image::ORIGINAL ]['tinify'] ) {
