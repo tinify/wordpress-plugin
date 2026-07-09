@@ -1,6 +1,6 @@
 # tiny_image_before_compression
 
-Action that is done before compressing an single attachment
+Action that runs before compressing an single attachment.
 
 **Location:** `src/class-tiny-image.php`  
 **Since:** 3.7.0
