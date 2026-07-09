@@ -110,4 +110,13 @@ class Tiny_Helpers_Test extends Tiny_TestCase
         $expected = '/home/user/PICTURE.avif';
         $this->assertEquals($expected, Tiny_Helpers::replace_file_extension('image/avif', $input));
     }
+    
+    public function test_str_starts_with_returns_true_when_haystack_starts_with_needle()
+    {
+        $this->assertTrue(Tiny_Helpers::str_starts_with('hello world', 'hello'));
+    }
+    public function test_str_starts_with_returns_false_for_sibling_directory_with_shared_prefix()
+    {
+        $this->assertFalse(Tiny_Helpers::str_starts_with('/var/www/uploads-evil/file.webp', '/var/www/uploads/'));
+    }
 }
