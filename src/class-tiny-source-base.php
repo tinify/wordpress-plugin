@@ -124,6 +124,7 @@ abstract class Tiny_Source_Base {
 	/**
 	 * Retrieves the sources from the <img> or <source> element
 	 *
+	 * @param string $html string containg html
 	 * @return array{path: string, size: string}[] The image sources
 	 */
 	protected function get_image_srcsets( $html ) {

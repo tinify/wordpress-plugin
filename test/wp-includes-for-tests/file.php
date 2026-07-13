@@ -11,6 +11,13 @@ class WP_Filesystem_Base {
 		return file_exists( $path );
 	}
 
+	public function copy( $src, $dest, $overwrite = false, $mode = false ) {
+		if ( ! $overwrite && file_exists( $dest ) ) {
+			return false;
+		}
+		return copy( $src, $dest );
+	}
+
 	public function get_contents( $path ) {
 		return file_get_contents( $path );
 	}

@@ -127,6 +127,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$field = self::get_prefixed_name( 'resize_original' );
 		register_setting( 'tinify', $field );
 
+		$field = self::get_prefixed_name( 'backup' );
+		register_setting( 'tinify', $field );
+
 		$field = self::get_prefixed_name( 'preserve_data' );
 		register_setting( 'tinify', $field );
 
@@ -324,6 +327,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return ! $compression_timing;
 	}
 
+	/**
+	 * Checks if backup is enabled.
+	 * backup is enabled when original will be compressed and setting is on.
+	 *
+	 * @return bool true if backup is enabled
+	 */
+	public function get_backup_enabled() {
+		$sizes = $this->get_sizes();
+		if ( ! $sizes[ Tiny_Image::ORIGINAL ]['tinify'] ) {
+			return false;
+		}
+
+		$setting = get_option( self::get_prefixed_name( 'backup' ) );
+		return isset( $setting['enabled'] ) && 'on' === $setting['enabled'];
+	}
+
 	public function get_resize_enabled() {
 		/* This only applies if the original is being resized. */
 		$sizes = $this->get_sizes();
@@ -362,6 +381,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return isset( $setting[ $name ] ) && 'on' === $setting[ $name ];
 	}
 
+	/**
+	 * Retrieves the preserve options for the original image
+	 *
+	 * @param string $size_name Name of the size
+	 * @return array<string>|false false if size is not original, otherwise array of preserved keys
+	 */
 	public function get_preserve_options( $size_name ) {
 		if ( ! Tiny_Image::is_original( $size_name ) &&
 			! Tiny_Image::is_original_unscaled( $size_name )

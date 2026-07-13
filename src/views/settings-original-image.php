@@ -68,6 +68,28 @@ $strong = array(
 				</div>
 			</div>
 
+			<p class="tiny-preserve">
+				<?php
+					$backup_enabled_id   = self::get_prefixed_name( 'backup' );
+					$backup_enabled_name = self::get_prefixed_name( 'backup[enabled]' );
+					$backup_enabled      = $this->get_backup_enabled();
+				?>
+				<input
+					type="checkbox"
+					id="<?php echo esc_attr( $backup_enabled_id ); ?>"
+					name="<?php echo esc_attr( $backup_enabled_name ); ?>"
+					value="on"
+					<?php checked( $backup_enabled ); ?> />
+				<label for="<?php echo esc_attr( $backup_enabled_id ); ?>">
+					<?php
+					esc_html_e(
+						'Create a backup of the uncompressed image',
+						'tiny-compress-images'
+					);
+					?>
+				</label>
+			</p>
+
 			<?php
 			$this->render_preserve_input(
 				'creation',
