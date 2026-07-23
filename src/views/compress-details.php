@@ -111,8 +111,11 @@ ksort( $size_exists );
 				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error ); ?>
 			</span>
 			<br>
-		<?php } ?>
-		<a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo absint( $tiny_image->get_id() ); ?>">
+		<?php } 
+		/* translators: %s is the image filename */
+		$modal_title = sprintf(esc_html__( 'Compression details for %s', 'tiny-compress-images' ), esc_html( $tiny_image->get_name() ));
+		?>
+		<a class="thickbox message" name="<?php echo esc_attr($modal_title); ?>" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo absint( $tiny_image->get_id() ); ?>">
 			<?php esc_html_e( 'Details', 'tiny-compress-images' ); ?>
 		</a>
 	</div>
@@ -138,12 +141,6 @@ ksort( $size_exists );
 
 <div class="modal" id="modal_<?php echo absint( $tiny_image->get_id() ); ?>">
 	<div class="tiny-compression-details">
-		<h3>
-			<?php
-			/* translators: %s is the image filename */
-			printf( esc_html__( 'Compression details for %s', 'tiny-compress-images' ), esc_html( $tiny_image->get_name() ) );
-			?>
-		</h3>
 		<table>
 			<tr>
 				<th><?php esc_html_e( 'Size', 'tiny-compress-images' ); ?></th>
