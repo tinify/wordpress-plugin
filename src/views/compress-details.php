@@ -10,6 +10,7 @@
 $available_sizes              = array_keys( $this->settings->get_sizes() );
 $conversion_enabled           = $this->settings->get_conversion_enabled();
 $active_sizes                 = $this->settings->get_sizes();
+$backup_enabled				  = $this->settings->get_backup_enabled();
 $active_tinify_sizes          = $this->settings->get_active_tinify_sizes();
 $error                        = $tiny_image->get_latest_error();
 $total                        = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
@@ -255,5 +256,6 @@ ksort( $size_exists );
 				?>
 			</strong>
 		</p>
+		<?php include __DIR__ . '/compress-details-backup.php'; ?>
 	</div>
 </div>
