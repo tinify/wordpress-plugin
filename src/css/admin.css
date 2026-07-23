@@ -412,7 +412,7 @@ input[type=number][name*="tinypng_resize_original"] {
 }
 
 .tiny-compression-details {
-	padding: 10px;
+	padding: 10px 0;
 }
 
 .tiny-compression-details table {
