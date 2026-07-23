@@ -934,37 +934,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
 
-		$original_image = $tiny_image->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
-		if ( null === $original_image ) {
-			$original_image = $tiny_image->get_image_size();
-		}
-
-		if ( null === $original_image ) {
-			return false;
-		}
-
-		$file_path  = $original_image->filename;
-		$upload_dir = wp_upload_dir();
-		$basedir    = trailingslashit( $upload_dir['basedir'] );
-		if ( Tiny_Helpers::str_starts_with( $file_path, $basedir ) ) {
-			$file_path = substr( $file_path, strlen( $basedir ) );
-		}
-
-		$backup_file = $basedir . 'tinify_backup/' . $file_path;
-
-		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-
-		if ( $wp_filesystem->exists( $backup_file ) ) {
-			return false;
-		}
-
-		$backup_dir = dirname( $backup_file );
-
-		if ( ! wp_mkdir_p( $backup_dir ) ) {
-			return false;
-		}
-
-		return $wp_filesystem->copy( $original_image->filename, $backup_file );
+		return $tiny_image->create_backup();
 	}
 
 	public static function request_review() {

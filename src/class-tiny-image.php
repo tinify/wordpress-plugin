@@ -675,4 +675,99 @@ class Tiny_Image {
 
 		$this->update_tiny_post_meta();
 	}
+
+	/**
+	 * Retrieves the original image of the Tiny_Image
+	 * 
+	 *
+	 * @return Tiny_Image_Size|false the image or false if does not exist
+	 */
+	private function get_original_image() {
+		$original_image = $this->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
+		if ( null === $original_image ) {
+			$original_image = $this->get_image_size();
+		}
+
+		if ( null === $original_image ) {
+			return false;
+		}
+
+		return $original_image;
+	}
+
+	/**
+	 * Builds the filesystem path where the backup of the original image is
+	 * (or would be) stored.
+	 *
+	 * @return string|false the backup file path, or false if there is no original image
+	 */
+	private function get_backup_path() {
+		$original_image = $this->get_original_image();
+		if ( false === $original_image ) {
+			return false;
+		}
+
+		$file_path  = $original_image->filename;
+		$upload_dir = wp_upload_dir();
+		$basedir    = trailingslashit( $upload_dir['basedir'] );
+		if ( Tiny_Helpers::str_starts_with( $file_path, $basedir ) ) {
+			$file_path = substr( $file_path, strlen( $basedir ) );
+		}
+
+		return $basedir . 'tinify_backup/' . $file_path;
+	}
+
+	/**
+	 * Creates a backup copy of the original image, if one does not already exist.
+	 *
+	 * @return bool true on success, false on failure or if a backup already exists
+	 */
+	public function create_backup() {
+
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return false;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+
+		if ( $wp_filesystem->exists( $backup_file_path ) ) {
+			return false;
+		}
+
+		$backup_dir = dirname( $backup_file_path );
+
+		if ( ! wp_mkdir_p( $backup_dir ) ) {
+			return false;
+		}
+
+		$original_image = $this->get_original_image();
+
+		return $wp_filesystem->copy( $original_image->filename, $backup_file_path );
+	}
+
+	
+	/**
+	 * Retrieves the public URL of the backup of the original image.
+	 *
+	 * @return string|false the backup URL, or false if no backup exists
+	 */
+	public function get_backup() {
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return false;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+
+		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
+			return false;
+		}
+
+		$upload_dir = wp_upload_dir();
+		$basedir    = trailingslashit( $upload_dir['basedir'] );
+		$baseurl    = trailingslashit( $upload_dir['baseurl'] );
+
+		return str_replace( $basedir, $baseurl, $backup_file_path );
+	}
 }
