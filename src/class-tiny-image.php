@@ -770,4 +770,57 @@ class Tiny_Image {
 
 		return str_replace( $basedir, $baseurl, $backup_file_path );
 	}
+
+	/**
+	 * Restores the original image from its backup.
+	 *
+	 * - Copies the backup file over the current original
+	 * - clears compression metadata 
+	 * - updates the WordPress attachment metadata
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return bool True on success, false if no backup exists or the copy fails.
+	 */
+	public function restore_backup() {
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return false;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+
+		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
+			return false;
+		}
+
+		$original_size_key = null !== $this->get_image_size( self::ORIGINAL_UNSCALED )
+			? self::ORIGINAL_UNSCALED
+			: self::ORIGINAL;
+
+		$original_image = $this->get_image_size( $original_size_key );
+		if ( null === $original_image ) {
+			return false;
+		}
+
+		if ( ! $wp_filesystem->copy( $backup_file_path, $original_image->filename, true ) ) {
+			return false;
+		}
+
+		$original_image->meta = array();
+		$this->update_tiny_post_meta();
+
+		// only on non-unscaled, as resize can be turned on
+		if ( self::is_original( $original_size_key ) ) {
+			$image_size = wp_getimagesize( $original_image->filename );
+			if ( $image_size ) {
+				$this->wp_metadata['width']    = $image_size[0];
+				$this->wp_metadata['height']   = $image_size[1];
+				$this->wp_metadata['filesize'] = filesize( $original_image->filename );
+				wp_update_attachment_metadata( $this->id, $this->wp_metadata );
+			}
+		}
+
+		return true;
+	}
 }

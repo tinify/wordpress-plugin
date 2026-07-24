@@ -119,6 +119,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'mark_image_as_compressed' )
 		);
 
+		add_action(
+			'wp_ajax_tiny_restore_backup',
+			$this->get_method( 'restore_backup_image' )
+		);
+
 		/*
 		When touching any functionality linked to image compressions when
 			uploading images make sure it also works with XML-RPC. See README. */
@@ -957,6 +962,32 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 */
 	public static function uninstall() {
 		Tiny_Apache_Rewrite::uninstall_rules();
+	}
+
+	/**
+	 * Restores the original image from its backup via AJAX.
+	 *
+	 * Validates the request, calls restore_backup() on the image, then
+	 * re-renders the compression details partial in the response.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return void
+	 */
+	public function restore_backup_image() {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset( $response['error'] ) ) {
+			echo esc_html( $response['error'] );
+			exit();
+		}
+
+		list($id, $metadata) = $response['data'];
+		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
+		$tiny_image->restore_backup();
+
+		$this->render_compress_details( $tiny_image );
+
+		exit();
 	}
 
 	public function mark_image_as_compressed() {
