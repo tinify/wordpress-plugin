@@ -678,12 +678,12 @@ class Tiny_Image {
 
 	/**
 	 * Retrieves the original image of the Tiny_Image
-	 * 
+	 *
 	 *
 	 * @return Tiny_Image_Size|false the image or false if does not exist
 	 */
 	private function get_original_image() {
-		$original_image = $this->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
+		$original_image = $this->get_image_size( self::ORIGINAL_UNSCALED );
 		if ( null === $original_image ) {
 			$original_image = $this->get_image_size();
 		}
@@ -746,7 +746,7 @@ class Tiny_Image {
 		return $wp_filesystem->copy( $original_image->filename, $backup_file_path );
 	}
 
-	
+
 	/**
 	 * Retrieves the public URL of the backup of the original image.
 	 *
@@ -775,7 +775,7 @@ class Tiny_Image {
 	 * Restores the original image from its backup.
 	 *
 	 * - Copies the backup file over the current original
-	 * - clears compression metadata 
+	 * - clears compression metadata
 	 * - updates the WordPress attachment metadata
 	 *
 	 * @since 3.7.0

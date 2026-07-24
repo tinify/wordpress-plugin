@@ -10,7 +10,7 @@
 $available_sizes              = array_keys( $this->settings->get_sizes() );
 $conversion_enabled           = $this->settings->get_conversion_enabled();
 $active_sizes                 = $this->settings->get_sizes();
-$backup_enabled				  = $this->settings->get_backup_enabled();
+$backup_enabled               = $this->settings->get_backup_enabled();
 $active_tinify_sizes          = $this->settings->get_active_tinify_sizes();
 $error                        = $tiny_image->get_latest_error();
 $total                        = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
@@ -112,11 +112,12 @@ ksort( $size_exists );
 				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error ); ?>
 			</span>
 			<br>
-		<?php } 
+			<?php
+		}
 		/* translators: %s is the image filename */
-		$modal_title = sprintf(esc_html__( 'Compression details for %s', 'tiny-compress-images' ), esc_html( $tiny_image->get_name() ));
+		$modal_title = sprintf( esc_html__( 'Compression details for %s', 'tiny-compress-images' ), esc_html( $tiny_image->get_name() ) );
 		?>
-		<a class="thickbox message" name="<?php echo esc_attr($modal_title); ?>" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo absint( $tiny_image->get_id() ); ?>">
+		<a class="thickbox message" name="<?php echo esc_attr( $modal_title ); ?>" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo absint( $tiny_image->get_id() ); ?>">
 			<?php esc_html_e( 'Details', 'tiny-compress-images' ); ?>
 		</a>
 	</div>
@@ -256,6 +257,6 @@ ksort( $size_exists );
 				?>
 			</strong>
 		</p>
-		<?php include __DIR__ . '/compress-details-backup.php'; ?>
+		<?php require __DIR__ . '/compress-details-backup.php'; ?>
 	</div>
 </div>
