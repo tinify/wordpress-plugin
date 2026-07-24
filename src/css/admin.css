@@ -482,3 +482,16 @@ fieldset.tinypng_convert_fields[disabled] {
 .tiny-mt-2 {
 	margin-top: 10px;
 }
+
+.tiny-dialog {
+	padding: 20px;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.tiny-dialog-actions {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+}
