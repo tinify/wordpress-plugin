@@ -119,6 +119,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->get_method( 'mark_image_as_compressed' )
 		);
 
+		add_action(
+			'wp_ajax_tiny_restore_backup',
+			$this->get_method( 'restore_backup_image' )
+		);
+
 		/*
 		When touching any functionality linked to image compressions when
 			uploading images make sure it also works with XML-RPC. See README. */
@@ -909,6 +914,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
+		$tiny_image->delete_backup();
 	}
 
 	/**
@@ -934,37 +940,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
 
-		$original_image = $tiny_image->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
-		if ( null === $original_image ) {
-			$original_image = $tiny_image->get_image_size();
-		}
-
-		if ( null === $original_image ) {
-			return false;
-		}
-
-		$file_path  = $original_image->filename;
-		$upload_dir = wp_upload_dir();
-		$basedir    = trailingslashit( $upload_dir['basedir'] );
-		if ( Tiny_Helpers::str_starts_with( $file_path, $basedir ) ) {
-			$file_path = substr( $file_path, strlen( $basedir ) );
-		}
-
-		$backup_file = $basedir . 'tinify_backup/' . $file_path;
-
-		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-
-		if ( $wp_filesystem->exists( $backup_file ) ) {
-			return false;
-		}
-
-		$backup_dir = dirname( $backup_file );
-
-		if ( ! wp_mkdir_p( $backup_dir ) ) {
-			return false;
-		}
-
-		return $wp_filesystem->copy( $original_image->filename, $backup_file );
+		return $tiny_image->create_backup();
 	}
 
 	public static function request_review() {
@@ -987,6 +963,36 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 */
 	public static function uninstall() {
 		Tiny_Apache_Rewrite::uninstall_rules();
+	}
+
+	/**
+	 * Restores the original image from its backup via AJAX.
+	 *
+	 * Validates the request, calls restore_backup() on the image, then
+	 * re-renders the compression details partial in the response.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return void
+	 */
+	public function restore_backup_image() {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset( $response['error'] ) ) {
+			echo esc_html( $response['error'] );
+			exit();
+		}
+
+		list($id, $metadata) = $response['data'];
+		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
+
+		if ( ! $tiny_image->restore_backup() ) {
+			echo esc_html__( 'Could not restore backup. The backup file may not exist or could not be written.', 'tiny-compress-images' );
+			exit();
+		}
+
+		$this->render_compress_details( $tiny_image );
+
+		exit();
 	}
 
 	public function mark_image_as_compressed() {

@@ -92,6 +92,8 @@ class WordPressStubs
 		$this->addMethod('is_multisite');
 		$this->addMethod('current_user_can');
 		$this->addMethod('wp_get_attachment_metadata');
+		$this->addMethod('wp_generate_attachment_metadata');
+		$this->addMethod('wp_update_attachment_metadata');
 		$this->addMethod('is_admin');
 		$this->addMethod('is_customize_preview');
 		$this->addMethod('is_plugin_active');
@@ -305,14 +307,11 @@ class WordPressStubs
 
 	public function createImage($file_size, $path, $name)
 	{
-		if (! $this->vfs->hasChild(self::UPLOAD_DIR . "/$path")) {
-			vfsStream::newDirectory(self::UPLOAD_DIR . "/$path")->at($this->vfs);
+		$full_dir = $this->vfs->url() . '/' . self::UPLOAD_DIR . '/' . $path;
+		if (! is_dir($full_dir)) {
+			mkdir($full_dir, 0777, true);
 		}
-		$dir = $this->vfs->getChild(self::UPLOAD_DIR . "/$path");
-
-		vfsStream::newFile($name)
-			->withContent(new LargeFileContent($file_size))
-			->at($dir);
+		file_put_contents($full_dir . '/' . $name, str_repeat("\x00", $file_size));
 	}
 
 	/**

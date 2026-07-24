@@ -1,4 +1,55 @@
-(function() {
+(function () {
+  function restoreBackup(attachmentId, container) {
+    container.css('opacity', '0.5');
+    jQuery.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_restore_backup',
+        id: attachmentId,
+      },
+      success: function (data) {
+        container.css('opacity', '1');
+        container.html(data);
+      },
+      error: function () {
+        container.css('opacity', '1');
+        // TODO: Replace when actual message
+        container.html('<p>Could not restore backup. Please try again.</p>');
+      },
+    });
+  }
+
+  jQuery(document).on('click', 'a[data-dialog-id]', function (e) {
+    e.preventDefault();
+    const trigger = jQuery(e.currentTarget);
+    const dialogID = trigger.data('dialog-id');
+    if (!dialogID) {
+      return;
+    }
+
+    const dialog = document.getElementById(dialogID);
+    if (!dialog) {
+      return;
+    }
+
+    const attachmentId = trigger.data('id');
+    const container = jQuery('#modal_' + attachmentId).closest('.tiny-ajax-container');
+
+    dialog.showModal();
+
+    dialog.addEventListener('close', function onClose() {
+      dialog.removeEventListener('close', onClose);
+      if (dialog.returnValue === 'confirm') {
+        if (typeof tb_remove === 'function') {
+          tb_remove();
+        }
+        restoreBackup(attachmentId, container);
+      }
+    });
+  });
+
   function downloadDiagnostics() {
     try {
       jQuery('#download-diagnostics-spinner').show();
