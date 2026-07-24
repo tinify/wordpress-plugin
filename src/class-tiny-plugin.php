@@ -984,7 +984,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		list($id, $metadata) = $response['data'];
 		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
-		$tiny_image->restore_backup();
+
+		if ( ! $tiny_image->restore_backup() ) {
+			echo esc_html__( 'Could not restore backup. The backup file may not exist or could not be written.', 'tiny-compress-images' );
+			exit();
+		}
 
 		$this->render_compress_details( $tiny_image );
 

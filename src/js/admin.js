@@ -1,5 +1,6 @@
 (function () {
   function restoreBackup(attachmentId, container) {
+    container.css('opacity', '0.5');
     jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
@@ -9,7 +10,13 @@
         id: attachmentId,
       },
       success: function (data) {
+        container.css('opacity', '1');
         container.html(data);
+      },
+      error: function () {
+        container.css('opacity', '1');
+        // TODO: Replace when actual message
+        container.html('<p>Could not restore backup. Please try again.</p>');
       },
     });
   }
