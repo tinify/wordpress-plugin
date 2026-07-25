@@ -39,12 +39,8 @@
 
     dialog.showModal();
 
-    dialog.addEventListener('close', function onClose() {
-      dialog.removeEventListener('close', onClose);
-      if (dialog.returnValue === 'confirm') {
-        if (typeof tb_remove === 'function') {
-          tb_remove();
-        }
+    dialog.addEventListener('close', () => {
+      if (dialog.returnValue === 'submit') {
         restoreBackup(attachmentId, container);
       }
     });

@@ -19,20 +19,20 @@ if ( $backup_enabled ) {
 			<a href="<?php echo esc_attr( $backup ); ?>" target="_blank">
 				<?php esc_html_e( 'View Uncompressed' ); ?>
 			</a>
-			<a href="#" data-dialog-id="<?php echo esc_attr( $modal_id ); ?>" data-id="<?php echo absint( $tiny_image->get_id() ); ?>">
+			<a class="button button-small" href="#" data-dialog-id="<?php echo esc_attr( $modal_id ); ?>" data-id="<?php echo absint( $tiny_image->get_id() ); ?>">
 				<?php esc_html_e( 'Restore Backup', 'tiny-compress-images' ); ?>
 			</a>
 			<dialog id="<?php echo esc_attr( $modal_id ); ?>" class="tiny-dialog">
 				<p><?php esc_html_e( 'Are you sure you want to restore the original uncompressed image?', 'tiny-compress-images' ); ?></p>
 				
-				<form method="dialog" class="tiny-dialog-actions">
-					<button value="cancel" class="button">
+				<div class="tiny-dialog-actions">
+					<button value="close" commandfor="<?php echo esc_attr( $modal_id ); ?>" command="close">
 						<?php esc_html_e( 'Cancel', 'tiny-compress-images' ); ?>
 					</button>
-					<button value="confirm" class="button button-primary">
+					<button value="submit" commandfor="<?php echo esc_attr( $modal_id ); ?>" command="close" class="button button-primary" autofocus>
 						<?php esc_html_e( 'Yes, Restore', 'tiny-compress-images' ); ?>
 					</button>
-				</form>
+				</div>
 			</dialog>
 		<?php } else { ?>
 			<span>
