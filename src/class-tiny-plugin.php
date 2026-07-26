@@ -751,7 +751,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( self::MEDIA_COLUMN === $column ) {
 			$tiny_image = new Tiny_Image( $this->settings, $id );
 			if ( $tiny_image->file_type_allowed() ) {
-				echo '<div class="tiny-ajax-container">';
+				echo '<div class="tiny-ajax-container" data-tiny-media-id="' . absint($id) . '">';
 				$this->render_compress_details( $tiny_image );
 				echo '</div>';
 			}
@@ -766,7 +766,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			echo '<h4>';
 			esc_html_e( 'JPEG, PNG, & WebP optimization', 'tiny-compress-images' );
 			echo '</h4>';
-			echo '<div class="tiny-ajax-container">';
+			echo '<div class="tiny-ajax-container" data-tiny-media-id="' . absint($post->ID) . '">';
 			$this->render_compress_details( $tiny_image );
 			echo '</div>';
 			echo '</div>';
