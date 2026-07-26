@@ -1,22 +1,12 @@
 (function () {
-  function restoreBackup(attachmentId, container) {
-    container.css('opacity', '0.5');
-    jQuery.ajax({
+  async function restoreBackup(attachmentId) {
+    return jQuery.ajax({
       url: ajaxurl,
       type: 'POST',
       data: {
         _nonce: tinyCompress.nonce,
         action: 'tiny_restore_backup',
         id: attachmentId,
-      },
-      success: function (data) {
-        container.css('opacity', '1');
-        container.html(data);
-      },
-      error: function () {
-        container.css('opacity', '1');
-        // TODO: Replace when actual message
-        container.html('<p>Could not restore backup. Please try again.</p>');
       },
     });
   }
@@ -35,13 +25,28 @@
     }
 
     const attachmentId = trigger.data('id');
-    const container = jQuery('#modal_' + attachmentId).closest('.tiny-ajax-container');
+    const container = document.querySelector(`[data-tiny-media-id="${attachmentId}"]`);
 
     dialog.showModal();
 
-    dialog.addEventListener('close', () => {
-      if (dialog.returnValue === 'submit') {
-        restoreBackup(attachmentId, container);
+    dialog.addEventListener('cancel', async (e) => {
+      e.preventDefault();
+      const spinner = dialog.querySelector('.spinner');
+      try {
+        if (spinner) {
+          spinner.style.visibility = 'visible';
+        }
+        const result = await restoreBackup(attachmentId);
+        container.innerHTML = result;
+        if (typeof tb_remove === 'function') {
+          tb_remove();
+        }
+      } catch (err) {
+        console.log('err:', err);
+      } finally {
+        if (spinner) {
+          spinner.style.visibility = 'hidden';
+        }
       }
     });
   });
