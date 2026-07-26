@@ -38,6 +38,14 @@
         }
         const result = await restoreBackup(attachmentId);
         dialog.close();
+
+        // refresh thickbox
+        const modal = container.querySelector('.modal');
+        const ajaxContent = document.getElementById('TB_ajaxContent');
+        if (modal && ajaxContent) {
+          modal.append(...ajaxContent.children);
+        }
+
         container.innerHTML = result;
         if (typeof tb_remove === 'function') {
           tb_remove();
