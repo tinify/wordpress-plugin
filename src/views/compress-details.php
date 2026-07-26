@@ -20,8 +20,8 @@ $available_uncompressed_sizes = $image_statistics['available_uncompressed_sizes'
 $size_before                  = $image_statistics['initial_total_size'];
 $size_after                   = $image_statistics['compressed_total_size'];
 
-$size_active = array_fill_keys( $active_tinify_sizes, true );
-$size_exists = array_fill_keys( $available_sizes, true );
+$size_active    = array_fill_keys( $active_tinify_sizes, true );
+$size_exists    = array_fill_keys( $available_sizes, true );
 $has_compressed = $size_before - $size_after;
 ksort( $size_exists );
 
@@ -258,9 +258,11 @@ ksort( $size_exists );
 				?>
 			</strong>
 
-			<?php if ( $has_compressed ) {
+			<?php
+			if ( $has_compressed ) {
 				require __DIR__ . '/compress-details-backup.php';
-			} ?>
+			}
+			?>
 		</p>
 	</div>
 </div>

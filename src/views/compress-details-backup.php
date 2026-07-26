@@ -16,7 +16,7 @@ if ( $backup_enabled ) {
 	$modal_id = 'modal_' . absint( $tiny_image->get_id() ) . '_backup';
 	?>
 	<?php if ( $backup ) { ?>
-		<p><?php echo esc_html_e('The original upload has been backed up.', 'tiny-compress-images'); ?></p>
+		<p><?php echo esc_html_e( 'The original upload has been backed up.', 'tiny-compress-images' ); ?></p>
 			
 		<p>
 			<a href="<?php echo esc_attr( $backup ); ?>" target="_blank">
@@ -28,7 +28,7 @@ if ( $backup_enabled ) {
 			</a>
 			<dialog id="<?php echo esc_attr( $modal_id ); ?>" class="tiny-dialog">
 				<strong class="tiny-dialog-title"><?php esc_html_e( 'Are you sure you want to restore the original uncompressed image?', 'tiny-compress-images' ); ?></strong>
-				<p><?php esc_html_e( 'This action will replace all the compressed images with uncompressed images', 'tiny-compress-images'); ?></p>
+				<p><?php esc_html_e( 'This action will replace all the compressed images with uncompressed images', 'tiny-compress-images' ); ?></p>
 
 				<div class="tiny-dialog-actions">
 					<span class="spinner"></span>
