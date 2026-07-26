@@ -29,6 +29,7 @@ if ( $backup_enabled ) {
 			<dialog id="<?php echo esc_attr( $modal_id ); ?>" class="tiny-dialog">
 				<strong class="tiny-dialog-title"><?php esc_html_e( 'Are you sure you want to restore the original uncompressed image?', 'tiny-compress-images' ); ?></strong>
 				<p><?php esc_html_e( 'This action will replace all the compressed images with uncompressed images', 'tiny-compress-images' ); ?></p>
+				<p class="tiny-dialog-error" hidden></p>
 
 				<div class="tiny-dialog-actions">
 					<span class="spinner"></span>

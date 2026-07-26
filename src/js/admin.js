@@ -37,18 +37,23 @@
           spinner.style.visibility = 'visible';
         }
         const result = await restoreBackup(attachmentId);
+        dialog.close();
         container.innerHTML = result;
         if (typeof tb_remove === 'function') {
           tb_remove();
         }
       } catch (err) {
-        console.log('err:', err);
+        const errorEl = dialog.querySelector('.tiny-dialog-error');
+        if (errorEl) {
+          errorEl.textContent = err.responseText || 'Failed to restore backup.';
+          errorEl.hidden = false;
+        }
       } finally {
         if (spinner) {
           spinner.style.visibility = 'hidden';
         }
       }
-    });
+    }, { once: true });
   });
 
   function downloadDiagnostics() {

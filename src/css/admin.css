@@ -490,6 +490,10 @@ fieldset.tinypng_convert_fields[disabled] {
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
+.tiny-dialog-error {
+	color: #dc3232;
+}
+
 .tiny-dialog-actions {
 	display: flex;
 	gap: 10px;
