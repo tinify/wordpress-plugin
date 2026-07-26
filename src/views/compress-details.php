@@ -22,6 +22,7 @@ $size_after                   = $image_statistics['compressed_total_size'];
 
 $size_active = array_fill_keys( $active_tinify_sizes, true );
 $size_exists = array_fill_keys( $available_sizes, true );
+$has_compressed = $size_before - $size_after;
 ksort( $size_exists );
 
 ?>
@@ -243,7 +244,7 @@ ksort( $size_exists );
 		<p>
 			<strong>
 				<?php
-				if ( $size_before - $size_after ) {
+				if ( $has_compressed ) {
 					printf(
 						/* translators: %1$.0f%%: savings percentage, %2$s: total file size savings */
 						esc_html__( 'Total savings %1$.0f%% (%2$s)', 'tiny-compress-images' ),
@@ -256,7 +257,10 @@ ksort( $size_exists );
 				}
 				?>
 			</strong>
+
+			<?php if ( $has_compressed ) {
+				require __DIR__ . '/compress-details-backup.php';
+			} ?>
 		</p>
-		<?php require __DIR__ . '/compress-details-backup.php'; ?>
 	</div>
 </div>
