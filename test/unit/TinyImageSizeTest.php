@@ -63,12 +63,12 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 	 * the memoized file_size so the next filesize() call reflects the new file
 	 * rather than returning the stale pre-compression value.
 	 */
-	public function test_add_tiny_meta_resets_memoized_filesize_after_compression() {
+	public function test_add_tiny_meta_clears_memoized_data_after_compression() {
+		$this->original->add_tiny_meta_start();
 		$this->assertEquals( 137856, $this->original->filesize(), 'expected filesize to be original' );
 
 		file_put_contents( $this->original->filename, str_repeat( 'a', 90000 ) );
 
-		$this->original->add_tiny_meta_start();
 		$this->original->add_tiny_meta( array(
 			'input'  => array( 'size' => 137856 ),
 			'output' => array( 'size' => 90000 ),
