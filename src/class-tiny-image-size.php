@@ -53,7 +53,21 @@ class Tiny_Image_Size {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta        = $response;
 			$this->meta['end'] = time();
+			$this->reset_memoized_filesystem_values();
 		}
+	}
+
+	/**
+	 * Clears the memoized exists/file_size/mime_type values.
+	 *
+	 * Must be called whenever the file on disk changed after those were
+	 * memoized, e.g. after compression overwrites it, so the next read
+	 * reflects the new file instead of the stale cached one.
+	 */
+	private function reset_memoized_filesystem_values() {
+		$this->exists    = null;
+		$this->file_size = null;
+		$this->mime_type = null;
 	}
 
 	public function add_tiny_meta_error( $exception ) {
