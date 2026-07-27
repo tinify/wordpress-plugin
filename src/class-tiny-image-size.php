@@ -42,7 +42,9 @@ class Tiny_Image_Size {
 	 * @var string|null $mime_type
 	 */
 	private $mime_type;
-	private $duplicate         = false;
+
+	private $duplicate = false;
+
 	private $duplicate_of_size = '';
 
 	public function __construct( $filename = null ) {
