@@ -22,9 +22,25 @@ class Tiny_Image_Size {
 	public $filename;
 	public $meta = array();
 
-	/* Used more than once and not trivial, so we are memoizing these */
+	/**
+	 * Whether the file exists on disk.
+	 *
+	 * @var bool|null $exists
+	 */
 	private $exists;
+
+	/**
+	 * File size in bytes.
+	 *
+	 * @var int|null $file_size
+	 */
 	private $file_size;
+
+	/**
+	 * MIME type of the file.
+	 *
+	 * @var string|null $mime_type
+	 */
 	private $mime_type;
 	private $duplicate         = false;
 	private $duplicate_of_size = '';
@@ -53,7 +69,7 @@ class Tiny_Image_Size {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta        = $response;
 			$this->meta['end'] = time();
-			$this->reset_memoized_filesystem_values();
+			$this->reset_memoized_filesystem();
 		}
 	}
 
@@ -66,7 +82,7 @@ class Tiny_Image_Size {
 	 * 
 	 * @return void
 	 */
-	private function reset_memoized_filesystem_values() {
+	private function reset_memoized_filesystem() {
 		$this->exists    = null;
 		$this->file_size = null;
 		$this->mime_type = null;
