@@ -213,8 +213,12 @@ class Tiny_Image_Size_Test extends Tiny_TestCase {
 	}
 
 	public function test_will_read_mimetype_from_file() {
-		// because files in the virtual file system are not really files but empty strings, it is a text/plain.
-		$this->assertEquals( $this->original->mimetype(), 'text/plain');
+		// vfs files are empty buffers
+		// empty buffers on php < 8 returns 'text/plain', > 8 is 'application/octet-stream'
+		$this->assertContains(
+			$this->original->mimetype(),
+			array( 'text/plain', 'application/octet-stream' )
+		);
 	}
 
 	/**
