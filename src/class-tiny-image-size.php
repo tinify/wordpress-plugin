@@ -63,6 +63,8 @@ class Tiny_Image_Size {
 	 * Must be called whenever the file on disk changed after those were
 	 * memoized, e.g. after compression overwrites it, so the next read
 	 * reflects the new file instead of the stale cached one.
+	 * 
+	 * @return void
 	 */
 	private function reset_memoized_filesystem_values() {
 		$this->exists    = null;
