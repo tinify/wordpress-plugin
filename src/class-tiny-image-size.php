@@ -71,7 +71,7 @@ class Tiny_Image_Size {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta        = $response;
 			$this->meta['end'] = time();
-			$this->reset_memoized_filesystem();
+			$this->clear_memoized_filesystem();
 		}
 	}
 
@@ -84,7 +84,7 @@ class Tiny_Image_Size {
 	 *
 	 * @return void
 	 */
-	private function reset_memoized_filesystem() {
+	private function clear_memoized_filesystem() {
 		clearstatcache( true, $this->filename );
 		$this->exists    = null;
 		$this->file_size = null;
