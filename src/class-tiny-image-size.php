@@ -85,6 +85,7 @@ class Tiny_Image_Size {
 	 * @return void
 	 */
 	private function reset_memoized_filesystem() {
+		clearstatcache( true, $this->filename );
 		$this->exists    = null;
 		$this->file_size = null;
 		$this->mime_type = null;
