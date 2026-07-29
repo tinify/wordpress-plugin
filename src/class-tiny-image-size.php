@@ -22,11 +22,29 @@ class Tiny_Image_Size {
 	public $filename;
 	public $meta = array();
 
-	/* Used more than once and not trivial, so we are memoizing these */
+	/**
+	 * Whether the file exists on disk.
+	 *
+	 * @var bool|null $exists
+	 */
 	private $exists;
+
+	/**
+	 * File size in bytes.
+	 *
+	 * @var int|null $file_size
+	 */
 	private $file_size;
+
+	/**
+	 * MIME type of the file.
+	 *
+	 * @var string|null $mime_type
+	 */
 	private $mime_type;
-	private $duplicate         = false;
+
+	private $duplicate = false;
+
 	private $duplicate_of_size = '';
 
 	public function __construct( $filename = null ) {
@@ -53,7 +71,24 @@ class Tiny_Image_Size {
 		if ( isset( $this->meta['start'] ) ) {
 			$this->meta        = $response;
 			$this->meta['end'] = time();
+			$this->clear_memoized_filesystem();
 		}
+	}
+
+	/**
+	 * Clears the memoized exists/file_size/mime_type values.
+	 *
+	 * Must be called whenever the file on disk changed after those were
+	 * memoized, e.g. after compression overwrites it, so the next read
+	 * reflects the new file instead of the stale cached one.
+	 *
+	 * @return void
+	 */
+	private function clear_memoized_filesystem() {
+		clearstatcache( true, $this->filename );
+		$this->exists    = null;
+		$this->file_size = null;
+		$this->mime_type = null;
 	}
 
 	public function add_tiny_meta_error( $exception ) {
