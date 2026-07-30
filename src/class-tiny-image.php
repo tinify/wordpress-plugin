@@ -730,6 +730,9 @@ class Tiny_Image {
 		}
 
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
 
 		if ( $wp_filesystem->exists( $backup_file_path ) ) {
 			return false;
@@ -759,6 +762,9 @@ class Tiny_Image {
 		}
 
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
 
 		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
 			return false;
@@ -790,6 +796,9 @@ class Tiny_Image {
 		}
 
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
 
 		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
 			return false;
@@ -838,6 +847,9 @@ class Tiny_Image {
 		}
 
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
 
 		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
 			return true;

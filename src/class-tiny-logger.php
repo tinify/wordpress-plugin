@@ -179,6 +179,9 @@ class Tiny_Logger {
 		// Ensure log directory exists.
 		$log_dir       = dirname( $this->log_file_path );
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return;
+		}
 		if ( ! $wp_filesystem->exists( $log_dir ) ) {
 			wp_mkdir_p( $log_dir );
 			self::create_blocking_files( $log_dir );
@@ -201,6 +204,9 @@ class Tiny_Logger {
 	 */
 	private function rotate_logs() {
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return;
+		}
 		if ( ! $wp_filesystem->exists( $this->log_file_path ) ) {
 			return;
 		}
@@ -222,6 +228,9 @@ class Tiny_Logger {
 		$instance      = self::get_instance();
 		$log_path      = $instance->get_log_file_path();
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
 		$file_exits    = $wp_filesystem->exists( $log_path );
 		if ( $file_exits ) {
 			return $wp_filesystem->delete( $log_path );
@@ -239,6 +248,9 @@ class Tiny_Logger {
 	 */
 	private static function create_blocking_files( $log_dir ) {
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return;
+		}
 
 		$index_file = trailingslashit( $log_dir ) . 'index.html';
 		if ( ! $wp_filesystem->exists( $index_file ) ) {

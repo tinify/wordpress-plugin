@@ -115,12 +115,10 @@ class Tiny_Helpers {
 	 * Gets or initializes the WordPress filesystem instance.
 	 *
 	 * Returns the global WP_Filesystem instance, initializing it if necessary.
-	 * This helper prevents repeated initialization code throughout the plugin.
 	 *
 	 * @since 3.7.0
 	 *
-	 * @return WP_Filesystem_Base The WP_Filesystem instance.
-	 * @throws Exception If the filesystem cannot be initialized.
+	 * @return WP_Filesystem_Base|false The WP_Filesystem instance, or false on failure.
 	 */
 	public static function get_wp_filesystem() {
 		global $wp_filesystem;
@@ -129,14 +127,15 @@ class Tiny_Helpers {
 			return $wp_filesystem;
 		}
 
-		// Initialize the filesystem only if the function isn't available yet.
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 		WP_Filesystem();
 
 		if ( ! ( $wp_filesystem instanceof WP_Filesystem_Base ) ) {
-			throw new Exception( 'Unable to initialize WordPress filesystem.' );
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( 'Tiny Compress: Unable to initialize WordPress filesystem.' );
+			return false;
 		}
 
 		return $wp_filesystem;
