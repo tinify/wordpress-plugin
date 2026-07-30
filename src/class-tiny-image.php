@@ -804,12 +804,8 @@ class Tiny_Image {
 			return false;
 		}
 
-		$original_size_key = null !== $this->get_image_size( self::ORIGINAL_UNSCALED )
-			? self::ORIGINAL_UNSCALED
-			: self::ORIGINAL;
-
-		$original_image = $this->get_image_size( $original_size_key );
-		if ( null === $original_image ) {
+		$original_image = $this->get_original_image();
+		if ( false === $original_image ) {
 			return false;
 		}
 
@@ -828,6 +824,8 @@ class Tiny_Image {
 		if ( $new_metadata ) {
 			$this->wp_metadata = $new_metadata;
 			wp_update_attachment_metadata( $this->id, $this->wp_metadata );
+			$this->sizes = array();
+			$this->parse_wp_metadata();
 		}
 
 		return true;
