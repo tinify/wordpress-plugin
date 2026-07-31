@@ -231,7 +231,7 @@ class Tiny_Logger {
 		if ( false === $wp_filesystem ) {
 			return false;
 		}
-		$file_exits    = $wp_filesystem->exists( $log_path );
+		$file_exits = $wp_filesystem->exists( $log_path );
 		if ( $file_exits ) {
 			return $wp_filesystem->delete( $log_path );
 		}

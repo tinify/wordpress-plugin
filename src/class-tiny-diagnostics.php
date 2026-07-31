@@ -212,7 +212,7 @@ class Tiny_Diagnostics {
 				__( 'WordPress filesystem could not be initialized.', 'tiny-compress-images' )
 			);
 		}
-		$temp_dir      = trailingslashit( get_temp_dir() ) . 'tiny-compress-temp';
+		$temp_dir = trailingslashit( get_temp_dir() ) . 'tiny-compress-temp';
 		if ( ! $wp_filesystem->exists( $temp_dir ) ) {
 			wp_mkdir_p( $temp_dir );
 		}
@@ -256,7 +256,12 @@ class Tiny_Diagnostics {
 	public static function download_zip( $zip_path ) {
 		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
 		if ( false === $wp_filesystem ) {
-			wp_die( esc_html__( 'WordPress filesystem could not be initialized.', 'tiny-compress-images' ) );
+			wp_die(
+				esc_html__(
+					'WordPress filesystem could not be initialized.',
+					'tiny-compress-images'
+				)
+			);
 		}
 		if ( ! $wp_filesystem->exists( $zip_path ) ) {
 			wp_die( esc_html__( 'Diagnostic file not found.', 'tiny-compress-images' ) );
