@@ -37,7 +37,7 @@ if ( $backup_enabled ) {
 					<button value="cancel" commandfor="<?php echo esc_attr( $modal_id ); ?>" command="close" class="button">
 						<?php esc_html_e( 'Cancel', 'tiny-compress-images' ); ?>
 					</button>
-					<button value="submit" commandfor="<?php echo esc_attr( $modal_id ); ?>" command="request-close" class="button button-primary" autofocus>
+					<button type="button" value="submit" class="button button-primary" autofocus>
 						<?php esc_html_e( 'Yes, Restore', 'tiny-compress-images' ); ?>
 					</button>
 				</div>

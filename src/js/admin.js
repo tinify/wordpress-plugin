@@ -26,42 +26,44 @@
 
     const attachmentId = trigger.data('id');
     const container = document.querySelector(`[data-tiny-media-id="${attachmentId}"]`);
+    const confirmButton = dialog.querySelector('button[value="submit"]');
 
     dialog.showModal();
 
-    dialog.addEventListener('cancel', async (e) => {
-      e.preventDefault();
-      const spinner = dialog.querySelector('.spinner');
-      try {
-        if (spinner) {
-          spinner.style.visibility = 'visible';
-        }
-        const result = await restoreBackup(attachmentId);
-        dialog.close();
+    if (confirmButton) {
+      confirmButton.onclick = async () => {
+        const spinner = dialog.querySelector('.spinner');
+        try {
+          if (spinner) {
+            spinner.style.visibility = 'visible';
+          }
+          const result = await restoreBackup(attachmentId);
+          dialog.close();
 
-        // refresh thickbox
-        const modal = container.querySelector('.modal');
-        const ajaxContent = document.getElementById('TB_ajaxContent');
-        if (modal && ajaxContent) {
-          modal.append(...ajaxContent.children);
-        }
+          // refresh thickbox
+          const modal = container.querySelector('.modal');
+          const ajaxContent = document.getElementById('TB_ajaxContent');
+          if (modal && ajaxContent) {
+            modal.append(...ajaxContent.children);
+          }
 
-        container.innerHTML = result;
-        if (typeof tb_remove === 'function') {
-          tb_remove();
+          container.innerHTML = result;
+          if (typeof tb_remove === 'function') {
+            tb_remove();
+          }
+        } catch (err) {
+          const errorEl = dialog.querySelector('.tiny-dialog-error');
+          if (errorEl) {
+            errorEl.textContent = err.responseText || 'Failed to restore backup.';
+            errorEl.hidden = false;
+          }
+        } finally {
+          if (spinner) {
+            spinner.style.visibility = 'hidden';
+          }
         }
-      } catch (err) {
-        const errorEl = dialog.querySelector('.tiny-dialog-error');
-        if (errorEl) {
-          errorEl.textContent = err.responseText || 'Failed to restore backup.';
-          errorEl.hidden = false;
-        }
-      } finally {
-        if (spinner) {
-          spinner.style.visibility = 'hidden';
-        }
-      }
-    }, { once: true });
+      };
+    }
   });
 
   function downloadDiagnostics() {
