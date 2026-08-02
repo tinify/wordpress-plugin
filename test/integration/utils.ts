@@ -104,6 +104,18 @@ export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], 
   await page.locator('#submit').click();
 }
 
+export async function setBackupEnabled(page: Page, enabled: boolean) {
+  await page.goto('/wp-admin/options-general.php?page=tinify');
+
+  if (enabled) {
+    await page.locator('#tinypng_backup').check({ force: true });
+  } else {
+    await page.locator('#tinypng_backup').uncheck({ force: true });
+  }
+
+  await page.locator('#submit').click();
+}
+
 type OriginalImageSettings = {
   resize: boolean;
   width?: number;
