@@ -801,9 +801,26 @@ class Tiny_Image {
 			return wp_create_image_subsizes( $filename, $this->id );
 		}
 
-		// WordPress < 5.3.
+		/*
+		WordPress < 5.3 has no way of regenerating the sizes without applying
+			the filter, so it is disabled for the duration of the call. */
+		global $tiny_plugin;
+		$compress_on_upload = ( $tiny_plugin instanceof Tiny_Plugin )
+			? array( $tiny_plugin, 'process_attachment' )
+			: null;
+
+		if ( $compress_on_upload ) {
+			remove_filter( 'wp_generate_attachment_metadata', $compress_on_upload, 10 );
+		}
+
 		// https://developer.wordpress.org/reference/functions/wp_generate_attachment_metadata/
-		return wp_generate_attachment_metadata( $this->id, $filename );
+		$metadata = wp_generate_attachment_metadata( $this->id, $filename );
+
+		if ( $compress_on_upload ) {
+			add_filter( 'wp_generate_attachment_metadata', $compress_on_upload, 10, 2 );
+		}
+
+		return $metadata;
 	}
 
 	/**

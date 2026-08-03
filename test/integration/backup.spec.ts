@@ -1,7 +1,7 @@
 import { Page, expect, test } from '@playwright/test';
 import fs from 'fs/promises';
 import path from 'path';
-import { enableCompressionSizes, setAPIKey, setBackupEnabled, setCompressionTiming, uploadMedia } from './utils';
+import { enableCompressionSizes, setAPIKey, setBackupEnabled, setCompressionTiming, setConversionSettings, setOriginalImage, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -21,6 +21,10 @@ test.describe('backup and restore', () => {
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0']);
     await setBackupEnabled(page, true);
+    // Resizing or converting makes the mock return a different image, which
+    // would break the comparisons against output-example.jpg below.
+    await setOriginalImage(page, { resize: false, preserveDate: false, preserveCopyright: false, preserveGPS: false });
+    await setConversionSettings(page, { convert: false });
   });
 
   test('enabling backup and compressing creates a backup of the original image', async () => {
