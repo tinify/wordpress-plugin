@@ -234,13 +234,19 @@ class Tiny_Image {
 		/**
 		 * Fires before an image is sent for compression.
 		 *
+		 * The metadata is passed along because it has not necessarily been
+		 * stored yet. On upload the compression runs from within
+		 * `wp_generate_attachment_metadata`, before WordPress saves it.
+		 *
 		 * @since 3.7.0
 		 *
-		 * @param int $attachment_id The attachment ID
+		 * @param int   $attachment_id The attachment ID
+		 * @param array $wp_metadata   The attachment metadata
 		 */
 		do_action(
 			'tiny_image_before_compression',
-			$this->id
+			$this->id,
+			$this->wp_metadata
 		);
 
 		$success = 0;

@@ -72,7 +72,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'tiny_image_before_compression',
 			$this->get_method( 'backup_original_image' ),
 			10,
-			1
+			2
 		);
 
 		load_plugin_textdomain(
@@ -934,12 +934,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * @param int       $attachment_id The ID of the attachment
 	 * @return bool             return true on backup created
 	 */
-	public function backup_original_image( $attachment_id ) {
+	public function backup_original_image( $attachment_id, $wp_metadata = null ) {
 		if ( ! $this->settings->get_backup_enabled() ) {
 			return false;
 		}
 
-		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
+		$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $wp_metadata );
 
 		return $tiny_image->create_backup();
 	}
