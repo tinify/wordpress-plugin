@@ -51,7 +51,8 @@ test.describe('backup and restore', () => {
   });
 
   test('restoring the backup replaces the compressed files with the original', async () => {
-    const original = await fs.readFile(path.join(__dirname, '../fixtures/input-example.jpg'));
+    const uncompressed = await fs.readFile(path.join(__dirname, '../fixtures/input-example.jpg'));
+    const compressed = await fs.readFile(path.join(__dirname, '../mock-tinypng-webservice/output-example.jpg'));
 
     const { attachmentID, imageURL } = await uploadMedia(page, 'input-example.jpg');
 
@@ -63,7 +64,7 @@ test.describe('backup and restore', () => {
     // different (compressed) version, otherwise the restore assertion below
     // would be meaningless.
     const compressedContent = await (await page.request.get(imageURL)).body();
-    expect(compressedContent.equals(original)).toBeFalsy();
+    expect(compressedContent.equals(compressed)).toBeTruthy();
 
     await page.getByRole('link', { name: 'Details' }).click({ force: true });
     await page.waitForSelector('#TB_overlay');
@@ -74,7 +75,9 @@ test.describe('backup and restore', () => {
 
     await expect(page.getByText('1 size to be compressed')).toBeVisible();
 
+    await page.reload();
+
     const restoredContent = await (await page.request.get(imageURL)).body();
-    expect(restoredContent.equals(original)).toBeTruthy();
+    expect(restoredContent.equals(uncompressed)).toBeTruthy();
   });
 });
