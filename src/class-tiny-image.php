@@ -820,6 +820,7 @@ class Tiny_Image {
 		$this->update_tiny_post_meta();
 
 		// Regenerate all thumbnail sizes from the restored image.
+		// https://developer.wordpress.org/reference/functions/wp_generate_attachment_metadata/
 		$new_metadata = wp_generate_attachment_metadata( $this->id, $original_image->filename );
 		if ( $new_metadata ) {
 			$this->wp_metadata = $new_metadata;

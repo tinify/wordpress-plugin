@@ -194,14 +194,17 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 
 	public function test_restore_backup_clears_all_sizes_metadata()
 	{
-		// Create only thumbnail file (not testfile.png) so the restore writes testfile.png fresh.
-		$this->wp->createImage( 5000, '2026/04', 'testfile-150x150.png' );
-		$this->wp->createImage( 100000, 'tinify_backup/2026/04', 'testfile.png' );
+		$this->wp->createImage( 65400, '2026/04', 'testfile-150x150.png' );
+		$this->wp->createImage( 123000, 'tinify_backup/2026/04', 'testfile.png' );
 
 		$this->wp->stub( 'wp_generate_attachment_metadata', function ( $id, $file ) {
 			return array(
 				'file'  => '2026/04/testfile.png',
-				'sizes' => array(),
+				'sizes' => array(
+					'thumbnail' => array(
+						'file' => '2026/04/testfile-150x150.png',
+					)
+				),
 			);
 		} );
 
@@ -211,19 +214,31 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 				'thumbnail' => array( 'file' => 'testfile-150x150.png', 'width' => 150, 'height' => 150 ),
 			),
 		);
+		$mock_settings = $this->createMock( Tiny_Settings::class );
+		$mock_settings->method( 'get_sizes' )->willReturn( array(
+			Tiny_Image::ORIGINAL,
+			'thumbnail',
+		) );
+		$mock_settings->method( 'get_active_tinify_sizes' )->willReturn( array(
+			Tiny_Image::ORIGINAL,
+			'thumbnail',
+		) );
 		$tiny_metadata = array(
 			Tiny_Image::ORIGINAL => array( 'input' => array( 'size' => 37857 ), 'output' => array( 'size' => 30000 ) ),
 			'thumbnail'          => array( 'input' => array( 'size' => 5000 ), 'output' => array( 'size' => 4000 ) ),
 		);
-		$mock_settings = $this->createMock( Tiny_Settings::class );
-		$mock_settings->method( 'get_sizes' )->willReturn( array() );
-		$mock_settings->method( 'get_active_tinify_sizes' )->willReturn( array() );
 		$tiny_image    = new Tiny_Image( $mock_settings, 1, $wp_metadata, $tiny_metadata );
+
+		assertEquals($tiny_image->get_image_size( 'thumbnail' )->filesize(), 65400, 'thumbnail before restoring'); 
+		
+		// wp_generate_attachment_metadata will regenerate new thumbnails, mock this by creating
+		// a new thumbnail on vfs
+		// https://developer.wordpress.org/reference/functions/wp_generate_attachment_metadata/
+		$this->wp->createImage( 123654, '2026/04', 'testfile-150x150.png' );
 
 		$tiny_image->restore_backup();
 
-		assertEquals( array(), $tiny_image->get_image_size( Tiny_Image::ORIGINAL )->meta, 'expected original size metadata to be cleared' );
-		assertEquals( array(), $tiny_image->get_image_size( 'thumbnail' )->meta, 'expected thumbnail size metadata to be cleared' );
+		assertEquals($tiny_image->get_image_size( 'thumbnail' )->filesize(), 123654, 'thumbnail before restoring'); 
 	}
 
 	public function test_clean_attachment_deletes_backup_file()
