@@ -499,3 +499,27 @@ fieldset.tinypng_convert_fields[disabled] {
 	gap: 10px;
 	justify-content: flex-end;
 }
+
+.tiny-dialog-title {
+	font-size: 1.3rem;
+}
+
+.tiny-compression-details .tiny-card {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 5px 20px;
+	background: #F1F7FF;
+	border: 1px solid #e1e1e1;
+}
+
+.tiny-card a.button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.tiny-icon-backup {
+	flex-shrink: 0;
+	fill: currentColor;
+}
