@@ -70,7 +70,7 @@ test.describe('backup and restore', () => {
 
     await page.getByRole('link', { name: 'Restore Backup' }).click();
     await expect(page.locator('dialog.tiny-dialog[open]')).toBeVisible();
-    await page.getByRole('button', { name: 'Yes, Restore' }).click();
+    await page.getByRole('button', { name: 'Restore' }).click();
 
     await expect(page.getByText('1 size to be compressed')).toBeVisible();
 
