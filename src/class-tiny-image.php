@@ -778,6 +778,29 @@ class Tiny_Image {
 	}
 
 	/**
+	 * Regenerates all thumbnail sizes of an attachment from a file.
+	 *
+	 * Uses wp_create_image_subsizes() when available, which does not apply
+	 * the `wp_generate_attachment_metadata` filter. That filter is what starts
+	 * a compression and the image that has just been restored should be left alone.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $filename Absolute path of the image to regenerate from.
+	 * @return array The regenerated attachment metadata.
+	 */
+	private function regenerate_sizes( $filename ) {
+		// https://developer.wordpress.org/reference/functions/wp_create_image_subsizes/
+		if ( function_exists( 'wp_create_image_subsizes' ) ) {
+			return wp_create_image_subsizes( $filename, $this->id );
+		}
+
+		// WordPress < 5.3.
+		// https://developer.wordpress.org/reference/functions/wp_generate_attachment_metadata/
+		return wp_generate_attachment_metadata( $this->id, $filename );
+	}
+
+	/**
 	 * Restores the original image from its backup.
 	 *
 	 * - Copies the backup file over the current original.
@@ -820,8 +843,7 @@ class Tiny_Image {
 		$this->update_tiny_post_meta();
 
 		// Regenerate all thumbnail sizes from the restored image.
-		// https://developer.wordpress.org/reference/functions/wp_generate_attachment_metadata/
-		$new_metadata = wp_generate_attachment_metadata( $this->id, $original_image->filename );
+		$new_metadata = $this->regenerate_sizes( $original_image->filename );
 		if ( $new_metadata ) {
 			$this->wp_metadata = $new_metadata;
 			wp_update_attachment_metadata( $this->id, $this->wp_metadata );

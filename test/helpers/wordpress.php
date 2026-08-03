@@ -93,6 +93,7 @@ class WordPressStubs
 		$this->addMethod('current_user_can');
 		$this->addMethod('wp_get_attachment_metadata');
 		$this->addMethod('wp_generate_attachment_metadata');
+		$this->addMethod('wp_create_image_subsizes');
 		$this->addMethod('wp_update_attachment_metadata');
 		$this->addMethod('is_admin');
 		$this->addMethod('is_customize_preview');

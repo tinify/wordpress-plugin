@@ -171,7 +171,7 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 		$this->wp->createImage( 1, '2026/04', '_placeholder.png' );
 		$this->wp->createImage( 100000, 'tinify_backup/2026/04', 'testfile.png' );
 
-		$this->wp->stub( 'wp_generate_attachment_metadata', function ( $id, $file ) {
+		$this->wp->stub( 'wp_create_image_subsizes', function ( $id, $file ) {
 			return array(
 				'file'  => '2026/04/testfile.png',
 				'sizes' => array(),
@@ -197,7 +197,7 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 		$this->wp->createImage( 65400, '2026/04', 'testfile-150x150.png' );
 		$this->wp->createImage( 123000, 'tinify_backup/2026/04', 'testfile.png' );
 
-		$this->wp->stub( 'wp_generate_attachment_metadata', function ( $id, $file ) {
+		$this->wp->stub( 'wp_create_image_subsizes', function ( $id, $file ) {
 			return array(
 				'file'  => '2026/04/testfile.png',
 				'sizes' => array(
