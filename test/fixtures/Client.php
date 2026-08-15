@@ -120,6 +120,11 @@ class Client {
 	protected static function closeRequest( $request ) {
 		if ( PHP_VERSION_ID < 80000 ) {
 			curl_close( $request );
+		} elseif (
+			is_object($request) &&
+			method_exists($request, 'close')
+		) { 
+			$request->close(); 
 		}
 	}
 
