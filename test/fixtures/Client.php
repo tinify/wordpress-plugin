@@ -53,7 +53,7 @@ class Client {
 		if ( is_string( $response ) ) {
 			$status = curl_getinfo( $request, CURLINFO_HTTP_CODE );
 			$headerSize = curl_getinfo( $request, CURLINFO_HEADER_SIZE );
-			curl_close( $request );
+			self::closeRequest( $request );
 
 			$headers = self::parseHeaders( substr( $response, 0, $headerSize ) );
 			$body = substr( $response, $headerSize );
@@ -107,9 +107,20 @@ class Client {
 			);
 		} else {
 			$message = sprintf( '%s (#%d)', curl_error( $request ), curl_errno( $request ) );
-			curl_close( $request );
+			self::closeRequest( $request );
 			throw new ConnectionException( 'Error while connecting: ' . $message );
 		}// End if().
+	}
+
+	/**
+	 * curl_close() is deprecated in >8.5, does nothing in >8.0 
+	 * 
+	 * @param \Tinify\CurlMock $request
+	 */
+	protected static function closeRequest( $request ) {
+		if ( PHP_VERSION_ID < 80000 ) {
+			curl_close( $request );
+		}
 	}
 
 	protected static function parseHeaders( $headers ) {
