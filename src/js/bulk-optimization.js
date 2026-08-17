@@ -213,7 +213,7 @@
         <td class="column-author status" data-testid="bulk-item-status-${i}" data-colname="${tinyCompress.L10nStatus}" data-status="waiting">${tinyCompress.L10nWaiting}</td>
       </tr>`;
       list.append(tableRow);
-      drawNow = i;
+      drawNow = i + 1;
     }
     window.totalRowsDrawn = drawNow;
   }
