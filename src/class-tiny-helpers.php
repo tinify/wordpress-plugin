@@ -130,9 +130,9 @@ class Tiny_Helpers {
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
-		WP_Filesystem();
+		$initialized = WP_Filesystem();
 
-		if ( ! ( $wp_filesystem instanceof WP_Filesystem_Base ) ) {
+		if ( true !== $initialized || ! ( $wp_filesystem instanceof WP_Filesystem_Base ) ) {
 			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Tiny Compress: Unable to initialize WordPress filesystem.' );
 			return false;
