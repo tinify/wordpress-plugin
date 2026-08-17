@@ -31,8 +31,16 @@
     dialog.showModal();
 
     if (confirmButton) {
+      let restoring = false;
       confirmButton.onclick = async () => {
+        if (restoring) {
+          return;
+        }
+        restoring = true;
+        confirmButton.disabled = true;
+
         const spinner = dialog.querySelector('.spinner');
+        let allowRetry = false;
         try {
           if (spinner) {
             spinner.style.visibility = 'visible';
@@ -52,12 +60,17 @@
             tb_remove();
           }
         } catch (err) {
+          allowRetry = true;
           const errorEl = dialog.querySelector('.tiny-dialog-error');
           if (errorEl) {
             errorEl.textContent = err.responseText || 'Failed to restore backup.';
             errorEl.hidden = false;
           }
         } finally {
+          restoring = false;
+          if (allowRetry) {
+            confirmButton.disabled = false;
+          }
           if (spinner) {
             spinner.style.visibility = 'hidden';
           }
