@@ -202,8 +202,9 @@
 
   function drawSomeRows(items, rowsToDraw) {
     const list = jQuery('#optimization-items tbody');
-    let drawNow = window.totalRowsDrawn;
-    for(let i = drawNow;i < Math.min(rowsToDraw + window.totalRowsDrawn, items.length); i++) {
+    const start = window.totalRowsDrawn;
+    const end = Math.min(start + rowsToDraw, items.length);
+    for (let i = start; i < end; i++) {
       const tableRow = `<tr class="media-item">
         <td class="thumbnail" />
         <td class="column-primary name">${items[i].post_title}</th>
@@ -213,9 +214,8 @@
         <td class="column-author status" data-testid="bulk-item-status-${i}" data-colname="${tinyCompress.L10nStatus}" data-status="waiting">${tinyCompress.L10nWaiting}</td>
       </tr>`;
       list.append(tableRow);
-      drawNow = i + 1;
     }
-    window.totalRowsDrawn = drawNow;
+    window.totalRowsDrawn = end;
   }
 
   function cancelOptimization() {
