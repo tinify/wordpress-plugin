@@ -31,6 +31,9 @@
     "post-update-cmd": "bin/post-install"
   },
   "config": {
+    "platform": {
+      "php": "7.4.0"
+    },
     "allow-plugins": {
       "composer/installers": true,
       "dealerdirect/phpcodesniffer-composer-installer": true
