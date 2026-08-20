@@ -19,7 +19,7 @@ runs:
 
     - name: Install Dependencies
       shell: bash
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --prefer-dist --no-progress
 
 inputs:
   php:
