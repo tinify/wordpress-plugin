@@ -197,7 +197,13 @@ class Tiny_Compress_Client extends Tiny_Compress {
 		The client does not let us override cURL properties yet, so we have
 			to use a reflection property. */
 		$property = new ReflectionProperty( $client, 'options' );
-		$property->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			/**
+			 * No effect since PHP 8.1 and deprecated since PHP 8.5
+			 * https://www.php.net/manual/en/reflectionproperty.setaccessible.php
+			 */
+			$property->setAccessible( true );
+		}
 		$options = $property->getValue( $client );
 
 		// Set API request timeout to prevent indefinite hanging
