@@ -176,7 +176,7 @@ A: When the conversion feature is enabled (to convert images to AVIF or WebP), e
 == Changelog ==
 = 3.8.0 =
 * feat: option to create a backup of the original uploaded image
-* fix: will not used setAccessible on newer PHP versions 
+* fix: will not use setAccessible on newer PHP versions
 * fix: correctly resets index when bulk optimizing
 * fix: clears memoized metadata when it is updated
 
