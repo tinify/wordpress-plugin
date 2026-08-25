@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 4.0
 Tested up to: 7.1
-Stable tag: 3.7.0
+Stable tag: 3.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,12 @@ A: You can upgrade to a paid account by adding your *Payment details* on your [a
 A: When the conversion feature is enabled (to convert images to AVIF or WebP), each image will use double the number of credits: one for compression and one for format conversion.
 
 == Changelog ==
+= 3.8.0 =
+* feat: option to create a backup of the original uploaded image
+* fix: will not use setAccessible on newer PHP versions
+* fix: correctly resets index when bulk optimizing
+* fix: clears memoized metadata when it is updated
+
 = 3.7.0 =
 * chore: migrated meta key from `tiny_compress_images` to `_tiny_compress_images`
 * feat: when original is set to be compressed, it will also compress images filtered by big_image_size_threshold.
