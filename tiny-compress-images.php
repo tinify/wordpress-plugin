@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: TinyPNG - JPEG, PNG & WebP image compression
- * Description: Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
+ * Plugin Name: TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF
+ * Description: Compress & convert images to WebP & AVIF automatically. Faster pages, improved SEO. Optimize 500 images/month free, no ads.
  * Version: 3.8.0
  * Author: TinyPNG
  * Author URI: https://tinypng.com
