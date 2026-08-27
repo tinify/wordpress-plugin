@@ -320,7 +320,7 @@
   case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage);
     break;
-  case 'settings_page_tiny-onboarding':
+  case 'settings_page_tiny-onboarding-1':
     eventOn('click', '[data-tiny-action=create-key]', submitKey);
     eventOn('click', '[data-tiny-action=update-key]', submitKey);
     break;

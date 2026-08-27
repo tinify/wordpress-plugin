@@ -43,11 +43,12 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 
 	function admin_init() {
 		if ( $this->is_onboarded() ) {
-			// if user is not onboarded
-			$this->set_is_onboarded( 1 );
-			wp_safe_redirect( $this->get_step_url( 1 ) );
-			exit();
+			return;
 		}
+
+		$this->set_is_onboarded( 1 );
+		wp_safe_redirect( $this->get_step_url( 1 ) );
+		exit();
 	}
 
 	function admin_menu() {
@@ -83,7 +84,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 */
 	function is_onboarded() {
 		$onboarding_status_field = self::get_prefixed_name( 'onboarding_status' );
-		return 1 === get_option( $onboarding_status_field, 1 );
+		return 1 === (int) get_option( $onboarding_status_field, 1 );
 	}
 
 	/**
@@ -125,7 +126,18 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		}
 	}
 
+	/**
+	 * Decides on activation whether this site still needs onboarding.
+	 *
+	 * A site that already has a key, or that has compressed before, keeps the
+	 * default onboarded state so it is never sent through onboarding again.
+	 */
 	static function on_activate() {
-		self::set_is_onboarded( 0 );
+		$api_key           = get_option( self::get_prefixed_name( 'api_key' ) );
+		$compression_count = get_option( self::get_prefixed_name( 'status' ) );
+
+		if ( empty( $api_key ) && empty( $compression_count ) ) {
+			self::set_is_onboarded( 0 );
+		}
 	}
 }
