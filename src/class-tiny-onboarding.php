@@ -24,6 +24,8 @@
  class Tiny_Onboarding extends Tiny_WP_Base {
 
     private $onboarding_url = 'tiny-onboarding';
+    private $steps = array(1, 2);
+    
 	/**
 	 * Tiny settings
 	 *
@@ -40,28 +42,37 @@
     }
     
     function admin_init() {
-        // $this->set_is_onboarded( 0 );
-        if ( $this->is_new_user() && !$this->is_onboarded() ) {
+        if ( $this->is_onboarded() ) {
             // if user is new and not onboarded
             $this->set_is_onboarded( 1 );
-            wp_safe_redirect( admin_url( 'options-general.php?page=' . $this->onboarding_url ) );
+            wp_safe_redirect( $this->get_step_url( 1 ) );
             exit();
         }
     }
 
     function admin_menu() {
-        add_submenu_page(
-            null,
-            'Onboarding TinyPNG',
-            'Welcome to TinyPNG',
-            'manage_options',
-            $this->onboarding_url,
-            array( $this, 'render_onboarding_page'),
-        );
-    }
-    
-    function render_onboarding_page() {
-        include __DIR__ . '/views/onboarding-1.php';
+        $title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
+
+        foreach ( $this->steps as $step ) {
+            $slug = $this->get_step_slug( $step );
+
+            $hook = add_submenu_page(
+                'options-general.php',
+                $title,
+                $title,
+                'manage_options',
+                $slug,
+                function () use ( $step ) {
+                    include __DIR__ . '/views/onboarding-' . $step . '.php';
+                }
+            );
+
+            if ( ! $hook ) {
+                continue;
+            }
+
+            remove_submenu_page( 'options-general.php', $slug );
+        }
     }
 
 	/**
@@ -70,14 +81,34 @@
 	 * @return bool true if user has no compressions or api key
 	 */
     function is_new_user() {
-        $api_key = $this->settings->get_api_key();
+        $has_api_key = $this->settings->has_api_key();
         $compression_count = $this->settings->get_compression_count();
-        return empty( $api_key ) && empty($compression_count);
+        return ! $has_api_key && empty($compression_count);
     }
 
     function is_onboarded() {
         $onboarding_status_field = self::get_prefixed_name( 'onboarding_status' );
         return get_option( $onboarding_status_field );
+    }
+
+    /**
+     * Returns the page slug of the given onboarding step
+     *
+     * @param int $step
+     * @return string
+     */
+    private function get_step_slug( $step ) {
+        return $this->onboarding_url . '-' . $step;
+    }
+
+    /**
+     * Retrieves the url of the given onboarding step
+     *
+     * @param int $step
+     * @return string
+     */
+    public function get_step_url( $step ) {
+        return admin_url( 'options-general.php?page=' . $this->get_step_slug( $step ) );
     }
 
 	/**
@@ -88,5 +119,14 @@
     function set_is_onboarded( $is_onboarded ) {
         $onboarding_status_field = self::get_prefixed_name( 'onboarding_status' );
         return update_option( $onboarding_status_field, $is_onboarded );
+    }
+
+    function render_register() {
+        $compressor = $this->settings->get_compressor();
+        if ( $compressor->can_create_key() ) {
+            include __DIR__ . '/views/account-status-create-advanced.php';
+        } else {
+            include __DIR__ . '/views/account-status-create-simple.php';
+        }
     }
 }

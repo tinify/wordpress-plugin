@@ -554,3 +554,10 @@ fieldset.tinypng_convert_fields[disabled] {
 	flex-shrink: 0;
 	fill: currentcolor;
 }
+
+.tiny-onboarding {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
