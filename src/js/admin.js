@@ -170,6 +170,13 @@
         var status = jQuery.parseJSON(json);
 
         if (status.ok) {
+          // when in onboarding
+          const nextStep = jQuery('#tiny-onboarding-step').data('next-step');
+          if (nextStep) {
+            window.location = nextStep;
+            return;
+          }
+
           var target = jQuery('#tiny-account-status');
           if (target.length) {
             jQuery.get(ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_account_status', function(data) {
@@ -295,6 +302,7 @@
     });
   }
 
+  console.log('adminpage:', adminpage);
   switch (adminpage) {
   case 'upload-php':
     eventOn('click', 'button.tiny-compress', compressImage);
@@ -311,6 +319,10 @@
     break;
   case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage);
+    break;
+  case 'settings_page_tiny-onboarding':
+    eventOn('click', '[data-tiny-action=create-key]', submitKey);
+    eventOn('click', '[data-tiny-action=update-key]', submitKey);
     break;
   case 'settings_page_tinify':
     changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]');

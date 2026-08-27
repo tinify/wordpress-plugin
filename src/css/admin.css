@@ -482,3 +482,10 @@ fieldset.tinypng_convert_fields[disabled] {
 .tiny-mt-2 {
 	margin-top: 10px;
 }
+
+.tiny-onboarding {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
