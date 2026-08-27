@@ -49,3 +49,5 @@ register_uninstall_hook(
 	__FILE__,
 	array( 'Tiny_Plugin', 'uninstall' )
 );
+
+register_activation_hook(__FILE__, array('Tiny_Onboarding', 'on_activate') );
