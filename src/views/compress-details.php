@@ -10,6 +10,7 @@
 $available_sizes              = array_keys( $this->settings->get_sizes() );
 $conversion_enabled           = $this->settings->get_conversion_enabled();
 $active_sizes                 = $this->settings->get_sizes();
+$backup_enabled               = $this->settings->get_backup_enabled();
 $active_tinify_sizes          = $this->settings->get_active_tinify_sizes();
 $error                        = $tiny_image->get_latest_error();
 $total                        = $tiny_image->get_count( array( 'modified', 'missing', 'has_been_compressed', 'compressed', 'has_been_converted' ) );
@@ -19,8 +20,9 @@ $available_uncompressed_sizes = $image_statistics['available_uncompressed_sizes'
 $size_before                  = $image_statistics['initial_total_size'];
 $size_after                   = $image_statistics['compressed_total_size'];
 
-$size_active = array_fill_keys( $active_tinify_sizes, true );
-$size_exists = array_fill_keys( $available_sizes, true );
+$size_active    = array_fill_keys( $active_tinify_sizes, true );
+$size_exists    = array_fill_keys( $available_sizes, true );
+$has_compressed = $size_before - $size_after;
 ksort( $size_exists );
 
 ?>
@@ -111,8 +113,12 @@ ksort( $size_exists );
 				<?php echo esc_html__( 'Latest error', 'tiny-compress-images' ) . ': ' . esc_html( $error ); ?>
 			</span>
 			<br>
-		<?php } ?>
-		<a class="thickbox message" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo absint( $tiny_image->get_id() ); ?>">
+			<?php
+		}
+		/* translators: %s is the image filename */
+		$modal_title = sprintf( __( 'Compression details for %s', 'tiny-compress-images' ), $tiny_image->get_name() );
+		?>
+		<a class="thickbox message" name="<?php echo esc_attr( $modal_title ); ?>" href="#TB_inline?width=700&amp;height=500&amp;inlineId=modal_<?php echo absint( $tiny_image->get_id() ); ?>">
 			<?php esc_html_e( 'Details', 'tiny-compress-images' ); ?>
 		</a>
 	</div>
@@ -138,12 +144,6 @@ ksort( $size_exists );
 
 <div class="modal" id="modal_<?php echo absint( $tiny_image->get_id() ); ?>">
 	<div class="tiny-compression-details">
-		<h3>
-			<?php
-			/* translators: %s is the image filename */
-			printf( esc_html__( 'Compression details for %s', 'tiny-compress-images' ), esc_html( $tiny_image->get_name() ) );
-			?>
-		</h3>
 		<table>
 			<tr>
 				<th><?php esc_html_e( 'Size', 'tiny-compress-images' ); ?></th>
@@ -244,7 +244,7 @@ ksort( $size_exists );
 		<p>
 			<strong>
 				<?php
-				if ( $size_before - $size_after ) {
+				if ( $has_compressed ) {
 					printf(
 						/* translators: %1$.0f%%: savings percentage, %2$s: total file size savings */
 						esc_html__( 'Total savings %1$.0f%% (%2$s)', 'tiny-compress-images' ),
@@ -257,6 +257,12 @@ ksort( $size_exists );
 				}
 				?>
 			</strong>
+
+			<?php
+			if ( $has_compressed ) {
+				require __DIR__ . '/compress-details-backup.php';
+			}
+			?>
 		</p>
 	</div>
 </div>
