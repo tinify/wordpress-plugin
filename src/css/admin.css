@@ -489,3 +489,13 @@ fieldset.tinypng_convert_fields[disabled] {
 	justify-content: center;
 	align-items: center;
 }
+
+.tiny-card {
+	background: #fff;
+	border: 1px solid #E1E1E1;
+	border-radius: 8px;
+	padding: 12px;
+}
+.tiny-text-center {
+	text-align: center;
+}

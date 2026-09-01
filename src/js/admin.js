@@ -135,6 +135,22 @@
     return false;
   }
 
+  /**
+   * Does nothing outside of onboarding
+   * If key is active, shows continue button
+   */
+  function updateOnboardingContinue() {
+    const button = jQuery('#tiny-onboarding-continue');
+    if (!button.length) {
+      return;
+    }
+
+    const status = jQuery('#tiny-account-status p.status').closest('div.status');
+    const valid = status.hasClass('status-success') || status.hasClass('status-pending');
+
+    button.toggle(valid);
+  }
+
   function submitKey(event) {
     event.preventDefault();
     jQuery(event.target).attr({disabled: true}).addClass('loading');
@@ -170,18 +186,13 @@
         var status = jQuery.parseJSON(json);
 
         if (status.ok) {
-          // when in onboarding
-          const nextStep = jQuery('#tiny-onboarding-step').data('next-step');
-          if (nextStep) {
-            window.location = nextStep;
-            return;
-          }
-
           var target = jQuery('#tiny-account-status');
           if (target.length) {
             jQuery.get(ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_account_status', function(data) {
               jQuery(event.target).attr({disabled: false}).removeClass('loading');
               target.replaceWith(data);
+              // The refreshed markup reports whether the key actually works.
+              updateOnboardingContinue();
             });
           }
           jQuery('div.tiny-notice[data-name="setting"]').remove();
@@ -321,8 +332,13 @@
     eventOn('click', 'button.tiny-compress', compressImage);
     break;
   case 'settings_page_tiny-onboarding-1':
+    changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]');
+    changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]');
+
     eventOn('click', '[data-tiny-action=create-key]', submitKey);
     eventOn('click', '[data-tiny-action=update-key]', submitKey);
+    
+    updateOnboardingContinue();
     break;
   case 'settings_page_tinify':
     changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]');

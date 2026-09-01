@@ -108,7 +108,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			);
 		}
 
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'manage_options' ) && ! Tiny_Onboarding::is_onboarding_page() ) {
 			$this->setup_incomplete_checks();
 		}
 
