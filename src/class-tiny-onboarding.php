@@ -23,8 +23,17 @@
  */
 class Tiny_Onboarding extends Tiny_WP_Base {
 
-	private $onboarding_url = 'tiny-onboarding';
-	private $steps          = array( 1, 2 );
+	/**
+	 * Prefix of every onboarding step page slug.
+	 *
+	 * @var string
+	 */
+	const PAGE_SLUG = 'tiny-onboarding';
+
+	/**
+	* @var string
+	*/
+	private $page_title;
 
 	/**
 	 * Tiny settings
@@ -47,20 +56,34 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		}
 
 		$this->set_is_onboarded( 1 );
+
+		if ( self::is_bulk_activation() ) {
+			return;
+		}
+
 		wp_safe_redirect( $this->get_step_url( 1 ) );
 		exit();
 	}
 
+	/**
+	 * Onboarding is skipped when activating multiple plugins
+	 *
+	 * @return bool
+	 */
+	private static function is_bulk_activation() {
+		return filter_has_var( INPUT_GET, 'activate-multi' );
+	}
+
 	function admin_menu() {
-		$title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
+		$this->page_title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
 
 		foreach ( $this->steps as $step ) {
 			$slug = $this->get_step_slug( $step );
 
 			$hook = add_submenu_page(
 				'options-general.php',
-				$title,
-				$title,
+				$this->page_title,
+				$this->page_title,
 				'manage_options',
 				$slug,
 				function () use ( $step ) {
@@ -73,7 +96,22 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 			}
 
 			remove_submenu_page( 'options-general.php', $slug );
+
+			/**
+			 * because title is retrieved from submenu, which is not part of the menu,
+			 * resolve it through globals
+			 */
+			add_action( 'load-' . $hook, $this->get_method( 'set_page_title' ) );
 		}
+	}
+
+	/**
+	 * Supplies the title of a page that is not listed in the menu.
+	 *
+	 * Hooked to `load-{$hook}` of every onboarding step.
+	 */
+	public function set_page_title() {
+		$GLOBALS['title'] = $this->page_title;
 	}
 
 	/**
@@ -94,7 +132,20 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 * @return string
 	 */
 	private function get_step_slug( $step ) {
-		return $this->onboarding_url . '-' . $step;
+		return self::PAGE_SLUG . '-' . $step;
+	}
+
+	/**
+	 * Whether the current admin request is one of the onboarding steps.
+	 *
+	 * Reads the page WordPress itself resolved, so no request input is touched.
+	 *
+	 * @return bool
+	 */
+	public static function is_onboarding_page() {
+		$page = isset( $GLOBALS['plugin_page'] ) ? $GLOBALS['plugin_page'] : '';
+
+		return 0 === strpos( $page, self::PAGE_SLUG . '-' );
 	}
 
 	/**
