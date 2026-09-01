@@ -108,7 +108,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 			);
 		}
 
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'manage_options' ) && ! Tiny_Onboarding::is_onboarding_page() ) {
 			$this->setup_incomplete_checks();
 		}
 
@@ -225,6 +225,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} else {
 			return get_option( self::get_prefixed_name( 'api_key_pending' ) );
 		}
+	}
+
+	public function has_api_key() {
+		$api_key = $this->get_api_key();
+		if ( empty( $api_key ) ) {
+			return false;
+		}
+
+		$pending_key = $this->get_api_key_pending();
+		return ! empty( $pending_key );
 	}
 
 	protected function clear_api_key_pending() {
