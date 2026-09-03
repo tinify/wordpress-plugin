@@ -2,9 +2,7 @@
 /**
  * Queue based bulk optimization view (proof of concept).
  *
- * @var array       $stats
  * @var array       $progress
- * @var float       $estimated_costs
  * @var int         $remaining_credits
  * @var Tiny_Plugin $this
  */
@@ -14,35 +12,7 @@ $legacy_url   = admin_url( 'upload.php?page=tiny-bulk-optimization' );
 ?>
 
 <div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization-queue">
-	<h2><?php esc_html_e( 'Bulk Optimization', 'tiny-compress-images' ); ?></h2>
-
-	<table class="widefat whitebox" id="tiny-queue-summary">
-		<tbody>
-			<tr>
-				<th><?php esc_html_e( 'Images available for optimization', 'tiny-compress-images' ); ?></th>
-				<td id="tiny-queue-available">
-					<?php echo esc_html( count( $stats['available-for-optimization'] ) ); ?>
-				</td>
-			</tr>
-			<tr>
-				<th><?php esc_html_e( 'Image sizes to optimize', 'tiny-compress-images' ); ?></th>
-				<td><?php echo esc_html( $stats['available-unoptimized-sizes'] ); ?></td>
-			</tr>
-			<tr>
-				<th><?php esc_html_e( 'Estimated credits', 'tiny-compress-images' ); ?></th>
-				<td>
-					<?php echo esc_html( $stats['estimated_credit_use'] ); ?>
-					<?php
-					printf(
-						/* translators: %d: number of remaining credits */
-						esc_html__( '(%d remaining this month)', 'tiny-compress-images' ),
-						absint( $remaining_credits )
-					);
-					?>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<h2><?php esc_html_e( 'Bulk Optimization V2', 'tiny-compress-images' ); ?></h2>
 
 	<p>
 		<button type="button" class="button button-primary" id="tiny-queue-start">
@@ -64,16 +34,28 @@ $legacy_url   = admin_url( 'upload.php?page=tiny-bulk-optimization' );
 		</div>
 	</div>
 
-	<p id="tiny-queue-counters">
-		<span><?php esc_html_e( 'Optimized', 'tiny-compress-images' ); ?>:
-			<strong id="tiny-queue-optimized">0</strong></span>
-		&nbsp;
-		<span><?php esc_html_e( 'Failed', 'tiny-compress-images' ); ?>:
-			<strong id="tiny-queue-failed">0</strong></span>
-		&nbsp;
-		<span><?php esc_html_e( 'Skipped', 'tiny-compress-images' ); ?>:
-			<strong id="tiny-queue-skipped">0</strong></span>
-	</p>
+	<table class="widefat whitebox" id="tiny-queue-counts">
+		<thead>
+			<tr>
+				<th><?php esc_html_e( 'Optimized', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Nothing to do', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Failed', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'In progress', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Waiting', 'tiny-compress-images' ); ?></th>
+				<th><?php esc_html_e( 'Credits left', 'tiny-compress-images' ); ?></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td id="tiny-queue-optimized">0</td>
+				<td id="tiny-queue-skipped">0</td>
+				<td id="tiny-queue-failed">0</td>
+				<td id="tiny-queue-processing">0</td>
+				<td id="tiny-queue-pending">0</td>
+				<td><?php echo esc_html( $remaining_credits ); ?></td>
+			</tr>
+		</tbody>
+	</table>
 
 	<p class="notes">
 		<?php

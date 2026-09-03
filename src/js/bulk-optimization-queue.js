@@ -1,8 +1,10 @@
 /*
- *Bulk Optimization Queue
+ * Bulk Optimization Queue
  *
  * Starting sends one request that hands the library to the background queue;
- * from then on this script only polls for progress.
+ * from then on this script only polls for progress. The counts it renders come
+ * from the queue status stored on each attachment, so they survive a reload,
+ * a cancelled run, or a process that died halfway.
  */
 (() => {
   const POLL_INTERVAL = 3000;
@@ -28,19 +30,25 @@
     }
   }
 
-  function statusLabel(status) {
-    return (
-      {
-        running: `${tinyCompress.L10nCompressing}…`,
-        done: tinyCompress.L10nAllDone,
-        cancelled: tinyCompress.L10nCancelled,
-        stalled: tinyCompress.L10nInternalError,
-      }[status] || ''
-    );
+  function statusLabel(state) {
+    const label = {
+      running: `${tinyCompress.L10nCompressing}…`,
+      done: tinyCompress.L10nAllDone,
+      cancelled: tinyCompress.L10nCancelled,
+      stalled: tinyCompress.L10nInternalError,
+      unreachable: tinyCompress.L10nQueueUnreachable,
+    }[state.status];
+
+    if (!label) {
+      return '';
+    }
+
+    // The loopback error is the only thing that says why nothing is happening.
+    return state.error_message ? `${label}: ${state.error_message}` : label;
   }
 
   function fillStatus(cell, item) {
-    if (item.status === 'optimized') {
+    if (item.status === 'done') {
       let html = '';
       if (item.sizes_compressed > 0) {
         html += `<p>${ICON_SUCCESS} ${item.sizes_compressed} ${tinyCompress.L10nCompressed}</p>`;
@@ -52,7 +60,7 @@
       return;
     }
 
-    if (item.status === 'error') {
+    if (item.status === 'failed') {
       cell.innerHTML = `${ICON_ERROR} ${tinyCompress.L10nError}`;
       if (item.message) {
         cell.append(document.createElement('br'), item.message);
@@ -101,10 +109,12 @@
   }
 
   function render(state) {
-    if (!state || state.error) {
+    // A permission failure comes back as a bare {error: ...} with no status.
+    if (!state || !state.status) {
       return;
     }
 
+    const counts = state.counts || {};
     const total = parseInt(state.total, 10) || 0;
     const processed = parseInt(state.processed, 10) || 0;
     const percentage = total > 0 ? Math.round((processed / total) * 100) : 0;
@@ -113,10 +123,15 @@
     el.processed.textContent = processed;
     el.percentage.textContent = `(${percentage}%)`;
     el.progressBar.style.width = `${percentage}%`;
-    el.optimized.textContent = state.optimized || 0;
-    el.failed.textContent = state.failed || 0;
-    el.skipped.textContent = state.skipped || 0;
-    el.state.textContent = statusLabel(state.status);
+
+    el.optimized.textContent = counts.done || 0;
+    el.skipped.textContent = counts.skipped || 0;
+    el.failed.textContent = counts.failed || 0;
+    el.processing.textContent = counts.processing || 0;
+    // Everything not yet given a status is waiting too, not just the marked rows.
+    el.pending.textContent = Math.max(0, total - processed - (counts.processing || 0));
+
+    el.state.textContent = statusLabel(state);
 
     renderLog(state.log || []);
 
@@ -172,8 +187,10 @@
       processed: document.getElementById('tiny-queue-processed'),
       percentage: document.getElementById('tiny-queue-percentage'),
       optimized: document.getElementById('tiny-queue-optimized'),
-      failed: document.getElementById('tiny-queue-failed'),
       skipped: document.getElementById('tiny-queue-skipped'),
+      failed: document.getElementById('tiny-queue-failed'),
+      processing: document.getElementById('tiny-queue-processing'),
+      pending: document.getElementById('tiny-queue-pending'),
       state: document.getElementById('tiny-queue-state'),
       progressBar: document.querySelector('#tiny-queue-progress-bar #progress-size'),
       tbody: document.querySelector('#tiny-queue-items tbody'),

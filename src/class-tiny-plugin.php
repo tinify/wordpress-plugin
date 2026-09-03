@@ -353,6 +353,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'L10nError'              => __( 'Error', 'tiny-compress-images' ),
 				'L10nLatestError'        => __( 'Latest error', 'tiny-compress-images' ),
 				'L10nInternalError'      => __( 'Internal error', 'tiny-compress-images' ),
+				'L10nQueueUnreachable'   => __(
+					'Could not reach this site to start background processing',
+					'tiny-compress-images'
+				),
 				'L10nOutOf'              => __( 'out of', 'tiny-compress-images' ),
 				'L10nWaiting'            => __( 'Waiting', 'tiny-compress-images' ),
 			)
@@ -724,10 +728,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Hand the whole library to the background queue in one request.
+	 * Hand the library to the background queue in one request.
 	 *
-	 * Unlike tiny_compress_image_for_bulk this returns as soon as the queue is
-	 * stored and dispatched; the browser is not needed after that.
+	 * Nothing is enqueued up front: the queue lives in postmeta, so starting a
+	 * run is a reset and a dispatch no matter how large the library is. Passing
+	 * ids optimizes just those attachments instead of everything.
 	 */
 	public function ajax_bulk_queue_start() {
 		if ( ! $this->validate_bulk_queue_request() ) {
@@ -735,23 +740,28 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			exit();
 		}
 
-		if ( $this->bulk_queue->is_active() ) {
-			echo json_encode( $this->bulk_queue->get_progress() );
+		/*
+		Only a run that is genuinely under way blocks a new one. Asking the
+			library whether it is "active" would also count a cancel that never
+			reached its handler, which would make the button do nothing. */
+		$progress = $this->bulk_queue->get_progress();
+		if ( 'running' === $progress['status'] ) {
+			echo json_encode( $progress );
 			exit();
 		}
 
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		// Nonce verified in validate_bulk_queue_request().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$requested = isset( $_POST['ids'] ) ?
+			sanitize_text_field( wp_unslash( $_POST['ids'] ) ) : '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		$ids = null;
 
-		$ids = array();
-		foreach ( $stats['available-for-optimization'] as $item ) {
-			if ( isset( $item['ID'] ) ) {
-				$ids[] = $item['ID'];
-			}
+		if ( '' !== $requested ) {
+			$ids = array_filter( array_map( 'intval', explode( ',', $requested ) ) );
 		}
 
-		$this->bulk_queue->start( $ids );
-
-		echo json_encode( $this->bulk_queue->get_progress() );
+		echo json_encode( $this->bulk_queue->start( $ids ) );
 		exit();
 	}
 
@@ -919,12 +929,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function render_bulk_optimization_queue_page() {
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-
-		$estimated_costs = $this->get_estimated_bulk_cost( $stats['estimated_credit_use'] );
-
+		/* This makes sure that up to date information is retrieved from the API. */
 		$this->settings->get_compressor()->get_status();
 
+		/*
+		No library scan here. The queue counts come out of postmeta, so this
+			page renders in the same time on a library of ten or ten thousand. */
 		$progress          = $this->bulk_queue->get_progress();
 		$remaining_credits = $this->settings->get_remaining_credits();
 
