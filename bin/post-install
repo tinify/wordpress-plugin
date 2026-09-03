@@ -1,4 +1,8 @@
 #!/bin/bash
+set -e
+
 rm -rf src/vendor
 mkdir src/vendor
 cp -R vendor/tinify/tinify/lib src/vendor/tinify
+
+vendor/bin/mozart compose
