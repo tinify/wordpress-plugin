@@ -26,6 +26,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	private $settings;
 	private $twig;
+	private $bulk_queue;
 
 	public static function jpeg_quality() {
 		return 85;
@@ -42,6 +43,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
 		new Tiny_Conversion( $this->settings );
+		$this->bulk_queue = new Tiny_Bulk_Queue( $this->settings );
 	}
 
 	public function set_compressor( $compressor ) {
@@ -107,6 +109,21 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_action(
 			'wp_ajax_tiny_get_optimization_statistics',
 			$this->get_method( 'ajax_optimization_statistics' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_bulk_queue_start',
+			$this->get_method( 'ajax_bulk_queue_start' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_bulk_queue_status',
+			$this->get_method( 'ajax_bulk_queue_status' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_bulk_queue_cancel',
+			$this->get_method( 'ajax_bulk_queue_cancel' )
 		);
 
 		add_action(
@@ -216,6 +233,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'upload_files',
 			'tiny-bulk-optimization',
 			$this->get_method( 'render_bulk_optimization_page' )
+		);
+
+		add_media_page(
+			__( 'Bulk Optimization V2', 'tiny-compress-images' ),
+			esc_html__( 'Bulk TinyPNG V2', 'tiny-compress-images' ),
+			'upload_files',
+			'tiny-bulk-optimization-queue',
+			$this->get_method( 'render_bulk_optimization_queue_page' )
 		);
 	}
 
@@ -359,6 +384,25 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			);
 
 			wp_enqueue_script( self::NAME . '_tiny_bulk_optimization' );
+		}
+
+		if ( 'media_page_tiny-bulk-optimization-queue' == $hook ) {
+			wp_enqueue_style(
+				self::NAME . '_tiny_bulk_optimization',
+				plugins_url( '/css/bulk-optimization.css', __FILE__ ),
+				array(),
+				self::version()
+			);
+
+			wp_register_script(
+				self::NAME . '_tiny_bulk_optimization_queue',
+				plugins_url( '/js/bulk-optimization-queue.js', __FILE__ ),
+				array( self::NAME . '_admin' ),
+				self::version(),
+				true
+			);
+
+			wp_enqueue_script( self::NAME . '_tiny_bulk_optimization_queue' );
 		}
 	}
 
@@ -672,6 +716,67 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
+	private function validate_bulk_queue_request() {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ) {
+			return false;
+		}
+		return current_user_can( 'upload_files' );
+	}
+
+	/**
+	 * Hand the whole library to the background queue in one request.
+	 *
+	 * Unlike tiny_compress_image_for_bulk this returns as soon as the queue is
+	 * stored and dispatched; the browser is not needed after that.
+	 */
+	public function ajax_bulk_queue_start() {
+		if ( ! $this->validate_bulk_queue_request() ) {
+			echo json_encode( array( 'error' => __( 'Not allowed', 'tiny-compress-images' ) ) );
+			exit();
+		}
+
+		if ( $this->bulk_queue->is_active() ) {
+			echo json_encode( $this->bulk_queue->get_progress() );
+			exit();
+		}
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+
+		$ids = array();
+		foreach ( $stats['available-for-optimization'] as $item ) {
+			if ( isset( $item['ID'] ) ) {
+				$ids[] = $item['ID'];
+			}
+		}
+
+		$this->bulk_queue->start( $ids );
+
+		echo json_encode( $this->bulk_queue->get_progress() );
+		exit();
+	}
+
+	public function ajax_bulk_queue_status() {
+		if ( ! $this->validate_bulk_queue_request() ) {
+			echo json_encode( array( 'error' => __( 'Not allowed', 'tiny-compress-images' ) ) );
+			exit();
+		}
+
+		echo json_encode( $this->bulk_queue->get_progress() );
+		exit();
+	}
+
+	public function ajax_bulk_queue_cancel() {
+		if ( ! $this->validate_bulk_queue_request() ) {
+			echo json_encode( array( 'error' => __( 'Not allowed', 'tiny-compress-images' ) ) );
+			exit();
+		}
+
+		$this->bulk_queue->stop();
+
+		echo json_encode( $this->bulk_queue->get_progress() );
+		exit();
+	}
+
 	public function ajax_compression_status() {
 		$response = $this->validate_ajax_attachment_request();
 
@@ -811,6 +916,19 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$email_address       = $this->settings->get_email_address();
 
 		include __DIR__ . '/views/bulk-optimization.php';
+	}
+
+	public function render_bulk_optimization_queue_page() {
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+
+		$estimated_costs = $this->get_estimated_bulk_cost( $stats['estimated_credit_use'] );
+
+		$this->settings->get_compressor()->get_status();
+
+		$progress          = $this->bulk_queue->get_progress();
+		$remaining_credits = $this->settings->get_remaining_credits();
+
+		include __DIR__ . '/views/bulk-optimization-queue.php';
 	}
 
 	public function add_dashboard_widget() {
