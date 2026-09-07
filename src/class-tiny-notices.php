@@ -174,7 +174,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 
 		$css         = implode( ' ', $css );
 		$plugin_name = __(
-			'TinyPNG - JPEG, PNG & WebP image compression',
+			'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF',
 			'tiny-compress-images'
 		);
 
@@ -291,7 +291,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice          = '<div class="error notice tiny-notice incompatible-plugins">';
 		$notice         .= '<h3>';
 		$notice         .= esc_html__(
-			'TinyPNG - JPEG, PNG & WebP image compression',
+			'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF',
 			'tiny-compress-images'
 		);
 		$notice         .= '</h3>';
@@ -305,7 +305,7 @@ class Tiny_Notices extends Tiny_WP_Base {
 		$notice .= '<table>';
 		$notice .= '<tr><td class="bullet">•</td><td class="name">';
 		$notice .= esc_html__(
-			'TinyPNG - JPEG, PNG & WebP image compression',
+			'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF',
 			'tiny-compress-images'
 		);
 		$notice .= '</td><td></td></tr>';
