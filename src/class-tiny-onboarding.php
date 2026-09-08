@@ -74,35 +74,43 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		return filter_has_var( INPUT_GET, 'activate-multi' );
 	}
 
+	/**
+	 * Set the sub menu pages
+	 *
+	 * @param int $step onboarding step
+	 */
+	private function add_sub_menu( $step ) {
+		$slug = $this->get_step_slug( $step );
+
+		$hook = add_submenu_page(
+			'options-general.php',
+			$this->page_title,
+			$this->page_title,
+			'manage_options',
+			$slug,
+			function () use ( $step ) {
+				include __DIR__ . '/views/onboarding-' . $step . '.php';
+			}
+		);
+
+		if ( ! $hook ) {
+			return;
+		}
+
+		remove_submenu_page( 'options-general.php', $slug );
+
+		/**
+		 * because title is retrieved from submenu, which is not part of the menu,
+		 * resolve it through globals
+		 */
+		add_action( 'load-' . $hook, $this->get_method( 'set_page_title' ) );
+	}
+
 	function admin_menu() {
 		$this->page_title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
 
-		foreach ( $this->steps as $step ) {
-			$slug = $this->get_step_slug( $step );
-
-			$hook = add_submenu_page(
-				'options-general.php',
-				$this->page_title,
-				$this->page_title,
-				'manage_options',
-				$slug,
-				function () use ( $step ) {
-					include __DIR__ . '/views/onboarding-' . $step . '.php';
-				}
-			);
-
-			if ( ! $hook ) {
-				continue;
-			}
-
-			remove_submenu_page( 'options-general.php', $slug );
-
-			/**
-			 * because title is retrieved from submenu, which is not part of the menu,
-			 * resolve it through globals
-			 */
-			add_action( 'load-' . $hook, $this->get_method( 'set_page_title' ) );
-		}
+		$this->add_sub_menu(1);
+		$this->add_sub_menu(2);
 	}
 
 	/**
