@@ -82,6 +82,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		$this->tiny_compatibility();
+		new Tiny_Onboarding( $this->settings );
 	}
 
 	public function cli_init() {

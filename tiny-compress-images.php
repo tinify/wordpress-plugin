@@ -28,6 +28,7 @@ require dirname( __FILE__ ) . '/src/class-tiny-cli.php';
 require dirname( __FILE__ ) . '/src/class-tiny-conversion.php';
 require dirname( __FILE__ ) . '/src/class-tiny-picture.php';
 require dirname( __FILE__ ) . '/src/class-tiny-apache-rewrite.php';
+require dirname( __FILE__ ) . '/src/class-tiny-onboarding.php';
 require dirname( __FILE__ ) . '/src/compatibility/wpml/class-tiny-wpml.php';
 require dirname( __FILE__ ) . '/src/compatibility/as3cf/class-tiny-as3cf.php';
 require dirname( __FILE__ ) . '/src/compatibility/woocommerce/class-tiny-woocommerce.php';
@@ -46,3 +47,5 @@ register_uninstall_hook(
 	__FILE__,
 	array( 'Tiny_Plugin', 'uninstall' )
 );
+
+register_activation_hook(__FILE__, array('Tiny_Onboarding', 'on_activate') );
