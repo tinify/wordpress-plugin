@@ -234,13 +234,19 @@ class Tiny_Image {
 		/**
 		 * Fires before an image is sent for compression.
 		 *
+		 * The metadata is passed along because it has not necessarily been
+		 * stored yet. On upload the compression runs from within
+		 * `wp_generate_attachment_metadata`, before WordPress saves it.
+		 *
 		 * @since 3.7.0
 		 *
-		 * @param int $attachment_id The attachment ID
+		 * @param int   $attachment_id The attachment ID
+		 * @param array $wp_metadata   The attachment metadata
 		 */
 		do_action(
 			'tiny_image_before_compression',
-			$this->id
+			$this->id,
+			$this->wp_metadata
 		);
 
 		$success = 0;
@@ -674,5 +680,225 @@ class Tiny_Image {
 		}
 
 		$this->update_tiny_post_meta();
+	}
+
+	/**
+	 * Retrieves the original image of the Tiny_Image
+	 *
+	 *
+	 * @return Tiny_Image_Size|false the image or false if does not exist
+	 */
+	private function get_original_image() {
+		$original_image = $this->get_image_size( self::ORIGINAL_UNSCALED );
+		if ( null === $original_image ) {
+			$original_image = $this->get_image_size();
+		}
+
+		if ( null === $original_image ) {
+			return false;
+		}
+
+		return $original_image;
+	}
+
+	/**
+	 * Builds the filesystem path where the backup of the original image is
+	 * (or would be) stored.
+	 *
+	 * @return string|false the backup file path, or false if there is no original image
+	 */
+	private function get_backup_path() {
+		$original_image = $this->get_original_image();
+		if ( false === $original_image ) {
+			return false;
+		}
+
+		$file_path  = $original_image->filename;
+		$upload_dir = wp_upload_dir();
+		$basedir    = trailingslashit( $upload_dir['basedir'] );
+		if ( Tiny_Helpers::str_starts_with( $file_path, $basedir ) ) {
+			$file_path = substr( $file_path, strlen( $basedir ) );
+		}
+
+		return $basedir . 'tinify_backup/' . $file_path;
+	}
+
+	/**
+	 * Creates a backup copy of the original image, if one does not already exist.
+	 *
+	 * @return bool true on success, false on failure or if a backup already exists
+	 */
+	public function create_backup() {
+
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return false;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
+
+		if ( $wp_filesystem->exists( $backup_file_path ) ) {
+			return false;
+		}
+
+		$backup_dir = dirname( $backup_file_path );
+
+		if ( ! wp_mkdir_p( $backup_dir ) ) {
+			return false;
+		}
+
+		$original_image = $this->get_original_image();
+
+		return $wp_filesystem->copy( $original_image->filename, $backup_file_path );
+	}
+
+
+	/**
+	 * Retrieves the public URL of the backup of the original image.
+	 *
+	 * @return string|false the backup URL, or false if no backup exists
+	 */
+	public function get_backup() {
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return false;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
+
+		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
+			return false;
+		}
+
+		$upload_dir = wp_upload_dir();
+		$basedir    = trailingslashit( $upload_dir['basedir'] );
+		$baseurl    = trailingslashit( $upload_dir['baseurl'] );
+
+		return str_replace( $basedir, $baseurl, $backup_file_path );
+	}
+
+	/**
+	 * Regenerates all thumbnail sizes of an attachment from a file.
+	 *
+	 * Uses wp_create_image_subsizes() when available, which does not apply
+	 * the `wp_generate_attachment_metadata` filter. That filter is what starts
+	 * a compression and the image that has just been restored should be left alone.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $filename Absolute path of the image to regenerate from.
+	 * @return array The regenerated attachment metadata.
+	 */
+	private function regenerate_sizes( $filename ) {
+		// https://developer.wordpress.org/reference/functions/wp_create_image_subsizes/
+		if ( function_exists( 'wp_create_image_subsizes' ) ) {
+			return wp_create_image_subsizes( $filename, $this->id );
+		}
+
+		/*
+		WordPress < 5.3 has no way of regenerating the sizes without applying
+			the filter, so it is disabled for the duration of the call. */
+		global $tiny_plugin;
+		$compress_on_upload = ( $tiny_plugin instanceof Tiny_Plugin )
+			? array( $tiny_plugin, 'process_attachment' )
+			: null;
+
+		if ( $compress_on_upload ) {
+			remove_filter( 'wp_generate_attachment_metadata', $compress_on_upload, 10 );
+		}
+
+		// https://developer.wordpress.org/reference/functions/wp_generate_attachment_metadata/
+		$metadata = wp_generate_attachment_metadata( $this->id, $filename );
+
+		if ( $compress_on_upload ) {
+			add_filter( 'wp_generate_attachment_metadata', $compress_on_upload, 10, 2 );
+		}
+
+		return $metadata;
+	}
+
+	/**
+	 * Restores the original image from its backup.
+	 *
+	 * - Copies the backup file over the current original.
+	 * - Clears compression metadata for all image sizes.
+	 * - Regenerates all thumbnail sizes from the restored image.
+	 * - Updates the WordPress attachment metadata.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return bool True on success, false if no backup exists or the copy fails.
+	 */
+	public function restore_backup() {
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return false;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
+
+		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
+			return false;
+		}
+
+		$original_image = $this->get_original_image();
+		if ( false === $original_image ) {
+			return false;
+		}
+
+		if ( ! $wp_filesystem->copy( $backup_file_path, $original_image->filename, true ) ) {
+			return false;
+		}
+
+		// Clear compression metadata for all image sizes.
+		foreach ( $this->sizes as $size ) {
+			$size->meta = array();
+		}
+		$this->update_tiny_post_meta();
+
+		// Regenerate all thumbnail sizes from the restored image.
+		$new_metadata = $this->regenerate_sizes( $original_image->filename );
+		if ( $new_metadata ) {
+			$this->wp_metadata = $new_metadata;
+			wp_update_attachment_metadata( $this->id, $this->wp_metadata );
+			$this->sizes = array();
+			$this->parse_wp_metadata();
+		}
+
+		return true;
+	}
+
+	/**
+	 * Deletes the backup file of the original image, if it exists.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return bool True on success or if no backup exists, false on deletion failure.
+	 */
+	public function delete_backup() {
+		$backup_file_path = $this->get_backup_path();
+		if ( false === $backup_file_path ) {
+			return true;
+		}
+
+		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
+		if ( false === $wp_filesystem ) {
+			return false;
+		}
+
+		if ( ! $wp_filesystem->exists( $backup_file_path ) ) {
+			return true;
+		}
+
+		return $wp_filesystem->delete( $backup_file_path );
 	}
 }

@@ -72,7 +72,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'tiny_image_before_compression',
 			$this->get_method( 'backup_original_image' ),
 			10,
-			1
+			2
 		);
 
 		load_plugin_textdomain(
@@ -117,6 +117,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_action(
 			'wp_ajax_tiny_mark_image_as_compressed',
 			$this->get_method( 'mark_image_as_compressed' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_restore_backup',
+			$this->get_method( 'restore_backup_image' )
 		);
 
 		/*
@@ -746,7 +751,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( self::MEDIA_COLUMN === $column ) {
 			$tiny_image = new Tiny_Image( $this->settings, $id );
 			if ( $tiny_image->file_type_allowed() ) {
-				echo '<div class="tiny-ajax-container">';
+				echo '<div class="tiny-ajax-container" data-tiny-media-id="' . absint( $id ) . '">';
 				$this->render_compress_details( $tiny_image );
 				echo '</div>';
 			}
@@ -761,7 +766,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			echo '<h4>';
 			esc_html_e( 'JPEG, PNG, & WebP optimization', 'tiny-compress-images' );
 			echo '</h4>';
-			echo '<div class="tiny-ajax-container">';
+			echo '<div class="tiny-ajax-container" data-tiny-media-id="';
+			echo absint( $post->ID ) . '">';
 			$this->render_compress_details( $tiny_image );
 			echo '</div>';
 			echo '</div>';
@@ -909,6 +915,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
+		$tiny_image->delete_backup();
 	}
 
 	/**
@@ -927,44 +934,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * @param int       $attachment_id The ID of the attachment
 	 * @return bool             return true on backup created
 	 */
-	public function backup_original_image( $attachment_id ) {
+	public function backup_original_image( $attachment_id, $wp_metadata = null ) {
 		if ( ! $this->settings->get_backup_enabled() ) {
 			return false;
 		}
 
-		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
+		$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $wp_metadata );
 
-		$original_image = $tiny_image->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
-		if ( null === $original_image ) {
-			$original_image = $tiny_image->get_image_size();
-		}
-
-		if ( null === $original_image ) {
-			return false;
-		}
-
-		$file_path  = $original_image->filename;
-		$upload_dir = wp_upload_dir();
-		$basedir    = trailingslashit( $upload_dir['basedir'] );
-		if ( Tiny_Helpers::str_starts_with( $file_path, $basedir ) ) {
-			$file_path = substr( $file_path, strlen( $basedir ) );
-		}
-
-		$backup_file = $basedir . 'tinify_backup/' . $file_path;
-
-		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-
-		if ( $wp_filesystem->exists( $backup_file ) ) {
-			return false;
-		}
-
-		$backup_dir = dirname( $backup_file );
-
-		if ( ! wp_mkdir_p( $backup_dir ) ) {
-			return false;
-		}
-
-		return $wp_filesystem->copy( $original_image->filename, $backup_file );
+		return $tiny_image->create_backup();
 	}
 
 	public static function request_review() {
@@ -987,6 +964,39 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 */
 	public static function uninstall() {
 		Tiny_Apache_Rewrite::uninstall_rules();
+	}
+
+	/**
+	 * Restores the original image from its backup via AJAX.
+	 *
+	 * Validates the request, calls restore_backup() on the image, then
+	 * re-renders the compression details partial in the response.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return void
+	 */
+	public function restore_backup_image() {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset( $response['error'] ) ) {
+			echo esc_html( $response['error'] );
+			exit();
+		}
+
+		list($id, $metadata) = $response['data'];
+		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
+
+		if ( ! $tiny_image->restore_backup() ) {
+			echo esc_html__(
+				'Could not restore backup. The backup file may not exist or could not be written.',
+				'tiny-compress-images'
+			);
+			exit();
+		}
+
+		$this->render_compress_details( $tiny_image );
+
+		exit();
 	}
 
 	public function mark_image_as_compressed() {

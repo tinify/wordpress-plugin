@@ -1,4 +1,84 @@
-(function() {
+(function () {
+  async function restoreBackup(attachmentId) {
+    return jQuery.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_restore_backup',
+        id: attachmentId,
+      },
+    });
+  }
+
+  jQuery(document).on('click', 'a[data-dialog-id]', function (e) {
+    e.preventDefault();
+    const trigger = jQuery(e.currentTarget);
+    const dialogID = trigger.data('dialog-id');
+    if (!dialogID) {
+      return;
+    }
+
+    const dialog = document.getElementById(dialogID);
+    if (!dialog) {
+      return;
+    }
+
+    const attachmentId = trigger.data('id');
+    const container = document.querySelector(`[data-tiny-media-id="${attachmentId}"]`);
+    const confirmButton = dialog.querySelector('button[value="submit"]');
+
+    dialog.showModal();
+
+    if (confirmButton) {
+      let restoring = false;
+      confirmButton.onclick = async () => {
+        if (restoring) {
+          return;
+        }
+        restoring = true;
+        confirmButton.disabled = true;
+
+        const spinner = dialog.querySelector('.spinner');
+        let allowRetry = false;
+        try {
+          if (spinner) {
+            spinner.style.visibility = 'visible';
+          }
+          const result = await restoreBackup(attachmentId);
+          dialog.close();
+
+          // refresh thickbox
+          const modal = container.querySelector('.modal');
+          const ajaxContent = document.getElementById('TB_ajaxContent');
+          if (modal && ajaxContent) {
+            modal.append(...ajaxContent.children);
+          }
+
+          container.innerHTML = result;
+          if (typeof tb_remove === 'function') {
+            tb_remove();
+          }
+        } catch (err) {
+          allowRetry = true;
+          const errorEl = dialog.querySelector('.tiny-dialog-error');
+          if (errorEl) {
+            errorEl.textContent = err.responseText || 'Failed to restore backup.';
+            errorEl.hidden = false;
+          }
+        } finally {
+          restoring = false;
+          if (allowRetry) {
+            confirmButton.disabled = false;
+          }
+          if (spinner) {
+            spinner.style.visibility = 'hidden';
+          }
+        }
+      };
+    }
+  });
+
   function downloadDiagnostics() {
     try {
       jQuery('#download-diagnostics-spinner').show();
