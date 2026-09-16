@@ -96,7 +96,7 @@
 		<p class="introduction">
 		<?php
 			$link = sprintf(
-				'<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
+				'<a href="https://tinypng.com/dashboard/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=api-key&utm_content=settings-account" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			printf(
@@ -136,7 +136,7 @@
 			<div class="button-container">
 				<div class="box">
 					<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( self::get_email_address() ) ); ?>
-					<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email ); ?>" target="_blank" class="button button-primary upgrade-account">
+					<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email . '&utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=settings-account' ); ?>" target="_blank" class="button button-primary upgrade-account">
 						<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 					</a>
 				</div>
