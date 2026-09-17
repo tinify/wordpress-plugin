@@ -44,7 +44,7 @@ $email = trim( $user->user_email );
 		<p class="introduction">
 		<?php
 			$link = sprintf(
-				'<a href="https://tinypng.com/dashboard/api" target="_blank">%s</a>',
+				'<a href="https://tinypng.com/dashboard/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=api-key&utm_content=settings-account" target="_blank">%s</a>',
 				esc_html__( 'API dashboard', 'tiny-compress-images' )
 			);
 			echo wp_kses_post(
