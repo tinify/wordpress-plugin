@@ -1,5 +1,7 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
+
 require_once dirname( __FILE__ ) . '/TinyTestCase.php';
 
 class Tiny_Image_Test extends Tiny_TestCase {
@@ -367,4 +369,89 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$this->assertEquals(array('image/webp'), $compress_calls[1]['convert_to']);
 	}
 
+	/**
+	 * A size added after the original was converted gets the original's format.
+	 */
+	public function test_later_compression_converts_to_format_of_earlier_conversion()
+	{
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on',
+			'convert_to' => 'smallest',
+		));
+		$this->wp->addOption('tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'on',
+			'thumbnail' => 'on',
+		));
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/png';
+		});
+		$this->wp->createImages(array());
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$convert_to_calls = array();
+		$mock_compressor->method('compress_file')
+			->willReturnCallback(function ($file, $resize, $preserve, $convert_to) use (&$convert_to_calls) {
+				$convert_to_calls[] = $convert_to;
+				return array(
+					'input' => array('size' => 12345),
+					'output' => array('size' => 12345, 'type' => 'image/png'),
+					'convert' => array('type' => 'image/avif', 'size' => 9000, 'path' => 'vfs://root/test.avif'),
+				);
+			});
+		$settings->set_compressor($mock_compressor);
+
+		// first run: only the original exists
+		$tinyimg = new Tiny_Image($settings, 999, $this->wp->getTestMetadata());
+		$tinyimg->compress();
+
+		// second run: a thumbnail has been added since
+		$this->wp->createImage(1000, '14/01', 'test-thumbnail.png');
+		$tinyimg = new Tiny_Image($settings, 999, $this->wp->getTestMetadata());
+		$tinyimg->compress();
+
+
+		assertEquals(array('image/avif', 'image/webp'), $convert_to_calls[0], 'original can be converted to avif and webp');
+		assertEquals(array('image/avif'), $convert_to_calls[1], 'original output was avif so expect subsequent sizes to avif');
+	}
+
+	/**
+	 * Marking as compressed records the original's own mimetype as conversion,
+	 * a size added afterwards must not be converted to that mimetype.
+	 */
+	public function test_compression_after_mark_as_compressed_uses_conversion_settings()
+	{
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on',
+			'convert_to' => 'smallest',
+		));
+		$this->wp->addOption('tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'on',
+			'thumbnail' => 'on',
+		));
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/png';
+		});
+		$this->wp->createImages(array());
+
+		$settings = new Tiny_Settings();
+		$tinyimg = new Tiny_Image($settings, 999, $this->wp->getTestMetadata());
+		$tinyimg->mark_as_compressed();
+
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+
+		// assert that 
+		$mock_compressor->expects($this->once())
+			->method('compress_file')
+			->with($this->anything(), $this->anything(), $this->anything(), array('image/avif', 'image/webp'))
+			->willReturn(array(
+				'input' => array('size' => 1000),
+				'output' => array('size' => 1000, 'type' => 'image/png'),
+			));
+		$settings->set_compressor($mock_compressor);
+
+		$this->wp->createImage(1000, '14/01', 'test-thumbnail.png');
+		$tinyimg = new Tiny_Image($settings, 999, $this->wp->getTestMetadata());
+		$tinyimg->compress();
+	}
 }
