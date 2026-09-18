@@ -9,7 +9,7 @@ test.describe('plugin', () => {
   });
 
   test('should have title', async () => {
-    await expect(page.getByText('TinyPNG - JPEG, PNG & WebP image compression', { exact: true })).toBeVisible();
+    await expect(page.getByText('TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF', { exact: true })).toBeVisible();
   });
 
   test('includes settings link', async () => {

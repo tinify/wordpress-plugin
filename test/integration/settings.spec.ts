@@ -25,7 +25,7 @@ test.describe('settings', () => {
   });
 
   test('can load settings page', async () => {
-    const showsPageTitle = await page.getByRole('heading', { name: 'TinyPNG - JPEG, PNG & WebP image compression' }).isVisible();
+    const showsPageTitle = await page.getByRole('heading', { name: 'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF' }).isVisible();
     expect(showsPageTitle).toBe(true);
   });
 

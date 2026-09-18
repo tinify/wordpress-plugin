@@ -856,9 +856,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		wp_enqueue_script( self::NAME . '_dashboard_widget' );
 
+		$widget_title = esc_html__(
+			'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF',
+			'tiny-compress-images'
+		);
+
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
-			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
+			$widget_title,
 			$this->get_method( 'add_widget_view' )
 		);
 	}

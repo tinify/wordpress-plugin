@@ -1,7 +1,7 @@
 {
   "name": "@tinify/wordpress-plugin",
   "version": "1.0.0",
-  "description": "TinyPNG - JPEG, PNG & WebP image compression",
+  "description": "TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF",
   "main": "index.js",
   "scripts": {
     "test:playwright": "playwright test"
