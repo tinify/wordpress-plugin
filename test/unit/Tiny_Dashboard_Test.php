@@ -50,18 +50,18 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame('done', $data['status']);
 		$this->assertSame(1250, $data['images_optimized']);
 		$this->assertSame(100, $data['percentage']);
-		$this->assertSame('all done', $data['label']);
+		$this->assertSame('optimized', $data['label']);
 		$this->assertSame('panda-laying.png', $data['panda']);
 	}
 
 	public function test_labels_below_half_as_keep_going()
 	{
-		$this->assertSame('keep going', $this->widget_data(100, 51)['label']);
+		$this->assertSame('getting started', $this->widget_data(100, 51)['label']);
 	}
 
 	public function test_labels_half_and_above_as_almost_there()
 	{
-		$this->assertSame('almost there', $this->widget_data(100, 50)['label']);
+		$this->assertSame('getting started', $this->widget_data(100, 50)['label']);
 	}
 
 	public function test_does_not_show_100_percent_while_images_remain()
