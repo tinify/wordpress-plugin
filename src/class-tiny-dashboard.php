@@ -150,7 +150,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		}
 
 		if ($percentage === 0 ) {
-			return __( '', 'tiny-compress-images' );
+			return '';
 		}
 
 		return __( 'getting started', 'tiny-compress-images' );

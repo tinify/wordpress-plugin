@@ -64,6 +64,11 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame('getting started', $this->widget_data(100, 50)['label']);
 	}
 
+	public function test_has_no_label_when_nothing_is_optimized()
+	{
+		$this->assertSame('', $this->widget_data(10, 10)['label']);
+	}
+
 	public function test_does_not_show_100_percent_while_images_remain()
 	{
 		$data = $this->widget_data(1000, 1);
