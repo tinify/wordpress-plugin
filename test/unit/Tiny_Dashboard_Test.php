@@ -106,11 +106,6 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame(210, $this->account_data('210', 'free')['remaining_credits']);
 	}
 
-	public function test_shows_remaining_credits_on_fixed_plan()
-	{
-		$this->assertSame(210, $this->account_data(210, 'fixed')['remaining_credits']);
-	}
-
 	public function test_hides_remaining_credits_on_paid_plan()
 	{
 		$this->assertNull($this->account_data(210, 'paid')['remaining_credits']);
@@ -130,7 +125,7 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 	public function test_notifies_low_credits_below_100()
 	{
 		$this->assertSame('low_credits', $this->account_data(99, 'free')['notice']);
-		$this->assertSame('low_credits', $this->account_data(0, 'fixed')['notice']);
+		$this->assertSame('low_credits', $this->account_data(0, 'free')['notice']);
 	}
 
 	public function test_does_not_notify_low_credits_on_paid_plan()

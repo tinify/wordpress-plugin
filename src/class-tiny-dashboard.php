@@ -19,12 +19,6 @@
 */
 class Tiny_Dashboard extends Tiny_WP_Base {
 
-	/**
-	 * Paying states whose accounts have a limited number of credits.
-	 * TODO: confirm the header value the API sends for fixed pricing plans.
-	 */
-	const LIMITED_CREDIT_PLANS = array( 'free', 'fixed' );
-
 	const LOW_CREDITS_THRESHOLD = 100;
 
 	/**
@@ -111,8 +105,9 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			$panda = 'panda-waiting.png';
 		}
 
-		$has_limited_credits = in_array( $paying_state, self::LIMITED_CREDIT_PLANS, true )
-			&& is_numeric( $remaining_credits );
+		// Only free accounts have a limited number of credits, including
+		// free accounts that bought a credit bundle.
+		$has_limited_credits = 'free' === $paying_state && is_numeric( $remaining_credits );
 		$remaining_credits = $has_limited_credits ? intval( $remaining_credits ) : null;
 
 		if ( ! $has_api_key ) {
