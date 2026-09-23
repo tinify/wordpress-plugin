@@ -52,7 +52,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			self::NAME . '_dashboard_widget',
 			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
 			array(),
-			self::wp_version()
+			Tiny_Plugin::version()
 		);
 
 		wp_add_dashboard_widget(
