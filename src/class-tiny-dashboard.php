@@ -58,13 +58,13 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 
 	public function add_widget_view() {
 		$optimization_statistics = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$widget = self::get_widget_data(
+		$widget                  = self::get_widget_data(
 			$optimization_statistics,
 			$this->settings->get_remaining_credits(),
 			$this->settings->get_paying_state(),
 			$this->settings->has_api_key()
 		);
-		$email_address = $this->settings->get_email_address();
+		$email_address           = $this->settings->get_email_address();
 		include __DIR__ . '/views/dashboard-widget.php';
 	}
 
@@ -79,36 +79,36 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	 */
 	public static function get_widget_data( $optimization_stats, $remaining_credits = false, $paying_state = false, $has_api_key = true ) {
 		$images_remaining = count( $optimization_stats['available-for-optimization'] );
-		$bytes_total = $optimization_stats['unoptimized-library-size'];
-		$images_total = max( 0, intval( $optimization_stats['uploaded-images'] ) );
-		
+		$bytes_total      = $optimization_stats['unoptimized-library-size'];
+		$images_total     = max( 0, intval( $optimization_stats['uploaded-images'] ) );
+
 		$images_optimized = $images_total - $images_remaining;
 		$images_optimized = max( 0, intval( $images_optimized ) );
 		$images_remaining = max( 0, $images_total - $images_optimized );
-		$bytes_saved =  $bytes_total - $optimization_stats['optimized-library-size'];
+		$bytes_saved      = $bytes_total - $optimization_stats['optimized-library-size'];
 
 		$percentage = $images_total > 0
 			? intval( floor( $images_optimized / $images_total * 100 ) )
 			: 0;
 		$percentage = max( 0, min( 100, $percentage ) );
 
-		$label = self::get_label_text($percentage);
+		$label = self::get_label_text( $percentage );
 
 		if ( 0 === $images_total ) {
-			$status = 'empty';	
-			$panda = 'panda-waiting.png';
+			$status = 'empty';
+			$panda  = 'panda-waiting.png';
 		} elseif ( 0 === $images_remaining ) {
 			$status = 'done';
-			$panda = 'panda-laying.png';
+			$panda  = 'panda-laying.png';
 		} else {
 			$status = 'in_progress';
-			$panda = 'panda-waiting.png';
+			$panda  = 'panda-waiting.png';
 		}
 
 		// Only free accounts have a limited number of credits, including
 		// free accounts that bought a credit bundle.
 		$has_limited_credits = 'free' === $paying_state && is_numeric( $remaining_credits );
-		$remaining_credits = $has_limited_credits ? intval( $remaining_credits ) : null;
+		$remaining_credits   = $has_limited_credits ? intval( $remaining_credits ) : null;
 
 		if ( ! $has_api_key ) {
 			$notice = 'no_api_key';
@@ -119,32 +119,32 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		}
 
 		return array(
-			'status' => $status,
-			'images_optimized' => $images_optimized,
-			'images_total' => $images_total,
-			'images_remaining' => $images_remaining,
-			'bytes_saved' => max( 0, intval( $bytes_saved ) ),
-			'percentage' => $percentage,
-			'label' => $label,
-			'panda' => $panda,
+			'status'            => $status,
+			'images_optimized'  => $images_optimized,
+			'images_total'      => $images_total,
+			'images_remaining'  => $images_remaining,
+			'bytes_saved'       => max( 0, intval( $bytes_saved ) ),
+			'percentage'        => $percentage,
+			'label'             => $label,
+			'panda'             => $panda,
 			'remaining_credits' => $remaining_credits,
-			'notice' => $notice,
+			'notice'            => $notice,
 		);
 	}
 
-	private static function get_label_text($percentage) {
-		if ($percentage > 99) {
+	private static function get_label_text( $percentage ) {
+		if ( $percentage > 99 ) {
 			return __( 'optimized', 'tiny-compress-images' );
 		}
-		if ($percentage > 75) {
+		if ( $percentage > 75 ) {
 			return __( 'amost there', 'tiny-compress-images' );
 		}
 
-		if ($percentage > 50) {
+		if ( $percentage > 50 ) {
 			return __( 'halfway there', 'tiny-compress-images' );
 		}
 
-		if ($percentage === 0 ) {
+		if ( $percentage === 0 ) {
 			return '';
 		}
 
