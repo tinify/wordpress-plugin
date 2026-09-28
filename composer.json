@@ -32,7 +32,7 @@
   },
   "config": {
     "platform": {
-      "php": "7.4.0"
+      "php": "8.2.0"
     },
     "allow-plugins": {
       "composer/installers": true,
