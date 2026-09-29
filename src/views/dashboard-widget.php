@@ -61,7 +61,7 @@ $database_icon = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="t
 									echo $database_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
 									printf(
 										/* translators: %s: number of compression credits left */
-										wp_kses( _n( '<strong>%s</strong> credit', '<strong>%s credits</strong> remaining', $widget['remaining_credits'], 'tiny-compress-images' ), $strong ),
+										wp_kses( _n( '<strong>%s</strong> credit remaining', '<strong>%s</strong> credits remaining', $widget['remaining_credits'], 'tiny-compress-images' ), $strong ),
 										esc_html( number_format_i18n( $widget['remaining_credits'] ) )
 									);
 									?>
@@ -98,10 +98,10 @@ $database_icon = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="t
 				printf(
 					wp_kses(
 						/* translators: %s: number of remaining credits */
-						__( 'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong>.', 'tiny-compress-images' ),
+						_n( 'You are on a <strong>free plan</strong> with <strong>%s compression left</strong>.', 'You are on a <strong>free plan</strong> with <strong>%s compressions left</strong>.', $widget['remaining_credits'], 'tiny-compress-images' ),
 						$strong
 					),
-					intval( $widget['remaining_credits'] )
+					esc_html( number_format_i18n( $widget['remaining_credits'] ) )
 				);
 			?>
 			</a>

@@ -78,19 +78,18 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	 * @return array
 	 */
 	public static function get_widget_data( $optimization_stats, $remaining_credits = false, $paying_state = false, $has_api_key = true ) {
-		$images_remaining = count( $optimization_stats['available-for-optimization'] );
-		$bytes_total      = $optimization_stats['unoptimized-library-size'];
 		$images_total     = max( 0, intval( $optimization_stats['uploaded-images'] ) );
-
+		$images_remaining = min(
+			$images_total,
+			count( $optimization_stats['available-for-optimization'] )
+		);
 		$images_optimized = $images_total - $images_remaining;
-		$images_optimized = max( 0, intval( $images_optimized ) );
-		$images_remaining = max( 0, $images_total - $images_optimized );
-		$bytes_saved      = $bytes_total - $optimization_stats['optimized-library-size'];
+		$bytes_saved      = $optimization_stats['unoptimized-library-size']
+			- $optimization_stats['optimized-library-size'];
 
 		$percentage = $images_total > 0
 			? intval( floor( $images_optimized / $images_total * 100 ) )
 			: 0;
-		$percentage = max( 0, min( 100, $percentage ) );
 
 		$label = self::get_label_text( $percentage );
 
@@ -137,7 +136,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			return __( 'optimized', 'tiny-compress-images' );
 		}
 		if ( $percentage > 75 ) {
-			return __( 'amost there', 'tiny-compress-images' );
+			return __( 'almost there', 'tiny-compress-images' );
 		}
 
 		if ( $percentage > 50 ) {

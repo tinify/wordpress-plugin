@@ -74,7 +74,7 @@ test.describe('dashboardwidget', () => {
 
     await page.goto('/wp-admin/index.php');
 
-    await expect(widget().getByText('You are on a free plan with 1 compressions left.')).toBeVisible();
+    await expect(widget().getByText('You are on a free plan with 1 compression left.')).toBeVisible();
   });
 
   test('not show credits on paid plan', async () => {
