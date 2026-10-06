@@ -116,12 +116,12 @@ test.describe('compression', () => {
 
     await viewImage(page, attachmentID);
 
-    // thickbox is used to show modal window so wait until it is loaded
+    // wait for admin.js so the Details link opens the dialog
     await page.waitForLoadState('networkidle');
 
     await page.getByRole('link', { name: 'Details' }).click({ force: true });
 
-    await page.waitForSelector('#TB_overlay');
+    await expect(page.locator('dialog.tiny-details-dialog[open]')).toBeVisible();
 
     const expectedSizes: Record<string, string> = {
       Original: 'Not configured to be compressed',
