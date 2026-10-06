@@ -13,69 +13,57 @@
 
   jQuery(document).on('click', 'a[data-dialog-id]', function (e) {
     e.preventDefault();
-    const trigger = jQuery(e.currentTarget);
-    const dialogID = trigger.data('dialog-id');
-    if (!dialogID) {
+    const dialog = document.getElementById(jQuery(e.currentTarget).data('dialog-id'));
+    if (dialog) {
+      dialog.showModal();
+    }
+  });
+
+  jQuery(document).on('click', '[data-dialog-close]', function (e) {
+    e.currentTarget.closest('dialog').close();
+  });
+
+  jQuery(document).on('click', 'dialog.tiny-dialog', function (e) {
+    const dialog = e.currentTarget;
+    if (e.target !== dialog) {
       return;
     }
-
-    const dialog = document.getElementById(dialogID);
-    if (!dialog) {
-      return;
+    const rect = dialog.getBoundingClientRect();
+    const inside = e.clientX >= rect.left && e.clientX <= rect.right &&
+      e.clientY >= rect.top && e.clientY <= rect.bottom;
+    if (!inside) {
+      dialog.close();
     }
+  });
 
-    const attachmentId = trigger.data('id');
-    const container = document.querySelector(`[data-tiny-media-id="${attachmentId}"]`);
-    const confirmButton = dialog.querySelector('button[value="submit"]');
+  jQuery(document).on('click', '.tiny-restore-dialog button[value="submit"]', async function (e) {
+    const confirmButton = e.currentTarget;
+    const dialog = confirmButton.closest('dialog');
+    const detailsDialog = dialog.parentElement.closest('dialog');
+    const container = dialog.closest('.tiny-ajax-container');
+    const spinner = dialog.querySelector('.spinner');
 
-    dialog.showModal();
-
-    if (confirmButton) {
-      let restoring = false;
-      confirmButton.onclick = async () => {
-        if (restoring) {
-          return;
-        }
-        restoring = true;
-        confirmButton.disabled = true;
-
-        const spinner = dialog.querySelector('.spinner');
-        let allowRetry = false;
-        try {
-          if (spinner) {
-            spinner.style.visibility = 'visible';
-          }
-          const result = await restoreBackup(attachmentId);
-          dialog.close();
-
-          // refresh thickbox
-          const modal = container.querySelector('.modal');
-          const ajaxContent = document.getElementById('TB_ajaxContent');
-          if (modal && ajaxContent) {
-            modal.append(...ajaxContent.children);
-          }
-
-          container.innerHTML = result;
-          if (typeof tb_remove === 'function') {
-            tb_remove();
-          }
-        } catch (err) {
-          allowRetry = true;
-          const errorEl = dialog.querySelector('.tiny-dialog-error');
-          if (errorEl) {
-            errorEl.textContent = err.responseText || 'Failed to restore backup.';
-            errorEl.hidden = false;
-          }
-        } finally {
-          restoring = false;
-          if (allowRetry) {
-            confirmButton.disabled = false;
-          }
-          if (spinner) {
-            spinner.style.visibility = 'hidden';
-          }
-        }
-      };
+    confirmButton.disabled = true;
+    if (spinner) {
+      spinner.style.visibility = 'visible';
+    }
+    try {
+      const result = await restoreBackup(container.dataset.tinyMediaId);
+      dialog.close();
+      if (detailsDialog) {
+        detailsDialog.close();
+      }
+      container.innerHTML = result;
+    } catch (err) {
+      const errorEl = dialog.querySelector('.tiny-dialog-error');
+      if (errorEl) {
+        errorEl.textContent = err.responseText || 'Failed to restore backup.';
+        errorEl.hidden = false;
+      }
+      confirmButton.disabled = false;
+      if (spinner) {
+        spinner.style.visibility = 'hidden';
+      }
     }
   });
 

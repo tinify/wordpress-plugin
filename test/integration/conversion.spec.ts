@@ -38,7 +38,7 @@ test.describe('conversion', () => {
 
     await expect(page.getByText('1 size compressed')).toBeVisible();
 
-    // thickbox is used to show modal window so wait until it is loaded
+    // wait for admin.js so the Details link opens the dialog
     await page.waitForLoadState('networkidle');
     await page.getByRole('link', { name: 'Details' }).click();
 
