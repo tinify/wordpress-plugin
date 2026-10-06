@@ -60,10 +60,9 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 
 	private function add_widget_view() {
 		$optimization_statistics = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$widget                  = self::get_widget_data(
+		$widget                  = $this->get_widget_data(
 			$optimization_statistics,
 			$this->settings->get_remaining_credits(),
-			$this->settings->get_paying_state(),
 			$this->settings->has_api_key()
 		);
 		$email_address           = $this->settings->get_email_address();
@@ -108,7 +107,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 
 		// Only free accounts have a limited number of credits, including
 		// free accounts that bought a credit bundle.
-		$has_limited_credits = 'free' === $paying_state && is_numeric( $remaining_credits );
+		$has_limited_credits = $this->settings->is_on_free_plan() && is_numeric( $remaining_credits );
 		$remaining_credits   = $has_limited_credits ? intval( $remaining_credits ) : null;
 
 		if ( ! $has_api_key ) {
