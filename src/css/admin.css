@@ -1,3 +1,7 @@
+:root {
+	--tiny-color-text-muted: #6a7282
+}
+
 div.misc-pub-section.tiny-compress-images {
 	border-top: 1px solid #e1e1e1;
 	padding-bottom: 16px;

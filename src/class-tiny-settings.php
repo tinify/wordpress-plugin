@@ -224,6 +224,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
+	public function has_api_key() {
+		return (bool) $this->get_api_key();
+	}
+
 	protected function get_api_key_pending() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return false;
