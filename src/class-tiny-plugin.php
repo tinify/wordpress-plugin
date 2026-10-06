@@ -106,11 +106,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		add_action(
-			'wp_ajax_tiny_get_optimization_statistics',
-			$this->get_method( 'ajax_optimization_statistics' )
-		);
-
-		add_action(
 			'wp_ajax_tiny_get_compression_status',
 			$this->get_method( 'ajax_compression_status' )
 		);
@@ -661,15 +656,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		echo json_encode( $result );
 
-		exit();
-	}
-
-	public function ajax_optimization_statistics() {
-		if ( check_ajax_referer( 'tiny-compress', '_nonce', false ) &&
-			current_user_can( 'upload_files' ) ) {
-			$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-			echo json_encode( $stats );
-		}
 		exit();
 	}
 
