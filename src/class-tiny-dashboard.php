@@ -43,7 +43,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		}
 	}
 
-	public function add_dashboard_widget() {
+	private function add_dashboard_widget() {
 		wp_enqueue_style(
 			self::NAME . '_dashboard_widget',
 			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
@@ -54,11 +54,11 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
 			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
-			$this->get_method( 'add_widget_view' )
+			array($this, 'add_widget_view' )
 		);
 	}
 
-	public function add_widget_view() {
+	private function add_widget_view() {
 		$optimization_statistics = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$widget                  = self::get_widget_data(
 			$optimization_statistics,
@@ -79,7 +79,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	 * @param bool         $has_api_key
 	 * @return array
 	 */
-	public static function get_widget_data( $optimization_stats, $remaining_credits = false, $paying_state = false, $has_api_key = true ) {
+	private function get_widget_data( $optimization_stats, $remaining_credits = false, $has_api_key = true ) {
 		$images_total     = max( 0, intval( $optimization_stats['uploaded-images'] ) );
 		$images_remaining = min(
 			$images_total,
