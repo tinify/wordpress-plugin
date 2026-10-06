@@ -210,7 +210,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$this->tiny_compatibility();
 
-		add_thickbox();
 		Tiny_Logger::init();
 	}
 

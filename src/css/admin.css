@@ -444,10 +444,6 @@ input[type=number][name*="tinypng_resize_original"] {
 	padding: 8px 10px;
 }
 
-.tiny-compress-images .modal {
-	display: none;
-}
-
 .tiny-compress-images h4 {
 	margin: 5px 0;
 }
@@ -490,6 +486,36 @@ fieldset.tinypng_convert_fields[disabled] {
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
+.tiny-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.7);
+}
+
+.tiny-details-dialog {
+	box-sizing: border-box;
+	width: min(700px, calc(100vw - 32px));
+	max-height: calc(100vh - 64px);
+	overflow: auto;
+	text-align: left;
+	white-space: normal;
+}
+
+.tiny-dialog-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+}
+
+.tiny-dialog-close {
+	color: #646970;
+	cursor: pointer;
+}
+
+.tiny-dialog-close:hover,
+.tiny-dialog-close:focus {
+	color: #135e96;
+}
+
 .tiny-dialog-error {
 	color: #dc3232;
 }
@@ -498,6 +524,11 @@ fieldset.tinypng_convert_fields[disabled] {
 	display: flex;
 	gap: 10px;
 	justify-content: flex-end;
+}
+
+/* Overrides .tiny-compress-images span.spinner; admin.js shows it while busy. */
+.tiny-dialog-actions span.spinner {
+	visibility: hidden;
 }
 
 .tiny-dialog-title {
