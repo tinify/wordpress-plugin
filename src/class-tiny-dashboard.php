@@ -74,11 +74,10 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	 *
 	 * @param array        $optimization_stats See Tiny_Bulk_Optimization::get_optimization_statistics().
 	 * @param int|false    $remaining_credits  Stored account credits, false when unknown.
-	 * @param string|false $paying_state       Stored account paying state, false when unknown.
 	 * @param bool         $has_api_key
 	 * @return array
 	 */
-	private function get_widget_data( $optimization_stats, $remaining_credits = false, $has_api_key = true ) {
+	private function get_widget_data( $optimization_stats, $remaining_credits, $has_api_key ) {
 		$images_total     = max( 0, intval( $optimization_stats['uploaded-images'] ) );
 		$images_remaining = min(
 			$images_total,
