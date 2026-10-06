@@ -621,7 +621,8 @@ class Tiny_Image {
 
 	/**
 	 * Get the targeted conversion.
-	 * If original is already converted, then we use the originals' mimetype.
+	 * If a size is already converted, then we use that size's mimetype so
+	 * sizes never mix formats, even when the settings changed since.
 	 * If nothing is converted yet, we use the settings conversion settings.
 	 *
 	 * @since 3.6.4
@@ -635,15 +636,14 @@ class Tiny_Image {
 			return array();
 		}
 
-		if ( isset( $this->sizes[ self::ORIGINAL ] ) ) {
-			// original is not in sizes so mimetypes are open
-			return $convert_settings['convert_to'];
-		}
-
-		$original_img_size = $this->sizes[ self::ORIGINAL ];
-		if ( $original_img_size->converted() ) {
-			// original has been convert so use that mimetype to convert to
-			return array( $original_img_size->meta['convert']['type'] );
+		foreach ( $this->sizes as $size ) {
+			if ( ! $size->converted() ) {
+				continue;
+			}
+			$type = $size->meta['convert']['type'];
+			if ( in_array( $type, array( 'image/avif', 'image/webp' ), true ) ) {
+				return array( $type );
+			}
 		}
 
 		return $convert_settings['convert_to'];

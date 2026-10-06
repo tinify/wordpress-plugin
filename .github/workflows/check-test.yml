@@ -14,10 +14,10 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        php: ['7.4']
+        php: ['8.2']
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -33,10 +33,10 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        php: ['7.4']
+        php: ['8.2']
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup
         uses: ./.github/actions/setup

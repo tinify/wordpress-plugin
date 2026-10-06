@@ -1,4 +1,4 @@
-=== TinyPNG - JPEG, PNG & WebP image compression ===
+=== TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF ===
 Contributors: TinyPNG
 Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
@@ -103,7 +103,7 @@ Want to contribute? Check out the [Tinify Wordpress plugin on GitHub](https://gi
 = From your WordPress dashboard =
 
 1. Visit *Plugins > Add New*.
-2. Search for 'tinypng' and press the 'Install Now' button for the plugin named 'TinyPNG - JPEG, PNG & WebP image compression' by 'TinyPNG'.
+2. Search for 'tinypng' and press the 'Install Now' button for the plugin named 'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF' by 'TinyPNG'.
 3. Activate the plugin from your *Plugins* page.
 4. Go to the *Settings > TinyPNG* page and register a new account.
 5. Or enter the API key you got from https://tinypng.com/developers.
@@ -111,7 +111,7 @@ Want to contribute? Check out the [Tinify Wordpress plugin on GitHub](https://gi
 
 = From WordPress.org =
 
-1. Download the plugin named 'TinyPNG - JPEG, PNG & WebP image compression' by 'TinyPNG'.
+1. Download the plugin named 'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF' by 'TinyPNG'.
 2. Upload the `tiny-compress-images` directory to your `/wp-content/plugins/` directory, using your favorite method (ftp, sftp, scp, etc...)
 3. Activate the plugin from your Plugins page.
 4. Go to the *Settings > TinyPNG* page and register a new account.
@@ -136,7 +136,7 @@ Once set up you will see a message on the *Settings > TinyPNG* page. This will w
 == Frequently Asked Questions ==
 
 = Q: How many images can I optimize for free? =
-A: In a default WordPress installation you can optimize around 100 images for free each month. WordPress creates different thumbnails of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the *Settings > TinyPNG - JPEG, PNG & WebP image compression* page before you start optimization.
+A: In a default WordPress installation you can optimize around 100 images for free each month. WordPress creates different thumbnails of your images which all have to be compressed. Some plugins even add more sizes, so take a look at the *Settings > TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF* page before you start optimization.
 
 = Q: How much does it cost to use the plugin? =
 A: The plugin is free to use, you receive 500 free compressions each calendar month.

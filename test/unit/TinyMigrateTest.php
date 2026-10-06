@@ -9,6 +9,8 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 	public function set_up()
 	{
 		parent::set_up();
+		// reduce test noise by swalloing error_log
+		$this->iniSet('error_log', '/dev/null');
 		$this->wp->stub('query', function() {
 			return 1;
 		});
