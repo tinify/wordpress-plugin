@@ -59,9 +59,9 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	}
 
 	public function add_widget_view() {
-		$optimization_statistics = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$widget                  = $this->get_widget_data( $optimization_statistics );
-		$email_address           = $this->settings->get_email_address();
+		$stats         = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$widget        = $this->get_widget_data( $stats );
+		$email_address = $this->settings->get_email_address();
 		include __DIR__ . '/views/dashboard-widget.php';
 	}
 
@@ -101,12 +101,14 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		// Only free accounts have a limited number of credits, including
 		// free accounts that bought a credit bundle.
 		$remaining_credits   = $this->settings->get_remaining_credits();
-		$has_limited_credits = $this->settings->is_on_free_plan() && is_numeric( $remaining_credits );
+		$has_limited_credits = $this->settings->is_on_free_plan() &&
+			is_numeric( $remaining_credits );
 		$remaining_credits   = $has_limited_credits ? intval( $remaining_credits ) : null;
 
 		if ( ! $this->settings->has_api_key() ) {
 			$notice = 'no_api_key';
-		} elseif ( null !== $remaining_credits && $remaining_credits < self::LOW_CREDITS_THRESHOLD ) {
+		} elseif ( null !== $remaining_credits &&
+			$remaining_credits < self::LOW_CREDITS_THRESHOLD ) {
 			$notice = 'low_credits';
 		} else {
 			$notice = null;
@@ -138,7 +140,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			return __( 'halfway there', 'tiny-compress-images' );
 		}
 
-		if ( $percentage === 0 ) {
+		if ( 0 === $percentage ) {
 			return '';
 		}
 
