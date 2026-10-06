@@ -35,10 +35,12 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	}
 
 	public function admin_init() {
-		add_action(
-			'wp_dashboard_setup',
-			$this->get_method( 'add_dashboard_widget' )
-		);
+		if ( current_user_can('upload_files') ) {
+			add_action(
+				'wp_dashboard_setup',
+				array( $this, 'add_dashboard_widget' )
+			);
+		}
 	}
 
 	public function add_dashboard_widget() {
