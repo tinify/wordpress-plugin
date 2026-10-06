@@ -983,6 +983,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function restore_backup_image() {
 		$response = $this->validate_ajax_attachment_request();
 		if ( isset( $response['error'] ) ) {
+			status_header( 400 );
 			echo esc_html( $response['error'] );
 			exit();
 		}
@@ -991,6 +992,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
 
 		if ( ! $tiny_image->restore_backup() ) {
+			status_header( 500 );
 			echo esc_html__(
 				'Could not restore backup. The backup file may not exist or could not be written.',
 				'tiny-compress-images'
