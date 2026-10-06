@@ -1,2 +1,2 @@
 #!/bin/bash
-XDEBUG_MODE=${XDEBUG_MODE:-off} vendor/bin/phpunit test/unit "$@"
+vendor/bin/phpunit test/unit "$@"
