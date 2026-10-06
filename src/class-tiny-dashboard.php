@@ -35,7 +35,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	}
 
 	public function admin_init() {
-		if ( current_user_can('upload_files') ) {
+		if ( current_user_can( 'upload_files' ) ) {
 			add_action(
 				'wp_dashboard_setup',
 				array( $this, 'add_dashboard_widget' )
@@ -43,7 +43,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		}
 	}
 
-	private function add_dashboard_widget() {
+	public function add_dashboard_widget() {
 		wp_enqueue_style(
 			self::NAME . '_dashboard_widget',
 			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
@@ -54,11 +54,11 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
 			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
-			array($this, 'add_widget_view' )
+			array( $this, 'add_widget_view' )
 		);
 	}
 
-	private function add_widget_view() {
+	public function add_widget_view() {
 		$optimization_statistics = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$widget                  = $this->get_widget_data(
 			$optimization_statistics,
@@ -77,7 +77,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	 * @param bool         $has_api_key
 	 * @return array
 	 */
-	private function get_widget_data( $optimization_stats, $remaining_credits, $has_api_key ) {
+	public function get_widget_data( $optimization_stats, $remaining_credits, $has_api_key ) {
 		$images_total     = max( 0, intval( $optimization_stats['uploaded-images'] ) );
 		$images_remaining = min(
 			$images_total,
