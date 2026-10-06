@@ -128,6 +128,12 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		);
 	}
 
+	/**
+	 * Returns a description based on the percentage of optimized library
+	 *
+	 * @param int $percentage 
+	 * @return string label
+	 */
 	private static function get_label_text( $percentage ) {
 		if ( $percentage > 99 ) {
 			return __( 'optimized', 'tiny-compress-images' );
