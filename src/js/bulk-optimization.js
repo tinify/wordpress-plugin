@@ -1,6 +1,7 @@
 (function() {
-  const processedItems = [];
-  var parallelCompressions = 5;
+  const POLL_INTERVAL = 2000;
+  const POLL_WINDOW = 10;
+  let pending = [];
 
   function updateProgressBar(successFullCompressions) {
     var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
@@ -68,30 +69,10 @@
     }
   }
 
-  function bulkOptimizationCallback(error, data, items, i) {
-    if (window.optimizationCancelled) {
-      handleCancellation();
-    }
-
+  function bulkOptimizationCallback(data, items, i) {
     var row = jQuery('#optimization-items tr').eq(parseInt(i, 10)+1);
 
-    if (error) {
-      row.addClass('failed');
-      row.find('.status').html(tinyCompress.L10nInternalError + '<br>' + error.toString());
-      row.find('.status').attr('title', error.toString());
-      row.find('.status').attr('data-status', 'error');
-      data = {};
-    } else if (data == null) {
-      row.addClass('failed');
-      row.find('.status').html(tinyCompress.L10nError);
-      row.find('.status').attr('data-status', 'error');
-      data = {};
-    } else if (data.error) {
-      row.addClass('failed');
-      row.find('.status').html(tinyCompress.L10nError + '<br>' + data.error);
-      row.find('.status').attr('title', data.error);
-      row.find('.status').attr('data-status', 'error');
-    } else if (data.failed > 0) {
+    if (data.failed > 0) {
       row.addClass('failed');
       row.find('.status').html('<span class=\'icon dashicons dashicons-no error\'></span><span class=\'message\'>' + tinyCompress.L10nLatestError + ': ' + data.message + '</span>');
       row.find('.status').attr('title', data.message);
@@ -122,88 +103,101 @@
     row.find('.initial-size').html(data.initial_total_size);
     row.find('.optimized-size').html(data.optimized_total_size);
     row.find('.savings').html(data.savings);
+  }
 
-    var totalToOptimize = jQuery('td.status[data-status="waiting"],td.status[data-status="compressing"]').length;
-    var nextImage;
-
-    if (jQuery('td.status[data-status="waiting"]').length > 0) {
-      nextImage = jQuery('tr.media-item').index(jQuery('td.status[data-status="waiting"]:first').parents('tr'));
+  function finishOptimization(message) {
+    if (message) {
+      const notice = jQuery('<div class=\'updated\'><p></p></div>');
+      notice.find('p').text(message);
+      notice.insertAfter(jQuery('#tiny-bulk-optimization h2'));
     }
-    if (nextImage !== undefined && items[nextImage]) {
-      if (!window.optimizationCancelled) {
-        drawSomeRows(items, 1);
+    jQuery('div#optimization-spinner').css('display', 'none');
+    handleCancellation();
+  }
+
+  // The queue works through the images in the order they are listed, so only
+  // the first few waiting ones need asking about.
+  function pollStatus(items) {
+    const batch = pending.slice(0, POLL_WINDOW);
+    drawSomeRows(items, batch[batch.length - 1] + 1);
+    jQuery.post(ajaxurl, {
+      _nonce: tinyCompress.nonce,
+      action: 'tiny_bulk_queue_status',
+      ids: batch.map(function(i) { return items[i].ID; }).join(','),
+      current_size: window.currentLibraryBytes
+    }, function(data) {
+      if (data.error) {
+        finishOptimization(tinyCompress.L10nError + ': ' + data.error);
+        return;
       }
-      bulkOptimizeItem(items, nextImage);
-    } else if (totalToOptimize === 0) {
-      var message = jQuery('<div class=\'updated\'><p></p></div>');
-      message.find('p').html(tinyCompress.L10nAllDone);
-      message.insertAfter(jQuery('#tiny-bulk-optimization h1'));
-      jQuery('div#optimization-spinner').css('display', 'none');
-      jQuery('div#bulk-optimization-actions').hide();
-      jQuery('div.progress').css('animation', 'none');
-    }
-  }
 
-  function bulkOptimizeItem(items, i) {
-    if (window.optimizationCancelled) {
-      return;
-    }
+      let finished = 0;
+      const waiting = batch.filter(function(i) {
+        const item = data.items[items[i].ID] || {};
+        if (item.status === 'done' || item.status === 'failed') {
+          bulkOptimizationCallback(item.result, items, i);
+          finished++;
+        } else if (data.running && (item.status === 'queued' || item.status === 'processing')) {
+          return true;
+        } else {
+          jQuery('#optimization-items tr').eq(i + 1).find('.status').html(tinyCompress.L10nCancelled).attr('data-status', 'cancelled');
+        }
+        return false;
+      });
+      pending = waiting.concat(pending.slice(batch.length));
 
-    const itemID = items[i].ID;
-    if (processedItems.includes(itemID)) {
-      const row = jQuery('#optimization-items tr').eq(parseInt(i, 10) + 1);
-      row.find('.status')
-        .attr('data-status', 'skipped-duplicate')
-        .html('<span class="icon dashicons dashicons-no alert"></span>' + tinyCompress.L10nDuplicate);
-    }
-
-    var row = jQuery('#optimization-items tr').eq(parseInt(i, 10)+1);
-    row.find('.status').removeClass('todo');
-    row.find('.status').html('<span class="icon spinner"></span>' + tinyCompress.L10nCompressing).attr('data-status', 'compressing');
-    jQuery.ajax({
-      url: ajaxurl,
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        _nonce: tinyCompress.nonce,
-        action: 'tiny_compress_image_for_bulk',
-        id: itemID,
-        current_size: window.currentLibraryBytes
-      },
-      success: function(data) { bulkOptimizationCallback(null, data, items, i); },
-      error: function(xhr, textStatus, errorThrown) { bulkOptimizationCallback(errorThrown, null, items, i, parallelCompressions); }
+      if (pending.length > 0 && (data.running || finished > 0)) {
+        setTimeout(pollStatus, POLL_INTERVAL, items);
+      } else {
+        finishOptimization(window.optimizationCancelled ? null : tinyCompress.L10nAllDone);
+      }
+    }, 'json').fail(function() {
+      setTimeout(pollStatus, POLL_INTERVAL, items);
     });
-    processedItems.push(itemID);
-    jQuery('#tiny-progress span').html(i + 1);
   }
 
-  function prepareBulkOptimization(items) {
+  function prepareBulkOptimization(items, running) {
     window.allBulkOptimizationItems = items;
     updateProgressBar(0);
+    if (running) {
+      startBulkOptimization(items, true);
+    }
   }
 
-  function startBulkOptimization(items) {
+  function startBulkOptimization(items, running) {
     window.optimizationCancelled = false;
     window.totalRowsDrawn = 0;
     window.currentLibraryBytes = parseInt(jQuery('#optimized-library-size').data('bytes'), 10);
-    processedItems.splice(0, processedItems.length);
+    pending = items.map(function(item, i) { return i; });
 
+    jQuery('div#bulk-optimization-actions input').removeClass('visible');
+    jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
+    jQuery('div#bulk-optimization-actions p.optimization-buttons_notice').text(tinyCompress.L10nBackgroundNotice);
     jQuery('div.progress').css('animation', 'progress-bar 80s linear infinite');
     jQuery('div#optimization-spinner').css('display', 'inline-block');
     updateProgressBar(0);
-    drawSomeRows(items, 5 + parallelCompressions);
 
-    for (var i = 0; i < parallelCompressions; i++) {
-      if (items.length >= i+1) {
-        bulkOptimizeItem(items, i);
-      }
+    if (running) {
+      pollStatus(items);
+      return;
     }
+
+    jQuery.post(ajaxurl, {
+      _nonce: tinyCompress.nonce,
+      action: 'tiny_bulk_queue_start'
+    }, function(data) {
+      if (data.error) {
+        finishOptimization(tinyCompress.L10nError + ': ' + data.error);
+      } else {
+        pollStatus(items);
+      }
+    }, 'json');
   }
 
-  function drawSomeRows(items, rowsToDraw) {
+  function drawSomeRows(items, end) {
     const list = jQuery('#optimization-items tbody');
     const start = window.totalRowsDrawn;
-    const end = Math.min(start + rowsToDraw, items.length);
+    end = Math.min(end, items.length);
     for (let i = start; i < end; i++) {
       const tableRow = `<tr class="media-item">
         <td class="thumbnail" />
@@ -215,15 +209,15 @@
       </tr>`;
       list.append(tableRow);
     }
-    window.totalRowsDrawn = end;
+    window.totalRowsDrawn = Math.max(start, end);
   }
 
   function cancelOptimization() {
     window.optimizationCancelled = true;
     jQuery('div#optimization-spinner').css('display', 'none');
-    jQuery(jQuery('#optimization-items tr td.status.todo')).html(tinyCompress.L10nCancelled).attr('data-status', 'cancelled');
     jQuery('div#bulk-optimization-actions input').removeClass('visible');
     jQuery('div#bulk-optimization-actions input#id-cancelling').addClass('visible');
+    jQuery.post(ajaxurl, { _nonce: tinyCompress.nonce, action: 'tiny_bulk_queue_cancel' });
   }
 
   jQuery('.tiny-bulk-optimization .upgrade-account-notice a#hide-warning').click(function() {
@@ -233,8 +227,6 @@
 
   jQuery('div#bulk-optimization-actions input').click(function() {
     if ((jQuery(this).attr('id') === 'id-start') && jQuery(this).hasClass('visible')) {
-      jQuery('div#bulk-optimization-actions input#id-start').removeClass('visible');
-      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
       startBulkOptimization(window.allBulkOptimizationItems);
     }
     if ((jQuery(this).attr('id') === 'id-cancel') && jQuery(this).hasClass('visible')) {

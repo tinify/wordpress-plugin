@@ -19,12 +19,14 @@
 */
 
 /**
- * Optimizes a selection of attachments in the background instead of from the
- * browser.
- *
- * The queue is the status postmeta of the attachments themselves: the library's
- * batch rows in the options table are never written. Every batch the library
- * asks for is worked out on the spot and holds the next queued attachment.
+ * Queued based image optimization
+ * 
+ * Extends WP_Background_Process
+ * @see https://github.com/deliciousbrains/wp-background-processing
+ * 
+ * get_batches is overridden from the abstract class. This retrieves
+ * images that are queued for optimization.
+ * 
  */
 class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 
@@ -45,6 +47,9 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 
 	/* Queue status: optimizing failed. */
 	const STATUS_FAILED = 'failed';
+
+	/* Number of images being optimized at the same time */
+	const WORKERS = 5;
 
 	protected $prefix = 'tiny';
 	protected $action = 'optimize';
@@ -70,6 +75,13 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	private $started_chain_id;
 
 	/**
+	 * Worker slot this process holds, from 1.
+	 *
+	 * @var int
+	 */
+	private $slot;
+
+	/**
 	 * @param Tiny_Settings $settings Tinify settings.
 	 */
 	public function __construct( $settings ) {
@@ -86,9 +98,6 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	 * @return bool Whether the run was started.
 	 */
 	public function start( array $ids ) {
-		/*
-		Cancelling only sets a flag, which the next loopback request clears. If
-			that request never came, the flag would stop this run straight away. */
 		delete_site_option( $this->get_status_key() );
 
 		delete_post_meta_by_key( self::META_KEY_STATUS );
@@ -99,7 +108,9 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 			add_post_meta( $id, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
 		}
 
-		$this->dispatch();
+		for ( $i = 0; $i < self::WORKERS; $i++ ) {
+			$this->dispatch();
+		}
 
 		return true;
 	}
@@ -113,7 +124,61 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	 * @return bool
 	 */
 	public function is_running() {
-		return $this->is_queued() || $this->is_processing();
+		return $this->is_queued() || count( $this->taken_slots() ) > 0;
+	}
+
+	/**
+	 * Whether every worker slot is taken.
+	 *
+	 * The library asks this before it starts another process, so it keeps
+	 * starting them until all slots are taken.
+	 *
+	 * @return bool
+	 */
+	public function is_processing() {
+		return count( $this->taken_slots() ) >= self::WORKERS;
+	}
+
+	/**
+	 * Take a free worker slot.
+	 *
+	 * @param bool $reset_start_time Whether this process starts its time limit.
+	 */
+	public function lock_process( $reset_start_time = true ) {
+		if ( $reset_start_time ) {
+			$this->start_time = time();
+		}
+
+		$free       = array_diff( range( 1, self::WORKERS ), $this->taken_slots() );
+		$this->slot = $free ? reset( $free ) : self::WORKERS;
+
+		set_site_transient( $this->slot_key( $this->slot ), microtime(), $this->queue_lock_time );
+	}
+
+	/**
+	 * Give the worker slot back.
+	 *
+	 * @return $this
+	 */
+	protected function unlock_process() {
+		delete_site_transient( $this->slot_key( $this->slot ) );
+		return $this;
+	}
+
+	/**
+	 * @return int[]
+	 */
+	private function taken_slots() {
+		return array_filter(
+			range( 1, self::WORKERS ),
+			function ( $slot ) {
+				return (bool) get_site_transient( $this->slot_key( $slot ) );
+			}
+		);
+	}
+
+	private function slot_key( $slot ) {
+		return $this->identifier . '_process_lock_' . $slot;
 	}
 
 	/**
@@ -203,10 +268,7 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	}
 
 	/**
-	 * Take what is still queued off the queue, as the library does when a run
-	 * is cancelled.
-	 *
-	 * Attachments that were already optimized keep their status and result.
+	 * Dequeues every attachment and reset queue state
 	 */
 	public function delete_all() {
 		delete_metadata( 'post', 0, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
@@ -291,6 +353,18 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 			'message'     => $tiny_image->get_latest_error(),
 			'size_change' => $after['compressed_total_size'] - $before['compressed_total_size'],
 		);
+	}
+
+	/**
+	 * Do not wait for the loopback request, as spawn_cron() does not: it runs
+	 * the queue and does not answer until it stops.
+	 *
+	 * @return array
+	 */
+	protected function get_post_args() {
+		$args            = parent::get_post_args();
+		$args['timeout'] = 0.01;
+		return $args;
 	}
 
 	/**
