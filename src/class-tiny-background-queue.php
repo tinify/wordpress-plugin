@@ -372,26 +372,20 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 		$args['timeout'] = 0.01;
 		return $args;
 	}
-
 	/**
-	 * ID tying together the loopback requests of a single run.
+	 * ID the library passes to its hooks.
 	 *
-	 * The library takes any AJAX request that asks for it to be its own loopback
-	 * request, and dies when the nonce does not match. Starting or cancelling a
-	 * run from the bulk optimization page is an AJAX request too, so only defer
-	 * to the library when the nonce really is the queue's.
+	 * The library's own version checks the nonce on every AJAX request and
+	 * needs WordPress 4.9. Nothing in the plugin listens to the chain ID, so a
+	 * fresh one per request is enough.
 	 *
 	 * @return string
 	 */
 	public function get_chain_id() {
-		if ( wp_doing_ajax() && ! check_ajax_referer( $this->identifier, 'nonce', false ) ) {
-			if ( empty( $this->started_chain_id ) ) {
-				$this->started_chain_id = wp_generate_uuid4();
-			}
-
-			return $this->started_chain_id;
+		if ( empty( $this->started_chain_id ) ) {
+			$this->started_chain_id = wp_generate_password( 32, false );
 		}
 
-		return parent::get_chain_id();
+		return $this->started_chain_id;
 	}
 }
