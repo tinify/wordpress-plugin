@@ -663,12 +663,16 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			wp_die( -1, 403 );
 		}
 
+		/* A run that is still going is followed, not restarted. */
 		if ( $this->bulk_queue->is_running() ) {
-			echo json_encode( array( 'running' => true ) );
-			exit();
+			wp_send_json_success();
 		}
 
-		exit();
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$ids   = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
+		$this->bulk_queue->start( $ids );
+
+		wp_send_json_success();
 	}
 
 	/**
@@ -717,13 +721,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$items[ $id ] = $item;
 		}
 
-		echo json_encode(
+		wp_send_json_success(
 			array(
 				'running' => $running,
 				'items'   => $items,
 			)
 		);
-		exit();
 	}
 
 	public function ajax_bulk_queue_cancel() {
@@ -734,7 +737,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$this->bulk_queue->cancel();
 
-		exit();
+		wp_send_json_success();
 	}
 
 	public function ajax_optimization_statistics() {

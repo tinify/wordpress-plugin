@@ -125,7 +125,8 @@
       action: 'tiny_bulk_queue_status',
       ids: batch.map(function(i) { return items[i].ID; }).join(','),
       current_size: window.currentLibraryBytes
-    }, function(data) {
+    }, function(response) {
+      const data = response.data;
       let finished = 0;
       const waiting = batch.filter(function(i) {
         const item = data.items[items[i].ID] || {};
