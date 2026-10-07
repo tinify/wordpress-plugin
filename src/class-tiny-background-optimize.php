@@ -73,7 +73,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	}
 
 	public function ajax_init() {
-		add_action( 'wp_ajax_nopriv_' . self::WORKER_ACTION, $this->get_method( 'work' ) );
+		add_action( 'wp_ajax_' . self::WORKER_ACTION, $this->get_method( 'work' ) );
 	}
 
 	/**
@@ -148,10 +148,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * workers at WORKERS.
 	 */
 	public function work() {
-		$key = isset( $_POST['key'] ) ? sanitize_key( wp_unslash( $_POST['key'] ) ) : '';
-		if ( ! hash_equals( wp_hash( self::WORKER_ACTION ), $key ) ) {
-			wp_die( -1, 403 );
-		}
+		check_ajax_referer( self::WORKER_ACTION, 'nonce' );
 
 		/* The request that started this worker does not wait for it. */
 		ignore_user_abort( true );
@@ -202,9 +199,8 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	/**
 	 * Start a worker in a request of its own, without waiting for it.
 	 *
-	 * The worker runs logged out, so logging out or an expiring login cannot
-	 * stop a run. A nonce is tied to a user, so a key from the site's salts
-	 * shows the request comes from the site itself.
+	 * The worker runs as the user whose request starts it. When that user logs
+	 * out, the workers stop, until the bulk optimization page restarts them.
 	 */
 	private function start_worker() {
 		$args = array(
@@ -212,8 +208,9 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			'blocking'  => false,
 			'body'      => array(
 				'action' => self::WORKER_ACTION,
-				'key'    => wp_hash( self::WORKER_ACTION ),
+				'nonce'  => wp_create_nonce( self::WORKER_ACTION ),
 			),
+			'cookies'   => isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array(),
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
