@@ -20,13 +20,13 @@
 
 /**
  * Queued based image optimization
- * 
+ *
  * Extends WP_Background_Process
  * @see https://github.com/deliciousbrains/wp-background-processing
- * 
+ *
  * get_batches is overridden from the abstract class. This retrieves
  * images that are queued for optimization.
- * 
+ *
  */
 class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 
