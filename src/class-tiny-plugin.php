@@ -653,36 +653,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		return $result;
 	}
 
-	private function validate_bulk_queue_request() {
-		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ) {
-			return false;
-		}
-		return current_user_can( 'upload_files' );
-	}
-
-	/**
-	 * Attachment IDs posted as a comma separated list.
-	 *
-	 * @return int[]
-	 */
-	private static function posted_bulk_ids() {
-		// Nonce verified in validate_bulk_queue_request().
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$ids = isset( $_POST['ids'] ) ?
-			sanitize_text_field( wp_unslash( $_POST['ids'] ) ) : '';
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
-
-		return array_values( array_filter( array_map( 'intval', explode( ',', $ids ) ) ) );
-	}
-
 	/**
 	 * Retrieves images available for optimization and
 	 * queues them for optimization
 	 */
 	public function ajax_bulk_queue_start() {
-		if ( ! $this->validate_bulk_queue_request() ) {
-			echo json_encode( array( 'error' => __( 'Not allowed', 'tiny-compress-images' ) ) );
-			exit();
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_die( -1, 403 );
 		}
 
 		/* A run that is still going is followed, not restarted. */
@@ -705,22 +683,22 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * compresses an image itself, so it can show them the same way.
 	 */
 	public function ajax_bulk_queue_status() {
-		if ( ! $this->validate_bulk_queue_request() ) {
-			echo json_encode( array( 'error' => __( 'Not allowed', 'tiny-compress-images' ) ) );
-			exit();
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_die( -1, 403 );
 		}
 
-		// Nonce verified in validate_bulk_queue_request().
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$ids          = isset( $_POST['ids'] ) ?
+			explode( ',', sanitize_text_field( wp_unslash( $_POST['ids'] ) ) )
+			: array();
 		$library_size = isset( $_POST['current_size'] ) ?
 			intval( wp_unslash( $_POST['current_size'] ) )
 			: 0;
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		$running = $this->bulk_queue->is_running();
 
 		$items = array();
-		foreach ( $this->bulk_queue->get_results( self::posted_bulk_ids() ) as $id => $item ) {
+		foreach ( $this->bulk_queue->get_results( $ids ) as $id => $item ) {
 			if ( is_array( $item['result'] ) ) {
 				$item['result'] = $this->bulk_image_result(
 					new Tiny_Image( $this->settings, $id ),
@@ -754,9 +732,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_bulk_queue_cancel() {
-		if ( ! $this->validate_bulk_queue_request() ) {
-			echo json_encode( array( 'error' => __( 'Not allowed', 'tiny-compress-images' ) ) );
-			exit();
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_die( -1, 403 );
 		}
 
 		$this->bulk_queue->cancel();

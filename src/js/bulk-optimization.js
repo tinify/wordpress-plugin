@@ -126,11 +126,6 @@
       ids: batch.map(function(i) { return items[i].ID; }).join(','),
       current_size: window.currentLibraryBytes
     }, function(data) {
-      if (data.error) {
-        finishOptimization(tinyCompress.L10nError + ': ' + data.error);
-        return;
-      }
-
       let finished = 0;
       const waiting = batch.filter(function(i) {
         const item = data.items[items[i].ID] || {};
@@ -151,8 +146,12 @@
       } else {
         finishOptimization(window.optimizationCancelled ? null : tinyCompress.L10nAllDone);
       }
-    }, 'json').fail(function() {
-      setTimeout(pollStatus, POLL_INTERVAL, items);
+    }, 'json').fail(function(xhr) {
+      if (xhr.status === 403) {
+        finishOptimization(tinyCompress.L10nInternalError);
+      } else {
+        setTimeout(pollStatus, POLL_INTERVAL, items);
+      }
     });
   }
 
@@ -185,13 +184,11 @@
     jQuery.post(ajaxurl, {
       _nonce: tinyCompress.nonce,
       action: 'tiny_bulk_queue_start'
-    }, function(data) {
-      if (data.error) {
-        finishOptimization(tinyCompress.L10nError + ': ' + data.error);
-      } else {
-        pollStatus(items);
-      }
-    }, 'json');
+    }, function() {
+      pollStatus(items);
+    }, 'json').fail(function() {
+      finishOptimization(tinyCompress.L10nInternalError);
+    });
   }
 
   function drawSomeRows(items, end) {
