@@ -176,7 +176,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			return;
 		}
 
-		
 		foreach ( $this->get_processing() as $id ) {
 			update_post_meta(
 				$id,
