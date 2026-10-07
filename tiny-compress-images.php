@@ -19,10 +19,6 @@ require dirname( __FILE__ ) . '/src/class-tiny-logger.php';
 require dirname( __FILE__ ) . '/src/class-tiny-diagnostics.php';
 require dirname( __FILE__ ) . '/src/class-tiny-compress.php';
 require dirname( __FILE__ ) . '/src/class-tiny-bulk-optimization.php';
-require dirname( __FILE__ ) .
-	'/src/vendor/prefixed/deliciousbrains/wp-background-processing/classes/wp-async-request.php';
-require dirname( __FILE__ ) .
-	'/src/vendor/prefixed/deliciousbrains/wp-background-processing/classes/wp-background-process.php';
 require dirname( __FILE__ ) . '/src/class-tiny-background-queue.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image-size.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image.php';

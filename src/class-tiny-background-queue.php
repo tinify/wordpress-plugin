@@ -19,16 +19,13 @@
 */
 
 /**
- * Queued based image optimization
+ * Optimizes attachments in the background.
  *
- * Extends WP_Background_Process
- * @see https://github.com/deliciousbrains/wp-background-processing
- *
- * get_batches is overridden from the abstract class. This retrieves
- * images that are queued for optimization.
- *
+ * The status of each attachment is the queue. Workers are requests to
+ * admin-ajax.php: each optimizes one queued attachment and then starts the
+ * next worker, so a run goes on after the bulk optimization page is closed.
  */
-class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
+class Tiny_Background_Queue extends Tiny_WP_Base {
 
 	/* Meta key for the queue status of an attachment. */
 	const META_KEY_STATUS = '_tinywp_queue_status';
@@ -51,14 +48,14 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	/* Number of images being optimized at the same time */
 	const WORKERS = 5;
 
-	protected $prefix = 'tiny';
-	protected $action = 'optimize';
+	/* AJAX action of a worker. */
+	const WORKER_ACTION = 'tiny_bulk_queue_work';
 
-	/*
-	An image with many sizes can take longer than the library's default lock of
-		60 seconds. Once the lock expires, the cron health check starts a second
-		process next to the one still busy. */
-	protected $queue_lock_time = 300;
+	/* Set when workers are started, and each time one starts on an attachment. */
+	const ALIVE_TRANSIENT = 'tiny_bulk_queue_alive';
+
+	/* Seconds without a worker starting on an attachment before a run counts as stalled. */
+	const STALLED_AFTER = 300;
 
 	/**
 	 * Tinify settings.
@@ -68,25 +65,15 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	private $settings;
 
 	/**
-	 * Chain ID for runs dispatched outside of the queue's own loopback request.
-	 *
-	 * @var string
-	 */
-	private $started_chain_id;
-
-	/**
-	 * Worker slot this process holds, from 1.
-	 *
-	 * @var int
-	 */
-	private $slot;
-
-	/**
 	 * @param Tiny_Settings $settings Tinify settings.
 	 */
 	public function __construct( $settings ) {
-		$this->settings = $settings;
 		parent::__construct();
+		$this->settings = $settings;
+	}
+
+	public function ajax_init() {
+		add_action( 'wp_ajax_nopriv_' . self::WORKER_ACTION, $this->get_method( 'work' ) );
 	}
 
 	/**
@@ -98,8 +85,6 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	 * @return bool Whether the run was started.
 	 */
 	public function start( array $ids ) {
-		delete_site_option( $this->get_status_key() );
-
 		delete_post_meta_by_key( self::META_KEY_STATUS );
 		delete_post_meta_by_key( self::META_KEY_RESULT );
 
@@ -108,77 +93,37 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 			add_post_meta( $id, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
 		}
 
-		for ( $i = 0; $i < self::WORKERS; $i++ ) {
-			$this->dispatch();
-		}
+		$this->start_workers();
 
 		return true;
 	}
 
 	/**
-	 * Whether a run still has attachments queued or one being optimized.
-	 *
-	 * Not is_active(): that also counts a cancel flag no loopback request has
-	 * cleared yet, and a run is over once it is cancelled.
+	 * Take every queued attachment off the queue. Attachments that are being
+	 * optimized right now still finish.
+	 */
+	public function cancel() {
+		delete_metadata( 'post', 0, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
+	}
+
+	/**
+	 * Whether a run still has attachments queued or being optimized.
 	 *
 	 * @return bool
 	 */
 	public function is_running() {
-		return $this->is_queued() || count( $this->taken_slots() ) > 0;
-	}
+		global $wpdb;
 
-	/**
-	 * Whether every worker slot is taken.
-	 *
-	 * The library asks this before it starts another process, so it keeps
-	 * starting them until all slots are taken.
-	 *
-	 * @return bool
-	 */
-	public function is_processing() {
-		return count( $this->taken_slots() ) >= self::WORKERS;
-	}
-
-	/**
-	 * Take a free worker slot.
-	 *
-	 * @param bool $reset_start_time Whether this process starts its time limit.
-	 */
-	public function lock_process( $reset_start_time = true ) {
-		if ( $reset_start_time ) {
-			$this->start_time = time();
-		}
-
-		$free       = array_diff( range( 1, self::WORKERS ), $this->taken_slots() );
-		$this->slot = $free ? reset( $free ) : self::WORKERS;
-
-		set_site_transient( $this->slot_key( $this->slot ), microtime(), $this->queue_lock_time );
-	}
-
-	/**
-	 * Give the worker slot back.
-	 *
-	 * @return $this
-	 */
-	protected function unlock_process() {
-		delete_site_transient( $this->slot_key( $this->slot ) );
-		return $this;
-	}
-
-	/**
-	 * @return int[]
-	 */
-	private function taken_slots() {
-		return array_filter(
-			range( 1, self::WORKERS ),
-			function ( $slot ) {
-				return (bool) get_site_transient( $this->slot_key( $slot ) );
-			}
+		return (bool) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT 1 FROM $wpdb->postmeta
+				WHERE meta_key = %s AND meta_value IN ( %s, %s )
+				LIMIT 1",
+				self::META_KEY_STATUS,
+				self::STATUS_QUEUED,
+				self::STATUS_PROCESSING
+			)
 		);
-	}
-
-	private function slot_key( $slot ) {
-		return $this->identifier . '_process_lock_' . $slot;
 	}
 
 	/**
@@ -211,16 +156,93 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	}
 
 	/**
-	 * The next queued attachment, as a batch of one.
+	 * Optimize one queued attachment, then start the next worker.
 	 *
-	 * Everything in the library that asks whether there is work left comes
-	 * through here, so an empty queue has to be an empty array: a batch without
-	 * data would still count as work.
-	 *
-	 * @param int $limit Number of batches; there is never more than one.
-	 * @return stdClass[]
+	 * Starting the next worker only once this one is done keeps the number of
+	 * workers at WORKERS.
 	 */
-	public function get_batches( $limit = 0 ) {
+	public function work() {
+		$key = isset( $_POST['key'] ) ? sanitize_key( wp_unslash( $_POST['key'] ) ) : '';
+		if ( ! hash_equals( wp_hash( self::WORKER_ACTION ), $key ) ) {
+			wp_die( -1, 403 );
+		}
+
+		/* The request that started this worker does not wait for it. */
+		ignore_user_abort( true );
+
+		$id = $this->next_queued();
+		if ( $id ) {
+			set_transient( self::ALIVE_TRANSIENT, time(), self::STALLED_AFTER );
+			$this->task( $id );
+			$this->start_worker();
+		}
+
+		wp_die();
+	}
+
+	/**
+	 * Restart any stalled workers.
+	 * A worker is stalled when still processing after STALLED_AFTER seconds
+	 * and marks them as failed.
+	 */
+	public function restart_stalled_workers() {
+		if ( ! $this->is_running() || get_transient( self::ALIVE_TRANSIENT ) ) {
+			return;
+		}
+
+		
+		foreach ( $this->get_processing() as $id ) {
+			update_post_meta(
+				$id,
+				self::META_KEY_RESULT,
+				array(
+					'failed'  => 1,
+					'message' => __( 'Optimization was interrupted', 'tiny-compress-images' ),
+				)
+			);
+			update_post_meta( $id, self::META_KEY_STATUS, self::STATUS_FAILED );
+		}
+
+		$this->start_workers();
+	}
+
+	private function start_workers() {
+		/* Counts as progress, so the next status check does not start them again. */
+		set_transient( self::ALIVE_TRANSIENT, time(), self::STALLED_AFTER );
+		for ( $i = 0; $i < self::WORKERS; $i++ ) {
+			$this->start_worker();
+		}
+	}
+
+	/**
+	 * Start a worker in a request of its own, without waiting for it.
+	 *
+	 * The worker runs logged out, so logging out or an expiring login cannot
+	 * stop a run. A nonce is tied to a user, so a key from the site's salts
+	 * shows the request comes from the site itself.
+	 */
+	private function start_worker() {
+		$args = array(
+			'timeout'   => 0.01,
+			'blocking'  => false,
+			'body'      => array(
+				'action' => self::WORKER_ACTION,
+				'key'    => wp_hash( self::WORKER_ACTION ),
+			),
+			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+		);
+
+		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
+			wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
+		} else {
+			wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
+		}
+	}
+
+	/**
+	 * @return int|null The next queued attachment, if any.
+	 */
+	private function next_queued() {
 		global $wpdb;
 
 		$id = $wpdb->get_var(
@@ -234,46 +256,25 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 			)
 		);
 
-		if ( is_null( $id ) ) {
-			return array();
-		}
-
-		$batch       = new stdClass();
-		$batch->key  = $this->identifier . '_batch_postmeta';
-		$batch->data = array( intval( $id ) );
-
-		return array( $batch );
+		return is_null( $id ) ? null : intval( $id );
 	}
 
 	/**
-	 * Nothing to store: an attachment's status records its progress.
-	 *
-	 * @param string $key  Batch key.
-	 * @param array  $data Batch data.
-	 * @return $this
+	 * @return int[] Attachments being optimized.
 	 */
-	public function update( $key, $data ) {
-		return $this;
-	}
+	private function get_processing() {
+		global $wpdb;
 
-	/**
-	 * Nothing to remove: a batch is used up once its attachment is no longer
-	 * queued.
-	 *
-	 * @param string $key Batch key.
-	 * @return $this
-	 */
-	public function delete( $key ) {
-		return $this;
-	}
-
-	/**
-	 * Dequeues every attachment and reset queue state
-	 */
-	public function delete_all() {
-		delete_metadata( 'post', 0, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
-		delete_site_option( $this->get_status_key() );
-		$this->cancelled();
+		return array_map(
+			'intval',
+			$wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s",
+					self::META_KEY_STATUS,
+					self::STATUS_PROCESSING
+				)
+			)
+		);
 	}
 
 	/**
@@ -282,13 +283,10 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 	 * The attachment always leaves the queue, whatever happens: one that stayed
 	 * queued would be handed out again and again.
 	 *
-	 * @param int $item Attachment ID.
-	 * @return false The library can forget the item.
+	 * @param int $id Attachment ID.
 	 */
-	protected function task( $item ) {
-		$id = intval( $item );
-
-		/* Another process may have claimed it since the batch was read. */
+	private function task( $id ) {
+		/* Another worker may have claimed it since it was read. */
 		$claimed = update_post_meta(
 			$id,
 			self::META_KEY_STATUS,
@@ -297,7 +295,7 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 		);
 
 		if ( ! $claimed ) {
-			return false;
+			return;
 		}
 
 		try {
@@ -316,13 +314,10 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 		update_post_meta( $id, self::META_KEY_RESULT, $result );
 		update_post_meta( $id, self::META_KEY_STATUS, $status );
 
-		
 		$compressor = $this->settings->get_compressor();
 		if ( $compressor && $compressor->limit_reached() ) {
 			$this->cancel();
 		}
-
-		return false;
 	}
 
 	/**
@@ -359,33 +354,5 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 			'message'     => $tiny_image->get_latest_error(),
 			'size_change' => $after['compressed_total_size'] - $before['compressed_total_size'],
 		);
-	}
-
-	/**
-	 * Do not wait for the loopback request, as spawn_cron() does not: it runs
-	 * the queue and does not answer until it stops.
-	 *
-	 * @return array
-	 */
-	protected function get_post_args() {
-		$args            = parent::get_post_args();
-		$args['timeout'] = 0.01;
-		return $args;
-	}
-	/**
-	 * ID the library passes to its hooks.
-	 *
-	 * The library's own version checks the nonce on every AJAX request and
-	 * needs WordPress 4.9. Nothing in the plugin listens to the chain ID, so a
-	 * fresh one per request is enough.
-	 *
-	 * @return string
-	 */
-	public function get_chain_id() {
-		if ( empty( $this->started_chain_id ) ) {
-			$this->started_chain_id = wp_generate_password( 32, false );
-		}
-
-		return $this->started_chain_id;
 	}
 }

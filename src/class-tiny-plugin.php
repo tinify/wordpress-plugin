@@ -694,6 +694,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			intval( wp_unslash( $_POST['current_size'] ) )
 			: 0;
 
+		$this->bulk_queue->restart_stalled_workers();
 		$running = $this->bulk_queue->is_running();
 
 		$items = array();
