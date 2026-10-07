@@ -116,7 +116,7 @@ class Tiny_Background_Queue extends Tiny_WP_Base {
 
 		return (bool) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT 1 FROM $wpdb->postmeta
+				"SELECT post_id FROM $wpdb->postmeta
 				WHERE meta_key = %s AND meta_value IN ( %s, %s )
 				LIMIT 1",
 				self::META_KEY_STATUS,
