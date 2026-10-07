@@ -316,6 +316,12 @@ class Tiny_Background_Queue extends Tiny_Vendor_WP_Background_Process {
 		update_post_meta( $id, self::META_KEY_RESULT, $result );
 		update_post_meta( $id, self::META_KEY_STATUS, $status );
 
+		
+		$compressor = $this->settings->get_compressor();
+		if ( $compressor && $compressor->limit_reached() ) {
+			$this->cancel();
+		}
+
 		return false;
 	}
 
