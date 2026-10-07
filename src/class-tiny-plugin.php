@@ -663,16 +663,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			wp_die( -1, 403 );
 		}
 
-		/* A run that is still going is followed, not restarted. */
 		if ( $this->bulk_queue->is_running() ) {
 			echo json_encode( array( 'running' => true ) );
 			exit();
 		}
 
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$ids   = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
-
-		echo json_encode( array( 'running' => $this->bulk_queue->start( $ids ) ) );
 		exit();
 	}
 
@@ -739,7 +734,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$this->bulk_queue->cancel();
 
-		echo json_encode( array( 'running' => false ) );
 		exit();
 	}
 
