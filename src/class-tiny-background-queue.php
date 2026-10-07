@@ -109,18 +109,7 @@ class Tiny_Background_Queue extends Tiny_WP_Base {
 	 * @return bool
 	 */
 	public function is_running() {
-		global $wpdb;
-
-		return (bool) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_id FROM $wpdb->postmeta
-				WHERE meta_key = %s AND meta_value IN ( %s, %s )
-				LIMIT 1",
-				self::META_KEY_STATUS,
-				self::STATUS_QUEUED,
-				self::STATUS_PROCESSING
-			)
-		);
+		return $this->next_queued() || $this->get_processing();
 	}
 
 	/**
@@ -283,7 +272,6 @@ class Tiny_Background_Queue extends Tiny_WP_Base {
 	 * @param int $id Attachment ID.
 	 */
 	private function task( $id ) {
-		/* Another worker may have claimed it since it was read. */
 		$claimed = update_post_meta(
 			$id,
 			self::META_KEY_STATUS,
@@ -327,7 +315,6 @@ class Tiny_Background_Queue extends Tiny_WP_Base {
 		$active_sizes        = $this->settings->get_sizes();
 		$active_tinify_sizes = $this->settings->get_active_tinify_sizes();
 
-		/* Statistics are worked out once per instance, so before needs its own. */
 		$before = new Tiny_Image( $this->settings, $id );
 		$before = $before->get_statistics( $active_sizes, $active_tinify_sizes );
 
