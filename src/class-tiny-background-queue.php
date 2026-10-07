@@ -82,7 +82,6 @@ class Tiny_Background_Queue extends Tiny_WP_Base {
 	 * Whatever an earlier run left behind is forgotten first.
 	 *
 	 * @param int[] $ids Attachments to optimize.
-	 * @return bool Whether the run was started.
 	 */
 	public function start( array $ids ) {
 		delete_post_meta_by_key( self::META_KEY_STATUS );
@@ -94,8 +93,6 @@ class Tiny_Background_Queue extends Tiny_WP_Base {
 		}
 
 		$this->start_workers();
-
-		return true;
 	}
 
 	/**
