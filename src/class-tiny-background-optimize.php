@@ -55,7 +55,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	const ALIVE_TRANSIENT = 'tiny_bulk_queue_alive';
 
 	/* Seconds without a worker starting on an attachment before a run counts as stalled. */
-	const STALLED_AFTER = 300;
+	const STALLED_AFTER = 120;
 
 	/**
 	 * Tinify settings.
