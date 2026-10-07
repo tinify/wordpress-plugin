@@ -21,11 +21,11 @@
 /**
  * Optimizes attachments in the background.
  *
- * The status of each attachment is the queue. Workers are requests to
+ * The status of each attachment is the queue. Workers are remote requests to
  * admin-ajax.php: each optimizes one queued attachment and then starts the
- * next worker, so a run goes on after the bulk optimization page is closed.
+ * next worker.
  */
-class Tiny_Background_Queue extends Tiny_WP_Base {
+class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 	/* Meta key for the queue status of an attachment. */
 	const META_KEY_STATUS = '_tinywp_queue_status';

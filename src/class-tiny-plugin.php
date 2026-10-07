@@ -22,13 +22,15 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	const MEDIA_COLUMN    = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
+	/** @var Tiny_Settings */
 	private $settings;
+
 	/**
 	 * Background process
 	 *
-	 * @var Tiny_Background_Queue
+	 * @var Tiny_Background_Optimize
 	 */
-	private $bulk_queue;
+	private $background_optimizer;
 
 	public static function jpeg_quality() {
 		return 85;
@@ -45,7 +47,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
 		new Tiny_Conversion( $this->settings );
-		$this->bulk_queue = new Tiny_Background_Queue( $this->settings );
+		$this->background_optimizer = new Tiny_Background_Optimize( $this->settings );
 	}
 
 	public function set_compressor( $compressor ) {
@@ -664,13 +666,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 
 		/* A run that is still going is followed, not restarted. */
-		if ( $this->bulk_queue->is_running() ) {
+		if ( $this->background_optimizer->is_running() ) {
 			wp_send_json_success();
 		}
 
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$ids   = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
-		$this->bulk_queue->start( $ids );
+		$this->background_optimizer->start( $ids );
 
 		wp_send_json_success();
 	}
@@ -694,11 +696,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			intval( wp_unslash( $_POST['current_size'] ) )
 			: 0;
 
-		$this->bulk_queue->restart_stalled_workers();
-		$running = $this->bulk_queue->is_running();
+		$this->background_optimizer->restart_stalled_workers();
+		$running = $this->background_optimizer->is_running();
 
 		$items = array();
-		foreach ( $this->bulk_queue->get_results( $ids ) as $id => $item ) {
+		foreach ( $this->background_optimizer->get_results( $ids ) as $id => $item ) {
 			if ( is_array( $item['result'] ) ) {
 				$item['result'] = $this->bulk_image_result(
 					new Tiny_Image( $this->settings, $id ),
@@ -736,7 +738,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			wp_die( -1, 403 );
 		}
 
-		$this->bulk_queue->cancel();
+		$this->background_optimizer->cancel();
 
 		wp_send_json_success();
 	}
@@ -888,7 +890,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$remaining_credits   = $this->settings->get_remaining_credits();
 		$is_on_free_plan     = $this->settings->is_on_free_plan();
 		$email_address       = $this->settings->get_email_address();
-		$bulk_running        = $this->bulk_queue->is_running();
+		$bulk_running        = $this->background_optimizer->is_running();
 
 		include __DIR__ . '/views/bulk-optimization.php';
 	}
