@@ -21,9 +21,7 @@
 /**
  * Optimizes attachments in the background.
  *
- * The status of each attachment is the queue. Workers are remote requests to
- * admin-ajax.php: each optimizes one queued attachment and then starts the
- * next worker.
+ * Starts a worker through a remote 
  */
 class Tiny_Background_Optimize extends Tiny_WP_Base {
 
@@ -51,11 +49,11 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	/* AJAX action of a worker. */
 	const WORKER_ACTION = 'tiny_bulk_queue_work';
 
-	/* Set when workers are started, and each time one starts on an attachment. */
-	const ALIVE_TRANSIENT = 'tiny_bulk_queue_alive';
+	/* Transient per worker, set each time it starts on an attachment. */
+	const WORKER_TRANSIENT = 'tiny_bulk_queue_worker_';
 
-	/* Seconds without a worker starting on an attachment before a run counts as stalled. */
-	const STALLED_AFTER = 120;
+	/* Seconds without starting on an attachment before a worker counts as dead. */
+	const STALLED_AFTER = 300;
 
 	/**
 	 * Tinify settings.
@@ -92,6 +90,11 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			add_post_meta( $id, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
 		}
 
+		// cleanup workers
+		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
+			delete_transient( self::WORKER_TRANSIENT . $worker );
+		}
+
 		$this->start_workers();
 	}
 
@@ -104,12 +107,14 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Whether a run still has attachments queued or being optimized.
+	 * Whether something is still being processed
+	 * - any worker is active
+	 * - any image is queued or processing
 	 *
 	 * @return bool
 	 */
 	public function is_running() {
-		return $this->next_queued() || $this->get_processing();
+		return $this->has_active_workers() && ( $this->next_queued() || $this->get_processing() );
 	}
 
 	/**
@@ -142,9 +147,10 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Optimize one queued attachment, then start the next worker.
+	 * Optimize one queued attachment, then send this worker's next request and
+	 * start any worker that died.
 	 *
-	 * Starting the next worker only once this one is done keeps the number of
+	 * Sending the next request only once this one is done keeps the number of
 	 * workers at WORKERS.
 	 */
 	public function work() {
@@ -153,62 +159,55 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		/* The request that started this worker does not wait for it. */
 		ignore_user_abort( true );
 
+		$worker = isset( $_POST['worker'] ) ? intval( $_POST['worker'] ) : 0;
+
 		$id = $this->next_queued();
 		if ( $id ) {
-			set_transient( self::ALIVE_TRANSIENT, time(), self::STALLED_AFTER );
+			set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 			$this->task( $id );
-			$this->start_worker();
+			$this->start_workers();
 		}
 
 		wp_die();
 	}
 
 	/**
-	 * Restart any stalled workers.
-	 * A worker is stalled when still processing after STALLED_AFTER seconds
-	 * and marks them as failed.
+	 * Start self::WORKERS of workers, if not already active
 	 */
-	public function restart_stalled_workers() {
-		if ( ! $this->is_running() || get_transient( self::ALIVE_TRANSIENT ) ) {
-			return;
+	private function start_workers() {
+		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
+			$is_active = get_transient( self::WORKER_TRANSIENT . $worker );
+			if ( ! $is_active ) {
+				set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
+				$this->start_worker( $worker );
+			}
 		}
-
-		foreach ( $this->get_processing() as $id ) {
-			update_post_meta(
-				$id,
-				self::META_KEY_RESULT,
-				array(
-					'failed'  => 1,
-					'message' => __( 'Optimization was interrupted', 'tiny-compress-images' ),
-				)
-			);
-			update_post_meta( $id, self::META_KEY_STATUS, self::STATUS_FAILED );
-		}
-
-		$this->start_workers();
 	}
 
-	private function start_workers() {
-		/* Counts as progress, so the next status check does not start them again. */
-		set_transient( self::ALIVE_TRANSIENT, time(), self::STALLED_AFTER );
-		for ( $i = 0; $i < self::WORKERS; $i++ ) {
-			$this->start_worker();
+	private function has_active_workers() {
+		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
+			if ( get_transient( self::WORKER_TRANSIENT . $worker ) ) {
+				return true;
+			}
 		}
+		return false;
 	}
 
 	/**
-	 * Start a worker in a request of its own, without waiting for it.
+	 * Send the next request for a worker
 	 *
-	 * The worker runs as the user whose request starts it. When that user logs
-	 * out, the workers stop, until the bulk optimization page restarts them.
+	 * The worker runs as the user whose request starts it.
+	 *
+	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
-	private function start_worker() {
+	private function start_worker( $worker ) {
 		$args = array(
 			'timeout'   => 0.01,
 			'blocking'  => false,
 			'body'      => array(
 				'action' => self::WORKER_ACTION,
 				'nonce'  => wp_create_nonce( self::WORKER_ACTION ),
+				'worker' => $worker,
 			),
 			'cookies'   => isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array(),
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
