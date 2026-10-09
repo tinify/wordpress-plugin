@@ -156,16 +156,17 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	public function work() {
 		check_ajax_referer( self::WORKER_ACTION, 'nonce' );
 
-		/* The request that started this worker does not wait for it. */
 		ignore_user_abort( true );
 
 		$worker = isset( $_POST['worker'] ) ? intval( $_POST['worker'] ) : 0;
 
 		$id = $this->next_queued();
 		if ( $id ) {
-			set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 			$this->task( $id );
+			delete_transient( self::WORKER_TRANSIENT . $worker );
 			$this->start_workers();
+		} else {
+			delete_transient( self::WORKER_TRANSIENT . $worker );
 		}
 
 		wp_die();
@@ -178,7 +179,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
 			$is_active = get_transient( self::WORKER_TRANSIENT . $worker );
 			if ( ! $is_active ) {
-				set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 				$this->start_worker( $worker );
 			}
 		}
@@ -201,6 +201,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
 	private function start_worker( $worker ) {
+		set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 		$args = array(
 			'timeout'   => 0.01,
 			'blocking'  => false,
