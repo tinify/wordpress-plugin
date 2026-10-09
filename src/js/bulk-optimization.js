@@ -2,6 +2,7 @@
   const POLL_INTERVAL = 2000;
   const POLL_WINDOW = 10;
   let pending = [];
+  let stoppedEarly = false;
 
   function updateProgressBar(successFullCompressions) {
     var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
@@ -137,6 +138,7 @@
           return true;
         } else {
           jQuery('#optimization-items tr').eq(i + 1).find('.status').html(tinyCompress.L10nCancelled).attr('data-status', 'cancelled');
+          stoppedEarly = true;
         }
         return false;
       });
@@ -145,7 +147,7 @@
       if (pending.length > 0 && (data.running || finished > 0)) {
         setTimeout(pollStatus, POLL_INTERVAL, items);
       } else {
-        finishOptimization(window.optimizationCancelled ? null : tinyCompress.L10nAllDone);
+        finishOptimization(window.optimizationCancelled || stoppedEarly ? null : tinyCompress.L10nAllDone);
       }
     }, 'json').fail(function(xhr) {
       if (xhr.status === 403) {
@@ -169,6 +171,7 @@
     window.totalRowsDrawn = 0;
     window.currentLibraryBytes = parseInt(jQuery('#optimized-library-size').data('bytes'), 10);
     pending = items.map(function(item, i) { return i; });
+    stoppedEarly = false;
 
     jQuery('div#bulk-optimization-actions input').removeClass('visible');
     jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
