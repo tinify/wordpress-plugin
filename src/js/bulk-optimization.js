@@ -193,7 +193,6 @@
       _nonce: tinyCompress.nonce,
       action: 'tiny_bulk_queue_start'
     }, function() {
-      // Only now offer cancelling: before the run is queued, a cancel removes nothing.
       jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
       pollStatus(items);
     }, 'json').fail(function() {
