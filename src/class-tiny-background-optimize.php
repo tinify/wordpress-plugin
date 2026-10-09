@@ -176,11 +176,17 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * Start self::WORKERS of workers, if not already active
 	 */
 	private function start_workers() {
+		$missing = array();
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
 			$is_active = get_transient( self::WORKER_TRANSIENT . $worker );
 			if ( ! $is_active ) {
-				$this->start_worker( $worker );
+				set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
+				$missing[] = $worker;
 			}
+		}
+
+		foreach ( $missing as $worker ) {
+			$this->start_worker( $worker );
 		}
 	}
 
@@ -202,7 +208,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
 	private function start_worker( $worker ) {
-		set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 		$args = array(
 			'timeout'   => 0.01,
 			'blocking'  => false,
