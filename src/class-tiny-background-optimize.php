@@ -163,7 +163,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		$id = $this->next_queued();
 		if ( $id ) {
 			$this->task( $id );
-			delete_transient( self::WORKER_TRANSIENT . $worker );
+			$this->start_worker( $worker );
 			$this->start_workers();
 		} else {
 			delete_transient( self::WORKER_TRANSIENT . $worker );
@@ -173,19 +173,19 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Start self::WORKERS of workers, if not already active
+	 * Start every worker that is not active.
 	 */
 	private function start_workers() {
-		$missing = array();
+		$inactive = array();
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
 			$is_active = get_transient( self::WORKER_TRANSIENT . $worker );
 			if ( ! $is_active ) {
 				set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
-				$missing[] = $worker;
+				$inactive[] = $worker;
 			}
 		}
 
-		foreach ( $missing as $worker ) {
+		foreach ( $inactive as $worker ) {
 			$this->start_worker( $worker );
 		}
 	}
@@ -201,13 +201,14 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Send the next request for a worker
+	 * Send the next request for a worker, and mark it active until then.
 	 *
 	 * The worker runs as the user whose request starts it.
 	 *
 	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
 	private function start_worker( $worker ) {
+		set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 		$args = array(
 			'timeout'   => 0.01,
 			'blocking'  => false,
