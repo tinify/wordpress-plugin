@@ -326,6 +326,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 					'tiny-compress-images'
 				),
 				'L10nCancelled'          => __( 'Cancelled', 'tiny-compress-images' ),
+				'L10nStopped'            => __( 'Stopped', 'tiny-compress-images' ),
 				'L10nCompressing'        => __( 'Compressing', 'tiny-compress-images' ),
 				'L10nCompressed'         => __( 'compressed', 'tiny-compress-images' ),
 				'L10nConverted'          => __( 'converted', 'tiny-compress-images' ),
@@ -350,6 +351,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'L10nBackgroundNotice'   => __(
 					// phpcs:ignore Generic.Files.LineLength
 					'Optimization continues in the background. You can close this page and come back later.',
+					'tiny-compress-images'
+				),
+				'L10nStoppedNotice'      => __(
+					'Optimization stopped early.',
 					'tiny-compress-images'
 				),
 			)

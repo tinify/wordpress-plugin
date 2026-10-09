@@ -137,7 +137,9 @@
         } else if (data.running && (item.status === 'queued' || item.status === 'processing')) {
           return true;
         } else {
-          jQuery('#optimization-items tr').eq(i + 1).find('.status').html(tinyCompress.L10nCancelled).attr('data-status', 'cancelled');
+          // Unless this page cancelled, the run ended because every worker stopped.
+          const label = window.optimizationCancelled ? tinyCompress.L10nCancelled : tinyCompress.L10nStopped;
+          jQuery('#optimization-items tr').eq(i + 1).find('.status').html(label).attr('data-status', 'cancelled');
           stoppedEarly = true;
         }
         return false;
@@ -146,8 +148,10 @@
 
       if (pending.length > 0 && (data.running || finished > 0)) {
         setTimeout(pollStatus, POLL_INTERVAL, items);
+      } else if (window.optimizationCancelled) {
+        finishOptimization(null);
       } else {
-        finishOptimization(window.optimizationCancelled || stoppedEarly ? null : tinyCompress.L10nAllDone);
+        finishOptimization(stoppedEarly ? tinyCompress.L10nStoppedNotice : tinyCompress.L10nAllDone);
       }
     }, 'json').fail(function(xhr) {
       if (xhr.status === 403) {
@@ -225,7 +229,7 @@
       });
     } catch (err) {
       // Cancel failed, revert state
-      window.optimizationCancelled = true;
+      window.optimizationCancelled = false;
       jQuery('div#optimization-spinner').css('display', 'inline-block');
       jQuery('div#bulk-optimization-actions input').removeClass('visible');
       jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
