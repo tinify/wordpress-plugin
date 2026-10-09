@@ -696,7 +696,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			intval( wp_unslash( $_POST['current_size'] ) )
 			: 0;
 
-		$this->background_optimizer->restart_stalled_workers();
 		$running = $this->background_optimizer->is_running();
 
 		$items = array();
