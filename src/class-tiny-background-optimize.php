@@ -186,7 +186,8 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 	private function has_active_workers() {
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
-			if ( get_transient( self::WORKER_TRANSIENT . $worker ) ) {
+			$is_active = get_transient( self::WORKER_TRANSIENT . $worker );
+			if ( $is_active ) {
 				return true;
 			}
 		}
