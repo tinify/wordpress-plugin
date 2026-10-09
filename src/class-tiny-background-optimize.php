@@ -21,7 +21,7 @@
 /**
  * Optimizes attachments in the background.
  *
- * Starts a worker through a remote 
+ * Starts a worker through a remote
  */
 class Tiny_Background_Optimize extends Tiny_WP_Base {
 
@@ -154,6 +154,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * workers at WORKERS.
 	 */
 	public function work() {
+		Tiny_Logger::debug( 'received start work' );
 		check_ajax_referer( self::WORKER_ACTION, 'nonce' );
 
 		ignore_user_abort( true );
@@ -162,6 +163,13 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 		$id = $this->next_queued();
 		if ( $id ) {
+			Tiny_Logger::debug(
+				'worker starting task',
+				array(
+					'attachment_id' => $id,
+					'worker_nr'     => $worker,
+				)
+			);
 			$this->task( $id );
 			$this->start_worker( $worker );
 			$this->start_workers();
@@ -186,6 +194,12 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		}
 
 		foreach ( $inactive as $worker ) {
+			Tiny_Logger::debug(
+				'worker stalled',
+				array(
+					'worker_nr' => $worker,
+				)
+			);
 			$this->start_worker( $worker );
 		}
 	}
@@ -208,6 +222,12 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
 	private function start_worker( $worker ) {
+		Tiny_Logger::debug(
+			'starting worker',
+			array(
+				'worker_nr' => $worker,
+			)
+		);
 		set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
 		$args = array(
 			'timeout'   => 0.01,
@@ -221,10 +241,27 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
+		$remote_request_result = null;
 		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
-			wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
+			$remote_request_result = wp_remote_post(
+				getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php',
+				$args
+			);
 		} else {
-			wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
+			$remote_request_result = wp_remote_post(
+				admin_url( 'admin-ajax.php' ),
+				$args
+			);
+		}
+
+		if ( is_wp_error( $remote_request_result ) ) {
+			Tiny_Logger::error(
+				'unable to send remote request',
+				array(
+					'worker_number' => $worker,
+					'error'         => $remote_request_result->get_error_message(),
+				)
+			);
 		}
 	}
 
