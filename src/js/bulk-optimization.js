@@ -213,12 +213,24 @@
     window.totalRowsDrawn = Math.max(start, end);
   }
 
-  function cancelOptimization() {
-    window.optimizationCancelled = true;
-    jQuery('div#optimization-spinner').css('display', 'none');
-    jQuery('div#bulk-optimization-actions input').removeClass('visible');
-    jQuery('div#bulk-optimization-actions input#id-cancelling').addClass('visible');
-    jQuery.post(ajaxurl, { _nonce: tinyCompress.nonce, action: 'tiny_bulk_queue_cancel' });
+  async function cancelOptimization() {
+    try {
+      window.optimizationCancelled = true;
+      jQuery('div#optimization-spinner').css('display', 'none');
+      jQuery('div#bulk-optimization-actions input').removeClass('visible');
+      jQuery('div#bulk-optimization-actions input#id-cancelling').addClass('visible');
+      await jQuery.post(ajaxurl, {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_bulk_queue_cancel',
+      });
+    } catch (err) {
+      // Cancel failed, revert state
+      window.optimizationCancelled = true;
+      jQuery('div#optimization-spinner').css('display', 'inline-block');
+      jQuery('div#bulk-optimization-actions input').removeClass('visible');
+      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
+      jQuery('div#bulk-optimization-actions p.optimization-buttons_notice').text(tinyCompress.L10nInternalError);
+    }
   }
 
   jQuery('.tiny-bulk-optimization .upgrade-account-notice a#hide-warning').click(function() {
