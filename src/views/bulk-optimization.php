@@ -9,6 +9,7 @@
  * @var string      $email_address
  * @var bool        $is_on_free_plan
  * @var int         $remaining_credits
+ * @var bool        $bulk_running
  * @var Tiny_Plugin $this
  */
 
@@ -326,7 +327,7 @@ div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progre
 		?>
 	</div>
 	<script type="text/javascript">
-	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ')})'; ?>
+	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ', ' . json_encode( $bulk_running ) . ')})'; ?>
 	</script>
 	<table class="wp-list-table widefat fixed striped media whitebox" id="optimization-items" >
 		<thead>
