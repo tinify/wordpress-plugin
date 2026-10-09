@@ -178,13 +178,13 @@
     stoppedEarly = false;
 
     jQuery('div#bulk-optimization-actions input').removeClass('visible');
-    jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
     jQuery('div#bulk-optimization-actions p.optimization-buttons_notice').text(tinyCompress.L10nBackgroundNotice);
     jQuery('div.progress').css('animation', 'progress-bar 80s linear infinite');
     jQuery('div#optimization-spinner').css('display', 'inline-block');
     updateProgressBar(0);
 
     if (running) {
+      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
       pollStatus(items);
       return;
     }
@@ -193,6 +193,8 @@
       _nonce: tinyCompress.nonce,
       action: 'tiny_bulk_queue_start'
     }, function() {
+      // Only now offer cancelling: before the run is queued, a cancel removes nothing.
+      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
       pollStatus(items);
     }, 'json').fail(function() {
       finishOptimization(tinyCompress.L10nInternalError);
