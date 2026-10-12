@@ -51,6 +51,11 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	}
 
 	function admin_init() {
+		add_action(
+			'admin_post_tiny_onboarding_save_settings',
+			$this->get_method( 'save_settings' )
+		);
+
 		if ( $this->is_onboarded() ) {
 			return;
 		}
@@ -109,8 +114,9 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	function admin_menu() {
 		$this->page_title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
 
-		$this->add_sub_menu(1);
-		$this->add_sub_menu(2);
+		$this->add_sub_menu( 1 );
+		$this->add_sub_menu( 2 );
+		$this->add_sub_menu( 3 );
 	}
 
 	/**
@@ -176,13 +182,68 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		return update_option( $onboarding_status_field, $is_onboarded );
 	}
 
-	function render_register() {
-		$compressor = $this->settings->get_compressor();
-		if ( $compressor->can_create_key() ) {
-			include __DIR__ . '/views/account-status-create-advanced.php';
-		} else {
-			include __DIR__ . '/views/account-status-create-simple.php';
+	/**
+	 * Renders the onboarding progress with the given step as current.
+	 *
+	 * @param int  $current_step
+	 * @param bool $confirm_email false when connecting with an API key skipped that step
+	 */
+	public function render_steps( $current_step, $confirm_email = true ) {
+		include __DIR__ . '/views/onboarding-steps.php';
+	}
+
+	/**
+	 * Saves settings from onboading page,
+	 * redirects to bulk optimizer.
+	 *
+	 * Hooked to `admin_post_tiny_onboarding_save_settings`.
+	 */
+	public function save_settings() {
+		check_admin_referer( 'tiny-onboarding-save-settings' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die(
+				esc_html__(
+					'Sorry, you are not allowed to manage options for this site.',
+					'tiny-compress-images'
+				)
+			);
 		}
+
+		$convert_to = isset( $_POST['convert_to'] ) ?
+			sanitize_key( wp_unslash( $_POST['convert_to'] ) ) : '';
+		if ( ! in_array( $convert_to, array( 'smallest', 'webp', 'avif' ), true ) ) {
+			$convert_to = 'smallest';
+		}
+
+		$delivery_method = isset( $_POST['delivery_method'] ) ?
+			sanitize_key( wp_unslash( $_POST['delivery_method'] ) ) : '';
+		if ( ! in_array( $delivery_method, array( 'htaccess', 'picture' ), true ) ) {
+			$delivery_method = 'picture';
+		}
+
+		$convert_format = array( 'convert' => 'off' );
+		if ( isset( $_POST['convert'] ) ) {
+			$convert_format = array(
+				'convert'         => 'on',
+				'convert_to'      => $convert_to,
+				'delivery_method' => $delivery_method,
+			);
+		}
+
+		update_option(
+			self::get_prefixed_name( 'compression_timing' ),
+			isset( $_POST['auto_compress'] ) ? 'background' : 'manual'
+		);
+		update_option( self::get_prefixed_name( 'convert_format' ), $convert_format );
+
+		$next = isset( $_POST['next'] ) ? sanitize_key( wp_unslash( $_POST['next'] ) ) : '';
+		if ( 'settings' === $next ) {
+			wp_safe_redirect( admin_url( 'options-general.php?page=tinify' ) );
+		} else {
+			wp_safe_redirect( admin_url( 'upload.php?page=tiny-bulk-optimization' ) );
+		}
+		exit();
 	}
 
 	/**

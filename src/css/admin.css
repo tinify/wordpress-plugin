@@ -483,19 +483,409 @@ fieldset.tinypng_convert_fields[disabled] {
 	margin-top: 10px;
 }
 
+/* Account connect */
+.tiny-account-connect {
+	box-sizing: border-box;
+	display: flex;
+	width: 100%;
+	background: #fff;
+	border: 1px solid #ededf1;
+	border-radius: 12px;
+}
+
+.tiny-account-connect-column {
+	display: flex;
+	flex: 1 1 0%;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+	padding: 24px;
+}
+
+.tiny-account-connect-column + .tiny-account-connect-column {
+	border-left: 1px solid #ededf1;
+}
+
+@media screen and (max-width: 600px) {
+	.tiny-account-connect {
+		flex-direction: column;
+	}
+
+	.tiny-account-connect-column + .tiny-account-connect-column {
+		border-top: 1px solid #ededf1;
+		border-left: 0;
+	}
+}
+
+.tiny-card-head h2 {
+	margin: 0;
+	padding: 0;
+	color: #12141d;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 24px;
+}
+
+.tiny-card-head p {
+	margin: 4px 0 0;
+	color: #5b5b67;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.tiny-field {
+	margin: 0;
+}
+
+.tiny-field label {
+	display: block;
+	margin-bottom: 6px;
+	color: #4a4b56;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 20px;
+}
+
+.tiny-field input[type="text"] {
+	box-sizing: border-box;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: 9px 14px;
+	color: #1e2029;
+	font-size: 16px;
+	line-height: 24px;
+	background-color: #fff;
+	border: 1px solid #b8b8c1;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(18, 20, 29, 0.05);
+}
+
+.tiny-field input[type="text"]::placeholder {
+	color: #7a7a86;
+}
+
+.tiny-field input[type="text"]:focus {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+	box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #2271b1);
+	outline: 2px solid transparent;
+}
+
+.tiny-field-invalid input[type="text"] {
+	padding-right: 38px;
+	background: #fff url("../images/alert-circle.svg") no-repeat right 14px center;
+	border-color: #fca5a5;
+}
+
+.tiny-field-invalid input[type="text"]:focus {
+	border-color: #fca5a5;
+	box-shadow: 0 0 0 1px #fca5a5;
+}
+
+.tiny-field-error {
+	display: none;
+	margin: 6px 0 0;
+	color: #ef4444;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.tiny-field-error a {
+	color: inherit;
+}
+
+.tiny-field-invalid .tiny-field-error {
+	display: block;
+}
+
+.tiny-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 0;
+}
+
+.tiny-actions .button {
+	height: auto;
+	min-height: 40px;
+	padding: 9px 16px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	border-radius: 2px;
+}
+
+.tiny-actions a,
+.tiny-actions .button-link {
+	color: var(--wp-admin-theme-color, #2271b1);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	text-decoration: none;
+}
+
+.tiny-actions .spinner {
+	float: none;
+	margin: 0;
+}
+
+/* Onboarding */
 .tiny-onboarding {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
+	gap: 24px;
+	max-width: 720px;
+	/* Matches #wpcontent's left padding, so the page centers between menu and window edge. */
+	margin: 64px auto 0;
+	padding-right: 20px;
 }
 
-.tiny-card {
-	background: #fff;
-	border: 1px solid #E1E1E1;
-	border-radius: 8px;
-	padding: 12px;
+.tiny-onboarding-steps {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
-.tiny-text-center {
+
+.tiny-onboarding-steps li {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	color: #5b5b67;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+/* The connector to the previous step. */
+.tiny-onboarding-steps li + li:before {
+	content: "";
+	width: 40px;
+	height: 2px;
+	margin-right: 4px;
+	background: #d4d4db;
+	border-radius: 1px;
+}
+
+.tiny-onboarding-steps li.tiny-step-done + li:before {
+	background: var(--wp-admin-theme-color, #2271b1);
+}
+
+@media screen and (max-width: 600px) {
+	.tiny-onboarding-steps li + li:before {
+		display: none;
+	}
+}
+
+.tiny-step-dot {
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 24px;
+	height: 24px;
+	color: #5b5b67;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+	letter-spacing: 0.12px;
+	background: #fff;
+	border: 1px solid #ededf1;
+	border-radius: 12px;
+}
+
+.tiny-step-current {
+	color: #12141d;
+	font-weight: 600;
+}
+
+.tiny-step-current .tiny-step-dot {
+	color: #fff;
+	background: var(--wp-admin-theme-color, #2271b1);
+	border: 0;
+}
+
+.tiny-step-done .tiny-step-dot {
+	color: var(--wp-admin-theme-color, #2271b1);
+	background: none;
+	border: 0;
+}
+
+.tiny-onboarding-panda {
+	display: block;
+	width: 112px;
+	height: 112px;
+}
+
+.tiny-onboarding-header {
 	text-align: center;
+}
+
+.tiny-onboarding-header h1 {
+	margin: 0 0 8px;
+	padding: 0;
+	color: #12141d;
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 32px;
+}
+
+.tiny-onboarding-header p {
+	margin: 0;
+	color: #5b5b67;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.tiny-onboarding-card {
+	box-sizing: border-box;
+	width: 100%;
+	background: #fff;
+	border: 1px solid #ededf1;
+	border-radius: 12px;
+}
+
+.tiny-card-section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 24px;
+}
+
+.tiny-card-section + .tiny-card-section {
+	border-top: 1px solid #ededf1;
+}
+
+.tiny-card-section .notice {
+	margin: 0;
+}
+
+.tiny-option {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 0;
+	cursor: pointer;
+}
+
+.tiny-option-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	color: #5b5b67;
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.tiny-option-label {
+	color: #4a4b56;
+	font-weight: 500;
+}
+
+/* Toggle switch, drawn over WordPress' own checkbox styles. */
+.tiny-option input[type="checkbox"] {
+	box-sizing: border-box;
+	position: relative;
+	flex: none;
+	width: 44px;
+	min-width: 44px;
+	height: 24px;
+	margin: 0;
+	background: #ededf1;
+	border: 0;
+	border-radius: 12px;
+	box-shadow: none;
+	transition: background-color 0.15s;
+}
+
+.tiny-option input[type="checkbox"]:before,
+.tiny-option input[type="checkbox"]:checked:before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	float: none;
+	width: 20px;
+	height: 20px;
+	margin: 0;
+	background: #fff;
+	border-radius: 50%;
+	box-shadow: 0 1px 2px rgba(18, 20, 29, 0.06);
+	transition: transform 0.15s;
+}
+
+.tiny-option input[type="checkbox"]:checked {
+	background: var(--wp-admin-theme-color, #2271b1);
+}
+
+.tiny-option input[type="checkbox"]:checked:before {
+	transform: translateX(20px);
+}
+
+/* Radio button, drawn over WordPress' own radio styles. */
+.tiny-option input[type="radio"] {
+	box-sizing: border-box;
+	flex: none;
+	width: 20px;
+	min-width: 20px;
+	height: 20px;
+	margin: 2px 0 0;
+	background: #fff;
+	border: 1px solid #b8b8c1;
+	border-radius: 50%;
+	box-shadow: none;
+}
+
+.tiny-option input[type="radio"]:checked {
+	background: var(--wp-admin-theme-color, #2271b1);
+	border-color: var(--wp-admin-theme-color, #2271b1);
+}
+
+.tiny-option input[type="radio"]:checked:before {
+	content: "";
+	display: block;
+	float: none;
+	width: 8px;
+	height: 8px;
+	margin: 5px;
+	text-indent: 0;
+	background: #fff;
+	border-radius: 50%;
+}
+
+.tiny-option input[type="checkbox"]:focus,
+.tiny-option input[type="radio"]:focus {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wp-admin-theme-color, #2271b1);
+	outline: 2px solid transparent;
+}
+
+.tiny-format-options {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-left: 52px;
+}
+
+.tiny-format-options[hidden] {
+	display: none;
+}
+
+.tiny-option-group {
+	margin: 0;
+	color: #12141d;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+.tiny-format-note {
+	margin: 0;
+	color: #5b5b67;
+	font-size: 14px;
+	line-height: 20px;
 }

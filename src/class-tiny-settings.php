@@ -227,18 +227,27 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
-	public function has_api_key() {
-		$api_key = $this->get_api_key();
-		if ( empty( $api_key ) ) {
+	protected function clear_api_key_pending() {
+		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
+	}
+
+	/**
+	 * Whether the API key of a new account still waits for its email to be
+	 * confirmed. While pending, asks the API and clears it once the key works.
+	 *
+	 * @return bool
+	 */
+	public function is_api_key_pending() {
+		if ( ! $this->get_api_key_pending() ) {
 			return false;
 		}
 
-		$pending_key = $this->get_api_key_pending();
-		return ! empty( $pending_key );
-	}
+		if ( $this->compressor->get_status()->ok ) {
+			$this->clear_api_key_pending();
+			return false;
+		}
 
-	protected function clear_api_key_pending() {
-		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
+		return true;
 	}
 
 	protected static function get_intermediate_size( $size ) {
@@ -865,6 +874,17 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
+	/**
+	 * Renders the form to create a Tinify account or to connect one with an API key.
+	 */
+	public function render_account_connect() {
+		$can_create_key = $this->get_compressor()->can_create_key();
+		$user           = wp_get_current_user();
+		$name           = trim( $user->user_firstname . ' ' . $user->user_lastname );
+		$email          = trim( $user->user_email );
+		include __DIR__ . '/views/account-status-connect.php';
+	}
+
 	public function render_pending_status() {
 		$key = $this->get_api_key();
 		if ( empty( $key ) ) {
@@ -914,6 +934,8 @@ class Tiny_Settings extends Tiny_WP_Base {
 			}
 
 			try {
+				$name       = sanitize_text_field( wp_unslash( $_POST['name'] ) );
+				$email      = sanitize_email( wp_unslash( $_POST['email'] ) );
 				$site       = str_replace(
 					array( 'http://', 'https://' ),
 					'',
@@ -921,18 +943,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 				);
 				$identifier = 'WordPress plugin for ' . $site;
 				$link       = $this->get_absolute_url();
-				$compressor->create_key(
-					sanitize_email( wp_unslash( $_POST['email'] ) ),
-					array(
-						'name'       => sanitize_text_field( wp_unslash( $_POST['name'] ) ),
-						'identifier' => $identifier,
-						'link'       => $link,
-					)
+				$options    = array(
+					'name'       => $name,
+					'identifier' => $identifier,
 				);
+				$compressor->create_key( $email, $options );
 
 				update_option( self::get_prefixed_name( 'api_key_pending' ), true );
 				update_option( self::get_prefixed_name( 'api_key' ), $compressor->get_key() );
 				update_option( self::get_prefixed_name( 'status' ), 0 );
+				update_option( self::get_prefixed_name( 'email_address' ), $email );
 
 				$status = (object) array(
 					'ok'      => true,
@@ -1030,7 +1050,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	/**
 	 * @return bool true if apache with mod_rewrite loaded
 	 */
-	private static function can_render_delivery_method() {
+	public static function can_render_delivery_method() {
 		global $is_apache;
 		if ( ! $is_apache ) {
 			return false;

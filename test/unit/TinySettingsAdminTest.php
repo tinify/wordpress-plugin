@@ -508,7 +508,5 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		$this->subject->render_delivery_method();
 		$output = ob_get_clean();
 		$this->assertStringContainsString( 'Conversion delivery', $output );
-
-
 	}
 }

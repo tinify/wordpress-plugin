@@ -136,19 +136,92 @@
   }
 
   /**
-   * Does nothing outside of onboarding
-   * If key is active, shows continue button
+   * Creates an account or connects an API key from the account connect view,
+   * then opens the onboarding step in the page's data-create-key-next or
+   * data-update-key-next. A failure is shown under the field it is about.
    */
-  function updateOnboardingContinue() {
-    const button = jQuery('#tiny-onboarding-continue');
-    if (!button.length) {
+  async function submitAccountConnect(event) {
+    event.preventDefault();
+
+    const button = event.target;
+    const column = button.closest('.tiny-account-connect-column');
+    const spinner = column.querySelector('.spinner');
+    const action = button.dataset.tinyAction === 'create-key' ? 'create' : 'update';
+    const name = document.querySelector('#tinypng_api_key_name')?.value ?? '';
+    const email = document.querySelector('#tinypng_api_key_email')?.value ?? '';
+    const key = document.querySelector('#tinypng_api_key').value;
+    let field;
+
+    if (action === 'update') {
+      field = document.querySelector('#tinypng_api_key').closest('.tiny-field');
+    } else if (!name) {
+      // The server only rejects the name when it is missing.
+      field = document.querySelector('#tinypng_api_key_name').closest('.tiny-field');
+    } else {
+      field = document.querySelector('#tinypng_api_key_email').closest('.tiny-field');
+    }
+
+    column.querySelectorAll('.tiny-field').forEach((f) => f.classList.remove('tiny-field-invalid'));
+
+    // The server saves a blank key as "no key", which is not a connection.
+    if (action === 'update' && !key) {
+      field.classList.add('tiny-field-invalid');
       return;
     }
 
-    const status = jQuery('#tiny-account-status p.status').closest('div.status');
-    const valid = status.hasClass('status-success') || status.hasClass('status-pending');
+    const showError = (message) => {
+      button.disabled = false;
+      spinner.classList.remove('is-active');
+      // The API key field keeps the invalid key message from the view.
+      if (action === 'create') {
+        field.querySelector('.tiny-field-error').textContent = message;
+      }
+      field.classList.add('tiny-field-invalid');
+    };
 
-    button.toggle(valid);
+    button.disabled = true;
+    spinner.classList.add('is-active');
+
+    try {
+      const response = await fetch(ajaxurl, {
+        method: 'POST',
+        body: new URLSearchParams({
+          _nonce: tinyCompress.nonce,
+          action: `tiny_settings_${action}_api_key`,
+          key,
+          name,
+          email,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      const status = await response.json();
+      if (status.ok) {
+        window.location.href = document.querySelector('.tiny-onboarding').dataset[`${action}KeyNext`];
+      } else {
+        showError(status.message);
+      }
+    } catch (err) {
+      showError('Something went wrong, try again soon');
+    }
+  }
+
+  /**
+   * Opens the next onboarding step once the account is activated from the email.
+   * The account status markup has status-success once the key works.
+   */
+  async function continueWhenActivated() {
+    const separator = ajaxurl.includes('?') ? '&' : '?';
+    try {
+      const html = await fetch(`${ajaxurl}${separator}action=tiny_account_status`).then(r => r.text());
+      const status = new DOMParser().parseFromString(html, 'text/html');
+      if (status.querySelector('.status-success')) {
+        window.location.href = document.querySelector('.tiny-onboarding').dataset.activatedNext;
+      }
+    } finally {
+      setTimeout(continueWhenActivated, 5000);
+    }
   }
 
   function submitKey(event) {
@@ -191,8 +264,6 @@
             jQuery.get(ajaxurl + (ajaxurl.indexOf( '?' ) > 0 ? '&' : '?') + 'action=tiny_account_status', function(data) {
               jQuery(event.target).attr({disabled: false}).removeClass('loading');
               target.replaceWith(data);
-              // The refreshed markup reports whether the key actually works.
-              updateOnboardingContinue();
             });
           }
           jQuery('div.tiny-notice[data-name="setting"]').remove();
@@ -331,17 +402,23 @@
     eventOn('click', 'button.tiny-compress', compressImage);
     break;
   case 'settings_page_tiny-onboarding-1':
-    changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]');
-    changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]');
+    changeEnterKeyTarget('#tinypng_api_key_name, #tinypng_api_key_email', '[data-tiny-action=create-key]');
+    changeEnterKeyTarget('#tinypng_api_key', '[data-tiny-action=update-key]');
 
-    eventOn('click', '[data-tiny-action=create-key]', submitKey);
-    eventOn('click', '[data-tiny-action=update-key]', submitKey);
-    
-    updateOnboardingContinue();
+    eventOn('click', '[data-tiny-action=create-key]', submitAccountConnect);
+    eventOn('click', '[data-tiny-action=update-key]', submitAccountConnect);
+    break;
+  case 'settings_page_tiny-onboarding-2':
+    setTimeout(continueWhenActivated, 5000);
+    break;
+  case 'settings_page_tiny-onboarding-3':
+    eventOn('change', '#tiny-convert', (event) => {
+      document.querySelector('#tiny-format-options').hidden = !event.target.checked;
+    });
     break;
   case 'settings_page_tinify':
-    changeEnterKeyTarget('div.tiny-account-status create', '[data-tiny-action=create-key]');
-    changeEnterKeyTarget('div.tiny-account-status update', '[data-tiny-action=update-key]');
+    changeEnterKeyTarget('div.tiny-account-status div.create', '[data-tiny-action=create-key]');
+    changeEnterKeyTarget('div.tiny-account-status div.update', '[data-tiny-action=update-key]');
 
     eventOn('click', '[data-tiny-action=create-key]', submitKey);
     eventOn('click', '[data-tiny-action=update-key]', submitKey);
