@@ -50,7 +50,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		$this->settings = $settings;
 	}
 
-	function admin_init() {
+	public function admin_init() {
 		add_action(
 			'admin_post_tiny_onboarding_save_settings',
 			$this->get_method( 'save_settings' )
@@ -111,7 +111,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		add_action( 'load-' . $hook, $this->get_method( 'set_page_title' ) );
 	}
 
-	function admin_menu() {
+	public function admin_menu() {
 		$this->page_title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
 
 		$this->add_sub_menu( 1 );
@@ -134,7 +134,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 *
 	 * @return boolean true if onboarded
 	 */
-	function is_onboarded() {
+	private function is_onboarded() {
 		$onboarding_status_field = self::get_prefixed_name( 'onboarding_status' );
 		return 1 === (int) get_option( $onboarding_status_field, 1 );
 	}
@@ -177,7 +177,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 *
 	 * @param int $is_onboarded status
 	 */
-	static function set_is_onboarded( $is_onboarded ) {
+	public static function set_is_onboarded( $is_onboarded ) {
 		$onboarding_status_field = self::get_prefixed_name( 'onboarding_status' );
 		return update_option( $onboarding_status_field, $is_onboarded );
 	}
@@ -252,7 +252,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 * A site that already has a key, or that has compressed before, keeps the
 	 * default onboarded state so it is never sent through onboarding again.
 	 */
-	static function on_activate() {
+	public static function on_activate() {
 		$api_key           = get_option( self::get_prefixed_name( 'api_key' ) );
 		$compression_count = get_option( self::get_prefixed_name( 'status' ) );
 
