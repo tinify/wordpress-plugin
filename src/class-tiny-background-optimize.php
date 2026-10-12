@@ -21,7 +21,6 @@
 /**
  * Optimizes attachments in the background.
  *
- * Starts a worker through a remote
  */
 class Tiny_Background_Optimize extends Tiny_WP_Base {
 
@@ -119,7 +118,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 *
 	 * @return bool
 	 */
-	public function has_lookback_support() {
+	public function loopback() {
 		$response = $this->post_to_admin_ajax(
 			array(
 				'action' => self::PING_ACTION,
@@ -177,7 +176,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			return false;
 		}
 
-		$this->task( $id );
+		$this->optimize_attachment( $id );
 		return true;
 	}
 
@@ -250,10 +249,10 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 				'worker starting task',
 				array(
 					'attachment_id' => $id,
-					'worker_nr'     => $worker,
+					'worker_number'     => $worker,
 				)
 			);
-			$this->task( $id );
+			$this->optimize_attachment( $id );
 			$this->start_worker( $worker );
 			$this->start_workers();
 		} else {
@@ -402,7 +401,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 *
 	 * @param int $id Attachment ID.
 	 */
-	private function task( $id ) {
+	private function optimize_attachment( $id ) {
 		$claimed = update_post_meta(
 			$id,
 			self::META_KEY_STATUS,
@@ -454,7 +453,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		Tiny_Logger::debug(
 			'compress from background queue',
 			array(
-				'image_id' => $id,
+				'attachment_id' => $id,
 			)
 		);
 

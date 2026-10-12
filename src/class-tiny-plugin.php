@@ -688,7 +688,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$ids   = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
 
-		$has_loopback = $this->background_optimizer->has_lookback_support();
+		$has_loopback = $this->background_optimizer->loopback();
 		if ( $has_loopback ) {
 			// if loopback is supported, will optimize in background
 			$this->background_optimizer->start( $ids );
