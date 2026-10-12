@@ -1,10 +1,18 @@
 import { Page, expect, test } from '@playwright/test';
-import { clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setConversionSettings, uploadMedia } from './utils';
+import { BASE_URL, clearMediaLibrary, enableCompressionSizes, getWPVersion, setAPIKey, setCompressionTiming, setConversionSettings, uploadImages, uploadMedia } from './utils';
 
 test.describe.configure({ mode: 'serial' });
 
 let page: Page;
 let WPVersion = 0;
+
+/** Server side behaviour, faked with cookies read by test/fixtures/class-tiny-config.php. */
+interface BulkBehaviour {
+  /** Whether the site can send requests to itself. Defaults to false. */
+  loopbackSupported?: boolean;
+  /** Seconds it takes to optimize one image. Defaults to 0.1. */
+  compressionDuration?: number;
+}
 
 test.describe('bulkoptimization', () => {
   test.beforeAll(async ({ browser }) => {
@@ -17,14 +25,28 @@ test.describe('bulkoptimization', () => {
 
   test.beforeEach(async () => {
     await clearMediaLibrary(page);
+    // Cookies read by test/fixtures/class-tiny-config.php.
+    await page.context().clearCookies({ name: /^tiny_test_/ });
   });
+
+  async function setBulkBehaviour(currentPage: Page, { loopbackSupported = false, compressionDuration = 0.1 }: BulkBehaviour) {
+    await currentPage.context().addCookies([{
+      name: 'tiny_test_slow_compression',
+      value: compressionDuration.toString(),
+      url: BASE_URL,
+    }, {
+      name: 'tiny_test_no_loopback',
+      value: loopbackSupported ? '0' : '1',
+      url: BASE_URL,
+    }]);
+  }
 
   test('display upgrade button for account with insufficient credits', async () => {
     await setAPIKey(page, 'INSUFFICIENTCREDITS123');
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
 
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -37,7 +59,7 @@ test.describe('bulkoptimization', () => {
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
 
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -50,7 +72,7 @@ test.describe('bulkoptimization', () => {
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
 
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -64,7 +86,7 @@ test.describe('bulkoptimization', () => {
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
 
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -106,6 +128,7 @@ test.describe('bulkoptimization', () => {
 
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');
+    await setBulkBehaviour(page, { loopbackSupported: true });
 
     await enableCompressionSizes(page, []);
     await uploadMedia(page, 'input-example.jpg');
@@ -128,13 +151,13 @@ test.describe('bulkoptimization', () => {
     await setCompressionTiming(page, 'auto');
 
     await enableCompressionSizes(page, []);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await enableCompressionSizes(page, ['0']);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -157,13 +180,13 @@ test.describe('bulkoptimization', () => {
     await setCompressionTiming(page, 'auto');
 
     await enableCompressionSizes(page, []);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await enableCompressionSizes(page, ['0']);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg');
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -172,7 +195,59 @@ test.describe('bulkoptimization', () => {
 
     await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
 
+    await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
     await expect(page.locator('#compression-progress-bar')).toHaveText('9 / 9 (100%)');
+  });
+
+  test('background optimization continues when page is refreshed', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
+    await setBulkBehaviour(page, { loopbackSupported: true, compressionDuration: 10 });
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
+    await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
+
+    await page.reload();
+
+    await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
+    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)', { timeout: 15000 });
+  });
+
+  test('cancel will clear the queue', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 6, { generateSizes: false });
+    await setBulkBehaviour(page, { loopbackSupported: false, compressionDuration: 5 });
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
+    await expect(page.locator('.optimization-buttons_notice')).toContainText('keep this page open');
+
+    await page.locator('#id-optimizing').hover({ force: true });
+    await page.locator('#id-cancel').click();
+
+    // Images that were being compressed finish, the others are cancelled.
+    await expect(page.locator('#bulk-optimization-actions')).toBeHidden({ timeout: 15000 });
+    await expect(page.locator('[data-status="cancelled"]').first()).toHaveText('Cancelled');
+    await expect(page.getByText('All images are processed')).not.toBeVisible();
+  });
+
+  test('stop when the account runs out of credits', async () => {
+    await setAPIKey(page, 'LIMIT123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 6, { generateSizes: false });
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
+
+    // The first image to hit the limit takes the rest off the queue.
+    await expect(page.getByText('Optimization stopped early.')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('[data-status="cancelled"]').first()).toHaveText('Stopped');
   });
 
   test('should display tooltips', async () => {
@@ -188,12 +263,12 @@ test.describe('bulkoptimization', () => {
     // upload 1 image and automaticly compress it, but not convert it yet
     await setCompressionTiming(page, 'auto');
     await setConversionSettings(page, { convert: false });
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
 
     // turn on convert and set to manual compression, upload another image
     await setCompressionTiming(page, 'manual');
     await setConversionSettings(page, { convert: true });
-    await uploadMedia(page, 'input-example.jpg');
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
 
     // apply bulk optimization
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
