@@ -121,6 +121,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		add_action(
+			'wp_ajax_tiny_bulk_queue_optimize_next',
+			$this->get_method( 'ajax_bulk_queue_optimize_next' )
+		);
+
+		add_action(
 			'wp_ajax_tiny_get_optimization_statistics',
 			$this->get_method( 'ajax_optimization_statistics' )
 		);
@@ -355,6 +360,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				),
 				'L10nStoppedNotice'      => __(
 					'Optimization stopped early.',
+					'tiny-compress-images'
+				),
+				'L10nInPageNotice'       => __(
+					// phpcs:ignore Generic.Files.LineLength
+					'For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!',
 					'tiny-compress-images'
 				),
 			)
@@ -672,14 +682,36 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		/* A run that is still going is followed, not restarted. */
 		if ( $this->background_optimizer->is_running() ) {
-			wp_send_json_success();
+			wp_send_json_success( array( 'background' => true ) );
 		}
 
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$ids   = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
-		$this->background_optimizer->start( $ids );
 
-		wp_send_json_success();
+		$has_loopback = $this->background_optimizer->has_lookback_support();
+		if ( $has_loopback ) {
+			// if loopback is supported, will optimize in background
+			$this->background_optimizer->start( $ids );
+		} else {
+			// if not, waits for request from front-end
+			$this->background_optimizer->queue( $ids );
+		}
+
+		wp_send_json_success( array( 'background' => $has_loopback ) );
+	}
+
+	/**
+	 * Optimize the next queued image
+	 */
+	public function ajax_bulk_queue_optimize_next() {
+		check_ajax_referer( 'tiny-compress', '_nonce' );
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_die( -1, 403 );
+		}
+
+		wp_send_json_success(
+			array( 'optimized' => $this->background_optimizer->optimize_next() )
+		);
 	}
 
 	/**

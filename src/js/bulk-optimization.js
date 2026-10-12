@@ -1,8 +1,10 @@
 (function() {
   const POLL_INTERVAL = 2000;
   const POLL_WINDOW = 10;
+  const PAGE_WORKERS = 5;
   let pending = [];
   let stoppedEarly = false;
+  let pageWorkers = 0;
 
   function updateProgressBar(successFullCompressions) {
     var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
@@ -128,13 +130,14 @@
       current_size: window.currentLibraryBytes
     }, function(response) {
       const data = response.data;
+      const running = data.running || pageWorkers > 0;
       let finished = 0;
       const waiting = batch.filter(function(i) {
         const item = data.items[items[i].ID] || {};
         if (item.status === 'done' || item.status === 'failed') {
           bulkOptimizationCallback(item.result, items, i);
           finished++;
-        } else if (data.running && (item.status === 'queued' || item.status === 'processing')) {
+        } else if (running && (item.status === 'queued' || item.status === 'processing')) {
           return true;
         } else {
           // Unless this page cancelled, the run ended because every worker stopped.
@@ -146,7 +149,7 @@
       });
       pending = waiting.concat(pending.slice(batch.length));
 
-      if (pending.length > 0 && (data.running || finished > 0)) {
+      if (pending.length > 0 && (running || finished > 0)) {
         setTimeout(pollStatus, POLL_INTERVAL, items);
       } else if (window.optimizationCancelled) {
         finishOptimization(null);
@@ -158,6 +161,29 @@
         finishOptimization(tinyCompress.L10nInternalError);
       } else {
         setTimeout(pollStatus, POLL_INTERVAL, items);
+      }
+    });
+  }
+
+  /**
+   * When the page cannot reach itself (loopbacks are not supported),
+   * the page works through the queue one image per request until none are left
+   */
+  function optimizeInPage() {
+    jQuery.post(ajaxurl, {
+      _nonce: tinyCompress.nonce,
+      action: 'tiny_bulk_queue_optimize_next'
+    }, function(response) {
+      if (response.data.optimized) {
+        optimizeInPage();
+      } else {
+        pageWorkers--;
+      }
+    }, 'json').fail(function(xhr) {
+      if (xhr.status === 403) {
+        pageWorkers--;
+      } else {
+        setTimeout(optimizeInPage, POLL_INTERVAL);
       }
     });
   }
@@ -177,13 +203,14 @@
     pending = items.map(function(item, i) { return i; });
     stoppedEarly = false;
 
+    const notice = jQuery('div#bulk-optimization-actions p.optimization-buttons_notice');
     jQuery('div#bulk-optimization-actions input').removeClass('visible');
-    jQuery('div#bulk-optimization-actions p.optimization-buttons_notice').text(tinyCompress.L10nBackgroundNotice);
     jQuery('div.progress').css('animation', 'progress-bar 80s linear infinite');
     jQuery('div#optimization-spinner').css('display', 'inline-block');
     updateProgressBar(0);
 
     if (running) {
+      notice.text(tinyCompress.L10nBackgroundNotice);
       jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
       pollStatus(items);
       return;
@@ -192,7 +219,16 @@
     jQuery.post(ajaxurl, {
       _nonce: tinyCompress.nonce,
       action: 'tiny_bulk_queue_start'
-    }, function() {
+    }, function(response) {
+      if (response.data.background) {
+        notice.text(tinyCompress.L10nBackgroundNotice);
+      } else {
+        notice.text(tinyCompress.L10nInPageNotice);
+        for (let i = 0; i < PAGE_WORKERS; i++) {
+          pageWorkers++;
+          optimizeInPage();
+        }
+      }
       jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
       pollStatus(items);
     }, 'json').fail(function() {

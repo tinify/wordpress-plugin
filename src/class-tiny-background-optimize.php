@@ -49,6 +49,9 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	/* AJAX action of a worker. */
 	const WORKER_ACTION = 'tiny_bulk_queue_work';
 
+	/* AJAX action that only answers, to test whether workers can reach this site. */
+	const PING_ACTION = 'tiny_bulk_queue_ping';
+
 	/* Transient per worker, set each time it starts on an attachment. */
 	const WORKER_TRANSIENT = 'tiny_bulk_queue_worker_';
 
@@ -72,16 +75,28 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 	public function ajax_init() {
 		add_action( 'wp_ajax_' . self::WORKER_ACTION, $this->get_method( 'work' ) );
+		add_action( 'wp_ajax_' . self::PING_ACTION, $this->get_method( 'ping' ) );
 	}
 
 	/**
-	 * Queue attachments and start working through them.
+	 * Queue attachments and start workers on them.
+	 *
+	 * @param int[] $ids Attachments to optimize.
+	 */
+	public function start( array $ids ) {
+		$this->queue( $ids );
+		$this->start_workers();
+	}
+
+	/**
+	 * Queue attachments without starting workers, for when the bulk
+	 * optimization page works through them itself.
 	 *
 	 * Whatever an earlier run left behind is forgotten first.
 	 *
 	 * @param int[] $ids Attachments to optimize.
 	 */
-	public function start( array $ids ) {
+	public function queue( array $ids ) {
 		delete_post_meta_by_key( self::META_KEY_STATUS );
 		delete_post_meta_by_key( self::META_KEY_RESULT );
 
@@ -94,8 +109,76 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
 			delete_transient( self::WORKER_TRANSIENT . $worker );
 		}
+	}
 
-		$this->start_workers();
+	/**
+	 * Will check if loopback is supported.
+	 * 
+	 * To perform background compression, a site needs to be able
+	 * to do a remote request to itself. 
+	 *
+	 * @return bool
+	 */
+	public function has_lookback_support() {
+		$response = $this->post_to_admin_ajax(
+			array(
+				'action' => self::PING_ACTION,
+				'nonce'  => wp_create_nonce( self::PING_ACTION ),
+			),
+			array(
+				'timeout'     => 10,
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			Tiny_Logger::error(
+				'loopback request failed',
+				array(
+					'error' => $response->get_error_message(),
+				)
+			);
+			return false;
+		}
+
+		$code = intval( wp_remote_retrieve_response_code( $response ) );
+		$body = wp_remote_retrieve_body( $response );
+		$json = json_decode( $body, true );
+		if ( 200 !== $code || ! isset( $json['success'] ) || true !== $json['success'] ) {
+			Tiny_Logger::error(
+				'loopback request failed',
+				array(
+					'status' => $code,
+					'body'   => substr( $body, 0, 200 ),
+				)
+			);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Answer the request that tests whether workers can reach this site.
+	 */
+	public function ping() {
+		check_ajax_referer( self::PING_ACTION, 'nonce' );
+		wp_send_json_success();
+	}
+
+	/**
+	 * Optimize the next queued attachment, for when the bulk optimization
+	 * page works through the queue itself.
+	 *
+	 * @return bool Whether there was one.
+	 */
+	public function optimize_next() {
+		$id = $this->next_queued();
+		if ( ! $id ) {
+			return false;
+		}
+
+		$this->task( $id );
+		return true;
 	}
 
 	/**
@@ -229,30 +312,18 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			)
 		);
 		set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
-		$args = array(
-			'timeout'   => 0.01,
-			'blocking'  => false,
-			'body'      => array(
+
+		$remote_request_result = $this->post_to_admin_ajax(
+			array(
 				'action' => self::WORKER_ACTION,
 				'nonce'  => wp_create_nonce( self::WORKER_ACTION ),
 				'worker' => $worker,
 			),
-			'cookies'   => isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array(),
-			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+			array(
+				'timeout'  => 0.01,
+				'blocking' => false,
+			)
 		);
-
-		$remote_request_result = null;
-		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
-			$remote_request_result = wp_remote_post(
-				getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php',
-				$args
-			);
-		} else {
-			$remote_request_result = wp_remote_post(
-				admin_url( 'admin-ajax.php' ),
-				$args
-			);
-		}
 
 		if ( is_wp_error( $remote_request_result ) ) {
 			Tiny_Logger::error(
@@ -263,6 +334,26 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Send a request to this site's admin-ajax.php as the current user.
+	 *
+	 * @param array $body Request body.
+	 * @param array $args Arguments for wp_remote_post() besides the body,
+	 *                    cookies and SSL verification.
+	 * @return array|WP_Error
+	 */
+	private function post_to_admin_ajax( array $body, array $args ) {
+		$args['body']      = $body;
+		$args['cookies']   = isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array();
+		$args['sslverify'] = apply_filters( 'https_local_ssl_verify', false );
+
+		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
+			return wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
+		}
+
+		return wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
 	}
 
 	/**
