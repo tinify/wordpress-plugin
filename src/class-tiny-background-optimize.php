@@ -112,9 +112,9 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 	/**
 	 * Will check if loopback is supported.
-	 * 
+	 *
 	 * To perform background compression, a site needs to be able
-	 * to do a remote request to itself. 
+	 * to do a remote request to itself.
 	 *
 	 * @return bool
 	 */
@@ -250,7 +250,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 				'worker starting task',
 				array(
 					'attachment_id' => $id,
-					'worker_number'     => $worker,
+					'worker_number' => $worker,
 				)
 			);
 			$this->optimize_attachment( $id );

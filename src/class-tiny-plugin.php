@@ -675,8 +675,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * queues them for optimization
 	 */
 	public function ajax_bulk_queue_start() {
-		check_ajax_referer( 'tiny-compress', '_nonce' );
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
 			wp_die( -1, 403 );
 		}
 
@@ -704,8 +705,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * Optimize the next queued image
 	 */
 	public function ajax_bulk_queue_optimize_next() {
-		check_ajax_referer( 'tiny-compress', '_nonce' );
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
 			wp_die( -1, 403 );
 		}
 
@@ -721,8 +723,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * compresses an image itself, so it can show them the same way.
 	 */
 	public function ajax_bulk_queue_status() {
-		check_ajax_referer( 'tiny-compress', '_nonce' );
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
 			wp_die( -1, 403 );
 		}
 
@@ -769,8 +772,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function ajax_bulk_queue_cancel() {
-		check_ajax_referer( 'tiny-compress', '_nonce' );
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
 			wp_die( -1, 403 );
 		}
 
