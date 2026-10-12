@@ -126,6 +126,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			),
 			array(
 				'timeout'     => 10,
+				'redirection' => 0,
 			)
 		);
 
