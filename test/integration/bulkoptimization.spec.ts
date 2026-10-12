@@ -227,7 +227,8 @@ test.describe('bulkoptimization', () => {
     await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
     await expect(page.locator('.optimization-buttons_notice')).toContainText('keep this page open');
 
-    await page.locator('#id-optimizing').hover({ force: true });
+    // The cursor still rests where Start was clicked, so Optimizing can already have turned into Cancel.
+    await page.locator('#id-optimizing, #id-cancel').filter({ visible: true }).hover();
     await page.locator('#id-cancel').click();
 
     // Images that were being compressed finish, the others are cancelled.
