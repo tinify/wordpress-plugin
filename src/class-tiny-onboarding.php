@@ -65,9 +65,6 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		if ( self::is_bulk_activation() ) {
 			return;
 		}
-
-		wp_safe_redirect( $this->get_step_url( 1 ) );
-		exit();
 	}
 
 	/**
