@@ -795,7 +795,6 @@ fieldset.tinypng_convert_fields[disabled] {
 .tiny-option-text {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
 	color: var(--tiny-text-secondary);
 	font-size: 16px;
 	line-height: 24px;
@@ -806,7 +805,6 @@ fieldset.tinypng_convert_fields[disabled] {
 	font-weight: 500;
 }
 
-/* Toggle switch, drawn over WordPress' own checkbox styles. */
 .tiny-option input[type="checkbox"] {
 	box-sizing: border-box;
 	position: relative;
@@ -814,7 +812,7 @@ fieldset.tinypng_convert_fields[disabled] {
 	width: 44px;
 	min-width: 44px;
 	height: 24px;
-	margin: 0;
+	margin: 4px 0;
 	background: var(--tiny-surface-subtle);
 	border: 0;
 	border-radius: 12px;

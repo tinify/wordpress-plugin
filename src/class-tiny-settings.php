@@ -219,7 +219,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
-	protected function get_api_key_pending() {
+	public function get_api_key_pending() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return false;
 		} else {
@@ -229,25 +229,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	protected function clear_api_key_pending() {
 		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
-	}
-
-	/**
-	 * Whether the API key of a new account still waits for its email to be
-	 * confirmed. While pending, asks the API and clears it once the key works.
-	 *
-	 * @return bool
-	 */
-	public function is_api_key_pending() {
-		if ( ! $this->get_api_key_pending() ) {
-			return false;
-		}
-
-		if ( $this->compressor->get_status()->ok ) {
-			$this->clear_api_key_pending();
-			return false;
-		}
-
-		return true;
 	}
 
 	protected static function get_intermediate_size( $size ) {
@@ -883,6 +864,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$name           = trim( $user->user_firstname . ' ' . $user->user_lastname );
 		$email          = trim( $user->user_email );
 		include __DIR__ . '/views/account-status-connect.php';
+	}
+
+	/**
+	 * Renders the switch for WebP or AVIF versions, with the format and the delivery to use.
+	 * Server rules are recommended, so they are selected when Apache can rewrite and
+	 * no delivery was chosen yet.
+	 */
+	public function render_modern_formats() {
+		$convert      = $this->get_conversion_enabled();
+		$convert_to   = self::get_convert_format_option( 'convert_to', 'smallest' );
+		$server_rules = self::can_render_delivery_method();
+		$delivery     = self::get_convert_format_option(
+			'delivery_method',
+			$server_rules ? 'htaccess' : 'picture'
+		);
+		include __DIR__ . '/views/settings-modern-formats.php';
 	}
 
 	public function render_pending_status() {
