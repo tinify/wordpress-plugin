@@ -373,7 +373,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	/**
 	 * Send a request to this site's admin-ajax.php as the current user.
 	 *
-	 * WordPress sents it's own loopback requests with all the cookies 
+	 * WordPress sents it's own loopback requests with all the cookies.
 	 * SSL is only verified when https_local_ssl_verify says so.
 	 *
 	 * @param array $body Request body.
