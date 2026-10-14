@@ -486,13 +486,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 		$tiny_image = new Tiny_Image( $this->settings, $id );
 
-		Tiny_Logger::debug(
-			'compress from background queue',
-			array(
-				'attachment_id' => $id,
-			)
-		);
-
 		$result = $tiny_image->compress();
 		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
