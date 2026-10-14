@@ -266,7 +266,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		/*
 		 * returns the response to the client
 		 * and allows this process to continue in an async way
-		 * 
+		 *
 		 * @see wp-cron.php
 		 */
 		if ( function_exists( 'fastcgi_finish_request' ) ) {
