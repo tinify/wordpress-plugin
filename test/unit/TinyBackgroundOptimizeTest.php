@@ -19,6 +19,7 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 			'delete_post_meta_by_key',
 			'wp_create_nonce',
 			'admin_url',
+			'wp_unslash',
 			'wp_remote_post',
 			'is_wp_error',
 			'wp_die',
@@ -44,6 +45,9 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 		} );
 		$this->wp->stub( 'admin_url', function ( $path ) {
 			return 'http://localhost/wp-admin/' . $path;
+		} );
+		$this->wp->stub( 'wp_unslash', function ( $value ) {
+			return array_map( 'stripslashes', $value );
 		} );
 		$this->wp->stub( 'wp_remote_post', function ( $url, $args ) {
 			$this->requests[] = $args + array(
@@ -174,6 +178,29 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 		$this->assertFalse( $request['blocking'] );
 		// worker runs as the user who started it
 		$this->assertEquals( $_COOKIE, $request['cookies'] );
+	}
+
+	public function test_worker_request_sends_cookies_without_the_slashes_wordpress_adds() {
+		$_COOKIE = array( 'preferences' => '{\"theme\":\"dark\"}' );
+
+		$this->subject->start( array( 7 ) );
+
+		$this->assertEquals( array( 'preferences' => '{"theme":"dark"}' ), $this->requests[0]['cookies'] );
+	}
+
+	public function test_clear_deletes_queue_results_and_workers_state() {
+		$this->activate_workers( array( 1, 2, 3, 4, 5 ) );
+
+		Tiny_Background_Optimize::clear();
+
+		$this->assertEquals(
+			array(
+				array( Tiny_Background_Optimize::META_KEY_STATUS ),
+				array( Tiny_Background_Optimize::META_KEY_RESULT ),
+			),
+			$this->wp->getCalls( 'delete_post_meta_by_key' )
+		);
+		$this->assertEquals( 0, $this->count_active_workers() );
 	}
 
 	public function test_work_optimizes_attachment_and_starts_next_worker() {
