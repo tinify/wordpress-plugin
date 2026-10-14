@@ -346,21 +346,22 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	/**
 	 * Send a request to this site's admin-ajax.php as the current user.
 	 *
+	 * WordPress sents it's own loopback requests with all the cookies 
+	 * SSL is only verified when https_local_ssl_verify says so.
+	 *
 	 * @param array $body Request body.
 	 * @param array $args Arguments for wp_remote_post() besides the body,
 	 *                    cookies and SSL verification.
 	 * @return array|WP_Error
 	 */
 	private function post_to_admin_ajax( array $body, array $args ) {
+		$url = admin_url( 'admin-ajax.php' );
+
 		$args['body']      = $body;
-		$args['cookies']   = isset( $_COOKIE ) && is_array( $_COOKIE ) ? $_COOKIE : array();
-		$args['sslverify'] = apply_filters( 'https_local_ssl_verify', false );
+		$args['cookies']   = wp_unslash( $_COOKIE );
+		$args['sslverify'] = apply_filters( 'https_local_ssl_verify', false, $url );
 
-		if ( getenv( 'WORDPRESS_HOST' ) !== false ) {
-			return wp_remote_post( getenv( 'WORDPRESS_HOST' ) . '/wp-admin/admin-ajax.php', $args );
-		}
-
-		return wp_remote_post( admin_url( 'admin-ajax.php' ), $args );
+		return wp_remote_post( $url, $args );
 	}
 
 	/**
