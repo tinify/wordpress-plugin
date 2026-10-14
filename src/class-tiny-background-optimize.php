@@ -96,15 +96,22 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * @param int[] $ids Attachments to optimize.
 	 */
 	public function queue( array $ids ) {
-		delete_post_meta_by_key( self::META_KEY_STATUS );
-		delete_post_meta_by_key( self::META_KEY_RESULT );
+		self::clear();
 
 		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
 		foreach ( $ids as $id ) {
 			add_post_meta( $id, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
 		}
+	}
 
-		// cleanup workers
+	/**
+	 * Delete everything a run keeps: the queue status and result of every
+	 * attachment, and which workers are active.
+	 */
+	public static function clear() {
+		delete_post_meta_by_key( self::META_KEY_STATUS );
+		delete_post_meta_by_key( self::META_KEY_RESULT );
+
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
 			delete_transient( self::WORKER_TRANSIENT . $worker );
 		}

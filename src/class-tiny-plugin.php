@@ -1085,6 +1085,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 */
 	public static function uninstall() {
 		Tiny_Apache_Rewrite::uninstall_rules();
+		Tiny_Background_Optimize::clear();
 	}
 
 	/**
