@@ -334,6 +334,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * Send the next request for a worker, and mark it active until then.
 	 *
 	 * The worker runs as the user whose request starts it.
+	 *   is non-blocking and will return as soon as possible (0.01s)
 	 *
 	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
