@@ -263,6 +263,18 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 
 		ignore_user_abort( true );
 
+		/*
+		 * returns the response to the client
+		 * and allows this process to continue in an async way
+		 * 
+		 * @see wp-cron.php
+		 */
+		if ( function_exists( 'fastcgi_finish_request' ) ) {
+			fastcgi_finish_request();
+		} elseif ( function_exists( 'litespeed_finish_request' ) ) {
+			litespeed_finish_request();
+		}
+
 		$worker = isset( $_POST['worker'] ) ? intval( $_POST['worker'] ) : 0;
 
 		$id = $this->next_queued();
