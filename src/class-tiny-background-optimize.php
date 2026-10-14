@@ -88,19 +88,33 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Queue attachments without starting workers, for when the bulk
-	 * optimization page works through them itself.
-	 *
-	 * Whatever an earlier run left behind is forgotten first.
+	 * Queue attachments
+	 *   clears previous results first
+	 *   sets status `STATUS_QUEUED` on all given attachments
+	 *   clears cache
 	 *
 	 * @param int[] $ids Attachments to optimize.
 	 */
 	public function queue( array $ids ) {
+		global $wpdb;
 		self::clear();
 
 		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
-		foreach ( $ids as $id ) {
-			add_post_meta( $id, self::META_KEY_STATUS, self::STATUS_QUEUED, true );
+
+		// in batches of 1000 to prevent max_allowed_packets
+		foreach ( array_chunk( $ids, 1000 ) as $chunk ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					"INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value)
+					SELECT ID, %s, %s FROM $wpdb->posts
+					WHERE ID IN (" . implode( ',', array_fill( 0, count( $chunk ), '%d' ) ) . ')',
+					array_merge( array( self::META_KEY_STATUS, self::STATUS_QUEUED ), $chunk )
+				)
+			);
+
+			foreach ( $chunk as $id ) {
+				wp_cache_delete( $id, 'post_meta' );
+			}
 		}
 	}
 
