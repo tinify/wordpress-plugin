@@ -15,7 +15,7 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 	public function set_up() {
 		parent::set_up();
 		$functions = array(
-			'add_post_meta',
+			'wp_cache_delete',
 			'delete_post_meta_by_key',
 			'wp_create_nonce',
 			'admin_url',
@@ -28,6 +28,10 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 			$this->wp->addMethod( $function );
 		}
 
+		/* Queries are kept as the query and its values, unprepared. */
+		$this->wp->stub( 'prepare', function ( $query, $args ) {
+			return array( $query, $args );
+		} );
 		/* The query for the next queued attachment. */
 		$this->wp->stub( 'get_var', function () {
 			$queued = array_keys( $this->statuses, Tiny_Background_Optimize::STATUS_QUEUED, true );
@@ -83,6 +87,15 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 		return $active;
 	}
 
+	/* The attachments each insert query queues. */
+	private function queued_per_query() {
+		$queued = array();
+		foreach ( $this->wp->getCalls( 'query' ) as $call ) {
+			$queued[] = array_slice( $call[0][1], 2 );
+		}
+		return $queued;
+	}
+
 	private function sent_to_workers() {
 		return array_column( array_column( $this->requests, 'body' ), 'worker' );
 	}
@@ -108,7 +121,7 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 	public function test_worker_action_queues_and_starts_workers() {
 		$this->subject->start( array( 7, 8 ) );
 
-		$this->assertEquals( array( 7, 8 ), array_column( $this->wp->getCalls( 'add_post_meta' ), 0 ), 'meta data should be added when queue starts');
+		$this->assertEquals( array( array( 7, 8 ) ), $this->queued_per_query(), 'meta data should be added when queue starts' );
 		$this->assertCount( Tiny_Background_Optimize::WORKERS, $this->requests, 'should have made 5 remote calls on start queue');
 	}
 
@@ -127,12 +140,26 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 	public function test_queue_sets_status_queued_on_attachments() {
 		$this->subject->queue( array( '7', '8', '7' ) );
 
+		$query = $this->wp->getCalls( 'query' )[0][0];
+		$this->assertStringContainsString( 'INSERT INTO wp_postmeta', $query[0] );
+		$this->assertEquals( array( Tiny_Background_Optimize::META_KEY_STATUS, 'queued', 7, 8 ), $query[1] );
+	}
+
+	public function test_queue_inserts_a_thousand_attachments_per_query() {
+		$this->subject->queue( range( 1, 2500 ) );
+
 		$this->assertEquals(
-			array(
-				array( 7, Tiny_Background_Optimize::META_KEY_STATUS, 'queued', true ),
-				array( 8, Tiny_Background_Optimize::META_KEY_STATUS, 'queued', true ),
-			),
-			$this->wp->getCalls( 'add_post_meta' )
+			array( range( 1, 1000 ), range( 1001, 2000 ), range( 2001, 2500 ) ),
+			$this->queued_per_query()
+		);
+	}
+
+	public function test_queue_clears_cached_meta_of_queued_attachments() {
+		$this->subject->queue( array( 7, 8 ) );
+
+		$this->assertEquals(
+			array( array( 7, 'post_meta' ), array( 8, 'post_meta' ) ),
+			$this->wp->getCalls( 'wp_cache_delete' )
 		);
 	}
 
