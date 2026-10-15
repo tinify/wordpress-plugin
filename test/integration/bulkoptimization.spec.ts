@@ -29,6 +29,12 @@ test.describe('bulkoptimization', () => {
     await page.context().clearCookies({ name: /^tiny_test_/ });
   });
 
+  /**
+   * loopbackSupported sets a cookie which redirects to the local admin url so that loopbacks work on docker
+   * compressionDuration decides how long the mock should sleep for compression
+   * 
+   * @see test/fixtures/class-tiny-config.php
+   */
   async function setBulkBehaviour(currentPage: Page, { loopbackSupported = false, compressionDuration = 0.1 }: BulkBehaviour) {
     await currentPage.context().addCookies([{
       name: 'tiny_test_slow_compression',
@@ -187,6 +193,7 @@ test.describe('bulkoptimization', () => {
 
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
     await uploadImages(page, 'input-example.jpg');
+    await setBulkBehaviour(page, { loopbackSupported: true });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
@@ -196,6 +203,31 @@ test.describe('bulkoptimization', () => {
     await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
 
     await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
+    await expect(page.locator('#compression-progress-bar')).toHaveText('9 / 9 (100%)');
+  });
+
+  test('start bulk optimization without loopback should optimize remaining images in the page', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'auto');
+
+    await enableCompressionSizes(page, []);
+    await uploadImages(page, 'input-example.jpg');
+
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg');
+
+    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
+    await uploadImages(page, 'input-example.jpg');
+    await setBulkBehaviour(page, { loopbackSupported: false });
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+
+    await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
+    await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
+
+    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
+
+    await expect(page.locator('.optimization-buttons_notice')).toContainText('keep this page open');
     await expect(page.locator('#compression-progress-bar')).toHaveText('9 / 9 (100%)');
   });
 
