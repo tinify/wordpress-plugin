@@ -100,9 +100,12 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		self::clear();
 
 		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
-		Tiny_Logger::debug('queue images start', array(
-			'image_count' => count( $ids )
-		));
+		Tiny_Logger::debug(
+			'queue images start',
+			array(
+				'image_count' => count( $ids ),
+			)
+		);
 
 		// in batches of 1000 to prevent max_allowed_packets
 		foreach ( array_chunk( $ids, 1000 ) as $chunk ) {
@@ -120,9 +123,12 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			}
 		}
 
-		Tiny_Logger::debug('queue images done', array(
-			'image_count' => count( $ids )
-		));
+		Tiny_Logger::debug(
+			'queue images done',
+			array(
+				'image_count' => count( $ids ),
+			)
+		);
 	}
 
 	/**
@@ -303,9 +309,12 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 				)
 			);
 		} else {
-			Tiny_Logger::debug('worker task finished', array(
-				'worker_number' => $worker
-			));
+			Tiny_Logger::debug(
+				'worker task finished',
+				array(
+					'worker_number' => $worker,
+				)
+			);
 			delete_transient( self::WORKER_TRANSIENT . $worker );
 		}
 
