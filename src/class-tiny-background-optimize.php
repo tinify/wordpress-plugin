@@ -327,12 +327,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		}
 
 		foreach ( $inactive as $worker ) {
-			Tiny_Logger::debug(
-				'worker stalled',
-				array(
-					'worker_nr' => $worker,
-				)
-			);
 			$this->start_worker( $worker );
 		}
 	}
