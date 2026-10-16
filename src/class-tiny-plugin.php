@@ -723,11 +723,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$next_image = $this->background_optimizer->optimize_next();
 		Tiny_Logger::debug('bulk optimize_next', array(
-			'next_image' => $next_image
+			'optimized next image' => $next_image
 		));
 
 		wp_send_json_success(
-			array( 'optimized' => $this->background_optimizer->optimize_next() )
+			array( 'optimized' => $next_image )
 		);
 	}
 
