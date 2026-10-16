@@ -60,6 +60,7 @@ class WordPressStubs
 	private $calls;
 	private $stubs;
 	private $filters;
+	public $posts = 'wp_posts';
 	public $postmeta = 'wp_postmeta';
 	public $last_error = '';
 

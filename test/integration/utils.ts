@@ -47,6 +47,25 @@ export async function clearMediaLibrary(page: Page) {
   });
 }
 
+/**
+ * Uploads a fixture image through an ajax call
+ * @see test/fixtures/class-tiny-config.php
+ */
+export async function uploadImages(page: Page, file: string, count = 1, { generateSizes = true }: { generateSizes?: boolean } = {}) {
+  const response = await page.request.post('/wp-admin/admin-ajax.php', {
+    form: {
+      action: 'upload_images',
+      file,
+      count,
+      generate_sizes: generateSizes ? 'yes' : 'no',
+    },
+  });
+  const json = await response.json();
+  if (!json.success) {
+    throw Error(`Could not upload ${file}: ${JSON.stringify(json.data)}`);
+  }
+}
+
 export async function setAPIKey(page: Page, key = '') {
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
