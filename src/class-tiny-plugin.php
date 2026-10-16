@@ -688,8 +688,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$ids   = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
-
 		$has_loopback = $this->background_optimizer->loopback();
+
+		Tiny_Logger::debug('bulk optimize starting', array(
+			'in_background' => $has_loopback,
+			'image_count' => count( $ids )
+		));
+
 		if ( $has_loopback ) {
 			// if loopback is supported, will optimize in background
 			$this->background_optimizer->start( $ids );
@@ -703,6 +708,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	/**
 	 * Optimize the next queued image
+	 * 
+	 * Used by front-end queue handler
+	 * hooked in wp_ajax_tiny_bulk_queue_optimize_next
+	 * 
+	 * @see src/js/bulk-optimization.js - optimizeInPage()
 	 */
 	public function ajax_bulk_queue_optimize_next() {
 		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
@@ -710,6 +720,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			status_header( 403 );
 			wp_die( -1, 403 );
 		}
+
+		$next_image = $this->background_optimizer->optimize_next();
+		Tiny_Logger::debug('bulk optimize_next', array(
+			'next_image' => $next_image
+		));
 
 		wp_send_json_success(
 			array( 'optimized' => $this->background_optimizer->optimize_next() )

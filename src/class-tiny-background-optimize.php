@@ -100,6 +100,9 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		self::clear();
 
 		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
+		Tiny_Logger::debug('queue images start', array(
+			'image_count' => count( $ids )
+		));
 
 		// in batches of 1000 to prevent max_allowed_packets
 		foreach ( array_chunk( $ids, 1000 ) as $chunk ) {
@@ -116,6 +119,10 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 				wp_cache_delete( $id, 'post_meta' );
 			}
 		}
+
+		Tiny_Logger::debug('queue images done', array(
+			'image_count' => count( $ids )
+		));
 	}
 
 	/**
@@ -190,16 +197,16 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * Optimize the next queued attachment, for when the bulk optimization
 	 * page works through the queue itself.
 	 *
-	 * @return bool Whether there was one.
+	 * @return int|null ID of next image or null if there was none
 	 */
 	public function optimize_next() {
 		$id = $this->next_queued();
 		if ( ! $id ) {
-			return false;
+			return null;
 		}
 
 		$this->optimize_attachment( $id );
-		return true;
+		return $id;
 	}
 
 	/**
@@ -280,7 +287,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		$id = $this->next_queued();
 		if ( $id ) {
 			Tiny_Logger::debug(
-				'worker starting task',
+				'worker task start',
 				array(
 					'attachment_id' => $id,
 					'worker_number' => $worker,
@@ -289,7 +296,17 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			$this->optimize_attachment( $id );
 			$this->start_worker( $worker );
 			$this->start_workers();
+			Tiny_Logger::debug(
+				'worker task done',
+				array(
+					'attachment_id' => $id,
+					'worker_number' => $worker,
+				)
+			);
 		} else {
+			Tiny_Logger::debug('worker task finished', array(
+				'worker_number' => $worker
+			));
 			delete_transient( self::WORKER_TRANSIENT . $worker );
 		}
 
@@ -334,7 +351,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * Send the next request for a worker, and mark it active until then.
 	 *
 	 * The worker runs as the user whose request starts it.
-	 *   is non-blocking and will return as soon as possible (0.01s)
+	 *   is non-blocking and will return as soon as possible (1s)
 	 *
 	 * @param int $worker Worker number, from 1 to WORKERS.
 	 */
@@ -342,7 +359,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		Tiny_Logger::debug(
 			'starting worker',
 			array(
-				'worker_nr' => $worker,
+				'worker_number' => $worker,
 			)
 		);
 		set_transient( self::WORKER_TRANSIENT . $worker, time(), self::STALLED_AFTER );
@@ -354,7 +371,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 				'worker' => $worker,
 			),
 			array(
-				'timeout'  => 0.01,
+				'timeout'  => 1,
 				'blocking' => false,
 			)
 		);
