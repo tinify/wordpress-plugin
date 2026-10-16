@@ -265,7 +265,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	 * workers at WORKERS.
 	 */
 	public function work() {
-		Tiny_Logger::debug( 'received start work' );
 		check_ajax_referer( self::WORKER_ACTION, 'nonce' );
 
 		ignore_user_abort( true );
@@ -287,7 +286,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		$id = $this->next_queued();
 		if ( $id ) {
 			Tiny_Logger::debug(
-				'worker task start',
+				'worker start',
 				array(
 					'attachment_id' => $id,
 					'worker_number' => $worker,
@@ -297,7 +296,7 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 			$this->start_worker( $worker );
 			$this->start_workers();
 			Tiny_Logger::debug(
-				'worker task done',
+				'worker done',
 				array(
 					'attachment_id' => $id,
 					'worker_number' => $worker,
