@@ -13,9 +13,29 @@ class Tiny_Config {
 	const LEGACY_META_KEY           = 'tiny_compress_images';
 }
 
-// With a docker test, loopbacks will not worker as within docker, it is on localhost:80 
+// Whether this site can reach itself with a loopback request.
+define( 'TINY_TEST_LOOPBACK', true );
+
+// Seconds each image takes to compress
+define( 'TINY_TEST_COMPRESSION_SECONDS', 0.05 );
+
+function tiny_test_loopback() {
+	if ( isset( $_COOKIE['tiny_test_no_loopback'] ) ) {
+		return empty( $_COOKIE['tiny_test_no_loopback'] );
+	}
+	return TINY_TEST_LOOPBACK;
+}
+
+function tiny_test_compression_seconds() {
+	if ( isset( $_COOKIE['tiny_test_slow_compression'] ) ) {
+		return floatval( $_COOKIE['tiny_test_slow_compression'] );
+	}
+	return TINY_TEST_COMPRESSION_SECONDS;
+}
+
+// With a docker test, loopbacks will not worker as within docker, it is on localhost:80
 // With this filter we can enforce loopback by overriding the url
-if ( empty( $_COOKIE['tiny_test_no_loopback'] ) ) {
+if ( tiny_test_loopback() ) {
 	add_filter( 'pre_http_request', 'tiny_test_loopback_to_port_80', 10, 3 );
 } else {
 	add_filter( 'pre_http_request', 'tiny_test_fail_loopback', 10, 3 );
@@ -25,7 +45,7 @@ function tiny_test_fail_loopback( $response, $args, $url ) {
 	if ( admin_url( 'admin-ajax.php' ) !== $url ) {
 		return $response;
 	}
-	return new WP_Error( 'http_request_failed', 'Loopback requests fail because the tiny_test_no_loopback cookie is set.' );
+	return new WP_Error( 'http_request_failed', 'Loopback requests fail because the mock config turned them off.' );
 }
 
 // WordPress listens on port 80 in its container, not on the host port in siteurl,
@@ -38,13 +58,12 @@ function tiny_test_loopback_to_port_80( $response, $args, $url ) {
 	return wp_remote_request( $port_80_url, $args );
 }
 
-// Tests set the tiny_test_slow_compression cookie to the seconds each image takes,
-// so a bulk run lasts long enough to act on it.
-if ( ! empty( $_COOKIE['tiny_test_slow_compression'] ) ) {
+// Slow compression down, so a bulk run lasts long enough to act on it.
+if ( tiny_test_compression_seconds() > 0 ) {
 	add_action( 'tiny_image_before_compression', 'tiny_test_slow_compression' );
 }
 function tiny_test_slow_compression() {
-	sleep( intval( $_COOKIE['tiny_test_slow_compression'] ) );
+	usleep( intval( tiny_test_compression_seconds() * 1000000 ) );
 }
 
 
