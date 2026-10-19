@@ -5,6 +5,7 @@
 
 .tiny-widget {
 	container-type: inline-size;
+	overflow: hidden;
 	color: #12141d;
 	font-size: 14px;
 	line-height: 20px;
@@ -25,6 +26,32 @@
 	flex-direction: column;
 	gap: 16px;
 	padding: 24px 12px;
+	animation: tiny-widget-slide-from-left 0.25s ease-out;
+}
+
+.tiny-widget-credits {
+	animation-name: tiny-widget-slide-from-right;
+}
+
+@keyframes tiny-widget-slide-from-left {
+	from {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
+}
+
+@keyframes tiny-widget-slide-from-right {
+	from {
+		opacity: 0;
+		transform: translateX(24px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tiny-widget-main,
+	.tiny-widget-credits {
+		animation: none;
+	}
 }
 
 .tiny-widget-top {
