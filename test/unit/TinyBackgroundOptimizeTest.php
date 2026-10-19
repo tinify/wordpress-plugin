@@ -17,6 +17,7 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 		$functions = array(
 			'wp_cache_delete',
 			'delete_post_meta_by_key',
+			'delete_option',
 			'wp_create_nonce',
 			'admin_url',
 			'wp_unslash',
@@ -213,6 +214,24 @@ class Tiny_Background_Optimize_Test extends Tiny_TestCase {
 		$this->subject->start( array( 7 ) );
 
 		$this->assertEquals( array( 'preferences' => '{"theme":"dark"}' ), $this->requests[0]['cookies'] );
+	}
+
+	public function test_queue_stores_when_the_run_started() {
+		$this->subject->queue( array( 7, 8, 8 ) );
+
+		$calls = $this->wp->getCalls( 'update_option' );
+		$this->assertEquals( Tiny_Background_Optimize::OPTION_STARTED, $calls[0][0] );
+		$this->assertEquals( 2, $calls[0][1]['remaining'] );
+		$this->assertEqualWithinDelta( time(), $calls[0][1]['time'], 2 );
+	}
+
+	public function test_clear_deletes_when_the_run_started() {
+		Tiny_Background_Optimize::clear();
+
+		$this->assertEquals(
+			array( array( Tiny_Background_Optimize::OPTION_STARTED ) ),
+			$this->wp->getCalls( 'delete_option' )
+		);
 	}
 
 	public function test_clear_deletes_queue_results_and_workers_state() {
