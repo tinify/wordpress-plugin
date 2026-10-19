@@ -228,7 +228,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return (bool) $this->get_api_key();
 	}
 
-	protected function get_api_key_pending() {
+	public function get_api_key_pending() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return false;
 		} else {
@@ -238,6 +238,24 @@ class Tiny_Settings extends Tiny_WP_Base {
 
 	protected function clear_api_key_pending() {
 		delete_option( self::get_prefixed_name( 'api_key_pending' ) );
+	}
+
+	/**
+	 * Whether the API key still waits for its activation link to be opened.
+	 * Asks the API only while the key is pending, and clears the flag once
+	 * the key works.
+	 *
+	 * @return bool
+	 */
+	public function refresh_api_key_pending() {
+		if ( ! $this->get_api_key_pending() ) {
+			return false;
+		}
+		if ( $this->compressor->get_status()->ok ) {
+			$this->clear_api_key_pending();
+			return false;
+		}
+		return true;
 	}
 
 	protected static function get_intermediate_size( $size ) {
@@ -850,18 +868,15 @@ class Tiny_Settings extends Tiny_WP_Base {
 				include __DIR__ . '/views/account-status-create-simple.php';
 			}
 		} else {
-			$status          = $this->compressor->get_status();
-			$status->pending = false;
-			if ( $status->ok ) {
-				if ( $this->get_api_key_pending() ) {
-					$this->clear_api_key_pending();
-				}
-			} elseif ( $this->get_api_key_pending() ) {
-					$status->ok      = true;
-					$status->pending = true;
-					$status->message = (
-						'An email has been sent to activate your account'
-					);
+			if ( $this->refresh_api_key_pending() ) {
+				$status = (object) array(
+					'ok'      => true,
+					'pending' => true,
+					'message' => 'An email has been sent to activate your account',
+				);
+			} else {
+				$status          = $this->compressor->get_status();
+				$status->pending = false;
 			}
 			include __DIR__ . '/views/account-status-connected.php';
 		}
