@@ -194,6 +194,23 @@
     if (running) {
       startBulkOptimization(items, true);
     }
+    startFromUrl(items, running);
+  }
+
+  // The dashboard widget opens this page with &start=1. Start right away, then
+  // drop the flag so a reload does not start again.
+  function startFromUrl(items, running) {
+    if (new URLSearchParams(location.search).get('start') !== '1') {
+      return;
+    }
+    const url = new URL(location.href);
+    url.searchParams.delete('start');
+    history.replaceState(null, '', url);
+
+    const start = document.getElementById('id-start');
+    if (!running && start && start.offsetParent !== null) {
+      startBulkOptimization(items);
+    }
   }
 
   function startBulkOptimization(items, running) {

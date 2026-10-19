@@ -19,19 +19,31 @@
 */
 class Tiny_Dashboard extends Tiny_WP_Base {
 
-	const LOW_CREDITS_THRESHOLD = 100;
-
 	/**
 	 * @var Tiny_Settings settings
 	 */
 	private $settings;
 
 	/**
-	 * @param Tiny_Settings $settings
+	 * @var Tiny_Background_Optimize
 	 */
-	public function __construct( $settings ) {
+	private $background_optimizer;
+
+	/**
+	 * @param Tiny_Settings            $settings
+	 * @param Tiny_Background_Optimize $background_optimizer
+	 */
+	public function __construct( $settings, $background_optimizer ) {
 		parent::__construct();
-		$this->settings = $settings;
+		$this->settings             = $settings;
+		$this->background_optimizer = $background_optimizer;
+	}
+
+	public function ajax_init() {
+		add_action(
+			'wp_ajax_tiny_dashboard_widget',
+			$this->get_method( 'ajax_widget' )
+		);
 	}
 
 	public function admin_init() {
@@ -51,6 +63,23 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			Tiny_Plugin::version()
 		);
 
+		wp_enqueue_script(
+			self::NAME . '_dashboard_widget',
+			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
+			array(),
+			Tiny_Plugin::version(),
+			true
+		);
+
+		wp_localize_script(
+			self::NAME . '_dashboard_widget',
+			'tinyDashboardWidget',
+			array(
+				'nonce'        => wp_create_nonce( 'tiny_dashboard_widget' ),
+				'pollInterval' => 10000,
+			)
+		);
+
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
 			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
@@ -59,10 +88,24 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	}
 
 	public function add_widget_view() {
-		$stats         = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-		$widget        = $this->get_widget_data( $stats );
-		$email_address = $this->settings->get_email_address();
+		$stats  = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$widget = $this->get_widget_data( $stats );
 		include __DIR__ . '/views/dashboard-widget.php';
+	}
+
+	/**
+	 * Render the widget again, for the dashboard to poll while compressing.
+	 */
+	public function ajax_widget() {
+		if ( ! check_ajax_referer( 'tiny_dashboard_widget', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
+			wp_die( -1, 403 );
+		}
+
+		ob_start();
+		$this->add_widget_view();
+		wp_send_json_success( array( 'html' => ob_get_clean() ) );
 	}
 
 	/**
@@ -85,18 +128,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			? intval( floor( $images_optimized / $images_total * 100 ) )
 			: 0;
 
-		$label = self::get_label_text( $percentage );
-
-		if ( 0 === $images_total ) {
-			$status = 'empty';
-			$panda  = 'panda-waiting.png';
-		} elseif ( 0 === $images_remaining ) {
-			$status = 'done';
-			$panda  = 'panda-laying.png';
-		} else {
-			$status = 'in_progress';
-			$panda  = 'panda-waiting.png';
-		}
+		$estimated_credit_use = intval( $optimization_stats['estimated_credit_use'] );
 
 		// Only free accounts have a limited number of credits, including
 		// free accounts that bought a credit bundle.
@@ -105,51 +137,56 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			is_numeric( $remaining_credits );
 		$remaining_credits   = $has_limited_credits ? intval( $remaining_credits ) : null;
 
+		// How many of the remaining images the credits still cover.
+		$images_affordable = 0;
+		if ( $has_limited_credits && $images_remaining > 0 && $estimated_credit_use > 0 ) {
+			$images_affordable = intval(
+				floor( $remaining_credits / ( $estimated_credit_use / $images_remaining ) )
+			);
+		}
+
+		$time_left = null;
 		if ( ! $this->settings->has_api_key() ) {
-			$notice = 'no_api_key';
-		} elseif ( null !== $remaining_credits &&
-			$remaining_credits < self::LOW_CREDITS_THRESHOLD ) {
-			$notice = 'low_credits';
+			$state = 'not_connected';
+		} elseif ( $this->settings->refresh_api_key_pending() ) {
+			$state = 'pending';
+		} elseif ( 0 === $images_total ) {
+			$state = 'empty';
+		} elseif ( $this->background_optimizer->is_running() ) {
+			$state = 'compressing';
+
+			// Expect the rest of the run to go as fast as it has gone so far,
+			// once there is enough of it to go on.
+			$started = get_option( Tiny_Background_Optimize::OPTION_STARTED );
+			if ( is_array( $started ) ) {
+				$elapsed = time() - intval( $started['time'] );
+				$done    = intval( $started['remaining'] ) - $images_remaining;
+				if ( $done >= 1 && $elapsed >= 30 ) {
+					$time_left = intval( round( $images_remaining * $elapsed / $done ) );
+				}
+			}
+		} elseif ( 0 === $images_remaining ) {
+			$state = 'done';
+		} elseif ( 0 === $remaining_credits ) {
+			$state = 'out_of_credits';
+		} elseif ( $has_limited_credits && $estimated_credit_use > $remaining_credits ) {
+			$state = 'credits_short';
 		} else {
-			$notice = null;
+			$state = 'ready';
 		}
 
 		return array(
-			'status'            => $status,
-			'images_optimized'  => $images_optimized,
-			'images_total'      => $images_total,
-			'images_remaining'  => $images_remaining,
-			'bytes_saved'       => max( 0, intval( $bytes_saved ) ),
-			'percentage'        => $percentage,
-			'label'             => $label,
-			'panda'             => $panda,
-			'remaining_credits' => $remaining_credits,
-			'notice'            => $notice,
+			'state'                => $state,
+			'images_optimized'     => $images_optimized,
+			'images_total'         => $images_total,
+			'images_remaining'     => $images_remaining,
+			'images_affordable'    => $images_affordable,
+			'bytes_saved'          => max( 0, intval( $bytes_saved ) ),
+			'percentage'           => $percentage,
+			'estimated_credit_use' => $estimated_credit_use,
+			'remaining_credits'    => $remaining_credits,
+			'time_left'            => $time_left,
+			'email_address'        => $this->settings->get_email_address(),
 		);
-	}
-
-	/**
-	 * Returns a description based on the percentage of optimized library
-	 *
-	 * @param int $percentage 
-	 * @return string label
-	 */
-	private static function get_label_text( $percentage ) {
-		if ( $percentage > 99 ) {
-			return __( 'optimized', 'tiny-compress-images' );
-		}
-		if ( $percentage > 75 ) {
-			return __( 'almost there', 'tiny-compress-images' );
-		}
-
-		if ( $percentage > 50 ) {
-			return __( 'halfway there', 'tiny-compress-images' );
-		}
-
-		if ( 0 === $percentage ) {
-			return '';
-		}
-
-		return __( 'getting started', 'tiny-compress-images' );
 	}
 }

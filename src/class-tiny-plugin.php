@@ -47,8 +47,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
 		new Tiny_Conversion( $this->settings );
-		new Tiny_Dashboard( $this->settings );
 		$this->background_optimizer = new Tiny_Background_Optimize( $this->settings );
+		new Tiny_Dashboard( $this->settings, $this->background_optimizer );
 	}
 
 	public function set_compressor( $compressor ) {
