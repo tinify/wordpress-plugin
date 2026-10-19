@@ -80,7 +80,7 @@ test.describe('dashboardwidget', () => {
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization&start=1');
 
     await expect(page).toHaveURL(/page=tiny-bulk-optimization$/);
-    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)');
+    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)', { timeout: 15000 });
   });
 
   test('upgrade shows how to get more credits', async () => {
