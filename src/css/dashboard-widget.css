@@ -47,27 +47,24 @@
 }
 
 .tiny-widget-badge {
-	padding: 4px 12px;
-	border: 1px solid;
-	border-radius: 8px;
+	padding: 2px 10px;
+	border-radius: 9999px;
+	font-size: 13px;
 	font-weight: 600;
 }
 
 .tiny-widget-badge-red {
 	background: #fef2f2;
-	border-color: #dc2626;
 	color: #dc2626;
 }
 
 .tiny-widget-badge-amber {
 	background: #fef3c7;
-	border-color: #b45309;
 	color: #b45309;
 }
 
 .tiny-widget-badge-green {
 	background: #e8faf0;
-	border-color: #00b075;
 	color: #00b075;
 }
 
