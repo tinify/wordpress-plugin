@@ -37,7 +37,7 @@ test.describe('backup and restore', () => {
     await expect(page.getByText('1 size compressed')).toBeVisible();
 
     await page.getByRole('link', { name: 'Details' }).click({ force: true });
-    await page.waitForSelector('#TB_overlay');
+    await expect(page.locator('dialog.tiny-details-dialog[open]')).toBeVisible();
 
     const backupLink = page.getByRole('link', { name: 'View uncompressed file' });
     await expect(backupLink).toBeVisible();
@@ -71,10 +71,10 @@ test.describe('backup and restore', () => {
     expect(compressedContent.equals(compressed)).toBeTruthy();
 
     await page.getByRole('link', { name: 'Details' }).click({ force: true });
-    await page.waitForSelector('#TB_overlay');
+    await expect(page.locator('dialog.tiny-details-dialog[open]')).toBeVisible();
 
     await page.getByRole('link', { name: 'Restore Backup' }).click();
-    await expect(page.locator('dialog.tiny-dialog[open]')).toBeVisible();
+    await expect(page.locator('dialog.tiny-restore-dialog[open]')).toBeVisible();
     await page.getByRole('button', { name: 'Restore' }).click();
 
     await expect(page.getByText('1 size to be compressed')).toBeVisible();

@@ -1,2 +1,2 @@
 #!/bin/bash
-XDEBUG_MODE=${XDEBUG_MODE:-off} vendor/bin/phpcs --standard=phpcs.xml "$@"
+vendor/bin/phpcs --standard=phpcs.xml "$@"

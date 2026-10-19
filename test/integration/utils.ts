@@ -47,6 +47,25 @@ export async function clearMediaLibrary(page: Page) {
   });
 }
 
+/**
+ * Uploads a fixture image through an ajax call
+ * @see test/fixtures/class-tiny-config.php
+ */
+export async function uploadImages(page: Page, file: string, count = 1, { generateSizes = true }: { generateSizes?: boolean } = {}) {
+  const response = await page.request.post('/wp-admin/admin-ajax.php', {
+    form: {
+      action: 'upload_images',
+      file,
+      count,
+      generate_sizes: generateSizes ? 'yes' : 'no',
+    },
+  });
+  const json = await response.json();
+  if (!json.success) {
+    throw Error(`Could not upload ${file}: ${JSON.stringify(json.data)}`);
+  }
+}
+
 export async function setAPIKey(page: Page, key = '') {
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
@@ -276,10 +295,14 @@ export async function newPost(page: Page, options: NewPostOptions, WPVersion: nu
 
   await page.goto('/wp-admin/post-new.php?' + query.toString() + '#content-html');
   if (WPVersion > 5) {
-    const welcomeGuideExists = await page.getByLabel('Close', { exact: true }).isVisible();
-    if (welcomeGuideExists) {
-      await page.getByLabel('Close', { exact: true }).click();
-    }
+    // The welcome guide renders asynchronously and blocks the Publish button,
+    // so turn it off through the store instead of racing to close it.
+    await page.waitForFunction(() => typeof wp !== 'undefined' && wp.data && wp.data.select('core/edit-post'));
+    await page.evaluate(() => {
+      if (wp.data.select('core/edit-post').isFeatureActive('welcomeGuide')) {
+        wp.data.dispatch('core/edit-post').toggleFeature('welcomeGuide');
+      }
+    });
     await page.evaluate((contentHtml) => {
       wp.data.dispatch('core/editor').resetBlocks([]);
       wp.data.dispatch('core/editor').insertBlocks(wp.blocks.parse(contentHtml));
