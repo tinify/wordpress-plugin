@@ -39,13 +39,6 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		$this->background_optimizer = $background_optimizer;
 	}
 
-	public function ajax_init() {
-		add_action(
-			'wp_ajax_tiny_dashboard_widget',
-			$this->get_method( 'ajax_widget' )
-		);
-	}
-
 	public function admin_init() {
 		if ( current_user_can( 'upload_files' ) ) {
 			add_action(
@@ -71,15 +64,6 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			true
 		);
 
-		wp_localize_script(
-			self::NAME . '_dashboard_widget',
-			'tinyDashboardWidget',
-			array(
-				'nonce'        => wp_create_nonce( 'tiny_dashboard_widget' ),
-				'pollInterval' => 10000,
-			)
-		);
-
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
 			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
@@ -91,21 +75,6 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		$stats  = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$widget = $this->get_widget_data( $stats );
 		include __DIR__ . '/views/dashboard-widget.php';
-	}
-
-	/**
-	 * Render the widget again, for the dashboard to poll while compressing.
-	 */
-	public function ajax_widget() {
-		if ( ! check_ajax_referer( 'tiny_dashboard_widget', '_nonce', false ) ||
-			! current_user_can( 'upload_files' ) ) {
-			status_header( 403 );
-			wp_die( -1, 403 );
-		}
-
-		ob_start();
-		$this->add_widget_view();
-		wp_send_json_success( array( 'html' => ob_get_clean() ) );
 	}
 
 	/**
