@@ -48,6 +48,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$this->settings = new Tiny_Settings();
 		new Tiny_Conversion( $this->settings );
 		$this->background_optimizer = new Tiny_Background_Optimize( $this->settings );
+		new Tiny_Dashboard( $this->settings, $this->background_optimizer );
 	}
 
 	public function set_compressor( $compressor ) {
@@ -126,11 +127,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		add_action(
-			'wp_ajax_tiny_get_optimization_statistics',
-			$this->get_method( 'ajax_optimization_statistics' )
-		);
-
-		add_action(
 			'wp_ajax_tiny_get_compression_status',
 			$this->get_method( 'ajax_compression_status' )
 		);
@@ -178,11 +174,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function admin_init() {
-		add_action(
-			'wp_dashboard_setup',
-			$this->get_method( 'add_dashboard_widget' )
-		);
-
 		add_action(
 			'admin_enqueue_scripts',
 			$this->get_method( 'enqueue_scripts' )
@@ -803,15 +794,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		wp_send_json_success();
 	}
 
-	public function ajax_optimization_statistics() {
-		if ( check_ajax_referer( 'tiny-compress', '_nonce', false ) &&
-			current_user_can( 'upload_files' ) ) {
-			$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-			echo json_encode( $stats );
-		}
-		exit();
-	}
-
 	public function ajax_compression_status() {
 		$response = $this->validate_ajax_attachment_request();
 
@@ -952,61 +934,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$email_address       = $this->settings->get_email_address();
 		$bulk_running        = $this->background_optimizer->is_running();
 
+		/* The dashboard widget links here with a nonce to start right away. */
+		$start_on_load = isset( $_GET['start'], $_GET['_wpnonce'] ) && wp_verify_nonce(
+			sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ),
+			'tiny-bulk-start'
+		);
+
 		include __DIR__ . '/views/bulk-optimization.php';
-	}
-
-	public function add_dashboard_widget() {
-		wp_enqueue_style(
-			self::NAME . '_chart',
-			plugins_url( '/css/optimization-chart.css', __FILE__ ),
-			array(),
-			self::version()
-		);
-
-		wp_enqueue_style(
-			self::NAME . '_dashboard_widget',
-			plugins_url( '/css/dashboard-widget.css', __FILE__ ),
-			array(),
-			self::version()
-		);
-
-		wp_register_script(
-			self::NAME . '_dashboard_widget',
-			plugins_url( '/js/dashboard-widget.js', __FILE__ ),
-			array(),
-			self::version(),
-			true
-		);
-
-		/*
-		This might be deduplicated with the admin script localization, but
-			the order of including scripts is sometimes different. So in that
-			case we need to make sure that the order of inclusion is correct. */
-		wp_localize_script(
-			self::NAME . '_dashboard_widget',
-			'tinyCompressDashboard',
-			array(
-				'nonce' => wp_create_nonce( 'tiny-compress' ),
-			)
-		);
-
-		wp_enqueue_script( self::NAME . '_dashboard_widget' );
-
-		$widget_title = esc_html__(
-			'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF',
-			'tiny-compress-images'
-		);
-
-		wp_add_dashboard_widget(
-			$this->get_prefixed_name( 'dashboard_widget' ),
-			$widget_title,
-			$this->get_method( 'add_widget_view' )
-		);
-	}
-
-	public function add_widget_view() {
-		$admin_colors = self::retrieve_admin_colors();
-		include __DIR__ . '/views/dashboard-widget.php';
 	}
 
 	private static function retrieve_admin_colors() {
