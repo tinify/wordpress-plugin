@@ -24,7 +24,7 @@
 .tiny-widget-credits {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 8px;
 	padding: 24px 12px;
 	animation: tiny-widget-slide-from-left 0.25s ease-out;
 }
@@ -65,7 +65,7 @@
 	flex: 1;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 12px;
+	gap: 4px;
 	min-width: 0;
 }
 
@@ -78,6 +78,7 @@
 	border-radius: 9999px;
 	font-size: 13px;
 	font-weight: 600;
+	margin-bottom: 8px;
 }
 
 .tiny-widget-badge-red {
@@ -111,7 +112,7 @@
 	letter-spacing: 0;
 }
 
-.tiny-widget-heading {
+#tinypng_dashboard_widget .tiny-widget-heading {
 	margin: 0;
 	padding: 0;
 	font-size: 20px;
@@ -122,7 +123,7 @@
 .tiny-widget-below {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 12px;
 }
 
 .tiny-widget-library {
@@ -204,7 +205,7 @@
 	text-decoration: underline;
 }
 
-.tiny-widget-credits-heading {
+#tinypng_dashboard_widget .tiny-widget-credits-heading {
 	margin: 0;
 	padding: 0;
 	font-size: 16px;

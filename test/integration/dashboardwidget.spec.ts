@@ -45,7 +45,7 @@ test.describe('dashboardwidget', () => {
 
     await page.goto('/wp-admin/index.php');
 
-    await expect(widget().getByText('No images yet')).toBeVisible();
+    await expect(widget().getByText('Upload your first image')).toBeVisible();
     await expect(widget().getByRole('link', { name: 'Upload images' })).toHaveAttribute('href', /media-new\.php/);
   });
 

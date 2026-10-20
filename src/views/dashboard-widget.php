@@ -87,7 +87,7 @@ if ( null !== $widget['time_left'] ) {
 						?>
 					</p>
 				<?php } elseif ( 'empty' === $state ) { ?>
-					<h3 class="tiny-widget-heading"><?php esc_html_e( 'No images yet', 'tiny-compress-images' ); ?></h3>
+					<h3 class="tiny-widget-heading"><?php esc_html_e( 'Upload your first image', 'tiny-compress-images' ); ?></h3>
 					<p><?php esc_html_e( 'Upload images to your Media Library and Tinify compresses them automatically.', 'tiny-compress-images' ); ?></p>
 				<?php } else { ?>
 					<div class="tiny-widget-hero">
