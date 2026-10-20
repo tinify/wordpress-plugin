@@ -112,7 +112,6 @@ if ( null !== $widget['seconds_left'] ) {
 					<?php } elseif ( 'compressing' === $state ) { ?>
 						<p>
 							<?php echo esc_html( $seconds_left_text ); ?>
-							<?php esc_html_e( 'Compression continues in the background, even if you close this page.', 'tiny-compress-images' ); ?>
 						</p>
 					<?php } elseif ( 'done' === $state && $widget['auto_compress'] ) { ?>
 						<p><?php esc_html_e( 'New uploads are compressed automatically.', 'tiny-compress-images' ); ?></p>
