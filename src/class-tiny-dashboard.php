@@ -114,7 +114,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			);
 		}
 
-		$time_left = null;
+		$seconds_left = null;
 		if ( ! $this->settings->has_api_key() ) {
 			$state = 'not_connected';
 		} elseif ( $this->settings->refresh_api_key_pending() ) {
@@ -124,7 +124,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		} elseif ( $this->background_optimizer->is_running() ) {
 			$state = 'compressing';
 
-			$time_left = intval(
+			$seconds_left = intval(
 				round( $estimated_credit_use / Tiny_Background_Optimize::WORKERS )
 			);
 		} elseif ( 0 === $images_remaining ) {
@@ -147,7 +147,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			'percentage'           => $percentage,
 			'estimated_credit_use' => $estimated_credit_use,
 			'remaining_credits'    => $remaining_credits,
-			'time_left'            => $time_left,
+			'seconds_left'         => $seconds_left,
 			'email_address'        => $this->settings->get_email_address(),
 			'auto_compress'        => $this->settings->auto_compress_enabled(),
 		);
