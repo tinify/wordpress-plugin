@@ -325,4 +325,44 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 
 		$this->assertSame(240, $data['seconds_left']);
 	}
+
+	public function test_widget_request_refuses_an_invalid_nonce_with_a_403()
+	{
+		$this->wp->stub('check_ajax_referer', function () {
+			return false;
+		});
+		$this->wp->stub('current_user_can', function () {
+			return true;
+		});
+
+		$this->assert_widget_request_refused_with_a_403();
+	}
+
+	public function test_widget_request_refuses_a_user_without_permission_with_a_403()
+	{
+		$this->wp->stub('current_user_can', function () {
+			return false;
+		});
+
+		$this->assert_widget_request_refused_with_a_403();
+	}
+
+	private function assert_widget_request_refused_with_a_403()
+	{
+		$this->wp->addMethod('status_header');
+		$this->wp->addMethod('wp_die');
+		$this->wp->stub('wp_die', function () {
+			throw new Exception('wp_die');
+		});
+
+		$dashboard = new Tiny_Dashboard($this->settings, $this->background_optimizer);
+		try {
+			$dashboard->ajax_dashboard_widget();
+		} catch (Exception $e) {
+			// wp_die() ends the request.
+		}
+
+		$this->assertEquals(array(array(403)), $this->wp->getCalls('status_header'));
+		$this->assertEquals(array(array(-1, 403)), $this->wp->getCalls('wp_die'));
+	}
 }

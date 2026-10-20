@@ -39,6 +39,13 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		$this->background_optimizer = $background_optimizer;
 	}
 
+	public function ajax_init() {
+		add_action(
+			'wp_ajax_tiny_dashboard_widget',
+			array( $this, 'ajax_dashboard_widget' )
+		);
+	}
+
 	public function admin_init() {
 		if ( current_user_can( 'upload_files' ) ) {
 			add_action(
@@ -71,10 +78,25 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		);
 	}
 
+	/**
+	 * The statistics scan the whole library, so the dashboard shows a spinner
+	 * and the widget JS fetches the real content from ajax_dashboard_widget().
+	 */
 	public function add_widget_view() {
+		include __DIR__ . '/views/dashboard-widget-loading.php';
+	}
+
+	public function ajax_dashboard_widget() {
+		if ( ! check_ajax_referer( 'tiny-dashboard-widget', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
+			wp_die( -1, 403 );
+		}
+
 		$stats  = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$widget = $this->get_widget_data( $stats );
 		include __DIR__ . '/views/dashboard-widget.php';
+		wp_die();
 	}
 
 	/**

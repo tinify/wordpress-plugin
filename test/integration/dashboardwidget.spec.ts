@@ -42,11 +42,24 @@ test.describe('dashboardwidget', () => {
 
   test('no images yet', async () => {
     await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'auto');
 
     await page.goto('/wp-admin/index.php');
 
     await expect(widget().getByText('Upload your first image')).toBeVisible();
+    await expect(widget().getByText('Tinify compresses them automatically')).toBeVisible();
     await expect(widget().getByRole('link', { name: 'Upload images' })).toHaveAttribute('href', /media-new\.php/);
+  });
+
+  test('no images yet without auto compress', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+
+    await page.goto('/wp-admin/index.php');
+
+    await expect(widget().getByText('Upload your first image')).toBeVisible();
+    await expect(widget().getByText('then compress them with the Bulk Optimizer')).toBeVisible();
+    await expect(widget().getByText('automatically')).not.toBeVisible();
   });
 
   test('ready to compress', async () => {

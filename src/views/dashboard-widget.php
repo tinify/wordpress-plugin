@@ -88,7 +88,11 @@ if ( null !== $widget['seconds_left'] ) {
 					</p>
 				<?php } elseif ( 'empty' === $state ) { ?>
 					<h3 class="tiny-widget-heading"><?php esc_html_e( 'Upload your first image', 'tiny-compress-images' ); ?></h3>
-					<p><?php esc_html_e( 'Upload images to your Media Library and Tinify compresses them automatically.', 'tiny-compress-images' ); ?></p>
+					<?php if ( $widget['auto_compress'] ) { ?>
+						<p><?php esc_html_e( 'Upload images to your Media Library and Tinify compresses them automatically.', 'tiny-compress-images' ); ?></p>
+					<?php } else { ?>
+						<p><?php esc_html_e( 'Upload images to your Media Library, then compress them with the Bulk Optimizer.', 'tiny-compress-images' ); ?></p>
+					<?php } ?>
 				<?php } else { ?>
 					<div class="tiny-widget-hero">
 						<?php echo esc_html( number_format_i18n( $widget['percentage'] ) ); ?>%
@@ -99,7 +103,7 @@ if ( null !== $widget['seconds_left'] ) {
 							<?php
 							printf(
 								/* translators: %s: number of free credits per month */
-								esc_html__( 'Connect a free Tinify account to start. Free accounts get %s credits every month.', 'tiny-compress-images' ),
+								esc_html__( 'Connect a free Tinify account to start. You get %s credits every month.', 'tiny-compress-images' ),
 								esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
 							);
 							?>

@@ -3,6 +3,15 @@
 	padding: 0;
 }
 
+.tiny-widget-loading {
+	padding: 24px 12px;
+}
+
+.tiny-widget-loading .spinner {
+	float: none;
+	margin: 0;
+}
+
 .tiny-widget {
 	container-type: inline-size;
 	overflow: hidden;
