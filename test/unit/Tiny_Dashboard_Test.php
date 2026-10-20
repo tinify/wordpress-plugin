@@ -120,6 +120,26 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame(2000, $data['bytes_saved']);
 	}
 
+	public function test_auto_compress_is_on_when_the_setting_is()
+	{
+		$this->connect();
+		$this->settings->method('auto_compress_enabled')->willReturn(true);
+
+		$data = $this->widget_data($this->stats(10, 0));
+
+		$this->assertTrue($data['auto_compress']);
+	}
+
+	public function test_auto_compress_is_off_when_the_setting_is()
+	{
+		$this->connect();
+		$this->settings->method('auto_compress_enabled')->willReturn(false);
+
+		$data = $this->widget_data($this->stats(10, 0));
+
+		$this->assertFalse($data['auto_compress']);
+	}
+
 	public function test_is_out_of_credits_when_none_are_left()
 	{
 		$this->connect(0);

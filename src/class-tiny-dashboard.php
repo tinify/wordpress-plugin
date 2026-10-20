@@ -149,6 +149,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			'remaining_credits'    => $remaining_credits,
 			'time_left'            => $time_left,
 			'email_address'        => $this->settings->get_email_address(),
+			'auto_compress'        => $this->settings->auto_compress_enabled(),
 		);
 	}
 }
