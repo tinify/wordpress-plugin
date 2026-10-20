@@ -58,21 +58,6 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->settings->method('get_remaining_credits')->willReturn($remaining_credits);
 	}
 
-	/**
-	 * helper to mark a run as started
-	 *
-	 * @param int $seconds_ago when the run started
-	 * @param int $remaining images the run started with
-	 */
-	private function start_run($seconds_ago, $remaining)
-	{
-		$this->background_optimizer->method('is_running')->willReturn(true);
-		$this->wp->addOption(Tiny_Background_Optimize::OPTION_STARTED, array(
-			'time' => time() - $seconds_ago,
-			'remaining' => $remaining,
-		));
-	}
-
 	private function widget_data($stats)
 	{
 		$dashboard = new Tiny_Dashboard($this->settings, $this->background_optimizer);
@@ -122,7 +107,6 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$data = $this->widget_data($this->stats(10, 4));
 
 		$this->assertSame('compressing', $data['state']);
-		$this->assertNull($data['time_left']);
 	}
 
 	public function test_is_done_when_no_images_remain()
@@ -312,56 +296,13 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame(0, $data['images_affordable']);
 	}
 
-	public function test_time_left_is_unknown_in_the_first_30_seconds()
+	public function test_time_left_spreads_compressions_over_the_workers()
 	{
 		$this->connect();
-		$this->start_run(29, 20);
+		$this->background_optimizer->method('is_running')->willReturn(true);
 
-		$data = $this->widget_data($this->stats(20, 10));
+		$data = $this->widget_data($this->stats(30, 20, 0, 0, 1200));
 
-		$this->assertNull($data['time_left']);
-	}
-
-	public function test_time_left_is_unknown_before_the_first_image_is_done()
-	{
-		$this->connect();
-		$this->start_run(120, 20);
-
-		$data = $this->widget_data($this->stats(20, 20));
-
-		$this->assertNull($data['time_left']);
-	}
-
-	public function test_time_left_in_minutes()
-	{
-		$this->connect();
-		$this->start_run(120, 30);
-
-		// 10 done in 120 seconds, so the 20 left take 240 seconds.
-		$data = $this->widget_data($this->stats(30, 20));
-
-		$this->assertEqualWithinDelta(240, $data['time_left'], 12);
-	}
-
-	public function test_time_left_under_a_minute()
-	{
-		$this->connect();
-		$this->start_run(60, 20);
-
-		// 19 done in 60 seconds, so the last one takes about 3 seconds.
-		$data = $this->widget_data($this->stats(20, 1));
-
-		$this->assertEqualWithinDelta(3, $data['time_left'], 1);
-	}
-
-	public function test_time_left_in_hours()
-	{
-		$this->connect();
-		$this->start_run(3600, 1000);
-
-		// 10 done in an hour, so the 990 left take 99 hours.
-		$data = $this->widget_data($this->stats(1000, 990));
-
-		$this->assertEqualWithinDelta(99 * 3600, $data['time_left'], 100);
+		$this->assertSame(240, $data['time_left']);
 	}
 }

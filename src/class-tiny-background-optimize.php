@@ -54,9 +54,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	/* Transient per worker, set each time it starts on an attachment. */
 	const WORKER_TRANSIENT = 'tiny_bulk_queue_worker_';
 
-	/* Option with when the current run started and how many attachments it had. */
-	const OPTION_STARTED = 'tinypng_bulk_queue_started';
-
 	/* Seconds without starting on an attachment before a worker counts as dead. */
 	const STALLED_AFTER = 300;
 
@@ -103,13 +100,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 		self::clear();
 
 		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
-		update_option(
-			self::OPTION_STARTED,
-			array(
-				'time'      => time(),
-				'remaining' => count( $ids ),
-			)
-		);
 		Tiny_Logger::debug(
 			'queue images start',
 			array(
@@ -148,7 +138,6 @@ class Tiny_Background_Optimize extends Tiny_WP_Base {
 	public static function clear() {
 		delete_post_meta_by_key( self::META_KEY_STATUS );
 		delete_post_meta_by_key( self::META_KEY_RESULT );
-		delete_option( self::OPTION_STARTED );
 
 		for ( $worker = 1; $worker <= self::WORKERS; $worker++ ) {
 			delete_transient( self::WORKER_TRANSIENT . $worker );

@@ -124,16 +124,9 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 		} elseif ( $this->background_optimizer->is_running() ) {
 			$state = 'compressing';
 
-			// Expect the rest of the run to go as fast as it has gone so far,
-			// once there is enough of it to go on.
-			$started = get_option( Tiny_Background_Optimize::OPTION_STARTED );
-			if ( is_array( $started ) ) {
-				$elapsed = time() - intval( $started['time'] );
-				$done    = intval( $started['remaining'] ) - $images_remaining;
-				if ( $done >= 1 && $elapsed >= 30 ) {
-					$time_left = intval( round( $images_remaining * $elapsed / $done ) );
-				}
-			}
+			$time_left = intval(
+				round( $estimated_credit_use / Tiny_Background_Optimize::WORKERS )
+			);
 		} elseif ( 0 === $images_remaining ) {
 			$state = 'done';
 		} elseif ( 0 === $remaining_credits ) {
