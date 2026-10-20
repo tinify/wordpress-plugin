@@ -872,7 +872,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$status = (object) array(
 					'ok'      => true,
 					'pending' => true,
-					'message' => 'An email has been sent to activate your account',
+					'message' => __(
+						'An email has been sent to activate your account',
+						'tiny-compress-images'
+					),
 				);
 			} else {
 				$status          = $this->compressor->get_status();
