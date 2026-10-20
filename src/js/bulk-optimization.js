@@ -211,10 +211,9 @@
       return;
     }
 
-    jQuery('#hide-warning').trigger('click');
-
     const start = document.getElementById('id-start');
     if (start && start.offsetParent !== null) {
+      jQuery('#hide-warning').trigger('click');
       startBulkOptimization(items);
     }
   }
