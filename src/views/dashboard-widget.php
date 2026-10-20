@@ -44,20 +44,20 @@ $has_credits_view = in_array( $state, array( 'credits_short', 'out_of_credits' )
 $has_credits_line = null !== $widget['remaining_credits'] &&
 	! in_array( $state, array( 'not_connected', 'pending' ), true );
 
-$time_left_text = '';
-if ( null !== $widget['time_left'] ) {
-	if ( $widget['time_left'] < 60 ) {
-		$time_left_text = __( 'Less than a minute left.', 'tiny-compress-images' );
-	} elseif ( $widget['time_left'] < 90 * 60 ) {
-		$minutes        = intval( round( $widget['time_left'] / 60 ) );
-		$time_left_text = sprintf(
+$seconds_left_text = '';
+if ( null !== $widget['seconds_left'] ) {
+	if ( $widget['seconds_left'] < 60 ) {
+		$seconds_left_text = __( 'Less than a minute left.', 'tiny-compress-images' );
+	} elseif ( $widget['seconds_left'] < 90 * 60 ) {
+		$minutes        = intval( round( $widget['seconds_left'] / 60 ) );
+		$seconds_left_text = sprintf(
 			/* translators: %s: number of minutes */
 			_n( 'About %s minute left.', 'About %s minutes left.', $minutes, 'tiny-compress-images' ),
 			number_format_i18n( $minutes )
 		);
 	} else {
-		$hours          = intval( round( $widget['time_left'] / 3600 ) );
-		$time_left_text = sprintf(
+		$hours          = intval( round( $widget['seconds_left'] / 3600 ) );
+		$seconds_left_text = sprintf(
 			/* translators: %s: number of hours */
 			_n( 'About %s hour left.', 'About %s hours left.', $hours, 'tiny-compress-images' ),
 			number_format_i18n( $hours )
@@ -95,10 +95,18 @@ if ( null !== $widget['time_left'] ) {
 						<span><?php esc_html_e( 'of your images are compressed', 'tiny-compress-images' ); ?></span>
 					</div>
 					<?php if ( 'not_connected' === $state ) { ?>
-						<p><?php esc_html_e( 'Connect a free Tinify account to start. Free accounts get 500 credits every month.', 'tiny-compress-images' ); ?></p>
+						<p>
+							<?php
+							printf(
+								/* translators: %s: number of free credits per month */
+								esc_html__( 'Connect a free Tinify account to start. Free accounts get %s credits every month.', 'tiny-compress-images' ),
+								esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
+							);
+							?>
+						</p>
 					<?php } elseif ( 'compressing' === $state ) { ?>
 						<p>
-							<?php echo esc_html( $time_left_text ); ?>
+							<?php echo esc_html( $seconds_left_text ); ?>
 							<?php esc_html_e( 'Compression continues in the background, even if you close this page.', 'tiny-compress-images' ); ?>
 						</p>
 					<?php } elseif ( 'done' === $state && $widget['auto_compress'] ) { ?>
@@ -289,7 +297,7 @@ if ( null !== $widget['time_left'] ) {
 				if ( $widget['remaining_credits'] <= Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
 					printf(
 						/* translators: %1$s: number of credits left, %2$s: monthly free credits */
-						esc_html( _n( '%1$s of %2$s free credit left', '%1$s of %2$s free credits left', Tiny_Config::MONTHLY_FREE_COMPRESSIONS, 'tiny-compress-images' ) ),
+						esc_html( _n( '%1$s of %2$s free credits left', '%1$s of %2$s free credits left', $widget['remaining_credits'], 'tiny-compress-images' ) ),
 						esc_html( number_format_i18n( $widget['remaining_credits'] ) ),
 						esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
 					);

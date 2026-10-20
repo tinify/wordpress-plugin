@@ -316,13 +316,13 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame(0, $data['images_affordable']);
 	}
 
-	public function test_time_left_spreads_compressions_over_the_workers()
+	public function test_seconds_left_spreads_compressions_over_the_workers()
 	{
 		$this->connect();
 		$this->background_optimizer->method('is_running')->willReturn(true);
 
 		$data = $this->widget_data($this->stats(30, 20, 0, 0, 1200));
 
-		$this->assertSame(240, $data['time_left']);
+		$this->assertSame(240, $data['seconds_left']);
 	}
 }

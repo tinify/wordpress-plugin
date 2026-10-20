@@ -228,7 +228,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return (bool) $this->get_api_key();
 	}
 
-	public function get_api_key_pending() {
+	protected function get_api_key_pending() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return false;
 		} else {
