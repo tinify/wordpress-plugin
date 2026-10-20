@@ -67,7 +67,7 @@ if ( null !== $widget['seconds_left'] ) {
 }
 ?>
 
-<div class="tiny-widget" data-state="<?php echo esc_attr( $state ); ?>">
+<div class="tiny-widget">
 	<div class="tiny-widget-main">
 		<div class="tiny-widget-top">
 			<div class="tiny-widget-content">
