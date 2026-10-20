@@ -207,12 +207,14 @@
       url.searchParams.delete('_wpnonce');
       history.replaceState(null, '', url);
     }
-    if (!startOnLoad) {
+    if (!startOnLoad || running) {
       return;
     }
 
+    jQuery('#hide-warning').trigger('click');
+
     const start = document.getElementById('id-start');
-    if (!running && start && start.offsetParent !== null) {
+    if (start && start.offsetParent !== null) {
       startBulkOptimization(items);
     }
   }
