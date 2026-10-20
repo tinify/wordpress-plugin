@@ -14,6 +14,7 @@ $upload_url   = admin_url( 'media-new.php' );
 $credits_url  = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-credits';
 $api_url      = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-api';
 $strong       = array( 'strong' => array() );
+$can_manage   = current_user_can( 'manage_options' );
 
 $badges = array(
 	'not_connected'  => array( 'red', __( 'Not connected', 'tiny-compress-images' ) ),
@@ -171,11 +172,11 @@ if ( null !== $widget['seconds_left'] ) {
 				</div>
 			<?php } ?>
 
-			<?php if ( 'not_connected' === $state ) { ?>
+			<?php if ( 'not_connected' === $state && $can_manage ) { ?>
 				<div class="tiny-widget-actions">
 					<a class="button button-primary button-large" href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Connect Tinify', 'tiny-compress-images' ); ?></a>
 				</div>
-			<?php } elseif ( 'pending' === $state ) { ?>
+			<?php } elseif ( 'pending' === $state && $can_manage ) { ?>
 				<div class="tiny-widget-actions">
 					<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Use an API key instead', 'tiny-compress-images' ); ?></a>
 				</div>
@@ -284,7 +285,9 @@ if ( null !== $widget['seconds_left'] ) {
 	<div class="tiny-widget-footer">
 		<nav>
 			<a href="<?php echo esc_url( $bulk_url ); ?>"><?php esc_html_e( 'Bulk Optimizer', 'tiny-compress-images' ); ?></a>
-			<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Settings', 'tiny-compress-images' ); ?></a>
+			<?php if ( $can_manage ) { ?>
+				<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Settings', 'tiny-compress-images' ); ?></a>
+			<?php } ?>
 		</nav>
 		<?php if ( $has_credits_line ) { ?>
 			<?php
