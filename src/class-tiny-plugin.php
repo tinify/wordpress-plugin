@@ -934,6 +934,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$email_address       = $this->settings->get_email_address();
 		$bulk_running        = $this->background_optimizer->is_running();
 
+		/* The dashboard widget links here with a nonce to start right away. */
+		$start_on_load = isset( $_GET['start'], $_GET['_wpnonce'] ) && wp_verify_nonce(
+			sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ),
+			'tiny-bulk-start'
+		);
+
 		include __DIR__ . '/views/bulk-optimization.php';
 	}
 

@@ -57,7 +57,7 @@ test.describe('dashboardwidget', () => {
     await page.goto('/wp-admin/index.php');
 
     await expect(widget().getByText('Ready to compress')).toBeVisible();
-    await expect(widget().getByRole('link', { name: 'Compress 1 image' })).toHaveAttribute('href', /page=tiny-bulk-optimization&start=1$/);
+    await expect(widget().getByRole('link', { name: 'Compress 1 image' })).toHaveAttribute('href', /page=tiny-bulk-optimization&start=1&_wpnonce=\w+$/);
   });
 
   test('all done', async () => {
@@ -72,7 +72,19 @@ test.describe('dashboardwidget', () => {
     await expect(widget().getByText('1 compressed')).toBeVisible();
   });
 
-  test('start flag starts the bulk optimization', async () => {
+  test('compress link starts the bulk optimization', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
+
+    await page.goto('/wp-admin/index.php');
+    await widget().getByRole('link', { name: 'Compress 1 image' }).click();
+
+    await expect(page).toHaveURL(/page=tiny-bulk-optimization$/);
+    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)', { timeout: 15000 });
+  });
+
+  test('start flag without a nonce does not start the bulk optimization', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'manual');
     await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
@@ -80,7 +92,8 @@ test.describe('dashboardwidget', () => {
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization&start=1');
 
     await expect(page).toHaveURL(/page=tiny-bulk-optimization$/);
-    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)', { timeout: 15000 });
+    await expect(page.locator('#id-start')).toBeVisible();
+    await expect(page.locator('#compression-progress-bar')).toHaveText('0 / 1 (0%)');
   });
 
   test('upgrade shows how to get more credits', async () => {

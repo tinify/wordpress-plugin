@@ -8,7 +8,7 @@
 $state = $widget['state'];
 
 $bulk_url     = admin_url( 'upload.php?page=tiny-bulk-optimization' );
-$start_url    = $bulk_url . '&start=1';
+$start_url    = wp_nonce_url( $bulk_url . '&start=1', 'tiny-bulk-start' );
 $settings_url = admin_url( 'options-general.php?page=tinify' );
 $upload_url   = admin_url( 'media-new.php' );
 $credits_url  = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-credits';
@@ -49,14 +49,14 @@ if ( null !== $widget['seconds_left'] ) {
 	if ( $widget['seconds_left'] < 60 ) {
 		$seconds_left_text = __( 'Less than a minute left.', 'tiny-compress-images' );
 	} elseif ( $widget['seconds_left'] < 90 * 60 ) {
-		$minutes        = intval( round( $widget['seconds_left'] / 60 ) );
+		$minutes           = intval( round( $widget['seconds_left'] / 60 ) );
 		$seconds_left_text = sprintf(
 			/* translators: %s: number of minutes */
 			_n( 'About %s minute left.', 'About %s minutes left.', $minutes, 'tiny-compress-images' ),
 			number_format_i18n( $minutes )
 		);
 	} else {
-		$hours          = intval( round( $widget['seconds_left'] / 3600 ) );
+		$hours             = intval( round( $widget['seconds_left'] / 3600 ) );
 		$seconds_left_text = sprintf(
 			/* translators: %s: number of hours */
 			_n( 'About %s hour left.', 'About %s hours left.', $hours, 'tiny-compress-images' ),

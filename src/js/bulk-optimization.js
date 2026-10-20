@@ -188,24 +188,28 @@
     });
   }
 
-  function prepareBulkOptimization(items, running) {
+  function prepareBulkOptimization(items, running, startOnLoad) {
     window.allBulkOptimizationItems = items;
     updateProgressBar(0);
     if (running) {
       startBulkOptimization(items, true);
     }
-    startFromUrl(items, running);
+    startFromUrl(items, running, startOnLoad);
   }
 
-  // The dashboard widget opens this page with &start=1. Start right away, then
-  // drop the flag so a reload does not start again.
-  function startFromUrl(items, running) {
-    if (new URLSearchParams(location.search).get('start') !== '1') {
+  // The dashboard widget opens this page with &start=1 and a nonce, which the
+  // server checks. Start right away, then drop both from the URL so a reload
+  // does not start again.
+  function startFromUrl(items, running, startOnLoad) {
+    const url = new URL(location.href);
+    if (url.searchParams.has('start')) {
+      url.searchParams.delete('start');
+      url.searchParams.delete('_wpnonce');
+      history.replaceState(null, '', url);
+    }
+    if (!startOnLoad) {
       return;
     }
-    const url = new URL(location.href);
-    url.searchParams.delete('start');
-    history.replaceState(null, '', url);
 
     const start = document.getElementById('id-start');
     if (!running && start && start.offsetParent !== null) {
