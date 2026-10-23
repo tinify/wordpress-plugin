@@ -130,15 +130,10 @@ test.describe('settings', () => {
   });
 
   test('store compression timing', async () => {
-    await page.locator('#tinypng_auto_compress').uncheck();
+    await page.locator('#tinypng_compression_timing_auto').check();
     await page.locator('#submit').click();
 
-    await expect(page.locator('#tinypng_auto_compress')).not.toBeChecked();
-
-    await page.locator('#tinypng_auto_compress').check();
-    await page.locator('#submit').click();
-
-    await expect(page.locator('#tinypng_auto_compress')).toBeChecked();
+    await expect(page.locator('#tinypng_compression_timing_auto')).toBeChecked();
   });
 
   test('have all sizes enabled by default', async () => {
