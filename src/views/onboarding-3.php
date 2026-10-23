@@ -1,8 +1,8 @@
 <?php
-$tiny_key_pending = $this->settings->get_api_key_pending();
-$tiny_auto_compress = $this->settings->get_compression_timing() === 'auto';
-$tiny_stats        = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
-$tiny_uncompressed = count( $tiny_stats['available-for-optimization'] );
+$tiny_key_pending   = $this->settings->get_api_key_pending();
+$tiny_auto_compress = $this->settings->auto_compress_enabled();
+$tiny_stats         = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+$tiny_uncompressed  = count( $tiny_stats['available-for-optimization'] );
 ?>
 
 <form class="tiny-onboarding" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">

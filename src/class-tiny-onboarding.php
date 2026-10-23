@@ -207,20 +207,20 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 			);
 		}
 
-		$convert_to = isset( $_POST['convert_to'] ) ?
-			sanitize_key( wp_unslash( $_POST['convert_to'] ) ) : '';
+		$convert_to = isset( $_POST['tinypng_convert_format']['convert_to'] ) ?
+			sanitize_key( wp_unslash( $_POST['tinypng_convert_format']['convert_to'] ) ) : '';
 		if ( ! in_array( $convert_to, array( 'smallest', 'webp', 'avif' ), true ) ) {
 			$convert_to = 'smallest';
 		}
 
-		$delivery_method = isset( $_POST['delivery_method'] ) ?
-			sanitize_key( wp_unslash( $_POST['delivery_method'] ) ) : '';
+		$delivery_method = isset( $_POST['tinypng_convert_format']['delivery_method'] ) ?
+			sanitize_key( wp_unslash( $_POST['tinypng_convert_format']['delivery_method'] ) ) : '';
 		if ( ! in_array( $delivery_method, array( 'htaccess', 'picture' ), true ) ) {
 			$delivery_method = 'picture';
 		}
 
 		$convert_format = array( 'convert' => 'off' );
-		if ( isset( $_POST['convert'] ) ) {
+		if ( isset( $_POST['tinypng_convert_format']['convert'] ) ) {
 			$convert_format = array(
 				'convert'         => 'on',
 				'convert_to'      => $convert_to,
