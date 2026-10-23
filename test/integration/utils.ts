@@ -73,16 +73,7 @@ export async function setAPIKey(page: Page, key = '') {
  */
 export async function setCompressionTiming(page: Page, timing: 'background' | 'auto' | 'manual') {
   await page.goto('/wp-admin/options-general.php?page=tinify');
-  const toggle = page.locator('#tinypng_auto_compress');
-  if (timing === 'manual') {
-    await toggle.uncheck();
-  } else {
-    await toggle.check();
-    // The settings page only offers background; auto is still a stored option.
-    await toggle.evaluate((element: HTMLInputElement, value) => {
-      element.value = value;
-    }, timing);
-  }
+  await page.locator(`#tinypng_compression_timing_${timing}`).check({ force: true });
   await page.locator('#submit').click();
 }
 
