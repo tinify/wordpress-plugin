@@ -1,119 +1,50 @@
 <?php
-
-$strong = array(
-	'strong' => array(),
-);
-
+$tiny_resize_name = self::get_prefixed_name( 'resize_original[enabled]' );
+$tiny_backup_name = self::get_prefixed_name( 'backup[enabled]' );
+$tiny_resize_on   = $this->get_resize_enabled();
 ?>
+<div class="tiny-card-section tiny-resize-available" <?php echo $tiny_original_tinify ? '' : 'hidden'; ?>>
+	<div class="tiny-card-head">
+		<h2><?php esc_html_e( 'Resize large originals', 'tiny-compress-images' ); ?></h2>
+	</div>
+	<label class="tiny-option">
+		<input type="checkbox" role="switch" id="tinypng_resize_original_enabled"
+			name="<?php echo esc_attr( $tiny_resize_name ); ?>" value="on"
+			<?php checked( $tiny_resize_on ); ?>>
+		<span class="tiny-option-text">
+			<span class="tiny-option-label"><?php esc_html_e( 'Resize large originals', 'tiny-compress-images' ); ?></span>
+			<span><?php esc_html_e( 'Scales down uploads that are bigger than you need. Uses 1 extra credit per resized image.', 'tiny-compress-images' ); ?></span>
+		</span>
+	</label>
+	<div class="tiny-format-options tiny-resize-inputs" id="tiny-resize-inputs" <?php echo $tiny_resize_on ? '' : 'hidden'; ?>>
+		<p class="tiny-field">
+			<label for="tinypng_resize_original_width"><?php esc_html_e( 'Max Width', 'tiny-compress-images' ); ?></label>
+			<?php $this->render_resize_input( 'width' ); ?>
+		</p>
+		<p class="tiny-field">
+			<label for="tinypng_resize_original_height"><?php esc_html_e( 'Max Height', 'tiny-compress-images' ); ?></label>
+			<?php $this->render_resize_input( 'height' ); ?>
+		</p>
+	</div>
+</div>
 
-<tr>
-	<th scope="row"><?php esc_html_e( 'Original image', 'tiny-compress-images' ); ?></th>
-	<td>
-		<div class="tiny-resize-unavailable" style="display: none">
-			<?php
-			esc_html_e(
-				'Enable compression of the original image size for more options.',
-				'tiny-compress-images'
-			);
-			?>
-		</div>
-		<div class="tiny-resize-available">
-			<?php
-			$resize_original_enabled_id   = self::get_prefixed_name( 'resize_original_enabled' );
-			$resize_original_enabled_name = self::get_prefixed_name( 'resize_original[enabled]' );
-			$resize_original_enabled      = $this->get_resize_enabled();
-			?>
-			<input
-				type="checkbox"
-				id="<?php echo esc_attr( $resize_original_enabled_id ); ?>"
-				name="<?php echo esc_attr( $resize_original_enabled_name ); ?>"
-				value="on"
-				<?php checked( $resize_original_enabled ); ?> />
-			<label for="<?php echo esc_attr( $resize_original_enabled_id ); ?>">
-				<?php
-				esc_html_e(
-					'Resize the original image',
-					'tiny-compress-images'
-				);
-				?>
-			</label><br>
-			<div class="tiny-resize-available tiny-resize-resolution">
-				<span>
-					<?php
-					echo wp_kses(
-						__(
-							'<strong>Save space</strong> by setting a maximum width and height for all images uploaded.',
-							'tiny-compress-images'
-						),
-						$strong
-					);
-					?>
-					<br>
-					<?php
-					echo wp_kses(
-						__(
-							'Resizing takes <strong>1 additional compression</strong> for each image that is larger.',
-							'tiny-compress-images'
-						),
-						$strong
-					);
-					?>
-				</span>
-
-				<div class="tiny-resize-inputs">
-					<?php esc_html_e( 'Max Width', 'tiny-compress-images' ); ?>:
-					<?php $this->render_resize_input( 'width' ); ?>
-					<?php esc_html_e( 'Max Height', 'tiny-compress-images' ); ?>:
-					<?php $this->render_resize_input( 'height' ); ?>
-				</div>
-			</div>
-
-			<p class="tiny-preserve">
-				<?php
-					$backup_enabled_id   = self::get_prefixed_name( 'backup' );
-					$backup_enabled_name = self::get_prefixed_name( 'backup[enabled]' );
-					$backup_enabled      = $this->get_backup_enabled();
-				?>
-				<input
-					type="checkbox"
-					id="<?php echo esc_attr( $backup_enabled_id ); ?>"
-					name="<?php echo esc_attr( $backup_enabled_name ); ?>"
-					value="on"
-					<?php checked( $backup_enabled ); ?> />
-				<label for="<?php echo esc_attr( $backup_enabled_id ); ?>">
-					<?php
-					esc_html_e(
-						'Create a backup of the uncompressed image',
-						'tiny-compress-images'
-					);
-					?>
-				</label>
-			</p>
-
-			<?php
-			$this->render_preserve_input(
-				'creation',
-				esc_html__(
-					'Preserve creation date and time in the original image',
-					'tiny-compress-images'
-				)
-			);
-			$this->render_preserve_input(
-				'copyright',
-				esc_html__(
-					'Preserve copyright information in the original image',
-					'tiny-compress-images'
-				)
-			);
-			$this->render_preserve_input(
-				'location',
-				esc_html__(
-					'Preserve GPS location in the original image',
-					'tiny-compress-images'
-				) . ' ' .
-				esc_html__( '(JPEG only)', 'tiny-compress-images' )
-			);
-			?>
-		</div>
-	</td>
-</tr>
+<div class="tiny-card-section tiny-resize-available" <?php echo $tiny_original_tinify ? '' : 'hidden'; ?>>
+	<div class="tiny-card-head">
+		<h2><?php esc_html_e( 'Originals and metadata', 'tiny-compress-images' ); ?></h2>
+	</div>
+	<label class="tiny-option">
+		<input type="checkbox" role="switch" id="tinypng_backup"
+			name="<?php echo esc_attr( $tiny_backup_name ); ?>" value="on"
+			<?php checked( $this->get_backup_enabled() ); ?>>
+		<span class="tiny-option-text">
+			<span class="tiny-option-label"><?php esc_html_e( 'Keep a backup of each original', 'tiny-compress-images' ); ?></span>
+			<span><?php esc_html_e( 'Stores the uncompressed upload so you can restore it from the Media Library.', 'tiny-compress-images' ); ?></span>
+		</span>
+	</label>
+	<p class="tiny-option-group"><?php esc_html_e( 'Keep in compressed images', 'tiny-compress-images' ); ?></p>
+	<?php
+	$this->render_preserve_input( 'creation', __( 'Creation date and time', 'tiny-compress-images' ) );
+	$this->render_preserve_input( 'copyright', __( 'Copyright information', 'tiny-compress-images' ) );
+	$this->render_preserve_input( 'location', __( 'GPS location (JPEG only)', 'tiny-compress-images' ) );
+	?>
+</div>

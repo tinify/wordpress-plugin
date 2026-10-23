@@ -13,8 +13,6 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 
 	public function test_admin_init_should_register_keys() {
 		$this->assertEquals(array(
-			array( 'tinify', 'tinypng_api_key' ),
-			array( 'tinify', 'tinypng_api_key_pending' ),
 			array( 'tinify', 'tinypng_compression_timing' ),
 			array( 'tinify', 'tinypng_sizes' ),
 			array( 'tinify', 'tinypng_resize_original' ),
@@ -461,22 +459,23 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 	public function test_will_not_render_delivery_if_apache_is_unavailable() {
 		$GLOBALS['is_apache'] = false;
 		ob_start();
-		$this->subject->render_delivery_method();
+		$this->subject->render_modern_formats();
 		$output = ob_get_clean();
-		$this->assertEmpty( $output );
+		$this->assertStringNotContainsString( 'Server rules', $output );
 	}
 
 	public function test_will_not_render_delivery_apache_mod_loaded_is_unavailable() {
 		$GLOBALS['is_apache'] = true;
 		ob_start();
-		$this->subject->render_delivery_method();
+		$this->subject->render_modern_formats();
 		$output = ob_get_clean();
-		$this->assertEmpty( $output );
+		$this->assertStringNotContainsString( 'Server rules', $output );
 	}
 
 	/**
 	 * we are defining the apache functions here so run in a seperate process to not affect other tests
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
 	public function test_will_not_render_delivery_if_apache_get_modules_is_unavailable() {
 		$GLOBALS['is_apache'] = true;
@@ -486,13 +485,14 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		}
 		
 		ob_start();
-		$this->subject->render_delivery_method();
+		$this->subject->render_modern_formats();
 		$output = ob_get_clean();
-		$this->assertEmpty( $output );
+		$this->assertStringNotContainsString( 'Server rules', $output );
 	}
 
 	/**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
 	public function test_will_render_delivery() {
 		$GLOBALS['is_apache'] = true;
@@ -505,8 +505,44 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 			}
 		}
 		ob_start();
-		$this->subject->render_delivery_method();
+		$this->subject->render_modern_formats();
 		$output = ob_get_clean();
-		$this->assertStringContainsString( 'Conversion delivery', $output );
+		$this->assertStringContainsString( 'Server rules', $output );
+	}
+
+	public function test_should_label_size_with_width_and_height() {
+		$this->assertEquals(
+			'Thumbnail (150 × 150)',
+			Tiny_Settings::get_size_label( 'thumbnail', array( 'width' => 150, 'height' => 150 ) )
+		);
+	}
+
+	public function test_should_label_size_without_height_as_wide() {
+		$this->assertEquals(
+			'Medium large (768 wide)',
+			Tiny_Settings::get_size_label( 'medium_large', array( 'width' => 768, 'height' => 0 ) )
+		);
+	}
+
+	public function test_should_label_size_without_width_as_tall() {
+		$this->assertEquals(
+			'Banner (400 tall)',
+			Tiny_Settings::get_size_label( 'banner', array( 'width' => 0, 'height' => 400 ) )
+		);
+	}
+
+	public function test_should_label_size_named_after_dimensions_with_dimensions_only() {
+		$this->assertEquals(
+			'1536 × 1536',
+			Tiny_Settings::get_size_label( '1536x1536', array( 'width' => 1536, 'height' => 1536 ) )
+		);
+	}
+
+	public function test_should_count_credits_per_image_for_each_size() {
+		$this->assertEquals( 5, Tiny_Settings::get_credits_per_image( 5, false, false, false ) );
+	}
+
+	public function test_should_count_credits_per_image_with_resize_and_conversion() {
+		$this->assertEquals( 12, Tiny_Settings::get_credits_per_image( 5, true, false, true ) );
 	}
 }

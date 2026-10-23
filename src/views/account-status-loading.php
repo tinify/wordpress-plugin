@@ -1,11 +1,11 @@
-<div class="tiny-account-status" id="tiny-account-status" data-state="pending">
-	<div class="status status-loading">
-		<p class="status">
+<div class="tiny-card" id="tiny-account-status" data-state="pending">
+	<div class="tiny-card-section">
+		<div class="tiny-card-head">
+			<h2><?php esc_html_e( 'Tinify account', 'tiny-compress-images' ); ?></h2>
+		</div>
+		<p class="tiny-account-loading">
+			<span class="spinner is-active"></span>
 			<?php esc_html_e( 'Retrieving account status', 'tiny-compress-images' ); ?>
 		</p>
-
-		<input type="hidden" id="<?php echo esc_attr( self::get_prefixed_name( 'api_key' ) ); ?>"
-			name="<?php echo esc_attr( self::get_prefixed_name( 'api_key' ) ); ?>" size="35" spellcheck="false"
-			value="<?php echo esc_attr( $key ); ?>">
 	</div>
 </div>
