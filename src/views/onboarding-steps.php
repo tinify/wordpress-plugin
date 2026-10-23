@@ -4,12 +4,16 @@
  * Without the confirm email step, the steps are numbered by their position.
  *
  * @var int  $current_step
+ * @var bool $confirm_email
  */
 $tiny_steps = array(
 	1 => __( 'Account', 'tiny-compress-images' ),
 	2 => __( 'Confirm email', 'tiny-compress-images' ),
 	3 => __( 'Settings', 'tiny-compress-images' ),
 );
+if ( ! $confirm_email ) {
+	unset( $tiny_steps[2] );
+}
 $tiny_number = 0;
 ?>
 <ol class="tiny-onboarding-steps">
