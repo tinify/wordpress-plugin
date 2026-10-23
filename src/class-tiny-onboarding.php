@@ -55,8 +55,16 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 			'admin_post_tiny_onboarding_save_settings',
 			array( $this, 'save_settings' )
 		);
+		add_action( 'load-plugins.php', array( $this, 'redirect_after_activation' ) );
+	}
 
-		if ( $this->is_onboarded() ) {
+	/**
+	 * Sends a new user to the first onboarding step after activating the plugin.
+	 *
+	 * Hooked to `load-plugins.php`, the screen WordPress shows after activation.
+	 */
+	public function redirect_after_activation() {
+		if ( $this->is_onboarded() || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -65,6 +73,9 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		if ( self::is_bulk_activation() ) {
 			return;
 		}
+
+		wp_safe_redirect( $this->get_step_url( 1 ) );
+		exit();
 	}
 
 	/**
