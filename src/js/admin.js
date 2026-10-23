@@ -146,7 +146,6 @@
     if (action === 'update') {
       field = document.querySelector('#tinypng_api_key').closest('.tiny-field');
     } else if (!name) {
-      // The server only rejects the name when it is missing.
       field = document.querySelector('#tinypng_api_key_name').closest('.tiny-field');
     } else {
       field = document.querySelector('#tinypng_api_key_email').closest('.tiny-field');
@@ -154,16 +153,14 @@
 
     column.querySelectorAll('.tiny-field').forEach((f) => f.classList.remove('tiny-field-invalid'));
 
-    // The server saves a blank key as "no key", which is not a connection.
     if (action === 'update' && !key) {
       field.classList.add('tiny-field-invalid');
       return;
     }
 
-    const showError = (message) => {
+    function showError(message) {
       button.disabled = false;
       spinner.classList.remove('is-active');
-      // The API key field keeps the invalid key message from the view.
       if (action === 'create') {
         field.querySelector('.tiny-field-error').textContent = message;
       }
