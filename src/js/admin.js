@@ -368,18 +368,17 @@
   case 'post-php':
     eventOn('click', 'button.tiny-compress', compressImage);
     break;
-  case 'settings_page_tiny-onboarding-1':
+  case 'settings_page_tiny-onboarding':
     changeEnterKeyTarget('#tinypng_api_key_name, #tinypng_api_key_email', '[data-tiny-action=create-key]');
     changeEnterKeyTarget('#tinypng_api_key', '[data-tiny-action=update-key]');
 
     eventOn('click', '[data-tiny-action=create-key]', submitAccountConnect);
     eventOn('click', '[data-tiny-action=update-key]', submitAccountConnect);
-    break;
-  case 'settings_page_tiny-onboarding-2':
-    setTimeout(continueWhenActivated, 5000);
-    break;
-  case 'settings_page_tiny-onboarding-3':
     eventOn('change', '#tiny-convert', showFormatOptions);
+
+    if (document.querySelector('[data-activated-next]')) {
+      setTimeout(continueWhenActivated, 5000);
+    }
     break;
   case 'settings_page_tinify':
     changeEnterKeyTarget('#tinypng_api_key_name, #tinypng_api_key_email', '[data-tiny-action=create-key]');
