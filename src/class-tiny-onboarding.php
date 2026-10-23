@@ -53,7 +53,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	public function admin_init() {
 		add_action(
 			'admin_post_tiny_onboarding_save_settings',
-			$this->get_method( 'save_settings' )
+			array( $this, 'save_settings' )
 		);
 
 		if ( $this->is_onboarded() ) {
@@ -76,44 +76,40 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 		return filter_has_var( INPUT_GET, 'activate-multi' );
 	}
 
-	/**
-	 * Set the sub menu pages
-	 *
-	 * @param int $step onboarding step
-	 */
-	private function add_sub_menu( $step ) {
-		$slug = $this->get_step_slug( $step );
+	public function admin_menu() {
+		$this->page_title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
 
 		$hook = add_submenu_page(
 			'options-general.php',
 			$this->page_title,
 			$this->page_title,
 			'manage_options',
-			$slug,
-			function () use ( $step ) {
-				include __DIR__ . '/views/onboarding-' . $step . '.php';
-			}
+			self::PAGE_SLUG,
+			array( $this, 'render_step' )
 		);
 
 		if ( ! $hook ) {
 			return;
 		}
 
-		remove_submenu_page( 'options-general.php', $slug );
+		remove_submenu_page( 'options-general.php', self::PAGE_SLUG );
 
 		/**
 		 * because title is retrieved from submenu, which is not part of the menu,
 		 * resolve it through globals
 		 */
-		add_action( 'load-' . $hook, $this->get_method( 'set_page_title' ) );
+		add_action( 'load-' . $hook, array( $this, 'set_page_title' ) );
 	}
 
-	public function admin_menu() {
-		$this->page_title = __( 'Welcome to TinyPNG', 'tiny-compress-images' );
-
-		$this->add_sub_menu( 1 );
-		$this->add_sub_menu( 2 );
-		$this->add_sub_menu( 3 );
+	/**
+	 * Renders the step from the `step` query arg, or step 1 when it is not a known step.
+	 */
+	public function render_step() {
+		$step = filter_input( INPUT_GET, 'step', FILTER_VALIDATE_INT );
+		if ( ! in_array( $step, array( 1, 2, 3 ), true ) ) {
+			$step = 1;
+		}
+		include __DIR__ . '/views/onboarding-' . $step . '.php';
 	}
 
 	/**
@@ -137,26 +133,12 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Returns the page slug of the given onboarding step
-	 *
-	 * @param int $step
-	 * @return string
-	 */
-	private function get_step_slug( $step ) {
-		return self::PAGE_SLUG . '-' . $step;
-	}
-
-	/**
-	 * Whether the current admin request is one of the onboarding steps.
-	 *
-	 * Reads the page WordPress itself resolved, so no request input is touched.
+	 * Whether the current admin request is the onboarding page.
 	 *
 	 * @return bool
 	 */
 	public static function is_onboarding_page() {
-		$page = isset( $GLOBALS['plugin_page'] ) ? $GLOBALS['plugin_page'] : '';
-
-		return 0 === strpos( $page, self::PAGE_SLUG . '-' );
+		return isset( $GLOBALS['plugin_page'] ) && self::PAGE_SLUG === $GLOBALS['plugin_page'];
 	}
 
 	/**
@@ -166,7 +148,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 * @return string
 	 */
 	public function get_step_url( $step ) {
-		return admin_url( 'options-general.php?page=' . $this->get_step_slug( $step ) );
+		return admin_url( 'options-general.php?page=' . self::PAGE_SLUG . '&step=' . $step );
 	}
 
 	/**
