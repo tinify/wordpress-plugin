@@ -228,12 +228,31 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
-	public function get_api_key_pending() {
+	protected function get_api_key_pending() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return false;
 		} else {
 			return get_option( self::get_prefixed_name( 'api_key_pending' ) );
 		}
+	}
+
+	/**
+	 * Whether the API key still waits for the user to confirm their email.
+	 * Clears the pending flag once the key works.
+	 *
+	 * @return bool
+	 */
+	public function is_api_key_pending() {
+		if ( ! $this->get_api_key_pending() ) {
+			return false;
+		}
+
+		if ( $this->compressor->get_status()->ok ) {
+			$this->clear_api_key_pending();
+			return false;
+		}
+
+		return true;
 	}
 
 	protected function clear_api_key_pending() {
