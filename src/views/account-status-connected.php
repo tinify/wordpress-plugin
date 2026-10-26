@@ -102,9 +102,6 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 		<?php } ?>
 
 		<p class="tiny-account-links">
-			<a href="https://tinify.com/dashboard/api" target="_blank" rel="noopener">
-				<?php esc_html_e( 'Manage on tinify.com', 'tiny-compress-images' ); ?>
-			</a>
 			<?php if ( defined( 'TINY_API_KEY' ) ) { ?>
 				<span>
 					<?php
