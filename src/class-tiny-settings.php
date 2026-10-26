@@ -812,6 +812,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$user           = wp_get_current_user();
 		$name           = trim( $user->user_firstname . ' ' . $user->user_lastname );
 		$email          = trim( $user->user_email );
+		$has_api_key    = (bool) $this->get_api_key();
 		include __DIR__ . '/views/account-status-connect.php';
 	}
 
