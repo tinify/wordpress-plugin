@@ -48,8 +48,9 @@ export async function clearMediaLibrary(page: Page) {
 }
 
 /**
- * Uploads a fixture image through an ajax call
- * @see test/fixtures/class-tiny-config.php
+ * Stores the key the way the account connect view does. Keys the API rejects are not stored.
+ * @param  {Page} page the page context
+ * @param  {string} key the API key, or '' to remove it
  */
 export async function uploadImages(page: Page, file: string, count = 1, { generateSizes = true }: { generateSizes?: boolean } = {}) {
   const response = await page.request.post('/wp-admin/admin-ajax.php', {
@@ -66,18 +67,21 @@ export async function uploadImages(page: Page, file: string, count = 1, { genera
   }
 }
 
+/**
+ * Stores the key the way the account connect view does. Keys the API rejects are not stored.
+ * @param  {Page} page the page context
+ * @param  {string} key the API key, or '' to remove it
+ */
 export async function setAPIKey(page: Page, key = '') {
   await page.goto('/wp-admin/options-general.php?page=tinify');
-
-  await page.waitForLoadState('networkidle');
-  const changeAPIKey = await page.getByText('Change API key');
-  const isVisible = await changeAPIKey.isVisible();
-  if (isVisible) {
-    await changeAPIKey.click();
-  }
-  await page.locator('#tinypng_api_key').fill(key);
-
-  await page.locator('#submit').click();
+  await page.evaluate(async (apiKey) => {
+    const { ajaxurl, tinyCompress } = window as any;
+    await fetch(ajaxurl, {
+      method: 'POST',
+      body: new URLSearchParams({ _nonce: tinyCompress.nonce, action: 'tiny_settings_update_api_key', key: apiKey }),
+    });
+  }, key);
+  await page.reload();
 }
 
 /** Sets the compression timing to the preferred value
@@ -102,7 +106,7 @@ type DefaultSizes = '0' | 'thumbnail' | 'medium' | 'medium_large' | 'large' | '1
 export async function enableCompressionSizes(page: Page, sizes: DefaultSizes[], enableOtherSizes: boolean = false) {
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
-  const allSizes = await page.locator('.sizes input[type="checkbox"]').all();
+  const allSizes = await page.locator('.tiny-sizes input[type="checkbox"]').all();
   for (const size of allSizes) {
     const sizeID = await size.getAttribute('id');
     if (!sizeID) continue;
@@ -251,27 +255,15 @@ export async function setConversionSettings(page: Page, settings: { convert: boo
   await page.goto('/wp-admin/options-general.php?page=tinify');
 
   if (settings.convert) {
-    await page.locator('#tinypng_conversion_convert').check();
+    await page.locator('#tiny-convert').check();
 
-    switch (settings.output) {
-      case 'webp':
-        await page.locator('#tinypng_convert_convert_to_webp').check();
-        break;
-      case 'avif':
-        await page.locator('#tinypng_convert_convert_to_avif').check();
-        break;
-      case 'smallest':
-      default:
-        await page.locator('#tinypng_convert_convert_to_smallest').check();
-    }
+    const output = settings.output || 'smallest';
+    await page.locator(`input[name="tinypng_convert_format[convert_to]"][value="${output}"]`).check();
 
-    if (settings.delivery === 'htaccess') {
-      await page.getByTestId('tinypng_convert_delivery_htaccess').check();
-    } else {
-      await page.getByTestId('tinypng_convert_delivery_picture').check();
-    }
+    const delivery = settings.delivery || 'picture';
+    await page.locator(`input[name="tinypng_convert_format[delivery_method]"][value="${delivery}"]`).check();
   } else {
-    await page.locator('#tinypng_conversion_convert').uncheck();
+    await page.locator('#tiny-convert').uncheck();
   }
 
   await page.locator('#submit').click();
