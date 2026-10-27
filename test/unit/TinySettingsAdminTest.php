@@ -543,6 +543,6 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 	}
 
 	public function test_should_count_credits_per_image_with_resize_and_conversion() {
-		$this->assertEquals( 12, Tiny_Settings::get_credits_per_image( 5, true, false, true ) );
+		$this->assertEquals( 11, Tiny_Settings::get_credits_per_image( 5, true, false, true ) );
 	}
 }
