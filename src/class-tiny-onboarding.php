@@ -248,6 +248,8 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 
 		if ( empty( $api_key ) && empty( $compression_count ) ) {
 			self::set_is_onboarded( 0 );
+		} else {
+			self::set_is_onboarded( 1 );
 		}
 	}
 }
