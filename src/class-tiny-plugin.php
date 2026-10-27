@@ -18,14 +18,19 @@
 * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 class Tiny_Plugin extends Tiny_WP_Base {
-	const VERSION         = '3.8.0';
+	const VERSION         = '3.8.1';
 	const MEDIA_COLUMN    = self::NAME;
 	const DATETIME_FORMAT = 'Y-m-d G:i:s';
 
-	private static $version;
-
+	/** @var Tiny_Settings */
 	private $settings;
-	private $twig;
+
+	/**
+	 * Background process
+	 *
+	 * @var Tiny_Background_Optimize
+	 */
+	private $background_optimizer;
 
 	public static function jpeg_quality() {
 		return 85;
@@ -42,6 +47,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		parent::__construct();
 		$this->settings = new Tiny_Settings();
 		new Tiny_Conversion( $this->settings );
+		$this->background_optimizer = new Tiny_Background_Optimize( $this->settings );
 	}
 
 	public function set_compressor( $compressor ) {
@@ -72,7 +78,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			'tiny_image_before_compression',
 			$this->get_method( 'backup_original_image' ),
 			10,
-			1
+			2
 		);
 
 		load_plugin_textdomain(
@@ -101,8 +107,23 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		);
 
 		add_action(
-			'wp_ajax_tiny_compress_image_for_bulk',
-			$this->get_method( 'compress_image_for_bulk' )
+			'wp_ajax_tiny_bulk_queue_start',
+			$this->get_method( 'ajax_bulk_queue_start' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_bulk_queue_status',
+			$this->get_method( 'ajax_bulk_queue_status' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_bulk_queue_cancel',
+			$this->get_method( 'ajax_bulk_queue_cancel' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_bulk_queue_optimize_next',
+			$this->get_method( 'ajax_bulk_queue_optimize_next' )
 		);
 
 		add_action(
@@ -118,6 +139,11 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		add_action(
 			'wp_ajax_tiny_mark_image_as_compressed',
 			$this->get_method( 'mark_image_as_compressed' )
+		);
+
+		add_action(
+			'wp_ajax_tiny_restore_backup',
+			$this->get_method( 'restore_backup_image' )
 		);
 
 		/*
@@ -206,7 +232,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		$this->tiny_compatibility();
 
-		add_thickbox();
 		Tiny_Logger::init();
 	}
 
@@ -300,16 +325,13 @@ class Tiny_Plugin extends Tiny_WP_Base {
 					'No action taken',
 					'tiny-compress-images'
 				),
-				'L10nDuplicate'          => __(
-					'Image was already processed',
-					'tiny-compress-images'
-				),
 				'L10nBulkAction'         => __( 'Compress Images', 'tiny-compress-images' ),
 				'L10nBulkMarkCompressed' => __(
 					'Mark as Compressed',
 					'tiny-compress-images'
 				),
 				'L10nCancelled'          => __( 'Cancelled', 'tiny-compress-images' ),
+				'L10nStopped'            => __( 'Stopped', 'tiny-compress-images' ),
 				'L10nCompressing'        => __( 'Compressing', 'tiny-compress-images' ),
 				'L10nCompressed'         => __( 'compressed', 'tiny-compress-images' ),
 				'L10nConverted'          => __( 'converted', 'tiny-compress-images' ),
@@ -331,6 +353,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'L10nInternalError'      => __( 'Internal error', 'tiny-compress-images' ),
 				'L10nOutOf'              => __( 'out of', 'tiny-compress-images' ),
 				'L10nWaiting'            => __( 'Waiting', 'tiny-compress-images' ),
+				'L10nBackgroundNotice'   => __(
+					// phpcs:ignore Generic.Files.LineLength
+					'Optimization continues in the background. You can close this page and come back later.',
+					'tiny-compress-images'
+				),
+				'L10nStoppedNotice'      => __(
+					'Optimization stopped early.',
+					'tiny-compress-images'
+				),
+				'L10nInPageNotice'       => __(
+					// phpcs:ignore Generic.Files.LineLength
+					'For the plugin to do the work, you need to keep this page open. But no worries: when stopped, you can continue where you left off!',
+					'tiny-compress-images'
+				),
 			)
 		);
 
@@ -590,47 +626,21 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		exit();
 	}
 
-	public function compress_image_for_bulk() {
-		$response = $this->validate_ajax_attachment_request();
-		if ( isset( $response['error'] ) ) {
-			echo json_encode( $response );
-			exit();
-		}
-
-		list($id, $metadata)     = $response['data'];
-		$tiny_image_before       = new Tiny_Image( $this->settings, $id, $metadata );
-		$image_statistics_before = $tiny_image_before->get_statistics(
-			$this->settings->get_sizes(),
-			$this->settings->get_active_tinify_sizes()
-		);
-		$size_before             = $image_statistics_before['compressed_total_size'];
-
-		$tiny_image = new Tiny_Image( $this->settings, $id, $metadata );
-
-		Tiny_Logger::debug(
-			'compress from bulk',
-			array(
-				'image_id' => $id,
-			)
-		);
-
-		$result           = $tiny_image->compress();
+	/**
+	 * What the bulk optimization page shows about an image once it is done.
+	 *
+	 * @param Tiny_Image $tiny_image The image as it is after compressing.
+	 * @param array      $result     What compressing it came to: at least
+	 *                               'success', 'failed', 'message' and
+	 *                               'size_change'.
+	 * @return array
+	 */
+	private function bulk_image_result( $tiny_image, array $result ) {
 		$image_statistics = $tiny_image->get_statistics(
 			$this->settings->get_sizes(),
 			$this->settings->get_active_tinify_sizes()
 		);
-		wp_update_attachment_metadata( $id, $tiny_image->get_wp_metadata() );
 
-		// Nonce verified in validate_ajax_attachment_request().
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$current_library_size = isset( $_POST['current_size'] ) ?
-			intval( wp_unslash( $_POST['current_size'] ) )
-			: 0;
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
-		$size_after       = $image_statistics['compressed_total_size'];
-		$new_library_size = $current_library_size + $size_after - $size_before;
-
-		$result['message']                = $tiny_image->get_latest_error();
 		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
 		$result['image_sizes_converted']  = $image_statistics['image_sizes_converted'];
 		$result['image_sizes_optimized']  = $image_statistics['image_sizes_optimized'];
@@ -645,10 +655,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			1
 		);
 
-		$result['savings']                     = $tiny_image->get_savings( $image_statistics );
-		$result['status']                      = $this->settings->get_status();
-		$result['thumbnail']                   = wp_get_attachment_image(
-			$id,
+		$result['savings']   = $tiny_image->get_savings( $image_statistics );
+		$result['status']    = $this->settings->get_status();
+		$result['thumbnail'] = wp_get_attachment_image(
+			$tiny_image->get_id(),
 			array( '30', '30' ),
 			true,
 			array(
@@ -656,12 +666,142 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'alt'   => '',
 			)
 		);
-		$result['size_change']                 = $size_after - $size_before;
-		$result['human_readable_library_size'] = size_format( $new_library_size, 2 );
 
-		echo json_encode( $result );
+		return $result;
+	}
 
-		exit();
+	/**
+	 * Retrieves images available for optimization and
+	 * queues them for optimization
+	 */
+	public function ajax_bulk_queue_start() {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
+			wp_die( -1, 403 );
+		}
+
+		/* A run that is still going is followed, not restarted. */
+		if ( $this->background_optimizer->is_running() ) {
+			wp_send_json_success( array( 'background' => true ) );
+		}
+
+		$stats        = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$ids          = wp_list_pluck( $stats['available-for-optimization'], 'ID' );
+		$has_loopback = $this->background_optimizer->loopback();
+
+		Tiny_Logger::debug(
+			'bulk optimize starting',
+			array(
+				'in_background' => $has_loopback,
+				'image_count'   => count( $ids ),
+			)
+		);
+
+		if ( $has_loopback ) {
+			// if loopback is supported, will optimize in background
+			$this->background_optimizer->start( $ids );
+		} else {
+			// if not, waits for request from front-end
+			$this->background_optimizer->queue( $ids );
+		}
+
+		wp_send_json_success( array( 'background' => $has_loopback ) );
+	}
+
+	/**
+	 * Optimize the next queued image
+	 *
+	 * Used by front-end queue handler
+	 * hooked in wp_ajax_tiny_bulk_queue_optimize_next
+	 *
+	 * @see src/js/bulk-optimization.js - optimizeInPage()
+	 */
+	public function ajax_bulk_queue_optimize_next() {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
+			wp_die( -1, 403 );
+		}
+
+		$next_image = $this->background_optimizer->optimize_next();
+		Tiny_Logger::debug(
+			'bulk optimize_next',
+			array(
+				'optimized next image' => $next_image,
+			)
+		);
+
+		wp_send_json_success(
+			array( 'optimized' => $next_image )
+		);
+	}
+
+	/**
+	 * Where the images the bulk optimization page is waiting for stand.
+	 *
+	 * Finished images come with the same details the page gets when it
+	 * compresses an image itself, so it can show them the same way.
+	 */
+	public function ajax_bulk_queue_status() {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
+			wp_die( -1, 403 );
+		}
+
+		$ids          = isset( $_POST['ids'] ) ?
+			explode( ',', sanitize_text_field( wp_unslash( $_POST['ids'] ) ) )
+			: array();
+		$library_size = isset( $_POST['current_size'] ) ?
+			intval( wp_unslash( $_POST['current_size'] ) )
+			: 0;
+
+		$running = $this->background_optimizer->is_running();
+
+		$items = array();
+		foreach ( $this->background_optimizer->get_results( $ids ) as $id => $item ) {
+			if ( is_array( $item['result'] ) ) {
+				$item['result'] = $this->bulk_image_result(
+					new Tiny_Image( $this->settings, $id ),
+					array_merge(
+						array(
+							'success'     => 0,
+							'failed'      => 0,
+							'message'     => null,
+							'size_change' => 0,
+						),
+						$item['result']
+					)
+				);
+
+				/* The page applies the results in order, each on top of the last. */
+				$library_size += $item['result']['size_change'];
+
+				$item['result']['human_readable_library_size'] = size_format( $library_size, 2 );
+			}
+
+			$items[ $id ] = $item;
+		}
+
+		wp_send_json_success(
+			array(
+				'running' => $running,
+				'items'   => $items,
+			)
+		);
+	}
+
+	public function ajax_bulk_queue_cancel() {
+		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
+			! current_user_can( 'upload_files' ) ) {
+			status_header( 403 );
+			wp_die( -1, 403 );
+		}
+
+		$this->background_optimizer->cancel();
+
+		wp_send_json_success();
 	}
 
 	public function ajax_optimization_statistics() {
@@ -747,7 +887,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( self::MEDIA_COLUMN === $column ) {
 			$tiny_image = new Tiny_Image( $this->settings, $id );
 			if ( $tiny_image->file_type_allowed() ) {
-				echo '<div class="tiny-ajax-container">';
+				echo '<div class="tiny-ajax-container" data-tiny-media-id="' . absint( $id ) . '">';
 				$this->render_compress_details( $tiny_image );
 				echo '</div>';
 			}
@@ -762,7 +902,8 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			echo '<h4>';
 			esc_html_e( 'JPEG, PNG, & WebP optimization', 'tiny-compress-images' );
 			echo '</h4>';
-			echo '<div class="tiny-ajax-container">';
+			echo '<div class="tiny-ajax-container" data-tiny-media-id="';
+			echo absint( $post->ID ) . '">';
 			$this->render_compress_details( $tiny_image );
 			echo '</div>';
 			echo '</div>';
@@ -810,6 +951,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		$remaining_credits   = $this->settings->get_remaining_credits();
 		$is_on_free_plan     = $this->settings->is_on_free_plan();
 		$email_address       = $this->settings->get_email_address();
+		$bulk_running        = $this->background_optimizer->is_running();
 
 		include __DIR__ . '/views/bulk-optimization.php';
 	}
@@ -851,9 +993,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 		wp_enqueue_script( self::NAME . '_dashboard_widget' );
 
+		$widget_title = esc_html__(
+			'TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF',
+			'tiny-compress-images'
+		);
+
 		wp_add_dashboard_widget(
 			$this->get_prefixed_name( 'dashboard_widget' ),
-			esc_html__( 'TinyPNG - JPEG, PNG & WebP image compression', 'tiny-compress-images' ),
+			$widget_title,
 			$this->get_method( 'add_widget_view' )
 		);
 	}
@@ -910,6 +1057,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	public function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
 		$tiny_image->delete_converted_image();
+		$tiny_image->delete_backup();
 	}
 
 	/**
@@ -928,44 +1076,14 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 * @param int       $attachment_id The ID of the attachment
 	 * @return bool             return true on backup created
 	 */
-	public function backup_original_image( $attachment_id ) {
+	public function backup_original_image( $attachment_id, $wp_metadata = null ) {
 		if ( ! $this->settings->get_backup_enabled() ) {
 			return false;
 		}
 
-		$tiny_image = new Tiny_Image( $this->settings, $attachment_id );
+		$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $wp_metadata );
 
-		$original_image = $tiny_image->get_image_size( Tiny_Image::ORIGINAL_UNSCALED );
-		if ( null === $original_image ) {
-			$original_image = $tiny_image->get_image_size();
-		}
-
-		if ( null === $original_image ) {
-			return false;
-		}
-
-		$file_path  = $original_image->filename;
-		$upload_dir = wp_upload_dir();
-		$basedir    = trailingslashit( $upload_dir['basedir'] );
-		if ( Tiny_Helpers::str_starts_with( $file_path, $basedir ) ) {
-			$file_path = substr( $file_path, strlen( $basedir ) );
-		}
-
-		$backup_file = $basedir . 'tinify_backup/' . $file_path;
-
-		$wp_filesystem = Tiny_Helpers::get_wp_filesystem();
-
-		if ( $wp_filesystem->exists( $backup_file ) ) {
-			return false;
-		}
-
-		$backup_dir = dirname( $backup_file );
-
-		if ( ! wp_mkdir_p( $backup_dir ) ) {
-			return false;
-		}
-
-		return $wp_filesystem->copy( $original_image->filename, $backup_file );
+		return $tiny_image->create_backup();
 	}
 
 	public static function request_review() {
@@ -988,6 +1106,42 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	 */
 	public static function uninstall() {
 		Tiny_Apache_Rewrite::uninstall_rules();
+		Tiny_Background_Optimize::clear();
+	}
+
+	/**
+	 * Restores the original image from its backup via AJAX.
+	 *
+	 * Validates the request, calls restore_backup() on the image, then
+	 * re-renders the compression details partial in the response.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return void
+	 */
+	public function restore_backup_image() {
+		$response = $this->validate_ajax_attachment_request();
+		if ( isset( $response['error'] ) ) {
+			status_header( 400 );
+			echo esc_html( $response['error'] );
+			exit();
+		}
+
+		list($id, $metadata) = $response['data'];
+		$tiny_image          = new Tiny_Image( $this->settings, $id, $metadata );
+
+		if ( ! $tiny_image->restore_backup() ) {
+			status_header( 500 );
+			echo esc_html__(
+				'Could not restore backup. The backup file may not exist or could not be written.',
+				'tiny-compress-images'
+			);
+			exit();
+		}
+
+		$this->render_compress_details( $tiny_image );
+
+		exit();
 	}
 
 	public function mark_image_as_compressed() {

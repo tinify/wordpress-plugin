@@ -9,6 +9,27 @@
       "type": "php",
       "request": "launch",
       "port": 9003
+    },
+    {
+      "name": "XDebug PHPUnit (filter)",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/vendor/bin/phpunit",
+      "args": ["--filter", "${input:phpunitFilter}"],
+      "cwd": "${workspaceFolder}",
+      "port": 0,
+      "runtimeArgs": ["-dxdebug.start_with_request=yes"],
+      "env": {
+        "XDEBUG_MODE": "debug,develop",
+        "XDEBUG_CONFIG": "client_port=${port}"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "phpunitFilter",
+      "type": "promptString",
+      "description": "PHPUnit --filter (test method, class, or Class::method)"
     }
   ]
 }

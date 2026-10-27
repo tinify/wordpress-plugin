@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: TinyPNG - JPEG, PNG & WebP image compression
- * Description: Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
- * Version: 3.8.0
+ * Plugin Name: TinyPNG Image Optimization – Image Compression JPEG & PNG | Convert to WebP & AVIF
+ * Description: Compress & convert images to WebP & AVIF automatically. Faster pages, improved SEO. Optimize 500 images/month free, no ads.
+ * Version: 3.8.1
  * Author: TinyPNG
  * Author URI: https://tinypng.com
  * Text Domain: tiny-compress-images
@@ -19,6 +19,7 @@ require dirname( __FILE__ ) . '/src/class-tiny-logger.php';
 require dirname( __FILE__ ) . '/src/class-tiny-diagnostics.php';
 require dirname( __FILE__ ) . '/src/class-tiny-compress.php';
 require dirname( __FILE__ ) . '/src/class-tiny-bulk-optimization.php';
+require dirname( __FILE__ ) . '/src/class-tiny-background-optimize.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image-size.php';
 require dirname( __FILE__ ) . '/src/class-tiny-image.php';
 require dirname( __FILE__ ) . '/src/class-tiny-settings.php';

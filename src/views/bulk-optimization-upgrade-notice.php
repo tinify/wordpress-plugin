@@ -38,7 +38,7 @@
 		</p>
 	</div>
 	<?php $encoded_email = str_replace( '%20', '%2B', rawurlencode( $email_address ) ); ?>
-	<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email ); ?>" target="_blank" class="button button-primary button-hero upgrade-account">
+	<a href="<?php echo esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . $encoded_email . '&utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=bulk-optimization-notice' ); ?>" target="_blank" class="button button-primary button-hero upgrade-account">
 		<?php esc_html_e( 'Upgrade account', 'tiny-compress-images' ); ?>
 	</a>
 	<?php if ( $remaining_credits > 0 ) { ?>

@@ -1,4 +1,72 @@
-(function() {
+(function () {
+  async function restoreBackup(attachmentId) {
+    return jQuery.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: {
+        _nonce: tinyCompress.nonce,
+        action: 'tiny_restore_backup',
+        id: attachmentId,
+      },
+    });
+  }
+
+  jQuery(document).on('click', 'a[data-dialog-id]', function (e) {
+    e.preventDefault();
+    const dialog = document.getElementById(jQuery(e.currentTarget).data('dialog-id'));
+    if (dialog) {
+      dialog.showModal();
+    }
+  });
+
+  jQuery(document).on('click', '[data-dialog-close]', function (e) {
+    e.currentTarget.closest('dialog').close();
+  });
+
+  jQuery(document).on('click', 'dialog.tiny-dialog', function (e) {
+    const dialog = e.currentTarget;
+    if (e.target !== dialog) {
+      return;
+    }
+    const rect = dialog.getBoundingClientRect();
+    const inside = e.clientX >= rect.left && e.clientX <= rect.right &&
+      e.clientY >= rect.top && e.clientY <= rect.bottom;
+    if (!inside) {
+      dialog.close();
+    }
+  });
+
+  jQuery(document).on('click', '.tiny-restore-dialog button[value="submit"]', async function (e) {
+    const confirmButton = e.currentTarget;
+    const dialog = confirmButton.closest('dialog');
+    const detailsDialog = dialog.parentElement.closest('dialog');
+    const container = dialog.closest('.tiny-ajax-container');
+    const spinner = dialog.querySelector('.spinner');
+
+    confirmButton.disabled = true;
+    if (spinner) {
+      spinner.style.visibility = 'visible';
+    }
+    try {
+      const result = await restoreBackup(container.dataset.tinyMediaId);
+      dialog.close();
+      if (detailsDialog) {
+        detailsDialog.close();
+      }
+      container.innerHTML = result;
+    } catch (err) {
+      const errorEl = dialog.querySelector('.tiny-dialog-error');
+      if (errorEl) {
+        errorEl.textContent = err.responseText || 'Failed to restore backup.';
+        errorEl.hidden = false;
+      }
+      confirmButton.disabled = false;
+      if (spinner) {
+        spinner.style.visibility = 'hidden';
+      }
+    }
+  });
+
   function downloadDiagnostics() {
     try {
       jQuery('#tiny-download-diagnostics').attr('disabled', true);

@@ -15,7 +15,14 @@ class WP_Filesystem_Base {
 		if ( ! $overwrite && file_exists( $dest ) ) {
 			return false;
 		}
-		return copy( $src, $dest );
+		// Use file_get_contents + file_put_contents instead of copy() so that
+		// vfsStream files backed by LargeFileContent (read-only virtual content)
+		// can be overwritten in tests.
+		$content = file_get_contents( $src );
+		if ( false === $content ) {
+			return false;
+		}
+		return file_put_contents( $dest, $content ) !== false;
 	}
 
 	public function get_contents( $path ) {
