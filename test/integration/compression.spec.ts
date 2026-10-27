@@ -79,7 +79,7 @@ test.describe('compression', () => {
   });
 
   test('upload with incorrect metadata should show error', async () => {
-    await setAPIKey(page, 'PNG123 INVALID');
+    await setAPIKey(page, 'PNG123INVALID');
     await setCompressionTiming(page, 'auto');
     await enableCompressionSizes(page, ['0', 'medium']);
 
