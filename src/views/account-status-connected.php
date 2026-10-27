@@ -62,7 +62,7 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 					<dd><?php echo esc_html( $tiny_email ); ?></dd>
 				</div>
 			<?php } ?>
-			<?php if ( $status->ok ) { ?>
+			<?php if ( $status->ok && ! $status->pending ) { ?>
 				<div>
 					<dt><?php esc_html_e( 'Plan', 'tiny-compress-images' ); ?></dt>
 					<dd>
