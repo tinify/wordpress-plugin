@@ -220,7 +220,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $disabled_required_functions;
 	}
 
-	protected function get_api_key() {
+	public static function get_api_key() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return TINY_API_KEY;
 		} else {

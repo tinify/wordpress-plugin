@@ -243,7 +243,7 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 * default onboarded state so it is never sent through onboarding again.
 	 */
 	public static function on_activate() {
-		$api_key           = get_option( self::get_prefixed_name( 'api_key' ) );
+		$api_key           = Tiny_Settings::get_api_key();
 		$compression_count = get_option( self::get_prefixed_name( 'status' ) );
 
 		if ( empty( $api_key ) && empty( $compression_count ) ) {
