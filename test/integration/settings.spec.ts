@@ -123,6 +123,13 @@ test.describe('settings', () => {
     await expect(page.getByText('Your API key is not confirmed yet. Click the link we sent to john@example.com to activate it.')).toBeVisible();
   });
 
+  test('not show plan for an unconfirmed key', async () => {
+    await page.reload();
+
+    await expect(page.getByText('Your API key is not confirmed yet.')).toBeVisible();
+    await expect(page.getByText('Plan', { exact: true })).not.toBeVisible();
+  });
+
   test('allow key reset', async () => {
     await setAPIKey(page, '');
 
