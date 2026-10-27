@@ -21,6 +21,9 @@ class Tiny_Onboarding_Test extends Tiny_TestCase {
 
 		Tiny_Onboarding::on_activate();
 
-		$this->assertEquals( array(), $this->wp->getCalls( 'update_option' ) );
+		$this->assertContains(
+			array( 'tinypng_onboarding_status', 1 ),
+			$this->wp->getCalls( 'update_option' )
+		);
 	}
 }
