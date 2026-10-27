@@ -627,14 +627,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$conversion_enabled
 	) {
 		$credits = $active_sizes_count;
-		if ( $resize_original_enabled ) {
-			++$credits;
-		}
+
 		if ( $compress_wr2x ) {
 			$credits *= 2;
 		}
 		if ( $conversion_enabled ) {
 			$credits *= 2;
+		}
+
+		if ( $resize_original_enabled ) {
+			++$credits;
 		}
 		return $credits;
 	}
