@@ -934,7 +934,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			);
 		} else {
 			$key    = sanitize_text_field( wp_unslash( $_POST['key'] ) );
-			$status = Tiny_Compress::create( $key )->get_status();
+			$status = Tiny_Compress::create(
+				$key,
+				array( $this, 'after_compress_callback' )
+			)->get_status();
 		}
 
 		if ( $status->ok ) {
