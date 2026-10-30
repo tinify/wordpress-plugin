@@ -97,10 +97,11 @@ $tiny_timing          = $this->get_compression_timing();
 							<?php checked( get_option( $tiny_logging_name ), 'on' ); ?>>
 						<span class="tiny-option-text">
 							<span class="tiny-option-label"><?php esc_html_e( 'Enable logging', 'tiny-compress-images' ); ?></span>
+							<span><?php esc_html_e( 'Will log various system events to a log file.', 'tiny-compress-images' ); ?></span>
 						</span>
 					</label>
 					<p class="tiny-actions">
-						<button class="button" type="button" id="tiny-download-diagnostics">
+						<button class="button button-small" type="button" id="tiny-download-diagnostics">
 							<?php esc_html_e( 'Download Diagnostics', 'tiny-compress-images' ); ?>
 						</button>
 					</p>
