@@ -40,6 +40,9 @@ $pandas = array(
 
 list( $badge_colour, $badge_text ) = $badges[ $state ];
 
+// Without credits for a single image, nothing can be compressed either.
+$panda = $pandas[ $state ];
+
 $has_library_bar  = ! in_array( $state, array( 'pending', 'empty' ), true );
 $has_credits_view = in_array( $state, array( 'credits_short', 'out_of_credits' ), true );
 $has_credits_line = null !== $widget['remaining_credits'] &&
