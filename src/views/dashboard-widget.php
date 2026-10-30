@@ -34,7 +34,7 @@ $pandas = array(
 	'ready'          => 'panda-skate',
 	'compressing'    => 'panda-rocket',
 	'done'           => 'panda-duck',
-	'credits_short'  => 'panda-skate',
+	'credits_short'  => 'panda-coffee',
 	'out_of_credits' => 'panda-coffee',
 );
 
@@ -120,7 +120,7 @@ if ( null !== $widget['seconds_left'] ) {
 			</div>
 			<img
 				class="tiny-widget-panda"
-				src="<?php echo esc_url( plugins_url( '/images/widget/' . $pandas[ $state ] . '.png', __DIR__ ) ); ?>"
+				src="<?php echo esc_url( plugins_url( '/images/widget/' . $panda . '.png', __DIR__ ) ); ?>"
 				width="128" height="128" alt="" />
 		</div>
 

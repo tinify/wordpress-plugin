@@ -159,6 +159,17 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame(12, $data['estimated_credit_use']);
 	}
 
+	public function test_is_short_of_credits_when_they_do_not_cover_a_single_image()
+	{
+		$this->connect(1);
+
+		// One image with two sizes needs 2 credits.
+		$data = $this->widget_data($this->stats(1, 1, 0, 0, 2));
+
+		$this->assertSame('credits_short', $data['state']);
+		$this->assertSame(0, $data['images_affordable']);
+	}
+
 	public function test_is_ready_when_credits_cover_the_remaining_images()
 	{
 		$this->connect(12);
