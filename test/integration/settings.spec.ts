@@ -74,7 +74,7 @@ test.describe('settings', () => {
   });
 
   test('show account connect to change the account', async () => {
-    await page.getByRole('button', { name: 'Change account' }).click();
+    await page.getByRole('button', { name: 'Change API Key' }).click();
 
     await expect(page.getByRole('heading', { name: 'Already have an account?' })).toBeVisible();
     await expect(page.locator('#tinypng_api_key')).toBeFocused();

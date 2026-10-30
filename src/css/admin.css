@@ -885,6 +885,7 @@ div.misc-pub-section.tiny-compress-images {
 .tiny-account-links {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
 	gap: 12px;
 	margin: 0;
 	color: var(--tiny-text-secondary);

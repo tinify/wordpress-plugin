@@ -92,13 +92,5 @@ $tiny_dashboard_link = sprintf(
 			</button>
 			<span class="spinner"></span>
 		</p>
-
-		<?php if ( $has_api_key ) { ?>
-			<p class="tiny-account-links">
-				<a href="https://tinypng.com/dashboard/api" target="_blank" rel="noopener">
-					<?php esc_html_e( 'Manage on tinypng.com', 'tiny-compress-images' ); ?>
-				</a>
-			</p>
-		<?php } ?>
 	</div>
 </div>

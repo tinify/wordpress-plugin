@@ -102,6 +102,10 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 		<?php } ?>
 
 		<p class="tiny-account-links">
+			<a href="<?php echo esc_url( $tiny_api_url ); ?>" target="_blank" rel="noopener">
+				<?php esc_html_e( 'Tinify Dashboard', 'tiny-compress-images' ); ?>
+				<span aria-hidden="true">&nearr;</span>
+			</a>
 			<?php if ( defined( 'TINY_API_KEY' ) ) { ?>
 				<span>
 					<?php
@@ -114,7 +118,7 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 				</span>
 			<?php } else { ?>
 				<button type="button" class="button-link tiny-link-secondary" data-tiny-action="change-account">
-					<?php esc_html_e( 'Change account', 'tiny-compress-images' ); ?>
+					<?php esc_html_e( 'Change API Key', 'tiny-compress-images' ); ?>
 				</button>
 			<?php } ?>
 		</p>
