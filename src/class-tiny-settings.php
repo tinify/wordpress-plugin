@@ -820,11 +820,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 * Renders the form to create a Tinify account or to connect one with an API key.
 	 */
 	public function render_account_connect() {
-		$can_create_key = $this->get_compressor()->can_create_key();
 		$user           = wp_get_current_user();
 		$name           = trim( $user->user_firstname . ' ' . $user->user_lastname );
 		$email          = trim( $user->user_email );
-		$has_api_key    = (bool) $this->get_api_key();
+		$api_key        = $this->get_api_key();
+		$has_api_key    = (bool) $api_key;
+		$api_key_masked = str_repeat( '•', 8 ) . substr( $api_key, -4 );
+		$show_create    = ! $has_api_key;
 		include __DIR__ . '/views/account-status-connect.php';
 	}
 

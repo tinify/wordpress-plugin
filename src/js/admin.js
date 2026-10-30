@@ -195,71 +195,108 @@
   }
 
   /**
-   * Creates an account or connects an API key from the account connect view,
-   * then opens the page in its container's data-create-key-next or
-   * data-update-key-next. A failure is shown under the field it is about.
+   * Posts the account connect request for the clicked button and opens next
+   * when it worked. Returns the error message when it did not.
    */
-  async function submitAccountConnect(event) {
-    event.preventDefault();
-
-    const button = event.target;
-    const column = button.closest('.tiny-account-connect-column');
-    const spinner = column.querySelector('.spinner');
-    const action = button.dataset.tinyAction === 'create-key' ? 'create' : 'update';
-    const name = document.querySelector('#tinypng_api_key_name')?.value ?? '';
-    const email = document.querySelector('#tinypng_api_key_email')?.value ?? '';
-    const key = document.querySelector('#tinypng_api_key').value;
-    let field;
-
-    if (action === 'update') {
-      field = document.querySelector('#tinypng_api_key').closest('.tiny-field');
-    } else if (!name) {
-      field = document.querySelector('#tinypng_api_key_name').closest('.tiny-field');
-    } else {
-      field = document.querySelector('#tinypng_api_key_email').closest('.tiny-field');
-    }
-
-    column.querySelectorAll('.tiny-field').forEach((f) => f.classList.remove('tiny-field-invalid'));
-
-    if (action === 'update' && !key) {
-      field.classList.add('tiny-field-invalid');
-      return;
-    }
-
-    function showError(message) {
-      button.disabled = false;
-      spinner.classList.remove('is-active');
-      if (action === 'create') {
-        field.querySelector('.tiny-field-error').textContent = message;
-      }
-      field.classList.add('tiny-field-invalid');
-    };
-
+  async function postAccountConnect(button, params, next) {
+    const spinner = button.closest('.tiny-actions').querySelector('.spinner');
     button.disabled = true;
     spinner.classList.add('is-active');
 
+    let message;
     try {
       const response = await fetch(ajaxurl, {
         method: 'POST',
-        body: new URLSearchParams({
-          _nonce: tinyCompress.nonce,
-          action: `tiny_settings_${action}_api_key`,
-          key,
-          name,
-          email,
-        }),
+        body: new URLSearchParams({ _nonce: tinyCompress.nonce, ...params }),
       });
       if (!response.ok) {
         throw new Error(response.statusText);
       }
       const status = await response.json();
       if (status.ok) {
-        window.location.href = button.closest('[data-create-key-next]').dataset[`${action}KeyNext`];
-      } else {
-        showError(status.message);
+        window.location.href = next;
+        return null;
       }
+      message = status.message;
     } catch (err) {
-      showError('Something went wrong, try again soon');
+      message = 'Something went wrong, try again soon';
+    }
+
+    button.disabled = false;
+    spinner.classList.remove('is-active');
+    return message;
+  }
+
+  /**
+   * Creates an account and opens data-create-key-next. A failure is shown
+   * under the name field when it is empty, otherwise under the email field.
+   */
+  async function createAccount(event) {
+    event.preventDefault();
+
+    const button = event.target;
+    const nameInput = document.querySelector('#tinypng_api_key_name');
+    const emailInput = document.querySelector('#tinypng_api_key_email');
+    const nameField = nameInput.closest('.tiny-field');
+    const emailField = emailInput.closest('.tiny-field');
+
+    nameField.classList.remove('tiny-field-invalid');
+    emailField.classList.remove('tiny-field-invalid');
+
+    const message = await postAccountConnect(button, {
+      action: 'tiny_settings_create_api_key',
+      name: nameInput.value,
+      email: emailInput.value,
+    }, button.closest('[data-create-key-next]').dataset.createKeyNext);
+
+    if (message) {
+      const field = nameInput.value ? emailField : nameField;
+      field.querySelector('.tiny-field-error').textContent = message;
+      field.classList.add('tiny-field-invalid');
+    }
+  }
+
+  /**
+   * Connects the API key in the key field and opens data-update-key-next.
+   */
+  async function connectApiKey(event) {
+    event.preventDefault();
+
+    const button = event.target;
+    const keyInput = document.querySelector('#tinypng_api_key');
+    const field = keyInput.closest('.tiny-field');
+
+    field.classList.remove('tiny-field-invalid');
+    if (!keyInput.value) {
+      field.classList.add('tiny-field-invalid');
+      return;
+    }
+
+    const message = await postAccountConnect(button, {
+      action: 'tiny_settings_update_api_key',
+      key: keyInput.value,
+    }, button.closest('[data-update-key-next]').dataset.updateKeyNext);
+
+    if (message) {
+      field.classList.add('tiny-field-invalid');
+    }
+  }
+
+  /**
+   * Disconnects the account and opens data-update-key-next. The server
+   * deletes the API key when it gets an empty one.
+   */
+  async function disconnectApiKey(event) {
+    event.preventDefault();
+
+    const button = event.target;
+    const message = await postAccountConnect(button, {
+      action: 'tiny_settings_update_api_key',
+      key: '',
+    }, button.closest('[data-update-key-next]').dataset.updateKeyNext);
+
+    if (message) {
+      window.alert(message);
     }
   }
 
@@ -437,8 +474,8 @@
     changeEnterKeyTarget('#tinypng_api_key_name, #tinypng_api_key_email', '[data-tiny-action=create-key]');
     changeEnterKeyTarget('#tinypng_api_key', '[data-tiny-action=update-key]');
 
-    eventOn('click', '[data-tiny-action=create-key]', submitAccountConnect);
-    eventOn('click', '[data-tiny-action=update-key]', submitAccountConnect);
+    eventOn('click', '[data-tiny-action=create-key]', createAccount);
+    eventOn('click', '[data-tiny-action=update-key]', connectApiKey);
     eventOn('change', '#tiny-convert', showFormatOptions);
 
     if (document.querySelector('[data-activated-next]')) {
@@ -448,8 +485,9 @@
   case 'settings_page_tinify':
     changeEnterKeyTarget('#tinypng_api_key_name, #tinypng_api_key_email', '[data-tiny-action=create-key]');
     changeEnterKeyTarget('#tinypng_api_key', '[data-tiny-action=update-key]');
-    eventOn('click', '[data-tiny-action=create-key]', submitAccountConnect);
-    eventOn('click', '[data-tiny-action=update-key]', submitAccountConnect);
+    eventOn('click', '[data-tiny-action=create-key]', createAccount);
+    eventOn('click', '[data-tiny-action=update-key]', connectApiKey);
+    eventOn('click', '[data-tiny-action=clear-key]', disconnectApiKey);
     eventOn('click', '[data-tiny-action=change-account]', showAccountConnect);
     loadAccountStatus();
     eventOn('change', '#tiny-convert', showFormatOptions);

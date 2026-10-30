@@ -18,6 +18,7 @@ $tiny_remaining_credits = self::get_remaining_credits();
 $tiny_limited_credits   = $status->ok && self::is_on_free_plan() && is_numeric( $tiny_remaining_credits );
 $tiny_remaining_credits = intval( $tiny_remaining_credits );
 $tiny_free_credits      = Tiny_Config::MONTHLY_FREE_COMPRESSIONS;
+$tiny_dashboard_url     = 'https://tinify.com/dashboard/api';
 $tiny_credits_url       = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=settings-credits';
 $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=settings-api';
 ?>
@@ -102,7 +103,7 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 		<?php } ?>
 
 		<p class="tiny-account-links">
-			<a href="<?php echo esc_url( $tiny_api_url ); ?>" target="_blank" rel="noopener">
+			<a href="<?php echo esc_url( $tiny_dashboard_url ); ?>" target="_blank" rel="noopener">
 				<?php esc_html_e( 'Tinify Dashboard', 'tiny-compress-images' ); ?>
 				<span aria-hidden="true">&nearr;</span>
 			</a>
