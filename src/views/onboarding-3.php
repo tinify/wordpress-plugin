@@ -41,8 +41,9 @@ $tiny_confirm_email = 'api-key' !== filter_input( INPUT_GET, 'path' );
 					<p>
 					<?php
 					printf(
+						/* translators: %s: number of free credits per month */
 						esc_html__( 'Free plan, %s credits a month.', 'tiny-compress-images' ),
-						Tiny_Config::MONTHLY_FREE_COMPRESSIONS
+						absint( Tiny_Config::MONTHLY_FREE_COMPRESSIONS )
 					);
 					?>
 					</p>

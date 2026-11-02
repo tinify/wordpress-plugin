@@ -9,12 +9,12 @@
 		<p>
 			<?php
 			printf(
+				/* translators: %s: number of free credits per month */
 				esc_html__(
-					/* translators: %s: the number of free compressions per month */
 					'Compress your images automatically for a faster site. A free account includes %s credits a month.',
 					'tiny-compress-images'
 				),
-				Tiny_Config::MONTHLY_FREE_COMPRESSIONS
+				absint( Tiny_Config::MONTHLY_FREE_COMPRESSIONS )
 			);
 			?>
 		</p>
