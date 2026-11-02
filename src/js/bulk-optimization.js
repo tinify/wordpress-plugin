@@ -188,11 +188,33 @@
     });
   }
 
-  function prepareBulkOptimization(items, running) {
+  function prepareBulkOptimization(items, running, startOnLoad) {
     window.allBulkOptimizationItems = items;
     updateProgressBar(0);
     if (running) {
       startBulkOptimization(items, true);
+    }
+    startFromUrl(items, running, startOnLoad);
+  }
+
+  // The dashboard widget opens this page with &start=1 and a nonce, which the
+  // server checks. Start right away, then drop both from the URL so a reload
+  // does not start again.
+  function startFromUrl(items, running, startOnLoad) {
+    const url = new URL(location.href);
+    if (url.searchParams.has('start')) {
+      url.searchParams.delete('start');
+      url.searchParams.delete('_wpnonce');
+      history.replaceState(null, '', url);
+    }
+    if (!startOnLoad || running) {
+      return;
+    }
+
+    const start = document.getElementById('id-start');
+    if (start && start.offsetParent !== null) {
+      jQuery('#hide-warning').trigger('click');
+      startBulkOptimization(items);
     }
   }
 

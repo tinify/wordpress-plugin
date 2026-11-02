@@ -11,6 +11,47 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		$this->subject->admin_init();
 	}
 
+	/**
+	 * helper to mark the API key as pending and answer its status check
+	 *
+	 * @param bool $ok whether the API says the key works
+	 * @return Tiny_Compress|\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private function pending_key( $ok ) {
+		$this->wp->addMethod( 'delete_option' );
+		$this->wp->addOption( 'tinypng_api_key_pending', true );
+
+		$compressor = $this->createMock( 'Tiny_Compress' );
+		$compressor->method( 'get_status' )->willReturn( (object) array( 'ok' => $ok ) );
+		$this->subject->set_compressor( $compressor );
+		return $compressor;
+	}
+
+	public function test_refresh_api_key_pending_does_not_ask_the_api_when_not_pending() {
+		$compressor = $this->pending_key( true );
+		$this->wp->addOption( 'tinypng_api_key_pending', false );
+		$compressor->expects( $this->never() )->method( 'get_status' );
+
+		$this->assertFalse( $this->subject->refresh_api_key_pending() );
+	}
+
+	public function test_refresh_api_key_pending_clears_the_flag_once_the_key_works() {
+		$this->pending_key( true );
+
+		$this->assertFalse( $this->subject->refresh_api_key_pending() );
+		$this->assertEquals(
+			array( array( 'tinypng_api_key_pending' ) ),
+			$this->wp->getCalls( 'delete_option' )
+		);
+	}
+
+	public function test_refresh_api_key_pending_stays_pending_while_the_key_does_not_work() {
+		$this->pending_key( false );
+
+		$this->assertTrue( $this->subject->refresh_api_key_pending() );
+		$this->assertEmpty( $this->wp->getCalls( 'delete_option' ) );
+	}
+
 	public function test_admin_init_should_register_keys() {
 		$this->assertEquals(array(
 			array( 'tinify', 'tinypng_api_key' ),
