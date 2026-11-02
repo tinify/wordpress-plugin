@@ -87,6 +87,14 @@ test.describe('settings', () => {
     await expect(page.getByText('Get more credits')).toBeVisible();
   });
 
+  test('use free credits before bought credits', async () => {
+    await setAPIKey(page, 'BUNDLE123');
+
+    await expect(page.getByText('1,300 credits left')).toBeVisible();
+    await expect(page.getByText('300 free credits')).toBeVisible();
+    await expect(page.getByText('1,000 bundle credits (never expire)')).toBeVisible();
+  });
+
   test('not show credits for paid accounts', async () => {
     await setAPIKey(page, 'PAID123');
 

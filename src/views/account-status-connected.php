@@ -18,6 +18,9 @@ $tiny_remaining_credits = self::get_remaining_credits();
 $tiny_limited_credits   = $status->ok && self::is_on_free_plan() && is_numeric( $tiny_remaining_credits );
 $tiny_remaining_credits = intval( $tiny_remaining_credits );
 $tiny_free_credits      = Tiny_Config::MONTHLY_FREE_COMPRESSIONS;
+$tiny_free_credits_left = min( $tiny_remaining_credits, max( 0, $tiny_free_credits - intval( self::get_compression_count() ) ) );
+$tiny_bundle_credits    = $tiny_remaining_credits - $tiny_free_credits_left;
+$tiny_credits_bar_total = $tiny_free_credits + $tiny_bundle_credits;
 $tiny_dashboard_url     = 'https://tinify.com/dashboard/api';
 $tiny_credits_url       = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=settings-credits';
 $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=settings-api';
@@ -85,20 +88,32 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 					<strong><?php echo esc_html( number_format_i18n( $tiny_remaining_credits ) ); ?></strong>
 					<?php echo esc_html( _n( 'credit left', 'credits left', $tiny_remaining_credits, 'tiny-compress-images' ) ); ?>
 				</p>
-				<?php if ( $tiny_remaining_credits <= $tiny_free_credits ) { ?>
-					<div class="tiny-credits-bar">
-						<span style="width: <?php echo esc_attr( round( 100 * $tiny_remaining_credits / $tiny_free_credits ) ); ?>%"></span>
-					</div>
+				<div class="tiny-credits-bar">
+					<span style="width: <?php echo esc_attr( round( 100 * $tiny_free_credits_left / $tiny_credits_bar_total, 1 ) ); ?>%"></span>
+					<span class="tiny-credits-bundle" style="width: <?php echo esc_attr( round( 100 * $tiny_bundle_credits / $tiny_credits_bar_total, 1 ) ); ?>%"></span>
+				</div>
+				<div class="tiny-credits-keys">
 					<p class="tiny-credits-key">
 						<?php
 						printf(
 							/* translators: %s: number of free credits left */
-							esc_html( _n( '%s free credit', '%s free credits', $tiny_remaining_credits, 'tiny-compress-images' ) ),
-							esc_html( number_format_i18n( $tiny_remaining_credits ) )
+							esc_html( _n( '%s free credit', '%s free credits', $tiny_free_credits_left, 'tiny-compress-images' ) ),
+							esc_html( number_format_i18n( $tiny_free_credits_left ) )
 						);
 						?>
 					</p>
-				<?php } ?>
+					<?php if ( $tiny_bundle_credits > 0 ) { ?>
+						<p class="tiny-credits-key tiny-credits-bundle">
+							<?php
+							printf(
+								/* translators: %s: number of bought credits left */
+								esc_html( _n( '%s bundle credit (never expires)', '%s bundle credits (never expire)', $tiny_bundle_credits, 'tiny-compress-images' ) ),
+								esc_html( number_format_i18n( $tiny_bundle_credits ) )
+							);
+							?>
+						</p>
+					<?php } ?>
+				</div>
 			</div>
 		<?php } ?>
 

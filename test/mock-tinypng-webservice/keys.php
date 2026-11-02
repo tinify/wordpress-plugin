@@ -2,10 +2,10 @@
 
 ob_start();
 
-function mock_key_details_free_request($remaining = 500) {
+function mock_key_details_free_request($remaining = 500, $count = 0) {
 	header("HTTP/1.1 200 OK");
 	header("Content-Type: application/json; charset=utf-8");
-	header("Compression-Count: 0");
+	header("Compression-Count: " . $count);
 	header("Compression-Count-Remaining: " . $remaining);
 	header("Email-Address: test@example.com");
 	header("Paying-State: free");
@@ -50,6 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 			echo mock_key_details_free_request();
 		} elseif ($key == "INSUFFICIENTCREDITS123") {
 			echo mock_key_details_free_request(1);
+		} elseif ($key == "BUNDLE123") {
+			echo mock_key_details_free_request(1300, 200);
 		} elseif ($key == "NOCREDITS123") {
 			echo mock_key_details_free_request(0);
 		} else {

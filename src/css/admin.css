@@ -15,6 +15,7 @@ body {
 	--tiny-red-300: #fca5a5;
 	--tiny-red-500: #ef4444;
 	--tiny-green-500: #06d28b;
+	--tiny-green-700: #008560;
 	--tiny-shadow-xs: 0 1px 2px rgba(18, 20, 29, 0.05);
 	--tiny-shadow-sm: 0 1px 2px rgba(18, 20, 29, 0.06);
 }
@@ -850,6 +851,7 @@ div.misc-pub-section.tiny-compress-images {
 }
 
 .tiny-credits-bar {
+	display: flex;
 	height: 8px;
 	overflow: hidden;
 	background: var(--tiny-border-emphasis);
@@ -857,9 +859,14 @@ div.misc-pub-section.tiny-compress-images {
 }
 
 .tiny-credits-bar span {
-	display: block;
 	height: 100%;
 	background: var(--tiny-green-500);
+}
+
+.tiny-credits-keys {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .tiny-credits-key {
@@ -880,6 +887,11 @@ div.misc-pub-section.tiny-compress-images {
 	height: 10px;
 	background: var(--tiny-green-500);
 	border-radius: 2px;
+}
+
+.tiny-credits-bar .tiny-credits-bundle,
+.tiny-credits-key.tiny-credits-bundle:before {
+	background: var(--tiny-green-700);
 }
 
 .tiny-account-links {
