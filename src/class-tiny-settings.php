@@ -824,7 +824,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$name           = trim( $user->user_firstname . ' ' . $user->user_lastname );
 		$email          = trim( $user->user_email );
 		$api_key        = $this->get_api_key();
-		$has_api_key    = (bool) $api_key;
+		$has_api_key    = $api_key && ! $this->get_api_key_pending();
 		$api_key_masked = str_repeat( '•', 8 ) . substr( $api_key, -4 );
 		$show_create    = ! $has_api_key;
 		include __DIR__ . '/views/account-status-connect.php';

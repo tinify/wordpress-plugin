@@ -27,4 +27,21 @@ test.describe('onboarding', () => {
     await expect(page.getByRole('heading', { name: 'Connected as test@example.com' })).toBeVisible();
     await expect(page.getByText('Free plan, 500 credits a month.')).toBeVisible();
   });
+
+  test('change the email address before confirming it', async () => {
+    await setAPIKey(page, '');
+    await page.goto('/wp-admin/options-general.php?page=tiny-onboarding&step=1');
+    await page.locator('#tinypng_api_key_name').fill('John');
+    await page.locator('#tinypng_api_key_email').fill('john@example.com');
+    await page.getByRole('button', { name: 'Create account' }).click();
+    await page.waitForURL('**step=2**');
+
+    await page.getByRole('link', { name: 'Change email address' }).click();
+    await page.locator('#tinypng_api_key_name').fill('Jane');
+    await page.locator('#tinypng_api_key_email').fill('jane@example.com');
+    await page.getByRole('button', { name: 'Create account' }).click();
+    await page.waitForURL('**step=2**');
+
+    await expect(page.getByText('Click the link we sent to jane@example.com.')).toBeVisible();
+  });
 });
