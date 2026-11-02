@@ -38,7 +38,10 @@ $tiny_confirm_email = 'api-key' !== filter_input( INPUT_GET, 'path' );
 					?>
 				</h2>
 				<?php if ( $this->settings->is_on_free_plan() ) { ?>
-					<p><?php esc_html_e( 'Free plan, 500 credits a month.', 'tiny-compress-images' ); ?></p>
+					<p><?php echo sprintf(
+						esc_html__( 'Free plan, %s credits a month.', 'tiny-compress-images' ),
+						Tiny_Config::MONTHLY_FREE_COMPRESSIONS
+					); ?></p>
 				<?php } ?>
 			</div>
 			<?php if ( $tiny_key_pending ) { ?>
