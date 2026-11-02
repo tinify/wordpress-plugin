@@ -8,13 +8,13 @@
 		<h1><?php esc_html_e( 'Tinify account', 'tiny-compress-images' ); ?></h1>
 		<p>
 			<?php
-			echo sprintf(
+			printf(
 				esc_html__(
 					/* translators: %s: the number of free compressions per month */
 					'Compress your images automatically for a faster site. A free account includes %s credits a month.',
 					'tiny-compress-images'
 				),
-				Tiny_Config::MONTHLY_FREE_COMPRESSIONS	
+				Tiny_Config::MONTHLY_FREE_COMPRESSIONS
 			);
 			?>
 		</p>
