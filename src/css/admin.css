@@ -301,7 +301,7 @@ div.misc-pub-section.tiny-compress-images {
 }
 
 .tiny-onboarding-card,
-.tiny-card {
+.tiny-settings .tiny-card {
 	box-sizing: border-box;
 	width: 100%;
 	background: var(--tiny-surface-primary);
