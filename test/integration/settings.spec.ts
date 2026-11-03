@@ -83,8 +83,9 @@ test.describe('settings', () => {
   test('show credits for free accounts', async () => {
     await setAPIKey(page, 'LIMIT123');
 
-    await expect(page.getByText('500 free credits')).toBeVisible();
+    await expect(page.getByText('500 free credits', { exact: true })).toBeVisible();
     await expect(page.getByText('Get more credits')).toBeVisible();
+    await expect(page.getByText('Keep 500 free credits a month, then pay for what you compress.')).toBeVisible();
   });
 
   test('use free credits before bought credits', async () => {
@@ -95,10 +96,19 @@ test.describe('settings', () => {
     await expect(page.getByText('1,000 bundle credits (never expire)')).toBeVisible();
   });
 
-  test('not show credits for paid accounts', async () => {
+  test('show free credits for paid accounts', async () => {
     await setAPIKey(page, 'PAID123');
 
-    await expect(page.getByText('test@example.com')).toBeVisible();
+    await expect(page.getByText('500 free credits left')).toBeVisible();
+    await expect(page.getByText('500 free credits, then pay per compression')).toBeVisible();
+    await expect(page.getByText('Get more credits')).not.toBeVisible();
+  });
+
+  test('pay per compression once free credits are used', async () => {
+    await setAPIKey(page, 'PAIDUSED123');
+
+    await expect(page.getByText('0 free credits left')).toBeVisible();
+    await expect(page.getByText('0 free credits, then pay per compression')).toBeVisible();
     await expect(page.getByText('Get more credits')).not.toBeVisible();
   });
 

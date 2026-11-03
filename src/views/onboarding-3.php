@@ -47,6 +47,16 @@ $tiny_confirm_email = 'api-key' !== filter_input( INPUT_GET, 'path' );
 					);
 					?>
 					</p>
+				<?php } elseif ( 'paid' === $this->settings->get_paying_state() ) { ?>
+					<p>
+					<?php
+					printf(
+						/* translators: %s: number of free credits per month */
+						esc_html__( 'Pay per compression, after %s free credits a month.', 'tiny-compress-images' ),
+						absint( Tiny_Config::MONTHLY_FREE_COMPRESSIONS )
+					);
+					?>
+					</p>
 				<?php } ?>
 			</div>
 			<?php if ( $tiny_key_pending ) { ?>

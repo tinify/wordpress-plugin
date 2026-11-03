@@ -28,6 +28,16 @@ test.describe('onboarding', () => {
     await expect(page.getByText('Free plan, 500 credits a month.')).toBeVisible();
   });
 
+  test('show the free credits of a paid account', async () => {
+    await setAPIKey(page, '');
+    await page.goto('/wp-admin/options-general.php?page=tiny-onboarding&step=1');
+    await page.locator('#tinypng_api_key').fill('PAID123');
+    await page.getByRole('button', { name: 'Connect', exact: true }).click();
+    await page.waitForURL('**step=3**');
+
+    await expect(page.getByText('Pay per compression, after 500 free credits a month.')).toBeVisible();
+  });
+
   test('change the email address before confirming it', async () => {
     await setAPIKey(page, '');
     await page.goto('/wp-admin/options-general.php?page=tiny-onboarding&step=1');

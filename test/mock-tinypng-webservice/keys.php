@@ -13,10 +13,10 @@ function mock_key_details_free_request($remaining = 500, $count = 0) {
 	return '{}';
 }
 
-function mock_key_details_paid_request() {
+function mock_key_details_paid_request($count = 0) {
 	header("HTTP/1.1 200 OK");
 	header("Content-Type: application/json; charset=utf-8");
-	header("Compression-Count: 0");
+	header("Compression-Count: " . $count);
 	header("Email-Address: test@example.com");
 	header("Paying-State: paid");
 
@@ -54,6 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 			echo mock_key_details_free_request(1300, 200);
 		} elseif ($key == "NOCREDITS123") {
 			echo mock_key_details_free_request(0);
+		} elseif ($key == "PAIDUSED123") {
+			echo mock_key_details_paid_request(700);
 		} else {
 			echo mock_key_details_paid_request();
 		}

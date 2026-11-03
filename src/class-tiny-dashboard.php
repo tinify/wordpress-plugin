@@ -128,6 +128,17 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			is_numeric( $remaining_credits );
 		$remaining_credits   = $has_limited_credits ? intval( $remaining_credits ) : null;
 
+		// Paid accounts get the same free credits each month and pay per
+		// compression once those are used.
+		$free_credits_left = null;
+		if ( ! $this->settings->is_on_free_plan() ) {
+			$compression_count = intval( $this->settings->get_compression_count() );
+			$free_credits_left = max(
+				0,
+				Tiny_Config::MONTHLY_FREE_COMPRESSIONS - $compression_count
+			);
+		}
+
 		// How many of the remaining images the credits still cover.
 		$images_affordable = 0;
 		if ( $has_limited_credits && $images_remaining > 0 && $estimated_credit_use > 0 ) {
@@ -169,6 +180,7 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			'percentage'           => $percentage,
 			'estimated_credit_use' => $estimated_credit_use,
 			'remaining_credits'    => $remaining_credits,
+			'free_credits_left'    => $free_credits_left,
 			'seconds_left'         => $seconds_left,
 			'email_address'        => $this->settings->get_email_address(),
 			'auto_compress'        => $this->settings->auto_compress_enabled(),

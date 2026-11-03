@@ -109,6 +109,17 @@ test.describe('dashboardwidget', () => {
     await expect(page.locator('#compression-progress-bar')).toHaveText('0 / 1 (0%)');
   });
 
+  test('paid accounts pay per compression after their free credits', async () => {
+    await setAccount('PAIDUSED123');
+    await setCompressionTiming(page, 'manual');
+    await uploadImages(page, 'input-example.jpg');
+
+    await page.goto('/wp-admin/index.php');
+
+    await expect(widget().getByText('Ready to compress')).toBeVisible();
+    await expect(widget().getByText('0 of 500 free credits left, then pay per compression')).toBeVisible();
+  });
+
   test('upgrade shows how to get more credits', async () => {
     await setAccount('INSUFFICIENTCREDITS123');
     await setCompressionTiming(page, 'auto');
