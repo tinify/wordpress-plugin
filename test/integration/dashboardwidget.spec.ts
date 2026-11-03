@@ -11,7 +11,6 @@ const widget = () => page.locator('#tinypng_dashboard_widget');
 // so wait for that before the dashboard reads them.
 async function setAccount(key: string) {
   await setAPIKey(page, key);
-  await page.waitForURL(/settings-updated=true/);
   await page.waitForLoadState('networkidle');
 }
 
