@@ -912,15 +912,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function render_bulk_optimization_page() {
-		/*
-		 * The account card asks the API for the account status, which also
-		 * refreshes the credits left, so it renders before the rest.
-		 */
-		ob_start();
-		$this->settings->render_account_status( true );
-		$account_status = ob_get_clean();
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		$this->settings->get_compressor()->get_status();
 
-		$stats             = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 		$widget            = $this->dashboard->get_widget_data( $stats );
 		$state             = $widget['state'];
 		$compression_count = intval( $this->settings->get_compression_count() );

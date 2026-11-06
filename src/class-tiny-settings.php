@@ -193,9 +193,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function account_status() {
-		if ( current_user_can( 'manage_options' ) ) {
-			$this->render_account_status();
-		}
+		$this->render_account_status();
 		exit();
 	}
 
@@ -821,8 +819,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 *                               page, for pages other than the settings page.
 	 */
 	public function render_account_status( $link_to_settings = false ) {
+		$is_allowed = current_user_can( 'manage_options' );
 		$key = $this->get_api_key();
-		if ( ! empty( $key ) ) {
+		if ( $is_allowed && ! empty( $key ) ) {
 			if ( $this->refresh_api_key_pending() ) {
 				$status = (object) array(
 					'ok'      => true,

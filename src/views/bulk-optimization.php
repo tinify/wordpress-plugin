@@ -5,7 +5,6 @@
  * @var array       $stats             See Tiny_Bulk_Optimization::get_optimization_statistics().
  * @var array       $widget            See Tiny_Dashboard::get_widget_data().
  * @var string      $state             The widget state, or no_sizes.
- * @var string      $account_status    The rendered account card.
  * @var int         $compression_count Compressions made this month so far.
  * @var bool        $start_on_load
  * @var Tiny_Plugin $this
@@ -133,10 +132,7 @@ $strong          = array( 'strong' => array() );
 		</div>
 
 		<div class="tiny-settings-sidebar">
-			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Rendered by Tiny_Settings::render_account_status(), which escapes its output.
-			echo $account_status;
-			?>
+			<?php $this->settings->render_account_status( true ); ?>
 
 			<div class="tiny-card">
 				<div class="tiny-card-section">
