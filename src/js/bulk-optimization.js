@@ -139,7 +139,9 @@
   }
 
   function updateNumbers() {
-    const runPercentage = Math.floor(finished / items.length * 100) + '%';
+    const hasItems = items.length > 0;
+    const itemsRunningPerc = hasItems ? Math.floor(finished / items.length * 100) : 0;
+    const runPercentage = `${itemsRunningPerc}%`;
     setText('run-done', finished.toLocaleString());
     setText('run-percentage', runPercentage);
     element('run-bar').style.width = runPercentage;
@@ -165,10 +167,10 @@
   }
 
   // Shows the done hero when every image was compressed. Otherwise the run was
-  // paused or stopped, or some images failed, and the page reloads to show
-  // what is left.
+  // paused or stopped, some images failed, or the page had no images listed,
+  // and the page reloads to show what is left.
   function finishRun() {
-    if (pending.length > 0 || compressed < items.length) {
+    if (items.length === 0 || pending.length > 0 || compressed < items.length) {
       location.reload();
       return;
     }
@@ -202,7 +204,9 @@
       });
       updateNumbers();
 
-      if (pending.length > 0 && (running || finished > finishedBefore)) {
+      // A run can still be going when this page has no images waiting for it,
+      // e.g. when the page loaded just as the run was finishing up.
+      if (running || (pending.length > 0 && finished > finishedBefore)) {
         setTimeout(pollStatus, POLL_INTERVAL);
       } else {
         finishRun();
@@ -239,7 +243,9 @@
 
   function showRun() {
     const title = element('list-title');
-    title.textContent = title.getAttribute('data-compressing');
+    if (title) {
+      title.textContent = title.getAttribute('data-compressing');
+    }
     showHero('compressing');
     updateNumbers();
   }
