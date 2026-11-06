@@ -221,10 +221,12 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 			);
 		}
 
-		update_option(
-			self::get_prefixed_name( 'compression_timing' ),
-			isset( $_POST['auto_compress'] ) ? 'background' : 'manual'
-		);
+		$timing_name = self::get_prefixed_name( 'compression_timing' );
+		$timing      = isset( $_POST[ $timing_name ] ) ?
+			sanitize_key( wp_unslash( $_POST[ $timing_name ] ) ) : '';
+		if ( in_array( $timing, array( 'background', 'auto', 'manual' ), true ) ) {
+			update_option( $timing_name, $timing );
+		}
 		update_option( self::get_prefixed_name( 'convert_format' ), $convert_format );
 
 		$next = isset( $_POST['next'] ) ? sanitize_key( wp_unslash( $_POST['next'] ) ) : '';
@@ -243,11 +245,13 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 	 * default onboarded state so it is never sent through onboarding again.
 	 */
 	public static function on_activate() {
-		$api_key           = get_option( self::get_prefixed_name( 'api_key' ) );
+		$api_key           = Tiny_Settings::get_api_key();
 		$compression_count = get_option( self::get_prefixed_name( 'status' ) );
 
 		if ( empty( $api_key ) && empty( $compression_count ) ) {
 			self::set_is_onboarded( 0 );
+		} else {
+			self::set_is_onboarded( 1 );
 		}
 	}
 }

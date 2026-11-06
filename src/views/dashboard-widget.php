@@ -34,15 +34,18 @@ $pandas = array(
 	'ready'          => 'panda-skate',
 	'compressing'    => 'panda-rocket',
 	'done'           => 'panda-duck',
-	'credits_short'  => 'panda-skate',
+	'credits_short'  => 'panda-coffee',
 	'out_of_credits' => 'panda-coffee',
 );
 
 list( $badge_colour, $badge_text ) = $badges[ $state ];
 
+// Without credits for a single image, nothing can be compressed either.
+$panda = $pandas[ $state ];
+
 $has_library_bar  = ! in_array( $state, array( 'pending', 'empty' ), true );
 $has_credits_view = in_array( $state, array( 'credits_short', 'out_of_credits' ), true );
-$has_credits_line = null !== $widget['remaining_credits'] &&
+$has_credits_line = ( null !== $widget['remaining_credits'] || null !== $widget['free_credits_left'] ) &&
 	! in_array( $state, array( 'not_connected', 'pending' ), true );
 
 $seconds_left_text = '';
@@ -120,7 +123,7 @@ if ( null !== $widget['seconds_left'] ) {
 			</div>
 			<img
 				class="tiny-widget-panda"
-				src="<?php echo esc_url( plugins_url( '/images/widget/' . $pandas[ $state ] . '.png', __DIR__ ) ); ?>"
+				src="<?php echo esc_url( plugins_url( '/images/widget/' . $panda . '.png', __DIR__ ) ); ?>"
 				width="128" height="128" alt="" />
 		</div>
 
@@ -274,7 +277,15 @@ if ( null !== $widget['seconds_left'] ) {
 			<div class="tiny-widget-offer">
 				<div class="tiny-widget-offer-text">
 					<strong><?php esc_html_e( 'Pay per compression', 'tiny-compress-images' ); ?></strong>
-					<span><?php esc_html_e( 'No monthly limit. Pay for what you compress.', 'tiny-compress-images' ); ?></span>
+					<span>
+						<?php
+						printf(
+							/* translators: %s: number of free credits per month */
+							esc_html__( 'Keep %s free credits a month, then pay for what you compress.', 'tiny-compress-images' ),
+							esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
+						);
+						?>
+					</span>
 				</div>
 				<a class="button button-primary button-large" href="<?php echo esc_url( $api_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Switch to pay per compression', 'tiny-compress-images' ); ?> <span aria-hidden="true">&nearr;</span></a>
 			</div>
@@ -300,7 +311,14 @@ if ( null !== $widget['seconds_left'] ) {
 			?>
 			<span class="<?php echo esc_attr( $credits_line_class ); ?>">
 				<?php
-				if ( $widget['remaining_credits'] <= Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
+				if ( null !== $widget['free_credits_left'] ) {
+					printf(
+						/* translators: %1$s: number of free credits left, %2$s: monthly free credits */
+						esc_html__( '%1$s of %2$s free credits left, then pay per compression', 'tiny-compress-images' ),
+						esc_html( number_format_i18n( $widget['free_credits_left'] ) ),
+						esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
+					);
+				} elseif ( $widget['remaining_credits'] <= Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
 					printf(
 						/* translators: %1$s: number of credits left, %2$s: monthly free credits */
 						esc_html( _n( '%1$s of %2$s free credits left', '%1$s of %2$s free credits left', $widget['remaining_credits'], 'tiny-compress-images' ) ),

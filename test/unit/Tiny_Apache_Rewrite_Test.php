@@ -24,6 +24,62 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
     }
 
     /**
+     * The request that turns conversion on still has it off during init,
+     * so the hook must be there to install the rules.
+     */
+    function test_plugin_init_will_add_hook_when_conversion_is_off()
+    {
+        $GLOBALS['is_apache'] = false;
+
+        $mock_settings = $this->createMock(Tiny_Settings::class);
+        $mock_settings->method('get_conversion_enabled')->willReturn(false);
+
+        new Tiny_Conversion($mock_settings);
+
+        $this->wp->init();
+
+        WordPressStubs::assertHook('update_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules');
+    }
+
+    /**
+     * The first save of convert_format adds the option instead of updating it.
+     */
+    function test_plugin_init_will_add_hook_for_new_option()
+    {
+        $GLOBALS['is_apache'] = false;
+
+        $mock_settings = $this->createMock(Tiny_Settings::class);
+        $mock_settings->method('get_conversion_enabled')->willReturn(false);
+
+        new Tiny_Conversion($mock_settings);
+
+        $this->wp->init();
+
+        WordPressStubs::assertHook('add_option_tinypng_convert_format', 'Tiny_Apache_Rewrite::toggle_rules_for_new_option');
+    }
+
+    /**
+     * Saving convert_format for the first time with htaccess delivery
+     * inserts the rules in the upload directory.
+     */
+    function test_toggle_rules_for_new_option_installs_upload_dir_htaccess()
+    {
+        $upload_dir = $this->vfs->url() . '/wp-content/uploads';
+        $htaccess_file = $upload_dir . '/.htaccess';
+
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+
+        Tiny_Apache_Rewrite::toggle_rules_for_new_option(
+            'tinypng_convert_format',
+            array('convert' => 'on', 'delivery_method' => 'htaccess')
+        );
+
+        $this->assertStringContainsString('tiny-compress-images', file_get_contents($htaccess_file));
+    }
+
+    /**
      * uninstall_rules removes htaccess rules from upload directory.
      * - creates a htaccess file in uploads directory
      * - run uninstall_rules

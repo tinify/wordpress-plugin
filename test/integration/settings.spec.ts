@@ -74,7 +74,7 @@ test.describe('settings', () => {
   });
 
   test('show account connect to change the account', async () => {
-    await page.getByRole('button', { name: 'Change account' }).click();
+    await page.getByRole('button', { name: 'Change API Key' }).click();
 
     await expect(page.getByRole('heading', { name: 'Already have an account?' })).toBeVisible();
     await expect(page.locator('#tinypng_api_key')).toBeFocused();
@@ -83,14 +83,32 @@ test.describe('settings', () => {
   test('show credits for free accounts', async () => {
     await setAPIKey(page, 'LIMIT123');
 
-    await expect(page.getByText('500 free credits')).toBeVisible();
+    await expect(page.getByText('500 free credits', { exact: true })).toBeVisible();
     await expect(page.getByText('Get more credits')).toBeVisible();
+    await expect(page.getByText('Keep 500 free credits a month, then pay for what you compress.')).toBeVisible();
   });
 
-  test('not show credits for paid accounts', async () => {
+  test('use free credits before bought credits', async () => {
+    await setAPIKey(page, 'BUNDLE123');
+
+    await expect(page.getByText('1,300 credits left')).toBeVisible();
+    await expect(page.getByText('300 free credits')).toBeVisible();
+    await expect(page.getByText('1,000 bundle credits (never expire)')).toBeVisible();
+  });
+
+  test('show free credits for paid accounts', async () => {
     await setAPIKey(page, 'PAID123');
 
-    await expect(page.getByText('test@example.com')).toBeVisible();
+    await expect(page.getByText('500 free credits left')).toBeVisible();
+    await expect(page.getByText('500 free credits, then pay per compression')).toBeVisible();
+    await expect(page.getByText('Get more credits')).not.toBeVisible();
+  });
+
+  test('pay per compression once free credits are used', async () => {
+    await setAPIKey(page, 'PAIDUSED123');
+
+    await expect(page.getByText('0 free credits left')).toBeVisible();
+    await expect(page.getByText('0 free credits, then pay per compression')).toBeVisible();
     await expect(page.getByText('Get more credits')).not.toBeVisible();
   });
 
@@ -121,6 +139,13 @@ test.describe('settings', () => {
     await page.getByRole('button', { name: 'Create account' }).click();
 
     await expect(page.getByText('Your API key is not confirmed yet. Click the link we sent to john@example.com to activate it.')).toBeVisible();
+  });
+
+  test('not show plan for an unconfirmed key', async () => {
+    await page.reload();
+
+    await expect(page.getByText('Your API key is not confirmed yet.')).toBeVisible();
+    await expect(page.getByText('Plan', { exact: true })).not.toBeVisible();
   });
 
   test('allow key reset', async () => {

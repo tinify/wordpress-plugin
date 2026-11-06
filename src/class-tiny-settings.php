@@ -225,7 +225,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 		return $disabled_required_functions;
 	}
 
-	protected function get_api_key() {
+	public static function get_api_key() {
 		if ( defined( 'TINY_API_KEY' ) ) {
 			return TINY_API_KEY;
 		} else {
@@ -243,25 +243,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 		} else {
 			return get_option( self::get_prefixed_name( 'api_key_pending' ) );
 		}
-	}
-
-	/**
-	 * Whether the API key still waits for the user to confirm their email.
-	 * Clears the pending flag once the key works.
-	 *
-	 * @return bool
-	 */
-	public function is_api_key_pending() {
-		if ( ! $this->get_api_key_pending() ) {
-			return false;
-		}
-
-		if ( $this->compressor->get_status()->ok ) {
-			$this->clear_api_key_pending();
-			return false;
-		}
-
-		return true;
 	}
 
 	protected function clear_api_key_pending() {
@@ -649,14 +630,16 @@ class Tiny_Settings extends Tiny_WP_Base {
 		$conversion_enabled
 	) {
 		$credits = $active_sizes_count;
-		if ( $resize_original_enabled ) {
-			++$credits;
-		}
+
 		if ( $compress_wr2x ) {
 			$credits *= 2;
 		}
 		if ( $conversion_enabled ) {
 			$credits *= 2;
+		}
+
+		if ( $resize_original_enabled ) {
+			++$credits;
 		}
 		return $credits;
 	}
@@ -844,10 +827,6 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$status = (object) array(
 					'ok'      => true,
 					'pending' => true,
-					'message' => __(
-						'An email has been sent to activate your account',
-						'tiny-compress-images'
-					),
 				);
 			} else {
 				$status          = $this->compressor->get_status();
@@ -861,11 +840,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 	 * Renders the form to create a Tinify account or to connect one with an API key.
 	 */
 	public function render_account_connect() {
-		$can_create_key = $this->get_compressor()->can_create_key();
 		$user           = wp_get_current_user();
 		$name           = trim( $user->user_firstname . ' ' . $user->user_lastname );
 		$email          = trim( $user->user_email );
-		$has_api_key    = (bool) $this->get_api_key();
+		$api_key        = $this->get_api_key();
+		$has_api_key    = $api_key && ! $this->get_api_key_pending();
+		$api_key_masked = str_repeat( '•', 8 ) . substr( $api_key, -4 );
+		$show_create    = ! $has_api_key;
 		include __DIR__ . '/views/account-status-connect.php';
 	}
 
@@ -940,6 +921,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$options    = array(
 					'name'       => $name,
 					'identifier' => $identifier,
+					'link'       => $link,
 				);
 				$compressor->create_key( $email, $options );
 
@@ -987,7 +969,10 @@ class Tiny_Settings extends Tiny_WP_Base {
 			);
 		} else {
 			$key    = sanitize_text_field( wp_unslash( $_POST['key'] ) );
-			$status = Tiny_Compress::create( $key )->get_status();
+			$status = Tiny_Compress::create(
+				$key,
+				array( $this, 'after_compress_callback' )
+			)->get_status();
 		}
 
 		if ( $status->ok ) {

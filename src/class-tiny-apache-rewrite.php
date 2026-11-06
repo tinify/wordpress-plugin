@@ -24,7 +24,7 @@
  * - inserting/removing rules from htaccess
  *
  * We are only updating rules when:
- * - updating the option convert_format
+ * - adding or updating the option convert_format
  * - uninstalling the plug-in
  */
 class Tiny_Apache_Rewrite extends Tiny_WP_Base {
@@ -35,6 +35,19 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 	 * @var string
 	 */
 	const MARKER = 'tiny-compress-images';
+
+	/**
+	 * Installs the htaccess rules when the option convert_format is saved
+	 * for the first time, which adds it instead of updating it.
+	 * hooked into `add_option_tinypng_convert_format`
+	 *
+	 * @param string $option
+	 * @param mixed  $value
+	 * @return void
+	 */
+	public static function toggle_rules_for_new_option( $option, $value ) {
+		self::toggle_rules( null, $value, $option );
+	}
 
 	/**
 	 * Installs or uninstalls the htaccess rules

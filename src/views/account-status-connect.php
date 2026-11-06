@@ -2,10 +2,11 @@
 /**
  * Create a Tinify account, or connect an existing one with its API key.
  *
- * @var bool   $can_create_key whether this server can register new accounts
- * @var string $name           full name to prefill
- * @var string $email          email address to prefill
- * @var bool   $has_api_key    whether an account is connected already
+ * @var bool   $show_create        whether this server can register new accounts
+ * @var string $name               full name to prefill
+ * @var string $email              email address to prefill
+ * @var bool   $has_api_key        whether an account is connected already
+ * @var string $api_key_masked     last characters of the connected API key, shown as placeholder
  */
 
 $tiny_dashboard_link = sprintf(
@@ -14,7 +15,7 @@ $tiny_dashboard_link = sprintf(
 );
 ?>
 <div class="tiny-account-connect">
-	<?php if ( $can_create_key ) { ?>
+	<?php if ( $show_create ) { ?>
 		<div class="tiny-account-connect-column">
 			<div class="tiny-card-head">
 				<h2><?php esc_html_e( 'Create a free account', 'tiny-compress-images' ); ?></h2>
@@ -71,8 +72,12 @@ $tiny_dashboard_link = sprintf(
 
 		<p class="tiny-field">
 			<label for="tinypng_api_key"><?php esc_html_e( 'API key', 'tiny-compress-images' ); ?></label>
-			<input type="text" id="tinypng_api_key" name="tinypng_api_key" spellcheck="false"
-				placeholder="<?php esc_attr_e( 'Paste your API key', 'tiny-compress-images' ); ?>">
+			<input
+				type="text"
+				id="tinypng_api_key"
+				name="tinypng_api_key"
+				spellcheck="false"
+				placeholder="<?php echo esc_attr( $has_api_key ? $api_key_masked : __( 'Paste your API key', 'tiny-compress-images' ) ); ?>">
 			<span class="tiny-field-error">
 			<?php
 			echo wp_kses_post(
@@ -87,18 +92,19 @@ $tiny_dashboard_link = sprintf(
 		</p>
 
 		<p class="tiny-actions">
-			<button type="button" class="button" data-tiny-action="update-key">
-				<?php esc_html_e( 'Connect', 'tiny-compress-images' ); ?>
-			</button>
+			<?php if ( $has_api_key ) { ?>
+				<button type="button" class="button button-primary" data-tiny-action="update-key">
+					<?php esc_html_e( 'Update Key', 'tiny-compress-images' ); ?>
+				</button>
+				<button type="button" class="button" data-tiny-action="clear-key">
+					<?php esc_html_e( 'Disconnect', 'tiny-compress-images' ); ?>
+				</button>
+				<?php } else { ?>
+				<button type="button" class="button" data-tiny-action="update-key">
+					<?php esc_html_e( 'Connect', 'tiny-compress-images' ); ?>
+				</button>
+			<?php } ?>
 			<span class="spinner"></span>
 		</p>
-
-		<?php if ( $has_api_key ) { ?>
-			<p class="tiny-account-links">
-				<a href="https://tinypng.com/dashboard/api" target="_blank" rel="noopener">
-					<?php esc_html_e( 'Manage on tinypng.com', 'tiny-compress-images' ); ?>
-				</a>
-			</p>
-		<?php } ?>
 	</div>
 </div>

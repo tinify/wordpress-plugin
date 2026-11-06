@@ -37,24 +37,30 @@ class Tiny_Conversion extends Tiny_WP_Base {
 	}
 
 	/**
-	 * will check if conversion is enabled,
-	 * if true:
+	 * will add hooks to toggle rules when the conversion settings are saved,
+	 * also while conversion is off, because saving is what turns it on.
+	 * will check if conversion is enabled, if true:
 	 * - will enable the delivery method
-	 * - will add hook to toggle rules
 	 *
 	 * hooked into `init`
 	 */
 	public function init() {
-		if ( ! $this->settings->get_conversion_enabled() ) {
-			return;
-		}
-
+		add_action(
+			'add_option_tinypng_convert_format',
+			'Tiny_Apache_Rewrite::toggle_rules_for_new_option',
+			20,
+			2
+		);
 		add_action(
 			'update_option_tinypng_convert_format',
 			'Tiny_Apache_Rewrite::toggle_rules',
 			20,
 			3
 		);
+
+		if ( ! $this->settings->get_conversion_enabled() ) {
+			return;
+		}
 
 		$delivery_method = $this->settings->get_conversion_delivery_method();
 
