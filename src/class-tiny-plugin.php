@@ -321,9 +321,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				'L10nPause'              => __( 'Pause', 'tiny-compress-images' ),
 				'L10nPausing'            => __( 'Pausing...', 'tiny-compress-images' ),
 				/* translators: %s: number of image sizes */
-				'L10nSize'               => __( '%s size', 'tiny-compress-images' ),
-				/* translators: %s: number of image sizes */
-				'L10nSizes'              => __( '%s sizes', 'tiny-compress-images' ),
+				'L10nSizeCount'          => __( 'Sizes: %s', 'tiny-compress-images' ),
 				/* translators: %1$s: compressed size, e.g. 1.4 MB, %2$s: percentage saved, e.g. 56% */
 				'L10nSmaller'            => __( '%1$s, %2$s smaller', 'tiny-compress-images' ),
 				/* translators: %s: number of images still to compress */
@@ -334,23 +332,30 @@ class Tiny_Plugin extends Tiny_WP_Base {
 					'Less than a minute left.',
 					'tiny-compress-images'
 				),
-				/* translators: %s: number of minutes */
-				'L10nMinuteLeft'         => __( 'About %s minute left.', 'tiny-compress-images' ),
-				/* translators: %s: number of minutes */
-				'L10nMinutesLeft'        => __( 'About %s minutes left.', 'tiny-compress-images' ),
-				/* translators: %s: number of hours */
-				'L10nHourLeft'           => __( 'About %s hour left.', 'tiny-compress-images' ),
-				/* translators: %s: number of hours */
-				'L10nHoursLeft'          => __( 'About %s hours left.', 'tiny-compress-images' ),
-				/* translators: %1$s: bytes saved, e.g. 14.9 MB, %2$s: credits used, e.g. 165 credits */
+				/* translators: %s: number of minutes, with the unit abbreviated so it needs no plural */
+				'L10nMinutesLeft'        => __( 'About %s min left.', 'tiny-compress-images' ),
+				/* translators: %s: number of hours, with the unit abbreviated so it needs no plural */
+				'L10nHoursLeft'          => __( 'About %s h left.', 'tiny-compress-images' ),
+				/* translators: %1$s: bytes saved, e.g. 14.9 MB, %2$s: number of credits used */
 				'L10nRunStatus'          => __(
-					'%1$s saved so far, %2$s used.',
+					'%1$s saved so far. Credits used: %2$s.',
 					'tiny-compress-images'
 				),
-				/* translators: %s: number of credits */
-				'L10nCredit'             => __( '%s credit', 'tiny-compress-images' ),
-				/* translators: %s: number of credits */
-				'L10nCredits'            => __( '%s credits', 'tiny-compress-images' ),
+				/*
+				 * For Intl.NumberFormat, which only takes the language and region:
+				 * WordPress variants like pt_PT_ao90 make it throw.
+				 */
+				'locale'                 => implode(
+					'-',
+					array_slice( explode( '_', get_locale() ), 0, 2 )
+				),
+				'L10nUnits'              => array(
+					_x( 'B', 'unit symbol' ),
+					_x( 'KB', 'unit symbol' ),
+					_x( 'MB', 'unit symbol' ),
+					_x( 'GB', 'unit symbol' ),
+					_x( 'TB', 'unit symbol' ),
+				),
 				'L10nInternalError'      => __( 'Internal error', 'tiny-compress-images' ),
 				'L10nBackgroundNotice'   => __(
 					// phpcs:ignore Generic.Files.LineLength

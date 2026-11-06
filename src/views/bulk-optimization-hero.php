@@ -189,7 +189,7 @@ list( $badge_colour, $badge_text ) = $badges[ $hero ];
 			} elseif ( null !== $widget['remaining_credits'] ) {
 				printf(
 					/* translators: %1$s: estimated number of credits, %2$s: number of credits left */
-					esc_html( _n( 'Uses about %1$s of your %2$s credits.', 'Uses about %1$s of your %2$s credits.', $widget['estimated_credit_use'], 'tiny-compress-images' ) ),
+					esc_html__( 'Uses about %1$s of your %2$s credits.', 'tiny-compress-images' ),
 					esc_html( number_format_i18n( $widget['estimated_credit_use'] ) ),
 					esc_html( number_format_i18n( $widget['remaining_credits'] ) )
 				);

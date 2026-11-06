@@ -12,7 +12,7 @@
   let creditsUsed = 0;
 
   function element(name) {
-    return document.querySelector('[data-tiny-bulk="' + name + '"]');
+    return document.querySelector(`[data-tiny-bulk="${name}"]`);
   }
 
   function setText(name, text) {
@@ -31,18 +31,29 @@
     });
   }
 
-  function plural(count, singular, pluralForm) {
-    return format(count === 1 ? singular : pluralForm, count.toLocaleString());
-  }
+  // Numbers follow the WordPress locale, like PHP's number_format_i18n.
+  const numberFormat = new Intl.NumberFormat(tinyCompress.locale);
+  const sizeFormat = new Intl.NumberFormat(tinyCompress.locale, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
 
+  /**
+   * Formats bytes in the largest unit that keeps the value at 1 or more, with
+   * one decimal like PHP's size_format( $bytes, 1 ). Nothing or less than
+   * nothing shows as 0 bytes.
+   * @param number bytes
+   */
   function formatBytes(bytes) {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const units = tinyCompress.L10nUnits;
+    let value = Math.max(0, bytes || 0);
     let unit = 0;
-    while (bytes >= 1024 && unit < units.length - 1) {
-      bytes /= 1024;
+    while (value >= 1024 && unit < units.length - 1) {
+      value /= 1024;
       unit++;
     }
-    return bytes.toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' ' + units[unit];
+    const valueFormat = unit === 0 ? numberFormat : sizeFormat;
+    return `${valueFormat.format(value)} ${units[unit]}`;
   }
 
   async function post(action, data) {
@@ -85,14 +96,13 @@
       const title = document.createElement('strong');
       title.textContent = item.post_title;
       const details = document.createElement('span');
-      details.textContent = item.file + ', ' +
-        plural(item.sizes, tinyCompress.L10nSize, tinyCompress.L10nSizes) + ', ' +
-        formatBytes(item.bytes);
+      const sizeCount = format(tinyCompress.L10nSizeCount, numberFormat.format(item.sizes));
+      details.textContent = `${item.file}, ${sizeCount}, ${formatBytes(item.bytes)}`;
       name.append(title, details);
 
       const status = document.createElement('span');
       status.className = 'tiny-bulk-item-status';
-      status.setAttribute('data-testid', 'bulk-item-status-' + i);
+      status.setAttribute('data-testid', `bulk-item-status-${i}`);
       status.textContent = tinyCompress.L10nWaiting;
 
       row.append(thumbnail, name, status);
@@ -119,7 +129,7 @@
       setRowStatus(i, 'compressed', format(
         tinyCompress.L10nSmaller,
         result.optimized_total_size,
-        Math.round(result.savings) + '%'
+        `${Math.round(result.savings)}%`
       ));
     }
   }
@@ -133,36 +143,37 @@
       return tinyCompress.L10nLessThanMinute;
     }
     if (seconds < 90 * 60) {
-      return plural(Math.round(seconds / 60), tinyCompress.L10nMinuteLeft, tinyCompress.L10nMinutesLeft);
+      return format(tinyCompress.L10nMinutesLeft, numberFormat.format(Math.round(seconds / 60)));
     }
-    return plural(Math.round(seconds / 3600), tinyCompress.L10nHourLeft, tinyCompress.L10nHoursLeft);
+    return format(tinyCompress.L10nHoursLeft, numberFormat.format(Math.round(seconds / 3600)));
   }
 
   function updateNumbers() {
     const hasItems = items.length > 0;
     const itemsRunningPerc = hasItems ? Math.floor(finished / items.length * 100) : 0;
     const runPercentage = `${itemsRunningPerc}%`;
-    setText('run-done', finished.toLocaleString());
+    setText('run-done', numberFormat.format(finished));
     setText('run-percentage', runPercentage);
     element('run-bar').style.width = runPercentage;
-    setText('run-status', secondsLeftText() + ' ' + format(
+    const runStatus = format(
       tinyCompress.L10nRunStatus,
       formatBytes(savedBytes),
-      plural(creditsUsed, tinyCompress.L10nCredit, tinyCompress.L10nCredits)
-    ));
+      numberFormat.format(creditsUsed)
+    );
+    setText('run-status', `${secondsLeftText()} ${runStatus}`);
 
     const libraryCompressed = config.imagesOptimized + compressed;
     const libraryPercentage = Math.floor(libraryCompressed / config.imagesTotal * 100);
-    setText('library-percentage', libraryPercentage.toLocaleString());
-    setText('library-compressed', libraryCompressed.toLocaleString());
-    setText('library-todo', format(tinyCompress.L10nToGo, (config.imagesRemaining - compressed).toLocaleString()));
-    element('library-bar').style.width = libraryPercentage + '%';
-    setText('waiting', pending.length.toLocaleString());
+    setText('library-percentage', numberFormat.format(libraryPercentage));
+    setText('library-compressed', numberFormat.format(libraryCompressed));
+    setText('library-todo', format(tinyCompress.L10nToGo, numberFormat.format(config.imagesRemaining - compressed)));
+    element('library-bar').style.width = `${libraryPercentage}%`;
+    setText('waiting', numberFormat.format(pending.length));
 
     const librarySaved = config.bytesSaved + savedBytes;
-    setText('stat-compressed', libraryCompressed.toLocaleString());
+    setText('stat-compressed', numberFormat.format(libraryCompressed));
     setText('stat-saved', formatBytes(librarySaved));
-    setText('stat-average', Math.round(librarySaved / config.initialSize * 100) + '%');
+    setText('stat-average', `${Math.round(librarySaved / config.initialSize * 100)}%`);
     setText('done-saved', formatBytes(librarySaved));
   }
 
