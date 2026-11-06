@@ -1,11 +1,9 @@
-<p class="tiny-preserve">
+<label class="tiny-option tiny-check">
 	<input type="checkbox"
 		id="<?php echo esc_attr( $data['id'] ); ?>"
 		name="<?php echo esc_attr( $data['field'] ); ?>"
-		<?php checked( $data['checked'] ); ?> 
+		<?php checked( $data['checked'] ); ?>
 		value="on"
 	/>
-	<label for="<?php echo esc_attr( $data['id'] ); ?>">
-		<?php echo esc_html( $data['label'] ); ?>
-	</label>
-</p>
+	<span class="tiny-option-label"><?php echo esc_html( $data['label'] ); ?></span>
+</label>

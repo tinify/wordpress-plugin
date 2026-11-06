@@ -327,6 +327,37 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assertSame(0, $data['images_affordable']);
 	}
 
+	public function test_free_credits_left_is_unknown_for_free_accounts()
+	{
+		$this->connect(300);
+
+		$data = $this->widget_data($this->stats(20, 15));
+
+		$this->assertNull($data['free_credits_left']);
+	}
+
+	public function test_paid_accounts_use_their_free_credits_first()
+	{
+		$this->connect(false, false);
+		$this->settings->method('get_compression_count')->willReturn(200);
+
+		$data = $this->widget_data($this->stats(20, 15));
+
+		$this->assertSame(300, $data['free_credits_left']);
+		$this->assertNull($data['remaining_credits']);
+	}
+
+	public function test_paid_accounts_keep_compressing_after_their_free_credits()
+	{
+		$this->connect(false, false);
+		$this->settings->method('get_compression_count')->willReturn(700);
+
+		$data = $this->widget_data($this->stats(20, 15, 0, 0, 30));
+
+		$this->assertSame(0, $data['free_credits_left']);
+		$this->assertSame('ready', $data['state']);
+	}
+
 	public function test_seconds_left_spreads_compressions_over_the_workers()
 	{
 		$this->connect();

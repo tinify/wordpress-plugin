@@ -212,8 +212,8 @@ abstract class Tiny_Compress {
 			$total       -= $compressions;
 		}
 
-		if ( $total > 500 ) {
-			$compressions = $total - 500;
+		if ( $total > Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
+			$compressions = $total - Tiny_Config::MONTHLY_FREE_COMPRESSIONS;
 			$cost        += $compressions * 0.009;
 			$total       -= $compressions;
 		}

@@ -11,7 +11,6 @@ const widget = () => page.locator('#tinypng_dashboard_widget');
 // so wait for that before the dashboard reads them.
 async function setAccount(key: string) {
   await setAPIKey(page, key);
-  await page.waitForURL(/settings-updated=true/);
   await page.waitForLoadState('networkidle');
 }
 
@@ -108,6 +107,17 @@ test.describe('dashboardwidget', () => {
     await expect(page).toHaveURL(/page=tiny-bulk-optimization$/);
     await expect(page.locator('#id-start')).toBeVisible();
     await expect(page.locator('#compression-progress-bar')).toHaveText('0 / 1 (0%)');
+  });
+
+  test('paid accounts pay per compression after their free credits', async () => {
+    await setAccount('PAIDUSED123');
+    await setCompressionTiming(page, 'manual');
+    await uploadImages(page, 'input-example.jpg');
+
+    await page.goto('/wp-admin/index.php');
+
+    await expect(widget().getByText('Ready to compress')).toBeVisible();
+    await expect(widget().getByText('0 of 500 free credits left, then pay per compression')).toBeVisible();
   });
 
   test('upgrade shows how to get more credits', async () => {
