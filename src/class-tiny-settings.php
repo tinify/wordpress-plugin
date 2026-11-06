@@ -901,6 +901,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 				$options    = array(
 					'name'       => $name,
 					'identifier' => $identifier,
+					'link'       => $link,
 				);
 				$compressor->create_key( $email, $options );
 
