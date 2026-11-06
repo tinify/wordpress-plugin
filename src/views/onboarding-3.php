@@ -1,9 +1,9 @@
 <?php
 $tiny_key_pending   = $this->settings->refresh_api_key_pending();
-$tiny_auto_compress = $this->settings->auto_compress_enabled();
 $tiny_stats         = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
 $tiny_uncompressed  = count( $tiny_stats['available-for-optimization'] );
 $tiny_confirm_email = 'api-key' !== filter_input( INPUT_GET, 'path' );
+$tiny_timing        = $this->settings->get_compression_timing();
 ?>
 
 <form class="tiny-onboarding" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -74,19 +74,7 @@ $tiny_confirm_email = 'api-key' !== filter_input( INPUT_GET, 'path' );
 			<?php } ?>
 		</div>
 
-		<div class="tiny-card-section">
-			<div class="tiny-card-head">
-				<h2><?php esc_html_e( 'Automatic compression', 'tiny-compress-images' ); ?></h2>
-			</div>
-			<label class="tiny-option">
-				<input type="checkbox" role="switch" name="auto_compress" value="on"
-					<?php checked( $tiny_auto_compress ); ?>>
-				<span class="tiny-option-text">
-					<span class="tiny-option-label"><?php esc_html_e( 'Compress new uploads automatically', 'tiny-compress-images' ); ?></span>
-					<span class="tiny-option-descr"><?php esc_html_e( 'Every image you upload is compressed in the background.', 'tiny-compress-images' ); ?></span>
-				</span>
-			</label>
-		</div>
+		<?php require __DIR__ . '/settings-compression-timing.php'; ?>
 
 		<?php $this->settings->render_modern_formats(); ?>
 

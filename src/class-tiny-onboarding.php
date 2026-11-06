@@ -221,10 +221,12 @@ class Tiny_Onboarding extends Tiny_WP_Base {
 			);
 		}
 
-		update_option(
-			self::get_prefixed_name( 'compression_timing' ),
-			isset( $_POST['auto_compress'] ) ? 'background' : 'manual'
-		);
+		$timing_name = self::get_prefixed_name( 'compression_timing' );
+		$timing      = isset( $_POST[ $timing_name ] ) ?
+			sanitize_key( wp_unslash( $_POST[ $timing_name ] ) ) : '';
+		if ( in_array( $timing, array( 'background', 'auto', 'manual' ), true ) ) {
+			update_option( $timing_name, $timing );
+		}
 		update_option( self::get_prefixed_name( 'convert_format' ), $convert_format );
 
 		$next = isset( $_POST['next'] ) ? sanitize_key( wp_unslash( $_POST['next'] ) ) : '';
