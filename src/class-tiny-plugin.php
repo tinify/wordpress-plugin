@@ -634,31 +634,12 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			$this->settings->get_active_tinify_sizes()
 		);
 
-		$result['image_sizes_compressed'] = $image_statistics['image_sizes_compressed'];
-		$result['image_sizes_converted']  = $image_statistics['image_sizes_converted'];
-		$result['image_sizes_optimized']  = $image_statistics['image_sizes_optimized'];
-
-		$result['initial_total_size'] = size_format(
-			$image_statistics['initial_total_size'],
-			1
-		);
-
 		$result['optimized_total_size'] = size_format(
 			$image_statistics['compressed_total_size'],
 			1
 		);
 
-		$result['savings']   = $tiny_image->get_savings( $image_statistics );
-		$result['status']    = $this->settings->get_status();
-		$result['thumbnail'] = wp_get_attachment_image(
-			$tiny_image->get_id(),
-			array( '30', '30' ),
-			true,
-			array(
-				'class' => 'pinkynail',
-				'alt'   => '',
-			)
-		);
+		$result['savings'] = $tiny_image->get_savings( $image_statistics );
 
 		return $result;
 	}
@@ -731,10 +712,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Where the images the bulk optimization page is waiting for stand.
-	 *
-	 * Finished images come with the same details the page gets when it
-	 * compresses an image itself, so it can show them the same way.
+	 * Show a running background optimize status if any is running
 	 */
 	public function ajax_bulk_queue_status() {
 		if ( ! check_ajax_referer( 'tiny-compress', '_nonce', false ) ||
@@ -743,12 +721,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			wp_die( -1, 403 );
 		}
 
-		$ids          = isset( $_POST['ids'] ) ?
+		$ids = isset( $_POST['ids'] ) ?
 			explode( ',', sanitize_text_field( wp_unslash( $_POST['ids'] ) ) )
 			: array();
-		$library_size = isset( $_POST['current_size'] ) ?
-			intval( wp_unslash( $_POST['current_size'] ) )
-			: 0;
 
 		$running = $this->background_optimizer->is_running();
 
@@ -767,11 +742,6 @@ class Tiny_Plugin extends Tiny_WP_Base {
 						$item['result']
 					)
 				);
-
-				/* The page applies the results in order, each on top of the last. */
-				$library_size += $item['result']['size_change'];
-
-				$item['result']['human_readable_library_size'] = size_format( $library_size, 2 );
 			}
 
 			$items[ $id ] = $item;

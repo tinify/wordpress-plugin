@@ -24,7 +24,6 @@ if ( in_array( $state, array( 'ready', 'credits_short', 'compressing' ), true ) 
 
 $has_library_bar = ! in_array( $state, array( 'pending', 'empty', 'no_sizes' ), true );
 $has_list        = count( $items ) > 0 && 'pending' !== $state;
-$strong          = array( 'strong' => array() );
 ?>
 <div class="wrap tiny-settings tiny-bulk-optimization" id="tiny-bulk-optimization">
 	<h1><?php esc_html_e( 'Bulk Optimizer', 'tiny-compress-images' ); ?></h1>
