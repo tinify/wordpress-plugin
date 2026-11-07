@@ -11,12 +11,12 @@
   let savedBytes = 0;
   let creditsUsed = 0;
 
-  function element(name) {
+  function findPageElement(name) {
     return document.querySelector(`[data-tiny-bulk="${name}"]`);
   }
 
   function setText(name, text) {
-    const target = element(name);
+    const target = findPageElement(name);
     if (target) {
       target.textContent = text;
     }
@@ -154,7 +154,7 @@
     const runPercentage = `${itemsRunningPerc}%`;
     setText('run-done', numberFormat.format(finished));
     setText('run-percentage', runPercentage);
-    element('run-bar').style.width = runPercentage;
+    findPageElement('run-bar').style.width = runPercentage;
     const runStatus = format(
       tinyCompress.L10nRunStatus,
       formatBytes(savedBytes),
@@ -167,7 +167,7 @@
     setText('library-percentage', numberFormat.format(libraryPercentage));
     setText('library-compressed', numberFormat.format(libraryCompressed));
     setText('library-todo', format(tinyCompress.L10nToGo, numberFormat.format(config.imagesRemaining - compressed)));
-    element('library-bar').style.width = `${libraryPercentage}%`;
+    findPageElement('library-bar').style.width = `${libraryPercentage}%`;
     setText('waiting', numberFormat.format(pending.length));
 
     const librarySaved = config.bytesSaved + savedBytes;
@@ -185,9 +185,9 @@
       location.reload();
       return;
     }
-    const title = element('list-title');
+    const title = findPageElement('list-title');
     title.textContent = title.getAttribute('data-done');
-    element('list-waiting').hidden = true;
+    findPageElement('list-waiting').hidden = true;
     setText('library-todo', format(tinyCompress.L10nToCompress, '0'));
     showHero('done');
   }
@@ -253,7 +253,7 @@
   }
 
   function showRun() {
-    const title = element('list-title');
+    const title = findPageElement('list-title');
     if (title) {
       title.textContent = title.getAttribute('data-compressing');
     }
@@ -282,7 +282,11 @@
   }
 
   async function pauseRun() {
-    const button = element('pause');
+    const button = findPageElement('pause');
+    if ( !button ) {
+      return;
+    }
+
     button.disabled = true;
     button.textContent = tinyCompress.L10nPausing;
     try {
@@ -294,19 +298,13 @@
     }
   }
 
-  // The dashboard widget opens this page with &start=1 and a nonce, which the
-  // server checks. Start right away, then drop both from the URL so a reload
-  // does not start again.
-  function startFromUrl() {
-    const url = new URL(location.href);
-    if (url.searchParams.has('start')) {
-      url.searchParams.delete('start');
-      url.searchParams.delete('_wpnonce');
-      history.replaceState(null, '', url);
-    }
-    if (config.startOnLoad && !config.running && element('start')) {
-      startRun();
-    }
+  // The dashboard widget opens this page with &start=1 and a nonce.
+  // Both are removed from the URL so a reload does not start again.
+  const url = new URL(location.href);
+  if (url.searchParams.has('start')) {
+    url.searchParams.delete('start');
+    url.searchParams.delete('_wpnonce');
+    history.replaceState(null, '', url);
   }
 
   drawRows();
@@ -314,8 +312,10 @@
   document.querySelectorAll('[data-tiny-bulk="start"]').forEach(function(button) {
     button.addEventListener('click', startRun);
   });
-  if (element('pause')) {
-    element('pause').addEventListener('click', pauseRun);
+
+  const pauseElement = findPageElement('pause');
+  if (pauseElement) {
+    pauseElement.addEventListener('click', pauseRun);
   }
 
   if (config.running) {
@@ -323,7 +323,7 @@
     setText('run-notice', tinyCompress.L10nBackgroundNotice);
     showRun();
     pollStatus();
-  } else {
-    startFromUrl();
+  } else if (config.startOnLoad && findPageElement('start')) {
+    startRun();
   }
 }).call();
