@@ -1,6 +1,7 @@
 (function() {
   const POLL_INTERVAL = 2000;
   const POLL_WINDOW = 10;
+  const POLL_ATTEMPTS = 5;
   const PAGE_WORKERS = 5;
   const config = window.tinyBulk;
   const items = config.items;
@@ -10,6 +11,7 @@
   let compressed = 0;
   let savedBytes = 0;
   let creditsUsed = 0;
+  let failedPolls = 0;
 
   function findPageElement(name) {
     return document.querySelector(`[data-tiny-bulk="${name}"]`);
@@ -214,6 +216,7 @@
         }
       });
       updateNumbers();
+      failedPolls = 0;
 
       // A run can still be going when this page has no images waiting for it,
       // e.g. when the page loaded just as the run was finishing up.
@@ -223,10 +226,11 @@
         finishRun();
       }
     } catch (error) {
-      if (error.status === 403) {
-        setText('run-notice', tinyCompress.L10nInternalError);
-      } else {
+      failedPolls++;
+      if (failedPolls < POLL_ATTEMPTS) {
         setTimeout(pollStatus, POLL_INTERVAL);
+      } else {
+        setText('run-notice', tinyCompress.L10nInternalError);
       }
     }
   }
