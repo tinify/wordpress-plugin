@@ -94,7 +94,7 @@ test.describe('dashboardwidget', () => {
     await widget().getByRole('link', { name: 'Compress 1 image' }).click();
 
     await expect(page).toHaveURL(/page=tiny-bulk-optimization$/);
-    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)', { timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'All 1 image is compressed' })).toBeVisible({ timeout: 15000 });
   });
 
   test('start flag without a nonce does not start the bulk optimization', async () => {
@@ -105,8 +105,8 @@ test.describe('dashboardwidget', () => {
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization&start=1');
 
     await expect(page).toHaveURL(/page=tiny-bulk-optimization$/);
-    await expect(page.locator('#id-start')).toBeVisible();
-    await expect(page.locator('#compression-progress-bar')).toHaveText('0 / 1 (0%)');
+    await expect(page.getByRole('button', { name: 'Compress 1 image' })).toBeVisible();
+    await expect(page.getByTestId('bulk-item-status-0')).toHaveText('Waiting');
   });
 
   test('paid accounts pay per compression after their free credits', async () => {

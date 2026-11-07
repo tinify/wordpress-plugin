@@ -2,6 +2,7 @@
 /**
  * Settings section for showing credit cost per image
  *
+ * @var bool $show_settings_link boolean wether to link to the settings page
  * @var int $tiny_sizes_count number of sizes that are compressed
  * @var bool $tiny_resize wether or not the original size is resized
  * @var bool $tiny_wr2x plugin wr2x compressed causes images to be compressed twice
@@ -31,5 +32,8 @@
 	</div>
 	<div class="tiny-card-footer" id="tiny-credits-per-image">
 		<?php $this->render_credits_per_image( self::get_credits_per_image( $tiny_sizes_count, $tiny_resize, $tiny_wr2x, $tiny_convert ) ); ?>
+		<?php if ( ! empty( $show_settings_link ) ) { ?>
+			<a href="<?php echo esc_url( admin_url( 'options-general.php?page=tinify' ) ); ?>"><?php esc_html_e( 'Change settings', 'tiny-compress-images' ); ?></a>
+		<?php } ?>
 	</div>
 </div>

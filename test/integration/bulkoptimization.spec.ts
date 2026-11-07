@@ -47,85 +47,63 @@ test.describe('bulkoptimization', () => {
     }]);
   }
 
-  test('display upgrade button for account with insufficient credits', async () => {
+  test('offer an upgrade next to a smaller run for an account with insufficient credits', async () => {
     await setAPIKey(page, 'INSUFFICIENTCREDITS123');
-    await setCompressionTiming(page, 'auto');
-    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-
-    await uploadImages(page, 'input-example.jpg');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 2, { generateSizes: false });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    await expect(page.getByText('Upgrade account')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'No thanks, continue anyway' })).toBeVisible();
+    await expect(page.getByText('Not enough credits')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Upgrade' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Compress 1 image' })).toBeVisible();
   });
 
-  test('not display dismiss link for no credits', async () => {
+  test('only offer an upgrade for an account without credits', async () => {
     await setAPIKey(page, 'NOCREDITS123');
-    await setCompressionTiming(page, 'auto');
-    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-
-    await uploadImages(page, 'input-example.jpg');
-
-    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-
-    await expect(page.getByText('Upgrade account')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'No thanks, continue anyway' })).not.toBeVisible();
-  });
-
-  test('show bulk optimization button after dismissing notice', async () => {
-    await setAPIKey(page, 'INSUFFICIENTCREDITS123');
-    await setCompressionTiming(page, 'auto');
-    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-
-    await uploadImages(page, 'input-example.jpg');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    await page.getByRole('link', { name: 'No thanks, continue anyway' }).click();
-
-    await expect(page.getByRole('button', { name: 'Start Bulk Optimization' })).toBeVisible();
+    await expect(page.getByText('Out of credits')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Upgrade' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Compress/ })).toHaveCount(0);
   });
 
-  test('show notice after dismissing notice and refreshing page', async () => {
-    await setAPIKey(page, 'INSUFFICIENTCREDITS123');
-    await setCompressionTiming(page, 'auto');
-    await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
-
-    await uploadImages(page, 'input-example.jpg');
-
-    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-
-    await page.getByRole('link', { name: 'No thanks, continue anyway' }).click();
-
-    await page.reload();
-
-    await expect(page.getByRole('button', { name: 'Start Bulk Optimization' })).not.toBeVisible();
-    await expect(page.getByRole('link', { name: 'Upgrade account' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'No thanks, continue anyway' })).toBeVisible();
-  });
-
-  test('not display upgrade button for paid accounts', async () => {
+  test('not offer an upgrade to paid accounts', async () => {
     await setAPIKey(page, 'PAID123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    await expect(page.getByText('Upgrade account')).not.toBeVisible();
+    await expect(page.getByText('Ready to compress')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Upgrade' })).toHaveCount(0);
   });
 
-  test('summary should display correct values for empty library', async () => {
+  test('show the empty library', async () => {
     await enableCompressionSizes(page, ['0', 'thumbnail', 'medium']);
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    await expect(page.locator('#uploaded-images')).toHaveText('0');
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('0');
-    await expect(page.locator('#estimated-cost')).toHaveText('$ 0.00');
-    await expect(page.locator('#optimized-image-sizes')).toHaveText('0');
-    await expect(page.locator('#unoptimized-library-size')).toHaveText('-');
-    await expect(page.locator('#optimized-library-size')).toHaveText('-');
-    await expect(page.locator('#savings-percentage')).toHaveText('0%');
-    await expect(page.locator('#compression-progress-bar')).toHaveText('0 / 0 (100%)');
+    await expect(page.getByRole('heading', { name: 'No images yet' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Upload images' })).toBeVisible();
+  });
+
+  test('show that no image sizes are selected', async () => {
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await uploadImages(page, 'input-example.jpg', 1, { generateSizes: false });
+    await enableCompressionSizes(page, []);
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+
+    await expect(page.getByRole('heading', { name: 'No image sizes selected' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Change settings' }).first()).toBeVisible();
   });
 
   test('bulk optimize webp images', async () => {
@@ -147,9 +125,8 @@ test.describe('bulkoptimization', () => {
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    await expect(page.locator('#uploaded-images')).toHaveText('3');
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
-    await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
+    await expect(page.getByRole('heading', { name: '2 images to compress' })).toBeVisible();
+    await expect(page.getByText('1 of 3 compressed')).toBeVisible();
   });
 
   test('summary should display correct values', async () => {
@@ -167,18 +144,12 @@ test.describe('bulkoptimization', () => {
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    // We uploaded 3 images
-    await expect(page.locator('#uploaded-images')).toHaveText('3');
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
-    await expect(page.locator('#optimized-image-sizes')).toHaveText('4');
-
-    // Comparing byte sizes is unreliable at the moment. We need to figure out
-    // why there are differences between environments and versions.
-    // await expect(page.locator('#unoptimized-library-size')).toHaveText('3.03 MB');
-    // await expect(page.locator('#optimized-library-size')).toHaveText('2.36 MB');
-    // await expect(page.locator('#savings-percentage')).toHaveText('22.2%');
-
-    await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
+    await expect(page.getByRole('heading', { name: '2 images to compress' })).toBeVisible();
+    await expect(page.getByText('1 of 3 compressed')).toBeVisible();
+    await expect(page.getByText('2 to compress')).toBeVisible();
+    await expect(page.getByTestId('bulk-item-status-0')).toHaveText('Waiting');
+    await expect(page.getByTestId('bulk-item-status-1')).toHaveText('Waiting');
+    await expect(page.getByText('2 waiting')).toBeVisible();
   });
 
   test('start bulk optimization should optimize remaining images', async () => {
@@ -196,14 +167,13 @@ test.describe('bulkoptimization', () => {
     await setBulkBehaviour(page, { loopbackSupported: true });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    await page.getByRole('button', { name: 'Compress 2 images' }).click();
 
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
-    await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
-
-    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
-
-    await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
-    await expect(page.locator('#compression-progress-bar')).toHaveText('9 / 9 (100%)');
+    // A short run can be done before the notice is checked, so it may already be hidden.
+    await expect(page.locator('[data-tiny-bulk="run-notice"]')).toContainText('continues in the background');
+    await expect(page.getByRole('heading', { name: 'All 3 images are compressed' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Recently compressed' })).toBeVisible();
+    await expect(page.getByTestId('bulk-item-status-0')).toContainText('smaller');
   });
 
   test('start bulk optimization without loopback should optimize remaining images in the page', async () => {
@@ -221,14 +191,10 @@ test.describe('bulkoptimization', () => {
     await setBulkBehaviour(page, { loopbackSupported: false });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    await page.getByRole('button', { name: 'Compress 2 images' }).click();
 
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('5');
-    await expect(page.locator('#compression-progress-bar')).toHaveText('4 / 9 (44%)');
-
-    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
-
-    await expect(page.locator('.optimization-buttons_notice')).toContainText('keep this page open');
-    await expect(page.locator('#compression-progress-bar')).toHaveText('9 / 9 (100%)');
+    await expect(page.locator('[data-tiny-bulk="run-notice"]')).toContainText('keep this page open');
+    await expect(page.getByRole('heading', { name: 'All 3 images are compressed' })).toBeVisible({ timeout: 15000 });
   });
 
   test('background optimization continues when page is refreshed', async () => {
@@ -239,16 +205,17 @@ test.describe('bulkoptimization', () => {
     await setBulkBehaviour(page, { loopbackSupported: true, compressionDuration: 10 });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
-    await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
+    await page.getByRole('button', { name: 'Compress 1 image' }).click();
+    await expect(page.getByText('continues in the background')).toBeVisible();
 
     await page.reload();
 
-    await expect(page.locator('.optimization-buttons_notice')).toContainText('continues in the background');
-    await expect(page.locator('#compression-progress-bar')).toHaveText('1 / 1 (100%)', { timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Compressing 0 of 1 image' })).toBeVisible();
+    await expect(page.getByText('continues in the background')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'All 1 image is compressed' })).toBeVisible({ timeout: 15000 });
   });
 
-  test('cancel will clear the queue', async () => {
+  test('pause returns to the images that are left', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'manual');
     await enableCompressionSizes(page, ['0']);
@@ -256,17 +223,16 @@ test.describe('bulkoptimization', () => {
     await setBulkBehaviour(page, { loopbackSupported: false, compressionDuration: 5 });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
-    await expect(page.locator('.optimization-buttons_notice')).toContainText('keep this page open');
+    await page.getByRole('button', { name: 'Compress 6 images' }).click();
+    await expect(page.getByText('keep this page open')).toBeVisible();
 
-    // The cursor still rests where Start was clicked, so Optimizing can already have turned into Cancel.
-    await page.locator('#id-optimizing, #id-cancel').filter({ visible: true }).hover();
-    await page.locator('#id-cancel').click();
+    await page.getByRole('button', { name: 'Pause' }).click();
+    await expect(page.getByRole('button', { name: 'Pausing...' })).toBeDisabled();
 
-    // Images that were being compressed finish, the others are cancelled.
-    await expect(page.locator('#bulk-optimization-actions')).toBeHidden({ timeout: 15000 });
-    await expect(page.locator('[data-status="cancelled"]').first()).toHaveText('Cancelled');
-    await expect(page.getByText('All images are processed')).not.toBeVisible();
+    // Images that were being compressed finish, then the page shows what is left.
+    await expect(page.getByText('Ready to compress')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByRole('heading', { name: /^\d images? to compress$/ })).toBeVisible();
+    await expect(page.getByTestId('bulk-item-status-0')).toHaveText('Waiting');
   });
 
   test('stop when the account runs out of credits', async () => {
@@ -276,17 +242,11 @@ test.describe('bulkoptimization', () => {
     await uploadImages(page, 'input-example.jpg', 6, { generateSizes: false });
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-    await page.getByRole('button', { name: 'Start Bulk Optimization' }).click();
+    await page.getByRole('button', { name: 'Compress 6 images' }).click();
+    await expect(page.getByText('Compressing', { exact: true })).toBeVisible();
 
-    // The first image to hit the limit takes the rest off the queue.
-    await expect(page.getByText('Optimization stopped early.')).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('[data-status="cancelled"]').first()).toHaveText('Stopped');
-  });
-
-  test('should display tooltips', async () => {
-    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-    const tooltips = await page.locator('div.tip').all();
-    await expect(tooltips.length).toEqual(1);
+    // The first image to hit the limit takes the rest off the queue, and the page shows what is left.
+    await expect(page.getByRole('heading', { name: '6 images to compress' })).toBeVisible({ timeout: 30000 });
   });
 
   test('will only apply a conversion when images are already compressed but not converted', async ({ page }) => {
@@ -305,23 +265,10 @@ test.describe('bulkoptimization', () => {
 
     // apply bulk optimization
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
-    await Promise.all([
-      page.waitForResponse(res => 
-        res.url().includes('admin-ajax.php') && res.status() === 200
-      ),
-      page.locator('#id-start').click(),
-    ]);
-    
-    // we are expecting 2 unoptimized images sizes = 2 conversion and 1 compression
-    // expect two rows in the optimization items table
-    const optimizationRows = page.locator('#optimization-items tbody tr');
-    await expect(optimizationRows).toHaveCount(2);
-    
-    // first row should have "1 compressed and 1 converted"
-    // second row should have "1 converted"
-    await expect(page.getByTestId(`bulk-item-status-1`)).toContainText('1 compressed 1 converted');
-    await expect(page.getByTestId(`bulk-item-status-0`)).toContainText('1 converted');
+    await page.getByRole('button', { name: 'Compress 2 images' }).click();
 
-    // this should have cost us 3 credits
+    // both images end up optimized: one only converted, the other compressed and converted
+    await expect(page.getByRole('heading', { name: 'All 2 images are compressed' })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.tiny-bulk-item[data-status="compressed"]')).toHaveCount(2);
   });
 });

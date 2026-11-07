@@ -40,15 +40,6 @@ abstract class Tiny_Compress {
 		return new $class( $api_key, $after_compress_callback );
 	}
 
-	/* Based on pricing April 2016. */
-	public static function estimate_cost( $compressions, $compressions_used ) {
-		return round(
-			self::compression_cost( $compressions + $compressions_used ) -
-				self::compression_cost( $compressions_used ),
-			2
-		);
-	}
-
 	protected function __construct( $after_compress_callback ) {
 		$this->after_compress_callback = $after_compress_callback;
 	}
@@ -201,23 +192,5 @@ abstract class Tiny_Compress {
 			$height > $resize_options['height'];
 
 		return $should_resize_width || $should_resize_height;
-	}
-
-	private static function compression_cost( $total ) {
-		$cost = 0;
-
-		if ( $total > 10000 ) {
-			$compressions = $total - 10000;
-			$cost        += $compressions * 0.002;
-			$total       -= $compressions;
-		}
-
-		if ( $total > Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) {
-			$compressions = $total - Tiny_Config::MONTHLY_FREE_COMPRESSIONS;
-			$cost        += $compressions * 0.009;
-			$total       -= $compressions;
-		}
-
-		return $cost;
 	}
 }

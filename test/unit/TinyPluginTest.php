@@ -261,42 +261,6 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 		$this->assertEquals(2, count($this->wp->getCalls('update_post_meta')));
 	}
 
-	public function test_get_bulk_cost()
-	{
-		$virtual_compressed_image = array(
-			'path' => '2015/09',
-			'images' => array(
-				array(
-					"file" => "uncompressed.png",
-					"size" => 137856,
-				),
-			)
-		);
-		$this->wp->createImagesFromJSON($virtual_compressed_image);
-
-		$wpdb_results = array(
-			array(
-				'ID' => 1,
-				'post_title' => 'Uncompressed Image',
-				'meta_value' => serialize(array(
-					'width' => 1256,
-					'height' => 1256,
-					'file' => '2015/09/uncompressed.png',
-					'sizes' => array()
-				)),
-				'tiny_meta_value' => ''
-			),
-		);
-
-		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
-		$free_limit = 500;
-		$cost = Tiny_Compress::estimate_cost(
-			$stats['available-unoptimized-sizes'],
-			$free_limit,
-		);
-
-		$this->assertEquals($cost, 0.01, 0.0001, 'one compression is $0,009, rounded to 0.01',);
-	}
 	public function test_when_image_is_uncompressed_and_conversion_enabled_cost_two_credits()
 	{
 
@@ -328,25 +292,8 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 			),
 		);
 
-		// Mock settings with compression count
-		$mock_settings = $this->createMock(Tiny_Settings::class);
-		$mock_settings->method('get_conversion_enabled')->willReturn(true);
-		$mock_settings->method('get_compression_count')->willReturn(500);
-
-		$tiny_plugin = new Tiny_Plugin();
-
-		// because settings is private we need reflection
-		$ref = new \ReflectionClass($tiny_plugin);
-		$settings_prop = $ref->getProperty('settings');
-		$settings_prop->setAccessible(true);
-		$settings_prop->setValue($tiny_plugin, $mock_settings);
-
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
 		$this->assertEquals($stats['estimated_credit_use'], 2, 'one uncompressed image that will be converted is 2 credits');
-
-		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['estimated_credit_use']);
-
-		$this->assertEquals($cost, 0.02, 0.0001, 'a conversion will cost 2 credits at $0.009 each when 500 compressions already used');
 	}
 
 	/**
@@ -405,23 +352,8 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 			),
 		);
 
-		// Mock settings with compression count
-		$mock_settings = $this->createMock(Tiny_Settings::class);
-		$mock_settings->method('get_conversion_enabled')->willReturn(true);
-		$mock_settings->method('get_compression_count')->willReturn(500);
-
-		$tiny_plugin = new Tiny_Plugin();
-
-		// because settings is private we need reflection
-		$ref = new \ReflectionClass($tiny_plugin);
-		$settings_prop = $ref->getProperty('settings');
-		$settings_prop->setAccessible(true);
-		$settings_prop->setValue($tiny_plugin, $mock_settings);
-
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
-		$cost = $tiny_plugin->get_estimated_bulk_cost($stats['estimated_credit_use']);
-
-		$this->assertEquals($cost, 0.01, 0.0001, 'a compressed image that will be converted will cost 1 credit at $0.009 (rounded $0.01) each when 500 compressions already used');
+		$this->assertEquals($stats['estimated_credit_use'], 1, 'a compressed image that will be converted costs 1 credit');
 	}
 
 	public function test_conversion_enabled_but_filtered_off_not_load_picture()

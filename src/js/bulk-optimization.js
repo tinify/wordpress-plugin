@@ -2,351 +2,328 @@
   const POLL_INTERVAL = 2000;
   const POLL_WINDOW = 10;
   const PAGE_WORKERS = 5;
+  const config = window.tinyBulk;
+  const items = config.items;
   let pending = [];
-  let stoppedEarly = false;
   let pageWorkers = 0;
+  let finished = 0;
+  let compressed = 0;
+  let savedBytes = 0;
+  let creditsUsed = 0;
 
-  function updateProgressBar(successFullCompressions) {
-    var totalToOptimize = parseInt(jQuery('div#compression-progress-bar').data('number-to-optimize'), 10);
+  function element(name) {
+    return document.querySelector(`[data-tiny-bulk="${name}"]`);
+  }
 
-    var optimizedSoFar = parseInt(jQuery('#optimized-so-far').text(), 10);
-    jQuery('#optimized-so-far').html(successFullCompressions + optimizedSoFar);
-
-    var percentage = '100%';
-    if (totalToOptimize > 0) {
-      percentage = Math.round((successFullCompressions + optimizedSoFar) / totalToOptimize * 100, 1) + '%';
+  function setText(name, text) {
+    const target = element(name);
+    if (target) {
+      target.textContent = text;
     }
-    jQuery('div#compression-progress-bar #progress-size').css('width', percentage);
-    jQuery('div#compression-progress-bar #percentage').html('(' + percentage + ')');
-
-    var numberToOptimize = parseInt(jQuery('#optimizable-image-sizes').html(), 10);
-    jQuery('#optimizable-image-sizes').html(numberToOptimize - successFullCompressions);
   }
 
-  function updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize) {
-    window.currentLibraryBytes = window.currentLibraryBytes + successFullSaved;
-
-    var imagesSizedOptimized = parseInt(jQuery('#optimized-image-sizes').text(), 10) + successFullCompressions;
-    var initialLibraryBytes = parseInt(jQuery('#unoptimized-library-size').data('bytes'), 10);
-    var percentage = (1 - window.currentLibraryBytes / initialLibraryBytes);
-    var chartSize = jQuery('div#optimization-chart').data('full-circle-size');
-
-    jQuery('#optimized-image-sizes').html(imagesSizedOptimized);
-    jQuery('#optimized-library-size').attr('data-bytes', window.currentLibraryBytes);
-    jQuery('#optimized-library-size').html(newHumanReadableLibrarySize);
-    jQuery('#savings-percentage').html(Math.round(percentage * 1000) / 10 + '%');
-    jQuery('div#optimization-chart svg circle.main').css('stroke-dasharray', '' + (chartSize * percentage) + ' ' + chartSize);
+  // Fills in %s, or %1$s, %2$s, like PHP's sprintf.
+  function format(template) {
+    const values = Array.prototype.slice.call(arguments, 1);
+    let next = 0;
+    return template.replace(/%(?:(\d)\$)?s/g, function(match, position) {
+      return position ? values[position - 1] : values[next++];
+    });
   }
 
-  function handleCancellation() {
-    jQuery('div#bulk-optimization-actions').hide();
-    jQuery('div.progress').css('animation', 'none');
+  // Numbers follow the WordPress locale, like PHP's number_format_i18n.
+  const numberFormat = new Intl.NumberFormat(tinyCompress.locale);
+  const sizeFormat = new Intl.NumberFormat(tinyCompress.locale, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
+
+  /**
+   * Formats bytes in the largest unit that keeps the value at 1 or more, with
+   * one decimal like PHP's size_format( $bytes, 1 ). Nothing or less than
+   * nothing shows as 0 bytes.
+   * @param number bytes
+   */
+  function formatBytes(bytes) {
+    const units = tinyCompress.L10nUnits;
+    let value = Math.max(0, bytes || 0);
+    let unit = 0;
+    while (value >= 1024 && unit < units.length - 1) {
+      value /= 1024;
+      unit++;
+    }
+    const valueFormat = unit === 0 ? numberFormat : sizeFormat;
+    return `${valueFormat.format(value)} ${units[unit]}`;
   }
 
-  function updateRowAfterCompression(row, data) {
-    var successFullCompressions = parseInt(data.success, 10);
-    var successFullSaved = parseInt(data.size_change, 10);
-    var newHumanReadableLibrarySize = data.human_readable_library_size;
-    if (successFullCompressions === 0) {
-      row.addClass('no-action');
-      row.find('.status').html('<span class="icon dashicons dashicons-no alert"></span>' + tinyCompress.L10nNoActionTaken).attr('data-status', 'no-action-taken');
-    } else {
-      row.addClass('success');
-      const rowResultElement = row.find('.status');
-      rowResultElement.attr('data-status', 'compressed');
-      const icon = '<span class="icon dashicons dashicons-yes success"></span>';
-      
-      let successHTML = '';
-      if (data.image_sizes_compressed > 0) {
-        successHTML += `<p>${icon} ${data.image_sizes_compressed} ${tinyCompress.L10nCompressed}</p>`;
+  async function post(action, data) {
+    const body = new URLSearchParams(Object.assign({ _nonce: tinyCompress.nonce, action: action }, data));
+    const response = await fetch(ajaxurl, { method: 'POST', body: body, credentials: 'same-origin' });
+    if (!response.ok) {
+      const error = new Error(response.statusText);
+      error.status = response.status;
+      throw error;
+    }
+    const json = await response.json();
+    return json.data;
+  }
+
+  function showHero(state) {
+    document.querySelectorAll('[data-tiny-bulk-hero]').forEach(function(hero) {
+      hero.hidden = hero.getAttribute('data-tiny-bulk-hero') !== state;
+    });
+  }
+
+  function drawRows() {
+    const list = document.getElementById('tiny-bulk-items');
+    if (!list) {
+      return;
+    }
+    items.forEach(function(item, i) {
+      const row = document.createElement('li');
+      row.className = 'tiny-bulk-item';
+      row.setAttribute('data-status', 'waiting');
+
+      const thumbnail = document.createElement('img');
+      thumbnail.loading = 'lazy';
+      thumbnail.alt = '';
+      if (item.thumbnail) {
+        thumbnail.src = item.thumbnail;
       }
 
-      if (data.image_sizes_converted > 0) {
-        successHTML += `<p>${icon} ${data.image_sizes_converted} ${tinyCompress.L10nConverted}</p>`;
-      }
+      const name = document.createElement('div');
+      name.className = 'tiny-bulk-item-name';
+      const title = document.createElement('strong');
+      title.textContent = item.post_title;
+      const details = document.createElement('span');
+      const sizeCount = format(tinyCompress.L10nSizeCount, numberFormat.format(item.sizes));
+      details.textContent = `${item.file}, ${sizeCount}, ${formatBytes(item.bytes)}`;
+      name.append(title, details);
 
-      rowResultElement.html(successHTML);
+      const status = document.createElement('span');
+      status.className = 'tiny-bulk-item-status';
+      status.setAttribute('data-testid', `bulk-item-status-${i}`);
+      status.textContent = tinyCompress.L10nWaiting;
 
-      updateProgressBar(successFullCompressions);
-      updateSavings(successFullCompressions, successFullSaved, newHumanReadableLibrarySize);
+      row.append(thumbnail, name, status);
+      list.append(row);
+    });
+  }
+
+  function setRowStatus(i, status, text) {
+    const row = document.getElementById('tiny-bulk-items').children[i];
+    row.setAttribute('data-status', status);
+    row.querySelector('.tiny-bulk-item-status').textContent = text;
+    return row;
+  }
+
+  function applyResult(i, result) {
+    finished++;
+    if (result.failed > 0) {
+      setRowStatus(i, 'error', result.message).title = result.message;
+    } else if (parseInt(result.success, 10) === 0) {
+      setRowStatus(i, 'no-action', tinyCompress.L10nNoActionTaken);
+    } else {
+      compressed++;
+      savedBytes -= parseInt(result.size_change, 10);
+      setRowStatus(i, 'compressed', format(
+        tinyCompress.L10nSmaller,
+        result.optimized_total_size,
+        `${Math.round(result.savings)}%`
+      ));
     }
   }
 
-  function bulkOptimizationCallback(data, items, i) {
-    var row = jQuery('#optimization-items tr').eq(parseInt(i, 10)+1);
-
-    if (data.failed > 0) {
-      row.addClass('failed');
-      row.find('.status').html('<span class=\'icon dashicons dashicons-no error\'></span><span class=\'message\'>' + tinyCompress.L10nLatestError + ': ' + data.message + '</span>');
-      row.find('.status').attr('title', data.message);
-      row.find('.status').attr('data-status', 'error');
-    } else {
-      updateRowAfterCompression(row, data);
+  function secondsLeftText() {
+    const sizesLeft = pending.reduce(function(sum, i) {
+      return sum + items[i].sizes;
+    }, 0);
+    const seconds = Math.round(sizesLeft / config.workers);
+    if (seconds < 60) {
+      return tinyCompress.L10nLessThanMinute;
     }
-
-    row.find('.name').html(items[i].post_title + '<button class=\'toggle-row\' type=\'button\'><span class=\'screen-reader-text\'>' + tinyCompress.L10nShowMoreDetails + '</span></button>');
-
-    if (!data.image_sizes_compressed) {
-        data.image_sizes_compressed = '-';
+    if (seconds < 90 * 60) {
+      return format(tinyCompress.L10nMinutesLeft, numberFormat.format(Math.round(seconds / 60)));
     }
-    if (!data.initial_total_size) {
-        data.initial_total_size = '-';
-    }
-    if (!data.optimized_total_size) {
-        data.optimized_total_size = '-';
-    }
-    if (!data.savings || data.savings === 0) {
-      data.savings = '-';
-    } else {
-      data.savings += '%';
-    }
-
-    row.find('.thumbnail').html(data.thumbnail);
-    row.find('.sizes-compressed').html(data.image_sizes_compressed);
-    row.find('.initial-size').html(data.initial_total_size);
-    row.find('.optimized-size').html(data.optimized_total_size);
-    row.find('.savings').html(data.savings);
+    return format(tinyCompress.L10nHoursLeft, numberFormat.format(Math.round(seconds / 3600)));
   }
 
-  function finishOptimization(message) {
-    if (message) {
-      const notice = jQuery('<div class=\'updated\'><p></p></div>');
-      notice.find('p').text(message);
-      notice.insertAfter(jQuery('#tiny-bulk-optimization h2'));
+  function updateNumbers() {
+    const hasItems = items.length > 0;
+    const itemsRunningPerc = hasItems ? Math.floor(finished / items.length * 100) : 0;
+    const runPercentage = `${itemsRunningPerc}%`;
+    setText('run-done', numberFormat.format(finished));
+    setText('run-percentage', runPercentage);
+    element('run-bar').style.width = runPercentage;
+    const runStatus = format(
+      tinyCompress.L10nRunStatus,
+      formatBytes(savedBytes),
+      numberFormat.format(creditsUsed)
+    );
+    setText('run-status', `${secondsLeftText()} ${runStatus}`);
+
+    const libraryCompressed = config.imagesOptimized + compressed;
+    const libraryPercentage = Math.floor(libraryCompressed / config.imagesTotal * 100);
+    setText('library-percentage', numberFormat.format(libraryPercentage));
+    setText('library-compressed', numberFormat.format(libraryCompressed));
+    setText('library-todo', format(tinyCompress.L10nToGo, numberFormat.format(config.imagesRemaining - compressed)));
+    element('library-bar').style.width = `${libraryPercentage}%`;
+    setText('waiting', numberFormat.format(pending.length));
+
+    const librarySaved = config.bytesSaved + savedBytes;
+    setText('stat-compressed', numberFormat.format(libraryCompressed));
+    setText('stat-saved', formatBytes(librarySaved));
+    setText('stat-average', `${Math.round(librarySaved / config.initialSize * 100)}%`);
+    setText('done-saved', formatBytes(librarySaved));
+  }
+
+  // Shows the done hero when every image was compressed. Otherwise the run was
+  // paused or stopped, some images failed, or the page had no images listed,
+  // and the page reloads to show what is left.
+  function finishRun() {
+    if (items.length === 0 || pending.length > 0 || compressed < items.length) {
+      location.reload();
+      return;
     }
-    jQuery('div#optimization-spinner').css('display', 'none');
-    handleCancellation();
+    const title = element('list-title');
+    title.textContent = title.getAttribute('data-done');
+    element('list-waiting').hidden = true;
+    setText('library-todo', format(tinyCompress.L10nToCompress, '0'));
+    showHero('done');
   }
 
   // The queue works through the images in the order they are listed, so only
   // the first few waiting ones need asking about.
-  function pollStatus(items) {
+  async function pollStatus() {
     const batch = pending.slice(0, POLL_WINDOW);
-    drawSomeRows(items, batch[batch.length - 1] + 1);
-    jQuery.post(ajaxurl, {
-      _nonce: tinyCompress.nonce,
-      action: 'tiny_bulk_queue_status',
-      ids: batch.map(function(i) { return items[i].ID; }).join(','),
-      current_size: window.currentLibraryBytes
-    }, function(response) {
-      const data = response.data;
+    try {
+      const data = await post('tiny_bulk_queue_status', {
+        ids: batch.map(function(i) { return items[i].ID; }).join(',')
+      });
       const running = data.running || pageWorkers > 0;
-      let finished = 0;
-      const waiting = batch.filter(function(i) {
+      const finishedBefore = finished;
+      creditsUsed = data.compression_count - config.compressionCount;
+
+      batch.forEach(function(i) {
         const item = data.items[items[i].ID] || {};
         if (item.status === 'done' || item.status === 'failed') {
-          bulkOptimizationCallback(item.result, items, i);
-          finished++;
-        } else if (running && (item.status === 'queued' || item.status === 'processing')) {
-          return true;
-        } else {
-          // Unless this page cancelled, the run ended because every worker stopped.
-          const label = window.optimizationCancelled ? tinyCompress.L10nCancelled : tinyCompress.L10nStopped;
-          jQuery('#optimization-items tr').eq(i + 1).find('.status').html(label).attr('data-status', 'cancelled');
-          stoppedEarly = true;
+          applyResult(i, item.result);
+          pending = pending.filter(function(p) { return p !== i; });
+        } else if (item.status === 'processing') {
+          setRowStatus(i, 'compressing', tinyCompress.L10nCompressing);
         }
-        return false;
       });
-      pending = waiting.concat(pending.slice(batch.length));
+      updateNumbers();
 
-      if (pending.length > 0 && (running || finished > 0)) {
-        setTimeout(pollStatus, POLL_INTERVAL, items);
-      } else if (window.optimizationCancelled) {
-        finishOptimization(null);
+      // A run can still be going when this page has no images waiting for it,
+      // e.g. when the page loaded just as the run was finishing up.
+      if (running || (pending.length > 0 && finished > finishedBefore)) {
+        setTimeout(pollStatus, POLL_INTERVAL);
       } else {
-        finishOptimization(stoppedEarly ? tinyCompress.L10nStoppedNotice : tinyCompress.L10nAllDone);
+        finishRun();
       }
-    }, 'json').fail(function(xhr) {
-      if (xhr.status === 403) {
-        finishOptimization(tinyCompress.L10nInternalError);
+    } catch (error) {
+      if (error.status === 403) {
+        setText('run-notice', tinyCompress.L10nInternalError);
       } else {
-        setTimeout(pollStatus, POLL_INTERVAL, items);
+        setTimeout(pollStatus, POLL_INTERVAL);
       }
-    });
+    }
   }
 
   /**
    * When the page cannot reach itself (loopbacks are not supported),
    * the page works through the queue one image per request until none are left
    */
-  function optimizeInPage() {
-    jQuery.post(ajaxurl, {
-      _nonce: tinyCompress.nonce,
-      action: 'tiny_bulk_queue_optimize_next'
-    }, function(response) {
-      if (response.data.optimized) {
+  async function optimizeInPage() {
+    try {
+      const data = await post('tiny_bulk_queue_optimize_next');
+      if (data.optimized) {
         optimizeInPage();
       } else {
         pageWorkers--;
       }
-    }, 'json').fail(function(xhr) {
-      if (xhr.status === 403) {
+    } catch (error) {
+      if (error.status === 403) {
         pageWorkers--;
       } else {
         setTimeout(optimizeInPage, POLL_INTERVAL);
       }
-    });
+    }
   }
 
-  function prepareBulkOptimization(items, running, startOnLoad) {
-    window.allBulkOptimizationItems = items;
-    updateProgressBar(0);
-    if (running) {
-      startBulkOptimization(items, true);
+  function showRun() {
+    const title = element('list-title');
+    if (title) {
+      title.textContent = title.getAttribute('data-compressing');
     }
-    startFromUrl(items, running, startOnLoad);
+    showHero('compressing');
+    updateNumbers();
+  }
+
+  async function startRun() {
+    pending = items.map(function(item, i) { return i; });
+    showRun();
+    try {
+      const data = await post('tiny_bulk_queue_start');
+      if (data.background) {
+        setText('run-notice', tinyCompress.L10nBackgroundNotice);
+      } else {
+        setText('run-notice', tinyCompress.L10nInPageNotice);
+        for (let i = 0; i < PAGE_WORKERS; i++) {
+          pageWorkers++;
+          optimizeInPage();
+        }
+      }
+      pollStatus();
+    } catch (error) {
+      setText('run-notice', tinyCompress.L10nInternalError);
+    }
+  }
+
+  async function pauseRun() {
+    const button = element('pause');
+    button.disabled = true;
+    button.textContent = tinyCompress.L10nPausing;
+    try {
+      await post('tiny_bulk_queue_cancel');
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = tinyCompress.L10nPause;
+      setText('run-notice', tinyCompress.L10nInternalError);
+    }
   }
 
   // The dashboard widget opens this page with &start=1 and a nonce, which the
   // server checks. Start right away, then drop both from the URL so a reload
   // does not start again.
-  function startFromUrl(items, running, startOnLoad) {
+  function startFromUrl() {
     const url = new URL(location.href);
     if (url.searchParams.has('start')) {
       url.searchParams.delete('start');
       url.searchParams.delete('_wpnonce');
       history.replaceState(null, '', url);
     }
-    if (!startOnLoad || running) {
-      return;
-    }
-
-    const start = document.getElementById('id-start');
-    if (start && start.offsetParent !== null) {
-      jQuery('#hide-warning').trigger('click');
-      startBulkOptimization(items);
+    if (config.startOnLoad && !config.running && element('start')) {
+      startRun();
     }
   }
 
-  function startBulkOptimization(items, running) {
-    window.optimizationCancelled = false;
-    window.totalRowsDrawn = 0;
-    window.currentLibraryBytes = parseInt(jQuery('#optimized-library-size').data('bytes'), 10);
+  drawRows();
+
+  document.querySelectorAll('[data-tiny-bulk="start"]').forEach(function(button) {
+    button.addEventListener('click', startRun);
+  });
+  if (element('pause')) {
+    element('pause').addEventListener('click', pauseRun);
+  }
+
+  if (config.running) {
     pending = items.map(function(item, i) { return i; });
-    stoppedEarly = false;
-
-    const notice = jQuery('div#bulk-optimization-actions p.optimization-buttons_notice');
-    jQuery('div#bulk-optimization-actions input').removeClass('visible');
-    jQuery('div.progress').css('animation', 'progress-bar 80s linear infinite');
-    jQuery('div#optimization-spinner').css('display', 'inline-block');
-    updateProgressBar(0);
-
-    if (running) {
-      notice.text(tinyCompress.L10nBackgroundNotice);
-      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
-      pollStatus(items);
-      return;
-    }
-
-    jQuery.post(ajaxurl, {
-      _nonce: tinyCompress.nonce,
-      action: 'tiny_bulk_queue_start'
-    }, function(response) {
-      if (response.data.background) {
-        notice.text(tinyCompress.L10nBackgroundNotice);
-      } else {
-        notice.text(tinyCompress.L10nInPageNotice);
-        for (let i = 0; i < PAGE_WORKERS; i++) {
-          pageWorkers++;
-          optimizeInPage();
-        }
-      }
-      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
-      pollStatus(items);
-    }, 'json').fail(function() {
-      finishOptimization(tinyCompress.L10nInternalError);
-    });
+    setText('run-notice', tinyCompress.L10nBackgroundNotice);
+    showRun();
+    pollStatus();
+  } else {
+    startFromUrl();
   }
-
-  function drawSomeRows(items, end) {
-    const list = jQuery('#optimization-items tbody');
-    const start = window.totalRowsDrawn;
-    end = Math.min(end, items.length);
-    for (let i = start; i < end; i++) {
-      const tableRow = `<tr class="media-item">
-        <td class="thumbnail" />
-        <td class="column-primary name">${items[i].post_title}</th>
-        <td class="column-author initial-size" data-colname="${tinyCompress.L10nInitialSize}" />
-        <td class="column-author optimized-size" data-colname="${tinyCompress.L10nCurrentSize}" />
-        <td class="column-author savings" data-colname="${tinyCompress.L10nSavings}" />
-        <td class="column-author status" data-testid="bulk-item-status-${i}" data-colname="${tinyCompress.L10nStatus}" data-status="waiting">${tinyCompress.L10nWaiting}</td>
-      </tr>`;
-      list.append(tableRow);
-    }
-    window.totalRowsDrawn = Math.max(start, end);
-  }
-
-  async function cancelOptimization() {
-    try {
-      window.optimizationCancelled = true;
-      jQuery('div#optimization-spinner').css('display', 'none');
-      jQuery('div#bulk-optimization-actions input').removeClass('visible');
-      jQuery('div#bulk-optimization-actions input#id-cancelling').addClass('visible');
-      await jQuery.post(ajaxurl, {
-        _nonce: tinyCompress.nonce,
-        action: 'tiny_bulk_queue_cancel',
-      });
-    } catch (err) {
-      // Cancel failed, revert state
-      window.optimizationCancelled = false;
-      jQuery('div#optimization-spinner').css('display', 'inline-block');
-      jQuery('div#bulk-optimization-actions input').removeClass('visible');
-      jQuery('div#bulk-optimization-actions input#id-optimizing').addClass('visible');
-      jQuery('div#bulk-optimization-actions p.optimization-buttons_notice').text(tinyCompress.L10nInternalError);
-    }
-  }
-
-  jQuery('.tiny-bulk-optimization .upgrade-account-notice a#hide-warning').click(function() {
-    jQuery('.tiny-bulk-optimization .upgrade-account-notice').hide();
-    jQuery('.tiny-bulk-optimization .optimize').children().show();
-  });
-
-  jQuery('div#bulk-optimization-actions input').click(function() {
-    if ((jQuery(this).attr('id') === 'id-start') && jQuery(this).hasClass('visible')) {
-      startBulkOptimization(window.allBulkOptimizationItems);
-    }
-    if ((jQuery(this).attr('id') === 'id-cancel') && jQuery(this).hasClass('visible')) {
-      cancelOptimization();
-    }
-  });
-
-  jQuery('div#bulk-optimization-actions input').hover(function() {
-    if ((jQuery(this).attr('id') === 'id-optimizing') && jQuery(this).hasClass('visible')) {
-      window.lastActiveButton = jQuery('div#bulk-optimization-actions input.visible');
-      window.lastActiveButton.removeClass('visible');
-      jQuery('div#bulk-optimization-actions input#id-cancel').addClass('visible');
-    }
-  }, function() {
-    if ((jQuery(this).attr('id') === 'id-cancel') && jQuery(this).hasClass('visible')) {
-      window.lastActiveButton.addClass('visible');
-      jQuery('div#bulk-optimization-actions input#id-cancel').removeClass('visible');
-    }
-  });
-
-  function attachToolTipEventHandlers() {
-    var tooltip = '#tiny-bulk-optimization div.tooltip';
-    var tip = 'div.tip';
-    var toolTipTimeout = null;
-    jQuery(tooltip).mouseleave(function(){
-      var that = this;
-      toolTipTimeout = setTimeout(function() {
-        if (jQuery(that).find(tip).is(':visible')) {
-          jQuery(tooltip).find(tip).hide();
-        }
-      }, 100);
-    });
-    jQuery(tooltip).mouseenter(function(){
-      jQuery(this).find(tip).show();
-      clearTimeout(toolTipTimeout);
-    });
-    jQuery(tooltip).find(tip).mouseenter(function(){
-      clearTimeout(toolTipTimeout);
-    });
-  }
-
-  attachToolTipEventHandlers();
-
-  window.bulkOptimizationAutorun = startBulkOptimization;
-  window.bulkOptimization = prepareBulkOptimization;
-
 }).call();

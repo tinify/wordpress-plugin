@@ -217,10 +217,18 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 					array(
 						'ID' => 1,
 						'post_title' => 'I am uncompressed and unconverted',
+						'file' => 'image-4350.png',
+						'sizes' => 3,
+						'bytes' => 233568,
+						'thumbnail' => '/wp-content/uploads/2023/05/image-4350-150x150.png',
 					),
 					array(
 						'ID' => 4350,
 						'post_title' => 'I am compressed but not converted',
+						'file' => 'image-4351.jpg',
+						'sizes' => 3,
+						'bytes' => 223568,
+						'thumbnail' => '/wp-content/uploads/2023/05/image-4351-150x150.jpg',
 					),
 				),
 				'display-percentage' => 21.7,
