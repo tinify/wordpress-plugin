@@ -35,8 +35,6 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 	{
 		return array(
 			'uploaded-images' => $uploaded,
-			'optimized-image-sizes' => 0,
-			'available-unoptimized-sizes' => 0,
 			'optimized-library-size' => $optimized_size,
 			'unoptimized-library-size' => $unoptimized_size,
 			'estimated_credit_use' => $credit_use,

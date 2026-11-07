@@ -209,8 +209,6 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		$this->assertEquals(
 			array(
 				'uploaded-images' => 3,
-				'optimized-image-sizes' => 3,
-				'available-unoptimized-sizes' => 6,
 				'optimized-library-size' => 529136,
 				'unoptimized-library-size' => 676136,
 				'available-for-optimization' => array(
