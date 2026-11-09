@@ -664,7 +664,7 @@ class Tiny_Image {
 	 *
 	 * @since 3.6.4
 	 *
-	 * @return array{string} mimetypes to which the image should be converted to
+	 * @return string[] mimetypes to which the image should be converted to, empty when conversion does not apply
 	 */
 	private function convert_to() {
 		if ( ! $this->conversion_applies() ) {

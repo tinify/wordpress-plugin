@@ -92,7 +92,8 @@ class Tiny_Apache_Rewrite extends Tiny_WP_Base {
 		$convert_format = get_option( 'tinypng_convert_format' );
 		if ( isset( $convert_format['delivery_method'] ) &&
 			'htaccess' === $convert_format['delivery_method'] ) {
-			self::install_rules();
+			$installed = self::install_rules();
+			Tiny_Logger::debug( 'htaccess rules refreshed: ' . $installed );
 		}
 	}
 
