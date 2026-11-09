@@ -138,8 +138,7 @@ class Tiny_Cli {
 			return false;
 		}
 
-		$supported_types = array( 'image/jpeg', 'image/png', 'image/webp' );
-		if ( ! in_array( $mime_type, $supported_types, true ) ) {
+		if ( ! in_array( $mime_type, Tiny_Image::MIME_TYPES, true ) ) {
 			return false;
 		}
 

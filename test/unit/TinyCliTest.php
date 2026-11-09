@@ -75,6 +75,84 @@ class Tiny_Cli_Test extends Tiny_TestCase
 		));
 	}
 
+	public function test_will_compress_avif_attachments()
+	{
+		$this->wp->stub('get_post_mime_type', function ($i) {
+			return 'image/avif';
+		});
+		$this->wp->stub('wp_get_attachment_metadata', function ($i) {
+			return array(
+				'width' => 1080,
+				'height' => 720,
+				'file' => '2025/07/photo.avif',
+				'sizes' => array(),
+			);
+		});
+		$this->wp->createImage(137856, '2025/07', 'photo.avif');
+
+		$settings = new Tiny_Settings();
+		$mockCompressor = $this->createMock(Tiny_Compress::class);
+		$mockCompressor->expects($this->once())
+			->method('compress_file')
+			->with('vfs://root/wp-content/uploads/2025/07/photo.avif');
+		$settings->set_compressor($mockCompressor);
+
+		$command = new Tiny_Cli($settings);
+		$command->optimize(array(), array(
+			"attachments" => '4030',
+		));
+	}
+
+	public function test_will_compress_jxl_attachments()
+	{
+		$this->wp->stub('get_post_mime_type', function ($i) {
+			return 'image/jxl';
+		});
+		$this->wp->stub('wp_get_attachment_metadata', function ($i) {
+			return array('filesize' => 137856);
+		});
+		$this->wp->updateMetadata(4030, '_wp_attached_file', '2025/07/photo.jxl');
+		$this->wp->createImage(137856, '2025/07', 'photo.jxl');
+
+		$settings = new Tiny_Settings();
+		$mockCompressor = $this->createMock(Tiny_Compress::class);
+		$mockCompressor->expects($this->once())
+			->method('compress_file')
+			->with('vfs://root/wp-content/uploads/2025/07/photo.jxl');
+		$settings->set_compressor($mockCompressor);
+
+		$command = new Tiny_Cli($settings);
+		$command->optimize(array(), array(
+			"attachments" => '4030',
+		));
+	}
+
+	public function test_will_skip_unsupported_attachments()
+	{
+		$this->wp->stub('get_post_mime_type', function ($i) {
+			return 'image/gif';
+		});
+		$this->wp->stub('wp_get_attachment_metadata', function ($i) {
+			return array(
+				'width' => 100,
+				'height' => 100,
+				'file' => '2025/07/anim.gif',
+				'sizes' => array(),
+			);
+		});
+		$this->wp->createImage(1000, '2025/07', 'anim.gif');
+
+		$settings = new Tiny_Settings();
+		$mockCompressor = $this->createMock(Tiny_Compress::class);
+		$mockCompressor->expects($this->never())->method('compress_file');
+		$settings->set_compressor($mockCompressor);
+
+		$command = new Tiny_Cli($settings);
+		$command->optimize(array(), array(
+			"attachments" => '4030',
+		));
+	}
+
 	public function test_will_compress_all_uncompressed_attachments_if_none_given()
 	{
 		// mock db

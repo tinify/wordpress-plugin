@@ -512,4 +512,187 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$tinyimg = new Tiny_Image($settings, 999, $this->wp->getTestMetadata());
 		$tinyimg->compress();
 	}
+
+	public static function mime_types()
+	{
+		return array(
+			'jpeg' => array('image/jpeg', true),
+			'png' => array('image/png', true),
+			'webp' => array('image/webp', true),
+			'avif' => array('image/avif', true),
+			'jxl' => array('image/jxl', true),
+			'gif' => array('image/gif', false),
+			'heic' => array('image/heic', false),
+			'svg' => array('image/svg+xml', false),
+		);
+	}
+
+	/**
+	 * @dataProvider mime_types
+	 */
+	public function test_file_type_allowed($mime_type, $allowed)
+	{
+		$this->wp->stub('get_post_mime_type', function () use ($mime_type) {
+			return $mime_type;
+		});
+
+		$tinyimg = new Tiny_Image(new Tiny_Settings(), 1, $this->json('_wp_attachment_metadata'));
+
+		$this->assertSame($allowed, $tinyimg->file_type_allowed());
+	}
+
+	public function test_avif_is_compressed_without_a_converted_copy()
+	{
+		$this->enable_conversion();
+		$metadata = $this->create_avif_attachment();
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$mock_compressor->expects($this->exactly(2))
+			->method('compress_file')
+			->with($this->anything(), $this->anything(), $this->anything(), array())
+			->willReturn(array(
+				'input' => array('size' => 5000),
+				'output' => array('size' => 4000, 'type' => 'image/avif'),
+			));
+		$settings->set_compressor($mock_compressor);
+
+		$tinyimg = new Tiny_Image($settings, 999, $metadata);
+		$tinyimg->compress();
+	}
+
+	public function test_compressed_avif_has_nothing_left_to_optimize_with_conversion_enabled()
+	{
+		$this->enable_conversion();
+		$metadata = $this->create_avif_attachment();
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$mock_compressor->method('compress_file')
+			->willReturnCallback(function ($file) {
+				return array(
+					'input' => array('size' => filesize($file)),
+					'output' => array('size' => filesize($file), 'type' => 'image/avif'),
+				);
+			});
+		$settings->set_compressor($mock_compressor);
+
+		$tinyimg = new Tiny_Image($settings, 999, $metadata);
+		$tinyimg->compress();
+		$stats = $tinyimg->get_statistics($settings->get_sizes(), $settings->get_active_tinify_sizes());
+
+		$this->assertEquals(2, $stats['image_sizes_optimized']);
+		$this->assertEquals(0, $stats['available_unoptimized_sizes']);
+		$this->assertEquals(0, $stats['available_unconverted_sizes']);
+		$this->assertFalse($tinyimg->can_be_converted());
+	}
+
+	public function test_jxl_without_a_file_in_its_metadata_compresses_the_attached_file()
+	{
+		$this->wp->addOption('tinypng_sizes', array(Tiny_Image::ORIGINAL => 'on'));
+		$metadata = $this->create_jxl_attachment();
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$mock_compressor->expects($this->once())
+			->method('compress_file')
+			->with(
+				'vfs://root/wp-content/uploads/14/01/photo.jxl',
+				$this->anything(),
+				$this->anything(),
+				array()
+			)
+			->willReturn(array(
+				'input' => array('size' => 5000),
+				'output' => array('size' => 4000, 'type' => 'image/jxl'),
+			));
+		$settings->set_compressor($mock_compressor);
+
+		$tinyimg = new Tiny_Image($settings, 999, $metadata);
+		$tinyimg->compress();
+	}
+
+	public function test_jxl_gets_a_converted_copy_when_conversion_is_enabled()
+	{
+		$this->enable_conversion();
+		$metadata = $this->create_jxl_attachment();
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$mock_compressor->expects($this->once())
+			->method('compress_file')
+			->with($this->anything(), $this->anything(), $this->anything(), array('image/avif', 'image/webp'))
+			->willReturn(array(
+				'input' => array('size' => 5000),
+				'output' => array('size' => 4000, 'type' => 'image/jxl'),
+				'convert' => array('type' => 'image/avif', 'size' => 3000, 'path' => 'vfs://root/wp-content/uploads/14/01/photo.avif'),
+			));
+		$settings->set_compressor($mock_compressor);
+
+		$tinyimg = new Tiny_Image($settings, 999, $metadata);
+		$tinyimg->compress();
+	}
+
+	public function test_other_formats_without_a_file_in_their_metadata_are_skipped()
+	{
+		$this->wp->addOption('tinypng_sizes', array(Tiny_Image::ORIGINAL => 'on'));
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/png';
+		});
+		$this->wp->createImage(5000, '14/01', 'photo.png');
+		$this->wp->updateMetadata(999, '_wp_attached_file', '14/01/photo.png');
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$mock_compressor->expects($this->never())->method('compress_file');
+		$settings->set_compressor($mock_compressor);
+
+		$tinyimg = new Tiny_Image($settings, 999, array('filesize' => 5000));
+		$tinyimg->compress();
+	}
+
+	private function enable_conversion()
+	{
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on',
+			'convert_to' => 'smallest',
+		));
+		$this->wp->addOption('tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'on',
+			'thumbnail' => 'on',
+		));
+	}
+
+	private function create_avif_attachment()
+	{
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/avif';
+		});
+		$this->wp->createImage(5000, '14/01', 'photo.avif');
+		$this->wp->createImage(1000, '14/01', 'photo-150x150.avif');
+
+		return array(
+			'file' => '14/01/photo.avif',
+			'width' => 1080,
+			'height' => 720,
+			'sizes' => array(
+				'thumbnail' => array('file' => 'photo-150x150.avif'),
+			),
+		);
+	}
+
+	/**
+	 * WordPress cannot read JPEG XL, so the metadata of a JXL attachment
+	 * holds only its file size.
+	 */
+	private function create_jxl_attachment()
+	{
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/jxl';
+		});
+		$this->wp->createImage(5000, '14/01', 'photo.jxl');
+		$this->wp->updateMetadata(999, '_wp_attached_file', '14/01/photo.jxl');
+
+		return array('filesize' => 5000);
+	}
 }

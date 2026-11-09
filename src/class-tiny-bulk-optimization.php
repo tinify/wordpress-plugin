@@ -66,8 +66,9 @@ class Tiny_Bulk_Optimization {
 
 		// Retrieve posts that have "_wp_attachment_metadata" image metadata
 		// and optionally contain "tiny_compress_images" metadata.
-		$sql_start_id = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
-		$query        =
+		$sql_start_id   = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
+		$sql_mime_types = "'" . implode( "', '", Tiny_Image::MIME_TYPES ) . "'";
+		$query          =
 			"SELECT
 				$wpdb->posts.ID,
 				$wpdb->posts.post_title,
@@ -86,11 +87,7 @@ class Tiny_Bulk_Optimization {
 			WHERE
 				$sql_start_id
 				$wpdb->posts.post_type = 'attachment'
-				AND (
-					$wpdb->posts.post_mime_type = 'image/jpeg' OR
-					$wpdb->posts.post_mime_type = 'image/png' OR
-					$wpdb->posts.post_mime_type = 'image/webp'
-				)
+				AND $wpdb->posts.post_mime_type IN ( $sql_mime_types )
 				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
 			GROUP BY unique_attachment_name
 			ORDER BY ID DESC

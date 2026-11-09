@@ -405,7 +405,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function blocking_compress_on_upload( $metadata, $attachment_id ) {
-		if ( ! empty( $metadata ) ) {
+		if ( is_array( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 
 			Tiny_Logger::debug(
@@ -882,7 +882,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( $tiny_image->file_type_allowed() ) {
 			echo '<div class="misc-pub-section tiny-compress-images">';
 			echo '<h4>';
-			esc_html_e( 'JPEG, PNG, & WebP optimization', 'tiny-compress-images' );
+			esc_html_e( 'Image optimization', 'tiny-compress-images' );
 			echo '</h4>';
 			echo '<div class="tiny-ajax-container" data-tiny-media-id="';
 			echo absint( $post->ID ) . '">';

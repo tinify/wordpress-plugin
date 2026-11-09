@@ -1,9 +1,9 @@
-# TinyPNG - JPEG, PNG & WebP image compression for WordPress
+# TinyPNG - JPEG, PNG, WebP, AVIF & JPEG XL image compression for WordPress
 
 [![Integration Tests](https://github.com/tinify/wordpress-plugin/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/tinify/wordpress-plugin/actions/workflows/integration-tests.yml)
 [![Check and Test](https://github.com/tinify/wordpress-plugin/actions/workflows/check-test.yml/badge.svg)](https://github.com/tinify/wordpress-plugin/actions/workflows/check-test.yml)
 
-Make your website faster by optimizing your JPEG, PNG, and WebP images.
+Make your website faster by optimizing your JPEG, PNG, WebP, AVIF and JPEG XL images.
 
 This plugin automatically optimizes your images by integrating with the
 popular image compression services TinyJPG and TinyPNG. You can download the

@@ -80,6 +80,33 @@ class Tiny_Apache_Rewrite_Test extends Tiny_TestCase
     }
 
     /**
+     * A JXL request is served its converted AVIF or WebP copy, like JPEG and PNG.
+     */
+    function test_rules_serve_converted_copies_of_jxl()
+    {
+        $upload_dir = $this->vfs->url() . '/wp-content/uploads';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+
+        Tiny_Apache_Rewrite::toggle_rules_for_new_option(
+            'tinypng_convert_format',
+            array('convert' => 'on', 'delivery_method' => 'htaccess')
+        );
+        $rules = file_get_contents($upload_dir . '/.htaccess');
+
+        preg_match_all('/^RewriteCond %\{REQUEST_URI\} (\S+)$/m', $rules, $conditions);
+        preg_match_all('/^RewriteRule (\S+) /m', $rules, $rewrites);
+        preg_match_all('/<FilesMatch "([^"]+)">/', $rules, $vary);
+        $this->assertCount(2, $conditions[1]);
+        $this->assertCount(2, $rewrites[1]);
+        $this->assertCount(1, $vary[1]);
+        foreach (array_merge($conditions[1], $rewrites[1], $vary[1]) as $pattern) {
+            $this->assertMatchesRegularExpression('#' . $pattern . '#', '/wp-content/uploads/2026/11/photo.jxl');
+        }
+    }
+
+    /**
      * uninstall_rules removes htaccess rules from upload directory.
      * - creates a htaccess file in uploads directory
      * - run uninstall_rules

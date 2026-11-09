@@ -8,7 +8,7 @@
  */
 
 $available_sizes              = array_keys( $this->settings->get_sizes() );
-$conversion_enabled           = $this->settings->get_conversion_enabled();
+$conversion_enabled           = $tiny_image->can_be_converted();
 $active_sizes                 = $this->settings->get_sizes();
 $backup_enabled               = $this->settings->get_backup_enabled();
 $active_tinify_sizes          = $this->settings->get_active_tinify_sizes();
@@ -132,7 +132,7 @@ ksort( $size_exists );
 		<button type="button" class="tiny-mark-as-compressed button button-small button-secondary" data-id="<?php echo absint( $tiny_image->get_id() ); ?>">
 			<?php esc_html_e( 'Mark as Compressed', 'tiny-compress-images' ); ?>
 		</button>
-	<?php } elseif ( $active['unconverted'] > 0 && $tiny_image->can_be_converted() ) { ?>
+	<?php } elseif ( $active['unconverted'] > 0 && $conversion_enabled ) { ?>
 		<button type="button" class="tiny-compress button button-small button-primary" data-id="<?php echo absint( $tiny_image->get_id() ); ?>">
 			<?php esc_html_e( 'Convert', 'tiny-compress-images' ); ?>
 		</button>

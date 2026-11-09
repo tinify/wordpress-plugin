@@ -8,18 +8,18 @@ Stable tag: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Speed up your website. Optimize your JPEG, PNG, and WebP images automatically with TinyPNG.
+Speed up your website. Optimize your JPEG, PNG, WebP, AVIF and JPEG XL images automatically with TinyPNG.
 
 == Description ==
 
-The best & easiest image compression plugin for WordPress. Speed up your website by compressing and converting your images with TinyPNG for WordPress. Improve your websites’ performance by significantly reducing file sizes without noticeable quality loss. Support for WebP, AVIF, JPG and PNG formats.
+The best & easiest image compression plugin for WordPress. Speed up your website by compressing and converting your images with TinyPNG for WordPress. Improve your websites’ performance by significantly reducing file sizes without noticeable quality loss. Support for WebP, AVIF, JPEG XL, JPG and PNG formats.
 Start optimizing your images today to boost SEO, improve your PageSpeed scores, save bandwidth and enhance your website’s user experience.
 
 = Why TinyPNG? =
 
 * Next-gen format conversion, convert images to WebP and AVIF for even smaller files (NEW)
 * Smart compression algorithm, reduce image file sizes without visible quality loss
-* Broad format support, supports AVIF, WebP, PNG, animated PNG (APNG) and JPG.
+* Broad format support, supports AVIF, JPEG XL, WebP, PNG, animated PNG (APNG) and JPG.
 * Automatic image compression, compresses new images on upload.
 * Bulk optimization, optimize your full media library in just one click.
 * Individual image control, optimize a single image straight from your media library.
@@ -43,9 +43,11 @@ Google’s PageSpeed Insights and other tools strongly recommend serving images 
 
 With the TinyPNG WordPress plugin, your images can be automatically converted to AVIF or WebP when you upload them. No extra steps are required.
 
+AVIF images are already in a next-gen format, so they are compressed but not converted.
+
 = Optimizing all your images =
 
-You can bulk optimize your existing JPEG, PNG, and WebP images all at once by going to Media > Bulk TinyPNG. Clicking on the big button will start compressing and converting, when needed, all unoptimized images in your media library.
+You can bulk optimize your existing JPEG, PNG, WebP, AVIF and JPEG XL images all at once by going to Media > Bulk TinyPNG. Clicking on the big button will start compressing and converting, when needed, all unoptimized images in your media library.
 
 If you have more images than your free credits allow, the tool will show you an estimated cost to optimize your entire library. If you are interested, you can upgrade your account to the paid plan and optimize the full library all in one go. Prefer to stay on the free plan? No problem! The bulk optimization tool will simply process images until your free limit is reached.
 
@@ -171,7 +173,10 @@ A: Yes! After installing the plugin, go to *Media > Bulk TinyPNG*, and click on 
 A: You can upgrade to a paid account by adding your *Payment details* on your [account dashboard](https://tinypng.com/dashboard/api). Additional compressions above 500 will then be charged at the end of each month as a one-time fee.
 
 = Q: Does converting to AVIF or WebP use more credits? =
-A: When the conversion feature is enabled (to convert images to AVIF or WebP), each image will use double the number of credits: one for compression and one for format conversion.
+A: When the conversion feature is enabled (to convert images to AVIF or WebP), each image will use double the number of credits: one for compression and one for format conversion. AVIF images are not converted, so they use one credit per size.
+
+= Q: Can I optimize JPEG XL images? =
+A: Yes, if your site accepts JPEG XL uploads. WordPress does not accept them by default, and the plugin does not change that. WordPress cannot create thumbnails of a JPEG XL image, so only the uploaded image is compressed. Not every browser can display JPEG XL; with the conversion feature enabled, an AVIF or WebP version is created and served instead.
 
 == Changelog ==
 = 3.8.1 =

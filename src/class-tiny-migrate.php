@@ -36,7 +36,7 @@ class Tiny_Migrate {
 	 * @since 3.7.0
 	 * @var int
 	 */
-	const DB_VERSION = 1;
+	const DB_VERSION = 2;
 
 	/**
 	 * WordPress option key used to track the applied database version.
@@ -69,6 +69,7 @@ class Tiny_Migrate {
 	private static function migrations() {
 		return array(
 			1 => array( self::class, 'migrate_meta_key_to_private' ),
+			2 => array( self::class, 'refresh_htaccess_rules' ),
 		);
 	}
 
@@ -142,6 +143,18 @@ class Tiny_Migrate {
 
 		wp_cache_flush();
 
+		return true;
+	}
+
+	/**
+	 * Rewrites the installed .htaccess rules, so they also serve the
+	 * converted copies of JPEG XL images.
+	 *
+	 * @return bool Always true, retrying does not help when the upload
+	 *              directory is not writable.
+	 */
+	private static function refresh_htaccess_rules() {
+		Tiny_Apache_Rewrite::refresh_rules();
 		return true;
 	}
 }
