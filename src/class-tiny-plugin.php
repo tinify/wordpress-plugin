@@ -316,12 +316,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 					'Mark as Compressed',
 					'tiny-compress-images'
 				),
-				'L10nWaiting'            => __( 'Waiting', 'tiny-compress-images' ),
 				'L10nCompressing'        => __( 'Compressing...', 'tiny-compress-images' ),
 				'L10nPause'              => __( 'Pause', 'tiny-compress-images' ),
 				'L10nPausing'            => __( 'Pausing...', 'tiny-compress-images' ),
-				/* translators: %s: number of image sizes */
-				'L10nSizeCount'          => __( 'Sizes: %s', 'tiny-compress-images' ),
 				/* translators: %1$s: compressed size, e.g. 1.4 MB, %2$s: percentage saved, e.g. 56% */
 				'L10nSmaller'            => __( '%1$s, %2$s smaller', 'tiny-compress-images' ),
 				/* translators: %s: number of images still to compress */

@@ -4,7 +4,9 @@
   const POLL_ATTEMPTS = 5;
   const PAGE_WORKERS = 5;
   const config = window.tinyBulk;
-  const items = config.items;
+  const items = Array.from(document.querySelectorAll('.tiny-bulk-item')).map(function(row) {
+    return { ID: Number(row.dataset.id), sizes: Number(row.dataset.sizes) };
+  });
   let pending = [];
   let pageWorkers = 0;
   let finished = 0;
@@ -73,42 +75,6 @@
   function showHero(state) {
     document.querySelectorAll('[data-tiny-bulk-hero]').forEach(function(hero) {
       hero.hidden = hero.getAttribute('data-tiny-bulk-hero') !== state;
-    });
-  }
-
-  function drawRows() {
-    const list = document.getElementById('tiny-bulk-items');
-    if (!list) {
-      return;
-    }
-    items.forEach(function(item, i) {
-      const row = document.createElement('li');
-      row.className = 'tiny-bulk-item';
-      row.setAttribute('data-status', 'waiting');
-
-      const thumbnail = document.createElement('img');
-      thumbnail.loading = 'lazy';
-      thumbnail.alt = '';
-      if (item.thumbnail) {
-        thumbnail.src = item.thumbnail;
-      }
-
-      const name = document.createElement('div');
-      name.className = 'tiny-bulk-item-name';
-      const title = document.createElement('strong');
-      title.textContent = item.post_title;
-      const details = document.createElement('span');
-      const sizeCount = format(tinyCompress.L10nSizeCount, numberFormat.format(item.sizes));
-      details.textContent = `${item.file}, ${sizeCount}, ${formatBytes(item.bytes)}`;
-      name.append(title, details);
-
-      const status = document.createElement('span');
-      status.className = 'tiny-bulk-item-status';
-      status.setAttribute('data-testid', `bulk-item-status-${i}`);
-      status.textContent = tinyCompress.L10nWaiting;
-
-      row.append(thumbnail, name, status);
-      list.append(row);
     });
   }
 
@@ -310,8 +276,6 @@
     url.searchParams.delete('_wpnonce');
     history.replaceState(null, '', url);
   }
-
-  drawRows();
 
   document.querySelectorAll('[data-tiny-bulk="start"]').forEach(function(button) {
     button.addEventListener('click', startRun);

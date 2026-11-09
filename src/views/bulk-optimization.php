@@ -107,7 +107,9 @@ $has_list        = count( $items ) > 0 && 'pending' !== $state;
 							}
 							?>
 						</h3>
-						<ul class="tiny-bulk-items" id="tiny-bulk-items"></ul>
+						<ul class="tiny-bulk-items" id="tiny-bulk-items">
+							<?php require __DIR__ . '/bulk-optimization-items.php'; ?>
+						</ul>
 					</div>
 				<?php } ?>
 
@@ -167,7 +169,6 @@ $has_list        = count( $items ) > 0 && 'pending' !== $state;
 	<?php
 	echo 'window.tinyBulk = ' . wp_json_encode(
 		array(
-			'items'            => $items,
 			'running'          => 'compressing' === $state,
 			'startOnLoad'      => $start_on_load,
 			'compressionCount' => $compression_count,
