@@ -2,7 +2,7 @@
 /**
  * Settings section for showing credit cost per image
  *
- * @var bool $show_settings_link boolean wether to link to the settings page
+ * @var bool $show_settings_link whether to link to the settings page
  * @var int $tiny_sizes_count number of sizes that are compressed
  * @var bool $tiny_resize wether or not the original size is resized
  * @var bool $tiny_wr2x plugin wr2x compressed causes images to be compressed twice

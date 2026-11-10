@@ -815,12 +815,12 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	/**
-	 * @param bool $link_to_settings Whether Change account links to the settings
+	 * @param bool $link_to_settings Whether Change API Key links to the settings
 	 *                               page, for pages other than the settings page.
 	 */
 	public function render_account_status( $link_to_settings = false ) {
 		$is_allowed = current_user_can( 'manage_options' );
-		$key = $this->get_api_key();
+		$key        = $this->get_api_key();
 		if ( $is_allowed && ! empty( $key ) ) {
 			if ( $this->refresh_api_key_pending() ) {
 				$status = (object) array(

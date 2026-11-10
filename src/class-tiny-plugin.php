@@ -316,7 +316,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 					'Mark as Compressed',
 					'tiny-compress-images'
 				),
-				'L10nCompressing'        => __( 'Compressing...', 'tiny-compress-images' ),
+				'L10nCompressing'        => __( 'Compressing', 'tiny-compress-images' ),
 				'L10nPause'              => __( 'Pause', 'tiny-compress-images' ),
 				'L10nPausing'            => __( 'Pausing...', 'tiny-compress-images' ),
 				/* translators: %1$s: compressed size, e.g. 1.4 MB, %2$s: percentage saved, e.g. 56% */
@@ -885,6 +885,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 
 	public function render_bulk_optimization_page() {
 		$stats = Tiny_Bulk_Optimization::get_optimization_statistics( $this->settings );
+		/* Refreshes the credits left before the page reads them. */
 		$this->settings->get_compressor()->get_status();
 
 		$widget            = $this->dashboard->get_widget_data( $stats );

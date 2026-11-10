@@ -9,7 +9,7 @@
  *     @type string|null $message Optional status message.
  * }
  * @var string $key The API key.
- * @var bool   $link_to_settings Whether Change account links to the settings page.
+ * @var bool   $link_to_settings Whether Change API Key links to the settings page.
  */
 
 // Every account gets free credits each month. Only free accounts have a
@@ -153,7 +153,7 @@ $tiny_api_url           = 'https://tinify.com/checkout/api?utm_source=wordpress-
 				</span>
 			<?php } elseif ( $link_to_settings ) { ?>
 				<a class="tiny-link-secondary" href="<?php echo esc_url( admin_url( 'options-general.php?page=tinify' ) ); ?>">
-					<?php esc_html_e( 'Change account', 'tiny-compress-images' ); ?>
+					<?php esc_html_e( 'Change API Key', 'tiny-compress-images' ); ?>
 				</a>
 			<?php } else { ?>
 				<button type="button" class="button-link tiny-link-secondary" data-tiny-action="change-account">
