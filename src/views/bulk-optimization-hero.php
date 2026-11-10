@@ -199,11 +199,11 @@ $panda           = $badge_and_panda['panda'];
 			</div>
 			<span data-tiny-bulk="run-percentage">0%</span>
 		</div>
-		<p data-tiny-bulk="run-status"></p>
+		<p data-tiny-bulk="run-status" aria-live="polite"></p>
 		<p class="tiny-bulk-actions">
 			<button type="button" class="button button-hero" data-tiny-bulk="pause"><?php esc_html_e( 'Pause', 'tiny-compress-images' ); ?></button>
 		</p>
-		<p class="tiny-bulk-caption" data-tiny-bulk="run-notice"></p>
+		<p class="tiny-bulk-caption" data-tiny-bulk="run-notice" aria-live="polite"></p>
 
 	<?php } elseif ( 'done' === $hero ) { ?>
 		<h2 class="tiny-bulk-title">
