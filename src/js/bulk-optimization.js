@@ -141,7 +141,9 @@
     const librarySaved = config.bytesSaved + savedBytes;
     setText('stat-compressed', numberFormat.format(libraryCompressed));
     setText('stat-saved', formatBytes(librarySaved));
-    setText('stat-average', `${Math.round(librarySaved / config.initialSize * 100)}%`);
+    if (config.initialSize > 0) {
+      setText('stat-average', `${Math.round(librarySaved / config.initialSize * 100)}%`);
+    }
     setText('done-saved', formatBytes(librarySaved));
   }
 
