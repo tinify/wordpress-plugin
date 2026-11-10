@@ -17,7 +17,6 @@ foreach ( $items as $index => $item ) {
 	?>
 
 	<li class="tiny-bulk-item" data-status="waiting" data-id="<?php echo esc_attr( $item['ID'] ); ?>" data-sizes="<?php echo esc_attr( $item['sizes'] ); ?>">
-		<img loading="lazy" alt=""<?php echo $item['thumbnail'] ? ' src="' . esc_url( $item['thumbnail'] ) . '"' : ''; ?> />
 		<div class="tiny-bulk-item-name">
 			<strong><?php echo esc_html( $item['post_title'] ); ?></strong>
 			<span><?php echo esc_html( $attachment_descr ); ?></span>

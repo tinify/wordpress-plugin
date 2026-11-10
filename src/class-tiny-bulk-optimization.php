@@ -102,8 +102,6 @@ class Tiny_Bulk_Optimization {
 		$active_sizes        = $settings->get_sizes();
 		$active_tinify_sizes = $settings->get_active_tinify_sizes();
 		$conversion_enabled  = $settings->get_conversion_enabled();
-		$uploads             = wp_upload_dir();
-		$uploads_url         = $uploads['baseurl'];
 
 		$result_count = count( $result );
 		for ( $i = 0; $i < $result_count; $i++ ) {
@@ -145,7 +143,6 @@ class Tiny_Bulk_Optimization {
 					'file'       => self::get_file_name( $wp_metadata ),
 					'sizes'      => $image_stats['available_unoptimized_sizes'],
 					'bytes'      => $image_stats['compressed_total_size'],
-					'thumbnail'  => self::get_thumbnail_url( $wp_metadata, $uploads_url ),
 				);
 			}
 		}// End for().
@@ -164,22 +161,5 @@ class Tiny_Bulk_Optimization {
 			return wp_basename( $wp_metadata['file'] );
 		}
 		return '';
-	}
-
-	/**
-	 * The URL of the image's thumbnail, built from its metadata so the page
-	 * does not need a query for each image. Falls back to the image itself.
-	 */
-	private static function get_thumbnail_url( $wp_metadata, $uploads_url ) {
-		if ( ! isset( $wp_metadata['file'] ) ) {
-			return '';
-		}
-		$file = $wp_metadata['file'];
-		if ( isset( $wp_metadata['sizes']['thumbnail']['file'] ) ) {
-			$directory = dirname( $file );
-			$file      = ( '.' === $directory ? '' : $directory . '/' ) .
-				$wp_metadata['sizes']['thumbnail']['file'];
-		}
-		return $uploads_url . '/' . $file;
 	}
 }

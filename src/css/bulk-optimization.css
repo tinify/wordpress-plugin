@@ -175,15 +175,6 @@
 	border-top: 0;
 }
 
-.tiny-bulk-item img {
-	flex: none;
-	width: 32px;
-	height: 32px;
-	object-fit: cover;
-	background: var(--tiny-surface-subtle);
-	border-radius: 4px;
-}
-
 .tiny-bulk-item-name {
 	display: flex;
 	flex: 1;
