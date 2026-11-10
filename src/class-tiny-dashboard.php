@@ -188,14 +188,15 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 	}
 
 	/**
-	 * The badge and panda for each state, shared by the dashboard widget and
-	 * the bulk optimization page. Only the bulk optimization page has the
+	 * The badge and panda of a state, shared by the dashboard widget and the
+	 * bulk optimization page. Only the bulk optimization page has the
 	 * no_sizes state. The panda is a file name in images/widget.
 	 *
-	 * @return array<string,array{badge_colour: string, badge_text: string, panda: string}>
+	 * @param string $state A state from get_widget_data(), or no_sizes.
+	 * @return array{badge_colour: string, badge_text: string, panda: string}
 	 */
-	public static function get_state_badges_and_pandas() {
-		return array(
+	public static function get_state_badge_and_panda( $state ) {
+		$badges_and_pandas = array(
 			'not_connected'  => array(
 				'badge_colour' => 'red',
 				'badge_text'   => __( 'Not connected', 'tiny-compress-images' ),
@@ -242,5 +243,6 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 				'panda'        => 'panda-coffee',
 			),
 		);
+		return $badges_and_pandas[ $state ];
 	}
 }

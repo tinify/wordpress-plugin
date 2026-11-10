@@ -14,7 +14,7 @@ $settings_url = admin_url( 'options-general.php?page=tinify' );
 $credits_url  = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=bulk-optimization-credits';
 $remaining    = $widget['images_remaining'];
 
-$badge_and_panda = Tiny_Dashboard::get_state_badges_and_pandas()[ $hero ];
+$badge_and_panda = Tiny_Dashboard::get_state_badge_and_panda( $hero );
 $badge_colour    = $badge_and_panda['badge_colour'];
 $badge_text      = $badge_and_panda['badge_text'];
 $panda           = $badge_and_panda['panda'];

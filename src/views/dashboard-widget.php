@@ -16,7 +16,7 @@ $api_url      = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm
 $strong       = array( 'strong' => array() );
 $can_manage   = current_user_can( 'manage_options' );
 
-$badge_and_panda = Tiny_Dashboard::get_state_badges_and_pandas()[ $state ];
+$badge_and_panda = Tiny_Dashboard::get_state_badge_and_panda( $state );
 $badge_colour    = $badge_and_panda['badge_colour'];
 $badge_text      = $badge_and_panda['badge_text'];
 $panda           = $badge_and_panda['panda'];
