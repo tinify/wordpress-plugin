@@ -591,7 +591,7 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 		$this->assertStringContainsString( 'Change settings', $this->render_credits( true ) );
 	}
 
-	public function test_render_credits_does_not_link_to_settings_by_default() {
+	public function test_render_credits_does_not_link_to_settings_when_not_asked() {
 		$output = $this->render_credits( false );
 		$this->assertStringContainsString( 'How credits are used', $output );
 		$this->assertStringNotContainsString( 'Change settings', $output );

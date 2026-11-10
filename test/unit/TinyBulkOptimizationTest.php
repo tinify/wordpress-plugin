@@ -233,4 +233,33 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 			Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results)
 		);
 	}
+
+	public function test_lists_the_uploaded_file_name_when_wordpress_scaled_the_image()
+	{
+		$this->wp->createImagesFromJSON(array(
+			'path' => '2023/05',
+			'images' => array(
+				array('file' => 'photo-scaled.jpg', 'size' => 40000),
+				array('file' => 'photo-150x150.jpg', 'size' => 12000),
+			),
+		));
+		$wpdb_results = array(
+			array(
+				'ID' => 1,
+				'post_title' => 'A scaled photo',
+				'meta_value' => serialize(array(
+					'file' => '2023/05/photo-scaled.jpg',
+					'original_image' => 'photo.jpg',
+					'sizes' => array(
+						'thumbnail' => array('file' => 'photo-150x150.jpg'),
+					),
+				)),
+				'tiny_meta_value' => '',
+			),
+		);
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
+
+		$this->assertEquals('photo.jpg', $stats['available-for-optimization'][0]['file']);
+	}
 }

@@ -87,13 +87,13 @@
 
   function applyResult(i, result) {
     finished++;
+    savedBytes -= parseInt(result.size_change, 10);
     if (result.failed > 0) {
       setRowStatus(i, 'error', result.message).title = result.message;
     } else if (parseInt(result.success, 10) === 0) {
       setRowStatus(i, 'no-action', tinyCompress.L10nNoActionTaken);
     } else {
       compressed++;
-      savedBytes -= parseInt(result.size_change, 10);
       setRowStatus(i, 'compressed', format(
         tinyCompress.L10nSmaller,
         result.optimized_total_size,
@@ -181,6 +181,8 @@
           pending = pending.filter(function(p) { return p !== i; });
         } else if (item.status === 'processing') {
           setRowStatus(i, 'compressing', tinyCompress.L10nCompressing);
+        } else if (!item.status) {
+          pending = pending.filter(function(p) { return p !== i; });
         }
       });
       updateNumbers();
