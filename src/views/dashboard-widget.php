@@ -16,32 +16,10 @@ $api_url      = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm
 $strong       = array( 'strong' => array() );
 $can_manage   = current_user_can( 'manage_options' );
 
-$badges = array(
-	'not_connected'  => array( 'red', __( 'Not connected', 'tiny-compress-images' ) ),
-	'pending'        => array( 'amber', __( 'Waiting for activation', 'tiny-compress-images' ) ),
-	'empty'          => array( 'amber', __( 'Nothing to compress', 'tiny-compress-images' ) ),
-	'ready'          => array( 'green', __( 'Ready to compress', 'tiny-compress-images' ) ),
-	'compressing'    => array( 'green', __( 'Compressing', 'tiny-compress-images' ) ),
-	'done'           => array( 'green', __( 'All done', 'tiny-compress-images' ) ),
-	'credits_short'  => array( 'amber', __( 'Not enough credits', 'tiny-compress-images' ) ),
-	'out_of_credits' => array( 'red', __( 'Out of credits', 'tiny-compress-images' ) ),
-);
-
-$pandas = array(
-	'not_connected'  => 'panda-juggle',
-	'pending'        => 'panda-unbox',
-	'empty'          => 'panda-astronaut',
-	'ready'          => 'panda-skate',
-	'compressing'    => 'panda-rocket',
-	'done'           => 'panda-duck',
-	'credits_short'  => 'panda-coffee',
-	'out_of_credits' => 'panda-coffee',
-);
-
-list( $badge_colour, $badge_text ) = $badges[ $state ];
-
-// Without credits for a single image, nothing can be compressed either.
-$panda = $pandas[ $state ];
+$badge_and_panda = Tiny_Dashboard::get_state_badges_and_pandas()[ $state ];
+$badge_colour    = $badge_and_panda['badge_colour'];
+$badge_text      = $badge_and_panda['badge_text'];
+$panda           = $badge_and_panda['panda'];
 
 $has_library_bar  = ! in_array( $state, array( 'pending', 'empty' ), true );
 $has_credits_view = in_array( $state, array( 'credits_short', 'out_of_credits' ), true );

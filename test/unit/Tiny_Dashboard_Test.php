@@ -387,6 +387,19 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		$this->assert_widget_request_refused_with_a_403();
 	}
 
+	public function test_every_state_has_a_badge_and_a_panda()
+	{
+		$badges_and_pandas = Tiny_Dashboard::get_state_badges_and_pandas();
+
+		$this->assertEquals(
+			array('not_connected', 'pending', 'empty', 'no_sizes', 'ready', 'compressing', 'done', 'credits_short', 'out_of_credits'),
+			array_keys($badges_and_pandas)
+		);
+		foreach ($badges_and_pandas as $badge_and_panda) {
+			$this->assertEquals(array('badge_colour', 'badge_text', 'panda'), array_keys($badge_and_panda));
+		}
+	}
+
 	private function assert_widget_request_refused_with_a_403()
 	{
 		$this->wp->addMethod('status_header');

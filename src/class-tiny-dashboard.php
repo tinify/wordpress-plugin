@@ -186,4 +186,61 @@ class Tiny_Dashboard extends Tiny_WP_Base {
 			'auto_compress'        => $this->settings->auto_compress_enabled(),
 		);
 	}
+
+	/**
+	 * The badge and panda for each state, shared by the dashboard widget and
+	 * the bulk optimization page. Only the bulk optimization page has the
+	 * no_sizes state. The panda is a file name in images/widget.
+	 *
+	 * @return array<string,array{badge_colour: string, badge_text: string, panda: string}>
+	 */
+	public static function get_state_badges_and_pandas() {
+		return array(
+			'not_connected'  => array(
+				'badge_colour' => 'red',
+				'badge_text'   => __( 'Not connected', 'tiny-compress-images' ),
+				'panda'        => 'panda-juggle',
+			),
+			'pending'        => array(
+				'badge_colour' => 'amber',
+				'badge_text'   => __( 'Waiting for activation', 'tiny-compress-images' ),
+				'panda'        => 'panda-unbox',
+			),
+			'empty'          => array(
+				'badge_colour' => 'amber',
+				'badge_text'   => __( 'Nothing to compress', 'tiny-compress-images' ),
+				'panda'        => 'panda-astronaut',
+			),
+			'no_sizes'       => array(
+				'badge_colour' => 'amber',
+				'badge_text'   => __( 'Nothing to compress', 'tiny-compress-images' ),
+				'panda'        => 'panda-astronaut',
+			),
+			'ready'          => array(
+				'badge_colour' => 'green',
+				'badge_text'   => __( 'Ready to compress', 'tiny-compress-images' ),
+				'panda'        => 'panda-skate',
+			),
+			'compressing'    => array(
+				'badge_colour' => 'green',
+				'badge_text'   => __( 'Compressing', 'tiny-compress-images' ),
+				'panda'        => 'panda-rocket',
+			),
+			'done'           => array(
+				'badge_colour' => 'green',
+				'badge_text'   => __( 'All done', 'tiny-compress-images' ),
+				'panda'        => 'panda-duck',
+			),
+			'credits_short'  => array(
+				'badge_colour' => 'amber',
+				'badge_text'   => __( 'Not enough credits', 'tiny-compress-images' ),
+				'panda'        => 'panda-coffee',
+			),
+			'out_of_credits' => array(
+				'badge_colour' => 'red',
+				'badge_text'   => __( 'Out of credits', 'tiny-compress-images' ),
+				'panda'        => 'panda-coffee',
+			),
+		);
+	}
 }
