@@ -299,6 +299,9 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			true
 		);
 
+		/* The user's admin language, which number_format_i18n() uses too. Before WordPress 4.7 only the site has one. */
+		$locale = function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+
 		// WordPress < 3.3 does not handle multidimensional arrays
 		wp_localize_script(
 			self::NAME . '_admin',
@@ -344,7 +347,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 				 */
 				'locale'                 => implode(
 					'-',
-					array_slice( explode( '_', get_locale() ), 0, 2 )
+					array_slice( explode( '_', $locale ), 0, 2 )
 				),
 				'L10nUnits'              => array(
 					_x( 'B', 'unit symbol' ),
