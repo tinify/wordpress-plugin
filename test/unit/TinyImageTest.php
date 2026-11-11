@@ -612,6 +612,34 @@ class Tiny_Image_Test extends Tiny_TestCase {
 		$tinyimg->compress();
 	}
 
+	public function test_jxl_without_attachment_metadata_compresses_the_attached_file()
+	{
+		$this->wp->addOption('tinypng_sizes', array(Tiny_Image::ORIGINAL => 'on'));
+		$this->create_jxl_attachment();
+		$this->wp->stub('wp_get_attachment_metadata', function () {
+			return false;
+		});
+
+		$settings = new Tiny_Settings();
+		$mock_compressor = $this->createMock(Tiny_Compress::class);
+		$mock_compressor->expects($this->once())
+			->method('compress_file')
+			->with(
+				'vfs://root/wp-content/uploads/14/01/photo.jxl',
+				$this->anything(),
+				$this->anything(),
+				array()
+			)
+			->willReturn(array(
+				'input' => array('size' => 5000),
+				'output' => array('size' => 4000, 'type' => 'image/jxl'),
+			));
+		$settings->set_compressor($mock_compressor);
+
+		$tinyimg = new Tiny_Image($settings, 999);
+		$tinyimg->compress();
+	}
+
 	public function test_jxl_gets_a_converted_copy_when_conversion_is_enabled()
 	{
 		$this->enable_conversion();

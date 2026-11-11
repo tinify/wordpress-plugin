@@ -572,6 +572,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		$id       = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
+		if ( ! is_array( $metadata ) && 'image/jxl' === get_post_mime_type( $id ) ) {
+			// Before WordPress 6.0, a JPEG XL has no attachment metadata.
+			$metadata = array();
+		}
 		if ( ! is_array( $metadata ) ) {
 			return array(
 				'error' => esc_html__(

@@ -255,6 +255,31 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		$this->assertStringContainsString("'image/jxl'", $queries[0]);
 	}
 
+	public function test_counts_jxl_without_attachment_metadata()
+	{
+		$this->wp->addOption('tinypng_sizes', array(Tiny_Image::ORIGINAL => 'on'));
+		$this->wp->createImage(5000, '2023/05', 'photo.jxl');
+		$this->wp->updateMetadata(4400, '_wp_attached_file', '2023/05/photo.jxl');
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/jxl';
+		});
+		$this->wp->stub('wp_get_attachment_metadata', function () {
+			return false;
+		});
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), array(
+			array(
+				'ID' => 4400,
+				'post_title' => 'photo',
+				'meta_value' => null,
+				'tiny_meta_value' => null,
+			),
+		));
+
+		$this->assertEquals(1, $stats['estimated_credit_use']);
+		$this->assertEquals(1, $stats['available-unoptimized-sizes']);
+	}
+
 	public function test_avif_needs_no_conversion_credits()
 	{
 		$this->wp->addOption('tinypng_convert_format', array(

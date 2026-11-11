@@ -200,6 +200,20 @@ test.describe('compression', () => {
     await expect(page.getByText('1 size compressed')).toBeVisible();
   });
 
+  test('compress button should compress a jpeg xl image that was not compressed on upload', async () => {
+    // Before WordPress 6.0, such an image has no attachment metadata
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0', 'medium', 'thumbnail']);
+
+    await uploadMedia(page, 'input-example.jxl');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
+    await expect(page.getByText('1 size compressed')).toBeVisible({ timeout: 6000 });
+  });
+
   test('compress button should compress uncompressed sizes', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');

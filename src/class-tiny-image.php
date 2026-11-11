@@ -50,6 +50,10 @@ class Tiny_Image {
 		if ( ! is_array( $this->wp_metadata ) ) {
 			$this->wp_metadata = wp_get_attachment_metadata( $this->id );
 		}
+		if ( ! is_array( $this->wp_metadata ) && 'image/jxl' === $this->get_mime_type() ) {
+			// Before WordPress 6.0, a JPEG XL has no attachment metadata.
+			$this->wp_metadata = array();
+		}
 
 		$file = $this->get_metadata_file();
 		if ( null === $file ) {
