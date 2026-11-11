@@ -22,11 +22,6 @@ class Tiny_Image {
 	const ORIGINAL          = 0;
 	const ORIGINAL_UNSCALED = 'original_unscaled';
 
-	/**
-	 * The attachment mime types the plugin compresses.
-	 */
-	const MIME_TYPES = array( 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/jxl' );
-
 	/** @var Tiny_Settings */
 	private $settings;
 	private $id;
@@ -232,8 +227,18 @@ class Tiny_Image {
 		return $this->wp_metadata;
 	}
 
+	/**
+	 * The attachment mime types the plugin compresses. A function instead of
+	 * a constant, because PHP 5.4 and 5.5 do not allow arrays in constants.
+	 *
+	 * @return string[] mime types
+	 */
+	public static function compressible_mime_types() {
+		return array( 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/jxl' );
+	}
+
 	public function file_type_allowed() {
-		return in_array( $this->get_mime_type(), self::MIME_TYPES, true );
+		return in_array( $this->get_mime_type(), self::compressible_mime_types(), true );
 	}
 
 	public function get_mime_type() {

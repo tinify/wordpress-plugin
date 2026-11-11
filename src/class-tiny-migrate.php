@@ -68,8 +68,8 @@ class Tiny_Migrate {
 	 */
 	private static function migrations() {
 		return array(
-			1 => array( self::class, 'migrate_meta_key_to_private' ),
-			2 => array( self::class, 'refresh_htaccess_rules' ),
+			1 => array( __CLASS__, 'migrate_meta_key_to_private' ),
+			2 => array( __CLASS__, 'refresh_htaccess_rules' ),
 		);
 	}
 

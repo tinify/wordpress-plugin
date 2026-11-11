@@ -138,7 +138,7 @@ class Tiny_Cli {
 			return false;
 		}
 
-		if ( ! in_array( $mime_type, Tiny_Image::MIME_TYPES, true ) ) {
+		if ( ! in_array( $mime_type, Tiny_Image::compressible_mime_types(), true ) ) {
 			return false;
 		}
 
