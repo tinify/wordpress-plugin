@@ -81,6 +81,49 @@ class Tiny_Migrate_Test extends Tiny_TestCase
 		$this->assertOptionWasUpdated(Tiny_Migrate::DB_VERSION_OPTION, Tiny_Migrate::DB_VERSION);
 	}
 
+	public function test_run_refreshes_htaccess_rules_for_htaccess_delivery()
+	{
+		$this->wp->addOption(Tiny_Migrate::DB_VERSION_OPTION, 1);
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on',
+			'delivery_method' => 'htaccess',
+		));
+		$htaccess_file = $this->create_upload_dir() . '/.htaccess';
+		file_put_contents(
+			$htaccess_file,
+			"# BEGIN tiny-compress-images\nRewriteRule (.+)\\.(?:jpe?g|png)$ $1.avif [T=image/avif,L]\n# END tiny-compress-images\n"
+		);
+
+		Tiny_Migrate::run();
+
+		$this->assertStringContainsString('jxl', file_get_contents($htaccess_file));
+		$this->assertOptionWasUpdated(Tiny_Migrate::DB_VERSION_OPTION, Tiny_Migrate::DB_VERSION);
+	}
+
+	public function test_run_leaves_htaccess_alone_for_picture_delivery()
+	{
+		$this->wp->addOption(Tiny_Migrate::DB_VERSION_OPTION, 1);
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on',
+			'delivery_method' => 'picture',
+		));
+		$upload_dir = $this->create_upload_dir();
+
+		Tiny_Migrate::run();
+
+		$this->assertFileDoesNotExist($upload_dir . '/.htaccess');
+		$this->assertOptionWasUpdated(Tiny_Migrate::DB_VERSION_OPTION, Tiny_Migrate::DB_VERSION);
+	}
+
+	private function create_upload_dir()
+	{
+		$upload_dir = $this->vfs->url() . '/wp-content/uploads';
+		if (!is_dir($upload_dir)) {
+			mkdir($upload_dir, 0755, true);
+		}
+		return $upload_dir;
+	}
+
 	public function test_get_tiny_metadata_reads_the_current_private_key()
 	{
 		$this->wp->updateMetadata(1, Tiny_Config::META_KEY, array('size' => 'current'));

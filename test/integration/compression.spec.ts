@@ -172,6 +172,48 @@ test.describe('compression', () => {
     await expect(page.getByText('3 sizes compressed')).toBeVisible({ timeout: 6000 });
   });
 
+  test('upload of an avif image should compress all sizes', async () => {
+    // https://make.wordpress.org/core/2024/02/23/wordpress-6-5-adds-avif-support/
+    if (WPVersion < 6.5) return;
+
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'auto');
+    await enableCompressionSizes(page, ['0', 'medium', 'thumbnail']);
+
+    await uploadMedia(page, 'input-example.avif');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await expect(page.getByText('3 sizes compressed')).toBeVisible();
+  });
+
+  test('upload of a jpeg xl image should compress the uploaded image', async () => {
+    // WordPress cannot read JPEG XL, so it creates no other sizes
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'auto');
+    await enableCompressionSizes(page, ['0', 'medium', 'thumbnail']);
+
+    await uploadMedia(page, 'input-example.jxl');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await expect(page.getByText('1 size compressed')).toBeVisible();
+  });
+
+  test('compress button should compress a jpeg xl image that was not compressed on upload', async () => {
+    // Before WordPress 6.0, such an image has no attachment metadata
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0', 'medium', 'thumbnail']);
+
+    await uploadMedia(page, 'input-example.jxl');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await page.getByRole('button', { name: 'Compress', exact: true }).click();
+    await expect(page.getByText('1 size compressed')).toBeVisible({ timeout: 6000 });
+  });
+
   test('compress button should compress uncompressed sizes', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');

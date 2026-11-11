@@ -34,8 +34,8 @@ class Tiny_Helpers {
 	 * @return string the truncated string
 	 */
 	public static function truncate_text( $text, $length ) {
-		if ( mb_strlen( $text ) > $length ) {
-			return mb_substr( $text, 0, $length - 3 ) . '...';
+		if ( mb_strlen( $text, 'UTF-8' ) > $length ) {
+			return mb_substr( $text, 0, $length - 3, 'UTF-8' ) . '...';
 		}
 		return $text;
 	}
