@@ -133,7 +133,7 @@ $has_list        = count( $items ) > 0 && 'pending' !== $state;
 		</div>
 
 		<div class="tiny-settings-sidebar">
-			<?php $this->settings->render_account_status( true ); ?>
+			<?php $this->settings->render_account_status( false ); ?>
 
 			<div class="tiny-card">
 				<div class="tiny-card-section">
@@ -146,7 +146,7 @@ $has_list        = count( $items ) > 0 && 'pending' !== $state;
 							<dd><?php echo esc_html( number_format_i18n( $widget['images_total'] ) ); ?></dd>
 						</div>
 						<div>
-							<dt><?php esc_html_e( 'Compressed', 'tiny-compress-images' ); ?></dt>
+							<dt><?php esc_html_e( 'Optimized', 'tiny-compress-images' ); ?></dt>
 							<dd data-tiny-bulk="stat-compressed"><?php echo esc_html( number_format_i18n( $widget['images_optimized'] ) ); ?></dd>
 						</div>
 						<div>

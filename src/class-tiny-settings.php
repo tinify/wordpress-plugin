@@ -815,10 +815,9 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	/**
-	 * @param bool $link_to_settings Whether Change API Key links to the settings
-	 *                               page, for pages other than the settings page.
+	 * @param bool $show_change_api_key Whether to show the Change API Key button.
 	 */
-	public function render_account_status( $link_to_settings = false ) {
+	public function render_account_status( $show_change_api_key = true ) {
 		$is_allowed = current_user_can( 'manage_options' );
 		$key        = $this->get_api_key();
 		if ( $is_allowed && ! empty( $key ) ) {
