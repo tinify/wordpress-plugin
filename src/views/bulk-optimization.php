@@ -2,346 +2,187 @@
 /**
  * Bulk optimization view.
  *
- * @var array       $admin_colors
- * @var array       $stats
- * @var array       $active_tinify_sizes
- * @var float       $estimated_costs
- * @var string      $email_address
- * @var bool        $is_on_free_plan
- * @var int         $remaining_credits
- * @var bool        $bulk_running
+ * @var array       $stats             See Tiny_Bulk_Optimization::get_optimization_statistics().
+ * @var array       $widget            See Tiny_Dashboard::get_widget_data().
+ * @var string      $state             The widget state, or no_sizes.
+ * @var int         $compression_count Compressions made this month so far.
+ * @var bool        $start_on_load
  * @var Tiny_Plugin $this
  */
 
-$total_sizes   = $stats['optimized-image-sizes'] + $stats['available-unoptimized-sizes'];
-$settings_url  = admin_url( 'options-general.php?page=tinify' );
-$friendly_name = $this->friendly_user_name();
+$items      = $stats['available-for-optimization'];
+$can_manage = current_user_can( 'manage_options' );
+
+/* A run switches the page to the compressing hero, then to the done hero. */
+$heroes = array( $state );
+if ( in_array( $state, array( 'ready', 'credits_short' ), true ) ) {
+	$heroes[] = 'compressing';
+}
+if ( in_array( $state, array( 'ready', 'credits_short', 'compressing' ), true ) ) {
+	$heroes[] = 'done';
+}
+
+$has_library_bar = ! in_array( $state, array( 'pending', 'empty', 'no_sizes' ), true );
+$has_list        = count( $items ) > 0 && 'pending' !== $state;
 ?>
-<style>
-
-/* Admin color scheme colors */
-
-div.tiny-bulk-optimization div.available div.tooltip span.dashicons {
-	color: <?php echo esc_attr( $admin_colors[3] ); ?>;
-}
-div.tiny-bulk-optimization div.savings div.tiny-optimization-chart div.value {
-	color: <?php echo esc_attr( $admin_colors[2] ); ?>;
-}
-div.tiny-bulk-optimization div.savings div.tiny-optimization-chart svg circle.main {
-	stroke: <?php echo esc_attr( $admin_colors[2] ); ?>;
-}
-div.tiny-bulk-optimization div.savings table td.emphasize {
-	color: <?php echo esc_attr( $admin_colors[2] ); ?>;
-}
-div.tiny-bulk-optimization div.dashboard div.optimize div.progressbar div.progress {
-	background-color: <?php echo esc_attr( $admin_colors[0] ); ?>;
-	background-image: linear-gradient(
-		-63deg,
-		<?php echo esc_attr( $admin_colors[0] ); ?> 0%,
-		<?php echo esc_attr( $admin_colors[0] ); ?> 25%,
-		<?php echo esc_attr( $admin_colors[1] ); ?> 25%,
-		<?php echo esc_attr( $admin_colors[1] ); ?> 50%,
-		<?php echo esc_attr( $admin_colors[0] ); ?> 50%,
-		<?php echo esc_attr( $admin_colors[0] ); ?> 75%,
-		<?php echo esc_attr( $admin_colors[1] ); ?> 75%,
-		<?php echo esc_attr( $admin_colors[1] ); ?> 100%
-	);
-}
-
-</style>
-
-<div class="wrap tiny-bulk-optimization tiny-compress-images" id="tiny-bulk-optimization">
-	<div class="icon32" id="icon-upload"><br></div>
-	<h2><?php esc_html_e( 'Bulk Optimization', 'tiny-compress-images' ); ?></h2>
-	<div class="dashboard">
-		<div class="statistics">
-			<div class="available">
-				<div class="inner">
-					<h3><?php esc_html_e( 'Available Images', 'tiny-compress-images' ); ?></h3>
-					<p>
-						<?php
-						if ( 0 == $total_sizes ) {
-							$percentage = 0;
-						} else {
-							$percentage_of_files = round( $stats['optimized-image-sizes'] / $total_sizes * 100, 2 );
-						}
-						if ( 0 == $stats['uploaded-images'] + $stats['available-unoptimized-sizes'] ) {
-							esc_html_e( 'This page is designed to bulk optimize all your images.', 'tiny-compress-images' );
-							echo ' ';
-							esc_html_e( 'You do not seem to have uploaded any JPEG, PNG or WebP images yet.', 'tiny-compress-images' );
-						} elseif ( 0 == count( $active_tinify_sizes ) ) {
-							esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
-						} elseif ( 0 == $stats['available-unoptimized-sizes'] ) {
-							/* translators: %s: friendly user name */
-							printf( esc_html__( '%s, this is great! Your entire library is optimized!', 'tiny-compress-images' ), esc_html( $friendly_name ) );
-							echo '<br />';
-							require __DIR__ . '/request-review.php';
-						} elseif ( $stats['optimized-image-sizes'] > 0 ) {
-							if ( $percentage_of_files > 75 ) {
-								/* translators: %s: friendly user name */
-									printf( esc_html__( '%s, you are doing great!', 'tiny-compress-images' ), esc_html( $friendly_name ) );
-							} else {
-								/* translators: %s: friendly user name */
-									printf( esc_html__( '%s, you are doing good.', 'tiny-compress-images' ), esc_html( $friendly_name ) );
-							}
-							echo ' ';
-								/* translators: %1$d%2$s: percentage optimised */
-									printf( esc_html__( '%1$d%2$s of your image library is optimized.', 'tiny-compress-images' ), absint( $percentage_of_files ), '%' );
-							echo ' ';
-							/* translators: %s: bulk optimization title */
-							printf( esc_html__( 'Start the %s to optimize the remainder of your library.', 'tiny-compress-images' ), esc_html__( 'bulk optimization', 'tiny-compress-images' ) );
-						} else {
-							esc_html_e( 'Here you can start optimizing your entire library. Press the big button to start improving your website speed instantly!', 'tiny-compress-images' );
-						}
-						?>
-					</p>
-					<?php if ( Tiny_Settings::wr2x_active() ) { ?>
-						<p>
-							<?php esc_html_e( 'Notice that the WP Retina 2x sizes will not be compressed using this page. You will need to bulk generate the retina sizes separately from the WP Retina 2x page.', 'tiny-compress-images' ); ?>
-						</p>
-					<?php } ?>
-					<table class="totals">
-						<tr>
-							<td class="item">
-								<h3>
-									<?php
-									echo wp_kses(
-										__( 'Uploaded <br> images', 'tiny-compress-images' ),
-										array(
-											'br' => array(),
-										)
-									)
-									?>
-								</h3>
-								<span id="uploaded-images">
-									<?php echo esc_html( $stats['uploaded-images'] ); ?>
-								</span>
-							</td>
-							<td class="item">
-								<h3>
-									<?php
-									echo wp_kses(
-										__( 'Unoptimized <br> image sizes', 'tiny-compress-images' ),
-										array(
-											'br' => array(),
-										)
-									)
-									?>
-								</h3>
-								<span id="optimizable-image-sizes">
-									<?php echo esc_html( $stats['available-unoptimized-sizes'] ); ?>
-								</span>
-								<div class="tooltip">
-									<span class="dashicons dashicons-info"></span>
-									<div class="tip">
-										<?php if ( $stats['uploaded-images'] > 0 && count( $active_tinify_sizes ) > 0 && $stats['available-unoptimized-sizes'] > 0 ) { ?>
-											<p>
-												<?php
-												printf(
-													/* translators: %1$s: number of sizes that can be optimised, %2$s number of images */
-													esc_html__(
-														'With your current settings you can still optimize %1$s image sizes from your %2$s uploaded JPEG, PNG, and WebP images.',
-														'tiny-compress-images'
-													),
-													esc_html( $stats['available-unoptimized-sizes'] ),
-													esc_html( $stats['uploaded-images'] )
-												);
-												?>
-											</p>
-										<?php } ?>
-										<p>
-											<?php
-											if ( 0 == count( $active_tinify_sizes ) ) {
-												esc_html_e( 'Based on your current settings, nothing will be optimized. There are no active sizes selected for optimization.', 'tiny-compress-images' );
-											} else {
-												esc_html_e( 'These sizes are currently activated for optimization:', 'tiny-compress-images' );
-												echo '<ul>';
-												$active_tinify_sizes_count = count( $active_tinify_sizes );
-												for ( $i = 0; $i < $active_tinify_sizes_count; ++$i ) {
-													$name = $active_tinify_sizes[ $i ];
-													if ( '0' == $name ) {
-														echo '<li>- ' . esc_html__( 'Original image', 'tiny-compress-images' ) . '</li>';
-													} else {
-														echo '<li>- ' . esc_html( ucfirst( $name ) ) . '</li>';
-													}
-												}
-												echo '</ul>';
-											}
-											?>
-										</p>
-										<p>
-										<?php if ( count( $active_tinify_sizes ) > 0 ) { ?>
-											<?php
-											printf(
-												wp_kses(
-													/* translators: %d: number of sizes to be compressed */
-													_n( 'For each uploaded image <strong>%d size</strong> is optimized.', 'For each uploaded image <strong>%d sizes</strong> are optimized.', count( $active_tinify_sizes ), 'tiny-compress-images' ),
-													array(
-														'strong' => array(),
-													)
-												),
-												count( $active_tinify_sizes )
-											)
-											?>
-										<?php } ?>
-										<?php
-										printf(
-											wp_kses(
-												/* translators: %s: link to settings page saying here */
-												__( 'You can change these settings %s.', 'tiny-compress-images' ),
-												array(
-													'a' => array(
-														'href' => array(),
-													),
-												)
-											),
-											'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
-										)
-										?>
-										</p>
-									</div>
-								</div>
-							</td>
-							<td class="item costs">
-								<h3>
-									<?php
-									echo wp_kses(
-										__( 'Estimated <br> cost', 'tiny-compress-images' ),
-										array(
-											'br' => array(),
-										)
-									)
-									?>
-								</h3>
-								<span id="estimated-cost">$ <?php echo number_format( $estimated_costs, 2 ); ?></span>
-								USD
-								<?php if ( $estimated_costs > 0 ) { ?>
-									<div class="tooltip">
-										<span class="dashicons dashicons-info"></span>
-										<div class="tip">
-											<p>
-											<?php
-											printf(
-												wp_kses(
-													/* translators: %1$d %2$s: number of image sizes, %3$s: link saying upgrade here */
-													__( 'If you wish to compress more than <strong>%1$d %2$s</strong> a month and you are still on a free account %3$s.', 'tiny-compress-images' ),
-													array(
-														'strong' => array(),
-														'a' => array(
-															'href' => array(),
-														),
-													)
-												),
-												(int) Tiny_Config::MONTHLY_FREE_COMPRESSIONS,
-												esc_html__( 'image sizes', 'tiny-compress-images' ),
-												'<a target="_blank" href="' . esc_url( 'https://tinypng.com/dashboard/api?type=upgrade&mail=' . str_replace( '%20', '%2B', rawurlencode( $email_address ) ) . '&utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=bulk-optimization' ) . '">' . esc_html__( ' upgrade here', 'tiny-compress-images' ) . '</a>'
-											);
-											?>
-											</p>
-										</div>
-									</div>
-								<?php } ?>
-							</td>
-						</tr>
-					</table>
-					<div class="notes">
-						<?php
-						printf(
-							wp_kses(
-								/* translators: %s: link to settings page saying here */
-								__( 'Configure compression settings %s.', 'tiny-compress-images' ),
-								array(
-									'a' => array(
-										'href' => array(),
-									),
-								)
-							),
-							'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'here', 'tiny-compress-images' ) . '</a>'
-						)
-						?>
-					</div>
-				</div>
-			</div>
-			<div class="savings">
-				<div class="inner">
-					<h3><?php esc_html_e( 'Total Savings', 'tiny-compress-images' ); ?></h3>
-					<p>
-						<?php esc_html_e( 'Statistics based on all available JPEG, PNG, and WebP images in your media library.', 'tiny-compress-images' ); ?>
-					</p>
-					<?php
-						require_once __DIR__ . '/optimization-chart.php';
-					?>
-					<div class="legend">
-						<table>
-							<tr>
-								<td id="optimized-image-sizes" class="value emphasize">
-									<?php echo esc_html( $stats['optimized-image-sizes'] ); ?>
-								</td>
-								<td class="description">
-									<?php echo esc_html( _n( 'image size optimized', 'image sizes optimized', $stats['optimized-image-sizes'], 'tiny-compress-images' ) ); ?>
-								</td>
-							</tr>
-							<tr>
-								<td id="unoptimized-library-size" class="value" data-bytes="<?php echo esc_attr( $stats['unoptimized-library-size'] ); ?>" >
-									<?php echo esc_html( $stats['unoptimized-library-size'] ? size_format( $stats['unoptimized-library-size'], 2 ) : '-' ); ?>
-								</td>
-								<td class="description">
-									<?php esc_html_e( 'initial size', 'tiny-compress-images' ); ?>
-								</td>
-							</tr>
-							<tr>
-								<td id="optimized-library-size" class="value emphasize" data-bytes="<?php echo esc_attr( $stats['optimized-library-size'] ); ?>" class="green">
-									<?php echo esc_html( $stats['optimized-library-size'] ? size_format( $stats['optimized-library-size'], 2 ) : '-' ); ?>
-								</td>
-								<td class="description">
-									<?php esc_html_e( 'current size', 'tiny-compress-images' ); ?>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php $show_notice = $is_on_free_plan && $stats['available-unoptimized-sizes'] > $remaining_credits; ?>
-		<div class="optimize">
-			<div class="progressbar" id="compression-progress-bar" data-number-to-optimize="<?php echo esc_attr( $total_sizes ); ?>" data-amount-optimized="0" style="<?php echo $show_notice ? 'display:none;' : ''; ?>">
-				<div id="progress-size" class="progress">
-				</div>
-				<div class="numbers" >
-				<span id="optimized-so-far"><?php echo esc_html( $stats['optimized-image-sizes'] ); ?></span>
-				/
-				<span><?php echo esc_html( $total_sizes ); ?></span>
-					<span id="percentage"></span>
-				</div>
-			</div>
-			<?php
-			if ( $stats['available-unoptimized-sizes'] > 0 ) {
-				require_once __DIR__ . '/bulk-optimization-form.php';
-			}
-			?>
-		</div>
+<div class="wrap tiny-settings tiny-bulk-optimization" id="tiny-bulk-optimization">
+	<h1><?php esc_html_e( 'Bulk Optimizer', 'tiny-compress-images' ); ?></h1>
+	<p class="tiny-settings-intro">
 		<?php
-		if ( $show_notice ) {
-			require_once __DIR__ . '/bulk-optimization-upgrade-notice.php';
+		esc_html_e( 'Compress the images that are already in your Media Library.', 'tiny-compress-images' );
+		if ( $widget['auto_compress'] ) {
+			echo ' ';
+			esc_html_e( 'New uploads are compressed automatically.', 'tiny-compress-images' );
 		}
 		?>
+	</p>
+	<hr class="wp-header-end">
+
+	<div class="tiny-settings-columns">
+		<div class="tiny-settings-main">
+			<div class="tiny-card" data-tiny-views>
+				<?php
+				if ( in_array( $state, array( 'credits_short', 'out_of_credits' ), true ) ) {
+					$upgrade_from = 'bulk-optimization';
+					require __DIR__ . '/more-credits.php';
+				}
+				foreach ( $heroes as $hero ) {
+					require __DIR__ . '/bulk-optimization-hero.php';
+				}
+				?>
+
+				<?php if ( $has_library_bar ) { ?>
+					<div class="tiny-card-section tiny-bulk-library">
+						<div class="tiny-bulk-library-head">
+							<h3><?php esc_html_e( 'Media Library', 'tiny-compress-images' ); ?></h3>
+							<span>
+								<?php
+								printf(
+									/* translators: %s: percentage of compressed images */
+									esc_html__( '%s%% compressed', 'tiny-compress-images' ),
+									'<span data-tiny-bulk="library-percentage">' . esc_html( number_format_i18n( $widget['percentage'] ) ) . '</span>'
+								);
+								?>
+							</span>
+						</div>
+						<div class="tiny-bulk-bar">
+							<span data-tiny-bulk="library-bar" style="width: <?php echo esc_attr( $widget['percentage'] ); ?>%"></span>
+						</div>
+						<div class="tiny-bulk-legend">
+							<span class="tiny-bulk-legend-done">
+								<?php
+								printf(
+									/* translators: %1$s: number of compressed images, %2$s: number of images */
+									esc_html__( '%1$s of %2$s compressed', 'tiny-compress-images' ),
+									'<span data-tiny-bulk="library-compressed">' . esc_html( number_format_i18n( $widget['images_optimized'] ) ) . '</span>',
+									esc_html( number_format_i18n( $widget['images_total'] ) )
+								);
+								?>
+							</span>
+							<span class="tiny-bulk-legend-todo" data-tiny-bulk="library-todo">
+								<?php
+								if ( 'compressing' === $state ) {
+									/* translators: %s: number of images still to compress */
+									$to_compress = __( '%s to go', 'tiny-compress-images' );
+								} else {
+									/* translators: %s: number of images still to compress */
+									$to_compress = __( '%s to compress', 'tiny-compress-images' );
+								}
+								printf(
+									esc_html( $to_compress ),
+									esc_html( number_format_i18n( $widget['images_remaining'] ) )
+								);
+								?>
+							</span>
+						</div>
+					</div>
+				<?php } ?>
+
+				<?php if ( $has_list ) { ?>
+					<div class="tiny-card-section tiny-bulk-list">
+						<h3 data-tiny-bulk="list-title"
+							data-compressing="<?php esc_attr_e( 'Activity', 'tiny-compress-images' ); ?>"
+							data-done="<?php esc_attr_e( 'Recently compressed', 'tiny-compress-images' ); ?>">
+							<?php
+							if ( 'compressing' === $state ) {
+								esc_html_e( 'Activity', 'tiny-compress-images' );
+							} else {
+								esc_html_e( 'Waiting to be compressed', 'tiny-compress-images' );
+							}
+							?>
+						</h3>
+						<ul class="tiny-bulk-items" id="tiny-bulk-items">
+							<?php require __DIR__ . '/bulk-optimization-items.php'; ?>
+						</ul>
+					</div>
+				<?php } ?>
+
+				<?php if ( $has_list || 'done' === $state ) { ?>
+					<div class="tiny-bulk-footer">
+						<?php if ( $has_list ) { ?>
+							<span data-tiny-bulk="list-waiting">
+								<?php
+								printf(
+									/* translators: %s: number of images waiting to be compressed */
+									esc_html__( '%s waiting', 'tiny-compress-images' ),
+									'<span data-tiny-bulk="waiting">' . esc_html( number_format_i18n( count( $items ) ) ) . '</span>'
+								);
+								?>
+							</span>
+						<?php } ?>
+						<a href="<?php echo esc_url( admin_url( 'upload.php?mode=list' ) ); ?>"><?php esc_html_e( 'View all in Media Library', 'tiny-compress-images' ); ?></a>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+
+		<div class="tiny-settings-sidebar">
+			<?php $this->settings->render_account_status( false ); ?>
+
+			<div class="tiny-card">
+				<div class="tiny-card-section">
+					<div class="tiny-card-head">
+						<h2><?php esc_html_e( 'Statistics', 'tiny-compress-images' ); ?></h2>
+					</div>
+					<dl class="tiny-account-details">
+						<div>
+							<dt><?php esc_html_e( 'Images in library', 'tiny-compress-images' ); ?></dt>
+							<dd><?php echo esc_html( number_format_i18n( $widget['images_total'] ) ); ?></dd>
+						</div>
+						<div>
+							<dt><?php esc_html_e( 'Optimized', 'tiny-compress-images' ); ?></dt>
+							<dd data-tiny-bulk="stat-compressed"><?php echo esc_html( number_format_i18n( $widget['images_optimized'] ) ); ?></dd>
+						</div>
+						<div>
+							<dt><?php esc_html_e( 'Saved so far', 'tiny-compress-images' ); ?></dt>
+							<dd data-tiny-bulk="stat-saved"><?php echo esc_html( $widget['bytes_saved'] > 0 ? size_format( $widget['bytes_saved'], 1 ) : '0 B' ); ?></dd>
+						</div>
+						<div>
+							<dt><?php esc_html_e( 'Average saving', 'tiny-compress-images' ); ?></dt>
+							<dd data-tiny-bulk="stat-average"><?php echo $stats['display-percentage'] > 0 ? esc_html( number_format_i18n( $stats['display-percentage'] ) . '%' ) : '&ndash;'; ?></dd>
+						</div>
+					</dl>
+				</div>
+			</div>
+
+			<?php $this->settings->render_credits( $can_manage ); ?>
+		</div>
 	</div>
-	<script type="text/javascript">
-	<?php echo 'jQuery(function() { bulkOptimization(' . json_encode( $stats['available-for-optimization'] ) . ', ' . json_encode( $bulk_running ) . ', ' . json_encode( $start_on_load ) . ')})'; ?>
-	</script>
-	<table class="wp-list-table widefat fixed striped media whitebox" id="optimization-items" >
-		<thead>
-			<tr>
-				<?php // column-author WP 3.8-4.2 mobile view ?>
-				<th class="thumbnail"></th>
-				<th class="column-primary" ><?php esc_html_e( 'File', 'tiny-compress-images' ); ?></th>
-				<th class="column-author"><?php esc_html_e( 'Initial Size', 'tiny-compress-images' ); ?></th>
-				<th class="column-author"><?php esc_html_e( 'Current Size', 'tiny-compress-images' ); ?></th>
-				<th class="column-author savings"><?php esc_html_e( 'Savings', 'tiny-compress-images' ); ?></th>
-				<th class="column-author status"><?php esc_html_e( 'Status', 'tiny-compress-images' ); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
 </div>
+<script type="text/javascript">
+	<?php
+	echo 'window.tinyBulk = ' . wp_json_encode(
+		array(
+			'running'          => 'compressing' === $state,
+			'startOnLoad'      => $start_on_load,
+			'compressionCount' => $compression_count,
+			'workers'          => Tiny_Background_Optimize::WORKERS,
+			'imagesOptimized'  => $widget['images_optimized'],
+			'imagesTotal'      => $widget['images_total'],
+			'imagesRemaining'  => $widget['images_remaining'],
+			'bytesSaved'       => $widget['bytes_saved'],
+			'initialSize'      => intval( $stats['unoptimized-library-size'] ),
+		)
+	) . ';';
+	?>
+</script>

@@ -27,7 +27,10 @@ function mock_invalid_key_request() {
 	header("HTTP/1.1 404 Not Found");
 	header("Content-Type: application/json; charset=utf-8");
 
-	return '{}';
+	return json_encode(array(
+		"error" => "Unauthorized",
+		"message" => "Credentials are invalid",
+	));
 }
 
 function mock_key_creation_request() {

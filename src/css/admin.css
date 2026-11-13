@@ -704,7 +704,6 @@ div.misc-pub-section.tiny-compress-images {
 	gap: 12px;
 	margin: 0;
 	color: var(--tiny-text-secondary);
-	font-size: 14px;
 	line-height: 20px;
 }
 
@@ -729,8 +728,6 @@ div.misc-pub-section.tiny-compress-images {
 	gap: 12px;
 	padding: 24px;
 	color: var(--tiny-text-primary);
-	font-size: 14px;
-	font-weight: 600;
 	line-height: 20px;
 	background: var(--tiny-surface-page);
 	border-top: 1px solid var(--tiny-border-default);
@@ -962,4 +959,100 @@ div.misc-pub-section.tiny-compress-images {
 .tiny-icon-backup {
 	flex-shrink: 0;
 	fill: currentcolor;
+}
+
+/* Upgrade slides from the main view to the ways to get more credits. */
+[data-tiny-view="main"] {
+	animation: tiny-slide-from-left 0.25s ease-out;
+}
+
+.tiny-more-credits {
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	animation: tiny-slide-from-right 0.25s ease-out;
+}
+
+.tiny-more-credits[hidden] {
+	display: none;
+}
+
+@keyframes tiny-slide-from-left {
+	from {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
+}
+
+@keyframes tiny-slide-from-right {
+	from {
+		opacity: 0;
+		transform: translateX(24px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-tiny-view="main"],
+	.tiny-more-credits {
+		animation: none;
+	}
+}
+
+.tiny-more-credits-back {
+	align-self: flex-start;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--wp-admin-theme-color, #2271b1);
+	font-size: 14px;
+	line-height: 20px;
+	cursor: pointer;
+}
+
+.tiny-more-credits-back:hover,
+.tiny-more-credits-back:focus {
+	text-decoration: underline;
+}
+
+.tiny-more-credits-offer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.tiny-more-credits-offer + .tiny-more-credits-offer {
+	padding-top: 16px;
+	border-top: 1px solid #ededf1;
+}
+
+.tiny-more-credits-offer-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.tiny-more-credits-offer-text strong {
+	font-weight: 500;
+}
+
+.tiny-more-credits-offer-text span {
+	color: #5b5b67;
+}
+
+.tiny-more-credits-offer .button {
+	flex-shrink: 0;
+}
+
+@container (max-width: 396px) {
+	.tiny-more-credits-offer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.tiny-more-credits-offer .button {
+		justify-content: center;
+		text-align: center;
+	}
 }

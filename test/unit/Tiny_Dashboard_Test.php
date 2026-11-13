@@ -35,8 +35,6 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 	{
 		return array(
 			'uploaded-images' => $uploaded,
-			'optimized-image-sizes' => 0,
-			'available-unoptimized-sizes' => 0,
 			'optimized-library-size' => $optimized_size,
 			'unoptimized-library-size' => $unoptimized_size,
 			'estimated_credit_use' => $credit_use,
@@ -387,6 +385,18 @@ class Tiny_Dashboard_Test extends Tiny_TestCase
 		});
 
 		$this->assert_widget_request_refused_with_a_403();
+	}
+
+	public function test_every_state_has_a_badge_and_a_panda()
+	{
+		$states = array('not_connected', 'pending', 'empty', 'no_sizes', 'ready', 'compressing', 'done', 'credits_short', 'out_of_credits');
+
+		foreach ($states as $state) {
+			$this->assertEquals(
+				array('badge_colour', 'badge_text', 'panda'),
+				array_keys(Tiny_Dashboard::get_state_badge_and_panda($state))
+			);
+		}
 	}
 
 	private function assert_widget_request_refused_with_a_403()

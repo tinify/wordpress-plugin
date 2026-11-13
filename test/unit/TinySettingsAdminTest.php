@@ -586,4 +586,26 @@ class Tiny_Settings_Admin_Test extends Tiny_TestCase {
 	public function test_should_count_credits_per_image_with_resize_and_conversion() {
 		$this->assertEquals( 11, Tiny_Settings::get_credits_per_image( 5, true, false, true ) );
 	}
+
+	public function test_render_credits_links_to_settings_when_asked() {
+		$this->assertStringContainsString( 'Change settings', $this->render_credits( true ) );
+	}
+
+	public function test_render_credits_does_not_link_to_settings_when_not_asked() {
+		$output = $this->render_credits( false );
+		$this->assertStringContainsString( 'How credits are used', $output );
+		$this->assertStringNotContainsString( 'Change settings', $output );
+	}
+
+	private function render_credits( $show_settings_link ) {
+		$this->wp->addMethod( '_n' );
+		$this->wp->stub( '_n', function ( $single, $plural, $number ) {
+			return 1 === $number ? $single : $plural;
+		} );
+		$this->wp->addMethod( 'number_format_i18n' );
+		$this->wp->addMethod( 'esc_url' );
+		ob_start();
+		$this->subject->render_credits( $show_settings_link );
+		return ob_get_clean();
+	}
 }

@@ -453,7 +453,24 @@
     });
   }
 
+  // Upgrade slides from the main view to the ways to get more credits, Back
+  // slides back. Nothing is stored, so a reload shows the main view again.
+  function toggleMoreCredits(event) {
+    const action = event.target.closest('[data-tiny-action=more-credits], [data-tiny-action=back]');
+    if (!action) {
+      return;
+    }
+    const views = action.closest('[data-tiny-views]');
+    const showCredits = action.dataset.tinyAction === 'more-credits';
+    views.querySelector('[data-tiny-view=main]').hidden = showCredits;
+    views.querySelector('[data-tiny-view=credits]').hidden = !showCredits;
+  }
+
   switch (adminpage) {
+  case 'index-php':
+  case 'media_page_tiny-bulk-optimization':
+    document.addEventListener('click', toggleMoreCredits);
+    break;
   case 'upload-php':
     eventOn('click', 'button.tiny-compress', compressImage);
     eventOn('click', 'button.tiny-mark-as-compressed', onClickButtonMarkAsCompressed);

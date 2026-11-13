@@ -209,18 +209,22 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		$this->assertEquals(
 			array(
 				'uploaded-images' => 3,
-				'optimized-image-sizes' => 3,
-				'available-unoptimized-sizes' => 6,
 				'optimized-library-size' => 529136,
 				'unoptimized-library-size' => 676136,
 				'available-for-optimization' => array(
 					array(
 						'ID' => 1,
 						'post_title' => 'I am uncompressed and unconverted',
+						'file' => 'image-4350.png',
+						'sizes' => 3,
+						'bytes' => 233568,
 					),
 					array(
 						'ID' => 4350,
 						'post_title' => 'I am compressed but not converted',
+						'file' => 'image-4351.jpg',
+						'sizes' => 3,
+						'bytes' => 223568,
 					),
 				),
 				'display-percentage' => 21.7,
@@ -228,6 +232,35 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 			),
 			Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results)
 		);
+	}
+
+	public function test_lists_the_uploaded_file_name_when_wordpress_scaled_the_image()
+	{
+		$this->wp->createImagesFromJSON(array(
+			'path' => '2023/05',
+			'images' => array(
+				array('file' => 'photo-scaled.jpg', 'size' => 40000),
+				array('file' => 'photo-150x150.jpg', 'size' => 12000),
+			),
+		));
+		$wpdb_results = array(
+			array(
+				'ID' => 1,
+				'post_title' => 'A scaled photo',
+				'meta_value' => serialize(array(
+					'file' => '2023/05/photo-scaled.jpg',
+					'original_image' => 'photo.jpg',
+					'sizes' => array(
+						'thumbnail' => array('file' => 'photo-150x150.jpg'),
+					),
+				)),
+				'tiny_meta_value' => '',
+			),
+		);
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), $wpdb_results);
+
+		$this->assertEquals('photo.jpg', $stats['available-for-optimization'][0]['file']);
 	}
 
 	public function test_retrieves_avif_and_jxl_attachments()
@@ -277,7 +310,7 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		));
 
 		$this->assertEquals(1, $stats['estimated_credit_use']);
-		$this->assertEquals(1, $stats['available-unoptimized-sizes']);
+		$this->assertEquals(1, $stats['available-for-optimization'][0]['sizes']);
 	}
 
 	public function test_avif_needs_no_conversion_credits()
@@ -315,6 +348,6 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 		));
 
 		$this->assertEquals(2, $stats['estimated_credit_use']);
-		$this->assertEquals(2, $stats['available-unoptimized-sizes']);
+		$this->assertEquals(2, $stats['available-for-optimization'][0]['sizes']);
 	}
 }
