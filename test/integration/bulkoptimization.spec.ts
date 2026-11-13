@@ -160,8 +160,8 @@ test.describe('bulkoptimization', () => {
 
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
-    await expect(page.locator('#uploaded-images')).toHaveText('1');
-    await expect(page.locator('#optimizable-image-sizes')).toHaveText('1');
+    await expect(page.getByRole('heading', { name: '1 image to compress' })).toBeVisible();
+    await expect(page.getByText('0 of 1 compressed')).toBeVisible();
   });
 
   test('summary should display correct values', async () => {
