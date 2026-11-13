@@ -230,6 +230,32 @@ class Tiny_Plugin_Test extends Tiny_TestCase
 		$this->subject->blocking_compress_on_upload($this->wp->getTestMetadata(), 1);
 	}
 
+	public static function jxl_upload_metadata()
+	{
+		return array(
+			'WordPress 6.0 and later store the file size' => array(array('filesize' => 5000)),
+			'earlier versions store nothing' => array(array()),
+		);
+	}
+
+	/**
+	 * @dataProvider jxl_upload_metadata
+	 */
+	public function test_compress_on_upload_compresses_jxl($metadata)
+	{
+		$this->wp->stub('get_post_mime_type', function ($i) {
+			return 'image/jxl';
+		});
+		$this->wp->createImage(5000, '14/01', 'photo.jxl');
+		$this->wp->updateMetadata(1, '_wp_attached_file', '14/01/photo.jxl');
+		$this->compressor->expects($this->once())
+			->method('compress_file')
+			->with($this->equalTo('vfs://root/wp-content/uploads/14/01/photo.jxl'))
+			->will($this->returnCallback(array($this, 'success_compress')));
+
+		$this->subject->blocking_compress_on_upload($metadata, 1);
+	}
+
 	public function test_wrong_metadata_should_not_show_warnings()
 	{
 		$this->wp->stub('get_post_mime_type', function ($i) {

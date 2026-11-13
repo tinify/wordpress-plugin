@@ -24,6 +24,19 @@ class Tiny_Helpers_Test extends Tiny_TestCase
         $this->assertEquals($input_text, Tiny_Helpers::truncate_text($input_text, 26));
     }
 
+    public function test_truncates_utf8_text_by_characters_when_internal_encoding_is_latin1()
+    {
+        $internal_encoding = mb_internal_encoding();
+        mb_internal_encoding('ISO-8859-1');
+        try {
+            $truncated = Tiny_Helpers::truncate_text(str_repeat('é', 25), 20);
+        } finally {
+            mb_internal_encoding($internal_encoding);
+        }
+
+        $this->assertEquals(str_repeat('é', 17) . '...', $truncated);
+    }
+
     public function test_will_change_file_extension()
     {
         $input_file = "/home/user/image.png";

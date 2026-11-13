@@ -262,4 +262,92 @@ class Tiny_Bulk_Optimization_Test extends Tiny_TestCase
 
 		$this->assertEquals('photo.jpg', $stats['available-for-optimization'][0]['file']);
 	}
+
+	public function test_retrieves_avif_and_jxl_attachments()
+	{
+		if (!defined('ARRAY_A')) {
+			define('ARRAY_A', 'ARRAY_A');
+		}
+		global $wpdb;
+		$wpdb = $this->getMockBuilder(stdClass::class)
+			->addMethods(['get_results'])
+			->getMock();
+		$wpdb->posts = 'wp_posts';
+		$wpdb->postmeta = 'wp_postmeta';
+
+		$queries = array();
+		$wpdb->method('get_results')
+			->willReturnCallback(function ($query) use (&$queries) {
+				$queries[] = $query;
+				return array();
+			});
+
+		Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings());
+
+		$this->assertStringContainsString("'image/avif'", $queries[0]);
+		$this->assertStringContainsString("'image/jxl'", $queries[0]);
+	}
+
+	public function test_counts_jxl_without_attachment_metadata()
+	{
+		$this->wp->addOption('tinypng_sizes', array(Tiny_Image::ORIGINAL => 'on'));
+		$this->wp->createImage(5000, '2023/05', 'photo.jxl');
+		$this->wp->updateMetadata(4400, '_wp_attached_file', '2023/05/photo.jxl');
+		$this->wp->stub('get_post_mime_type', function () {
+			return 'image/jxl';
+		});
+		$this->wp->stub('wp_get_attachment_metadata', function () {
+			return false;
+		});
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), array(
+			array(
+				'ID' => 4400,
+				'post_title' => 'photo',
+				'meta_value' => null,
+				'tiny_meta_value' => null,
+			),
+		));
+
+		$this->assertEquals(1, $stats['estimated_credit_use']);
+		$this->assertEquals(1, $stats['available-for-optimization'][0]['sizes']);
+	}
+
+	public function test_avif_needs_no_conversion_credits()
+	{
+		$this->wp->addOption('tinypng_convert_format', array(
+			'convert' => 'on',
+			'convert_to' => 'smallest',
+		));
+		$this->wp->addOption('tinypng_sizes', array(
+			Tiny_Image::ORIGINAL => 'on',
+			'thumbnail' => 'on',
+		));
+		$this->wp->createImagesFromJSON(array(
+			'path' => '2023/05',
+			'images' => array(
+				array('file' => 'photo.avif', 'size' => 50000),
+				array('file' => 'photo-150x150.avif', 'size' => 5000),
+			),
+		));
+
+		$stats = Tiny_Bulk_Optimization::get_optimization_statistics(new Tiny_Settings(), array(
+			array(
+				'ID' => 4400,
+				'post_title' => 'photo',
+				'meta_value' => serialize(array(
+					'width' => 1080,
+					'height' => 720,
+					'file' => '2023/05/photo.avif',
+					'sizes' => array(
+						'thumbnail' => array('file' => 'photo-150x150.avif'),
+					),
+				)),
+				'tiny_meta_value' => '',
+			),
+		));
+
+		$this->assertEquals(2, $stats['estimated_credit_use']);
+		$this->assertEquals(2, $stats['available-for-optimization'][0]['sizes']);
+	}
 }

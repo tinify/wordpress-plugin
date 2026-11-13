@@ -85,6 +85,26 @@ function clear_media_library() {
 	) );
 }
 
+// WordPress does not accept JPEG XL uploads, act like a site that does. The file
+// check is overridden too, as the fileinfo of older PHP versions cannot detect JXL.
+add_filter( 'upload_mimes', 'tiny_test_allow_jxl_uploads' );
+function tiny_test_allow_jxl_uploads( $mimes ) {
+	$mimes['jxl'] = 'image/jxl';
+	return $mimes;
+}
+
+add_filter( 'wp_check_filetype_and_ext', 'tiny_test_accept_jxl_files', 10, 3 );
+function tiny_test_accept_jxl_files( $data, $file, $filename ) {
+	if ( 'jxl' === strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) ) ) {
+		return array(
+			'ext'             => 'jxl',
+			'type'            => 'image/jxl',
+			'proper_filename' => false,
+		);
+	}
+	return $data;
+}
+
 // ajax hook to upload copies of an image from test/fixtures in one request, as
 // uploading through the UI takes four page loads per image
 add_action( 'wp_ajax_upload_images', 'upload_images' );

@@ -150,6 +150,20 @@ test.describe('bulkoptimization', () => {
     await expect(page.getByText('1 of 3 compressed')).toBeVisible();
   });
 
+  test('summary should count jpeg xl images that were not compressed on upload', async () => {
+    // Before WordPress 6.0, such an image has no attachment metadata
+    await setAPIKey(page, 'JPG123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+
+    await uploadMedia(page, 'input-example.jxl');
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+
+    await expect(page.locator('#uploaded-images')).toHaveText('1');
+    await expect(page.locator('#optimizable-image-sizes')).toHaveText('1');
+  });
+
   test('summary should display correct values', async () => {
     await setAPIKey(page, 'JPG123');
     await setCompressionTiming(page, 'auto');

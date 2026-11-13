@@ -63,9 +63,11 @@ class Tiny_Bulk_Optimization {
 		global $wpdb;
 
 		// Retrieve posts that have "_wp_attachment_metadata" image metadata
-		// and optionally contain "tiny_compress_images" metadata.
-		$sql_start_id = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
-		$query        =
+		// and optionally contain "tiny_compress_images" metadata. Before
+		// WordPress 6.0, a JPEG XL has no attachment metadata.
+		$sql_start_id   = ( $start_id ? " $wpdb->posts.ID < $start_id AND " : '' );
+		$sql_mime_types = "'" . implode( "', '", Tiny_Image::compressible_mime_types() ) . "'";
+		$query          =
 			"SELECT
 				$wpdb->posts.ID,
 				$wpdb->posts.post_title,
@@ -75,6 +77,7 @@ class Tiny_Bulk_Optimization {
 			FROM $wpdb->posts
 			LEFT JOIN $wpdb->postmeta
 				ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+					AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
 			LEFT JOIN $wpdb->postmeta AS wp_postmeta_file
 				ON $wpdb->posts.ID = wp_postmeta_file.post_id
 					AND wp_postmeta_file.meta_key = '_wp_attached_file'
@@ -84,12 +87,11 @@ class Tiny_Bulk_Optimization {
 			WHERE
 				$sql_start_id
 				$wpdb->posts.post_type = 'attachment'
+				AND $wpdb->posts.post_mime_type IN ( $sql_mime_types )
 				AND (
-					$wpdb->posts.post_mime_type = 'image/jpeg' OR
-					$wpdb->posts.post_mime_type = 'image/png' OR
-					$wpdb->posts.post_mime_type = 'image/webp'
+					$wpdb->postmeta.meta_id IS NOT NULL
+					OR $wpdb->posts.post_mime_type = 'image/jxl'
 				)
-				AND $wpdb->postmeta.meta_key = '_wp_attachment_metadata'
 			GROUP BY unique_attachment_name
 			ORDER BY ID DESC
 			LIMIT " . self::PAGING_SIZE;

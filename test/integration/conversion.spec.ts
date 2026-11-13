@@ -70,6 +70,37 @@ test.describe('conversion', () => {
     await expect(picture).toBeVisible();
   });
 
+  test('will compress an avif image without converting it', async () => {
+    // https://make.wordpress.org/core/2024/02/23/wordpress-6-5-adds-avif-support/
+    if (WPVersion < 6.5) return;
+
+    await setConversionSettings(page, {
+      convert: true,
+      output: 'smallest',
+      delivery: 'picture',
+    });
+    await uploadMedia(page, 'input-example.avif');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await expect(page.getByText('1 size compressed')).toBeVisible();
+    await expect(page.locator('.tiny-ajax-container').getByText(/convert/i)).toHaveCount(0);
+  });
+
+  test('will add the optimized format to a jpeg xl image', async () => {
+    await setConversionSettings(page, {
+      convert: true,
+      output: 'smallest',
+      delivery: 'picture',
+    });
+    await uploadMedia(page, 'input-example.jxl');
+
+    await page.goto('/wp-admin/upload.php');
+
+    await expect(page.getByText('1 size compressed')).toBeVisible();
+    await expect(page.getByText('1 size converted')).toBeVisible();
+  });
+
   test('will serve optimized image when server side rules are configured', async () => {
     await setConversionSettings(page, {
       convert: true,
@@ -99,6 +130,24 @@ test.describe('conversion', () => {
     });
     const buffer = await response.body();
     const signature = buffer.toString('ascii', 0, 16);
+
+    expect(signature).toContain('ftypavif');
+  });
+
+  test('will serve the optimized format of a jpeg xl image when server side rules are configured', async () => {
+    await setConversionSettings(page, {
+      convert: true,
+      output: 'smallest',
+      delivery: 'htaccess',
+    });
+    const { imageURL } = await uploadMedia(page, 'input-example.jxl');
+
+    const response = await page.request.get(imageURL, {
+      headers: {
+        Accept: 'image/avif,image/webp,*/*',
+      },
+    });
+    const signature = (await response.body()).toString('ascii', 0, 16);
 
     expect(signature).toContain('ftypavif');
   });

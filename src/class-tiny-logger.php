@@ -30,7 +30,7 @@ class Tiny_Logger {
 	const LOG_LEVEL_ERROR = 'error';
 	const LOG_LEVEL_DEBUG = 'debug';
 
-	const MAX_LOG_SIZE = 2 * 1024 * 1024; // 2MB
+	const MAX_LOG_SIZE = 2097152; // 2MB
 
 	private static $instance = null;
 

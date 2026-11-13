@@ -407,7 +407,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	public function blocking_compress_on_upload( $metadata, $attachment_id ) {
-		if ( ! empty( $metadata ) ) {
+		if ( is_array( $metadata ) ) {
 			$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $metadata );
 
 			Tiny_Logger::debug(
@@ -574,6 +574,10 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		}
 		$id       = intval( $_POST['id'] );
 		$metadata = wp_get_attachment_metadata( $id );
+		if ( ! is_array( $metadata ) && 'image/jxl' === get_post_mime_type( $id ) ) {
+			// Before WordPress 6.0, a JPEG XL has no attachment metadata.
+			$metadata = array();
+		}
 		if ( ! is_array( $metadata ) ) {
 			return array(
 				'error' => esc_html__(
@@ -855,7 +859,7 @@ class Tiny_Plugin extends Tiny_WP_Base {
 		if ( $tiny_image->file_type_allowed() ) {
 			echo '<div class="misc-pub-section tiny-compress-images">';
 			echo '<h4>';
-			esc_html_e( 'JPEG, PNG, & WebP optimization', 'tiny-compress-images' );
+			esc_html_e( 'Image optimization', 'tiny-compress-images' );
 			echo '</h4>';
 			echo '<div class="tiny-ajax-container" data-tiny-media-id="';
 			echo absint( $post->ID ) . '">';
