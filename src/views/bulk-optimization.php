@@ -40,8 +40,12 @@ $has_list        = count( $items ) > 0 && 'pending' !== $state;
 
 	<div class="tiny-settings-columns">
 		<div class="tiny-settings-main">
-			<div class="tiny-card">
+			<div class="tiny-card" data-tiny-views>
 				<?php
+				if ( in_array( $state, array( 'credits_short', 'out_of_credits' ), true ) ) {
+					$upgrade_from = 'bulk-optimization';
+					require __DIR__ . '/more-credits.php';
+				}
 				foreach ( $heroes as $hero ) {
 					require __DIR__ . '/bulk-optimization-hero.php';
 				}

@@ -11,8 +11,6 @@ $bulk_url     = admin_url( 'upload.php?page=tiny-bulk-optimization' );
 $start_url    = wp_nonce_url( $bulk_url . '&start=1', 'tiny-bulk-start' );
 $settings_url = admin_url( 'options-general.php?page=tinify' );
 $upload_url   = admin_url( 'media-new.php' );
-$credits_url  = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-credits';
-$api_url      = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-api';
 $strong       = array( 'strong' => array() );
 $can_manage   = current_user_can( 'manage_options' );
 
@@ -48,8 +46,8 @@ if ( null !== $widget['seconds_left'] ) {
 }
 ?>
 
-<div class="tiny-widget">
-	<div class="tiny-widget-main">
+<div class="tiny-widget" data-tiny-views>
+	<div class="tiny-widget-main" data-tiny-view="main">
 		<div class="tiny-widget-top">
 			<div class="tiny-widget-content">
 				<span class="tiny-widget-badge tiny-widget-badge-<?php echo esc_attr( $badge_colour ); ?>"><?php echo esc_html( $badge_text ); ?></span>
@@ -242,32 +240,10 @@ if ( null !== $widget['seconds_left'] ) {
 	</div>
 
 	<?php if ( $has_credits_view ) { ?>
-		<div class="tiny-widget-credits" hidden>
-			<button type="button" class="tiny-widget-link" data-tiny-action="back">&larr; <?php esc_html_e( 'Back', 'tiny-compress-images' ); ?></button>
-			<h3 class="tiny-widget-credits-heading"><?php esc_html_e( 'Get more credits', 'tiny-compress-images' ); ?></h3>
-			<div class="tiny-widget-offer">
-				<div class="tiny-widget-offer-text">
-					<strong><?php esc_html_e( 'Credit bundle', 'tiny-compress-images' ); ?></strong>
-					<span><?php esc_html_e( 'Extra credits that never expire.', 'tiny-compress-images' ); ?></span>
-				</div>
-				<a class="button button-primary button-large" href="<?php echo esc_url( $credits_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Buy a credit bundle', 'tiny-compress-images' ); ?> <span aria-hidden="true">&nearr;</span></a>
-			</div>
-			<div class="tiny-widget-offer">
-				<div class="tiny-widget-offer-text">
-					<strong><?php esc_html_e( 'Pay per compression', 'tiny-compress-images' ); ?></strong>
-					<span>
-						<?php
-						printf(
-							/* translators: %s: number of free credits per month */
-							esc_html__( 'Keep %s free credits a month, then pay for what you compress.', 'tiny-compress-images' ),
-							esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
-						);
-						?>
-					</span>
-				</div>
-				<a class="button button-primary button-large" href="<?php echo esc_url( $api_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Switch to pay per compression', 'tiny-compress-images' ); ?> <span aria-hidden="true">&nearr;</span></a>
-			</div>
-		</div>
+		<?php
+		$upgrade_from = 'dashboard-widget';
+		require __DIR__ . '/more-credits.php';
+		?>
 	<?php } ?>
 
 	<div class="tiny-widget-footer">

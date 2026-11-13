@@ -11,7 +11,6 @@
  */
 
 $settings_url = admin_url( 'options-general.php?page=tinify' );
-$credits_url  = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=bulk-optimization-credits';
 $remaining    = $widget['images_remaining'];
 
 $badge_and_panda = Tiny_Dashboard::get_state_badge_and_panda( $hero );
@@ -19,7 +18,7 @@ $badge_colour    = $badge_and_panda['badge_colour'];
 $badge_text      = $badge_and_panda['badge_text'];
 $panda           = $badge_and_panda['panda'];
 ?>
-<div class="tiny-card-section tiny-bulk-hero" data-tiny-bulk-hero="<?php echo esc_attr( $hero ); ?>" <?php echo $hero !== $state ? 'hidden' : ''; ?>>
+<div class="tiny-card-section tiny-bulk-hero" data-tiny-bulk-hero="<?php echo esc_attr( $hero ); ?>" <?php echo in_array( $hero, array( 'credits_short', 'out_of_credits' ), true ) ? 'data-tiny-view="main"' : ''; ?> <?php echo $hero !== $state ? 'hidden' : ''; ?>>
 	<img class="tiny-bulk-panda"
 		src="<?php echo esc_url( plugins_url( '/images/widget/' . $panda . '.png', __DIR__ ) ); ?>"
 		width="128" height="128" alt="" />
@@ -133,7 +132,7 @@ $panda           = $badge_and_panda['panda'];
 					?>
 				</button>
 			<?php } else { ?>
-				<a class="button button-primary button-hero" href="<?php echo esc_url( $credits_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Upgrade', 'tiny-compress-images' ); ?></a>
+				<button type="button" class="button button-primary button-hero" data-tiny-action="more-credits"><?php esc_html_e( 'Upgrade', 'tiny-compress-images' ); ?></button>
 				<?php if ( 'credits_short' === $hero && $widget['images_affordable'] >= 1 ) { ?>
 					<button type="button" class="button button-hero" data-tiny-bulk="start">
 						<?php

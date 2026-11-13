@@ -56,8 +56,29 @@ test.describe('bulkoptimization', () => {
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
     await expect(page.getByText('Not enough credits')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Upgrade' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Upgrade' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Compress 1 image' })).toBeVisible();
+  });
+
+  test('upgrade shows how to get more credits', async () => {
+    await setAPIKey(page, 'INSUFFICIENTCREDITS123');
+    await setCompressionTiming(page, 'manual');
+    await enableCompressionSizes(page, ['0']);
+    await uploadImages(page, 'input-example.jpg', 2, { generateSizes: false });
+
+    await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
+    const main = page.locator('.tiny-settings-main');
+    await main.getByRole('button', { name: 'Upgrade' }).click();
+
+    await expect(main.getByText('Get more credits')).toBeVisible();
+    await expect(main.getByText('Not enough credits')).not.toBeVisible();
+    await expect(main.getByRole('link', { name: 'Buy a credit bundle' })).toHaveAttribute('href', 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=bulk-optimization-credits');
+    await expect(main.getByRole('link', { name: 'Switch to pay per compression' })).toHaveAttribute('href', 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=bulk-optimization-api');
+
+    await main.getByRole('button', { name: 'Back' }).click();
+
+    await expect(main.getByText('Not enough credits')).toBeVisible();
+    await expect(main.getByText('Get more credits')).not.toBeVisible();
   });
 
   test('only offer an upgrade for an account without credits', async () => {
@@ -69,7 +90,7 @@ test.describe('bulkoptimization', () => {
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
     await expect(page.getByText('Out of credits')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Upgrade' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Upgrade' })).toBeVisible();
     await expect(page.getByRole('button', { name: /^Compress/ })).toHaveCount(0);
   });
 
@@ -82,7 +103,7 @@ test.describe('bulkoptimization', () => {
     await page.goto('/wp-admin/upload.php?page=tiny-bulk-optimization');
 
     await expect(page.getByText('Ready to compress')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Upgrade' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Upgrade' })).toHaveCount(0);
   });
 
   test('show the empty library', async () => {
