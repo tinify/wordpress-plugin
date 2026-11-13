@@ -737,6 +737,10 @@ div.misc-pub-section.tiny-compress-images {
 	border-radius: 0 0 12px 12px;
 }
 
+.tiny-card-footer > a {
+	font-weight: 400;
+}
+
 .tiny-card-footer h3 {
 	margin: 0;
 	font-size: 14px;
