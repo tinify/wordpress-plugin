@@ -462,8 +462,15 @@
     }
     const views = action.closest('[data-tiny-views]');
     const showCredits = action.dataset.tinyAction === 'more-credits';
-    views.querySelector('[data-tiny-view=main]').hidden = showCredits;
-    views.querySelector('[data-tiny-view=credits]').hidden = !showCredits;
+    const main = views.querySelector('[data-tiny-view=main]');
+    const credits = views.querySelector('[data-tiny-view=credits]');
+    main.hidden = showCredits;
+    credits.hidden = !showCredits;
+    if (showCredits) {
+      credits.querySelector('[data-tiny-action]').focus();
+    } else {
+      main.querySelector('[data-tiny-action]').focus();
+    }
   }
 
   switch (adminpage) {
