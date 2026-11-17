@@ -125,6 +125,7 @@ class WordPressStubs
 		$this->addMethod('esc_html');
 		$this->addMethod('maybe_unserialize');
 		$this->addMethod('wp_basename');
+		$this->addMethod('get_posts');
 		$this->defaults();
 		$this->create_filesystem();
 	}

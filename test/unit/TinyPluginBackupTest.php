@@ -266,6 +266,124 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 		assertFalse( file_exists( $backup_path ), 'expected backup to be deleted after clean_attachment' );
 	}
 
+	public function test_clean_attachment_keeps_backup_file_when_another_attachment_uses_the_file()
+	{
+		$this->wp->createImage( 37857, '2026/04', 'testfile.png' );
+		$this->wp->createImage( 100000, 'tinify_backup/2026/04', 'testfile.png' );
+		$backup_path = $this->vfs->url() . '/wp-content/uploads/tinify_backup/2026/04/testfile.png';
+
+		$this->wp->stub( 'wp_get_attachment_metadata', function ( $i ) {
+			return array(
+				'file'  => '2026/04/testfile.png',
+				'sizes' => array(),
+			);
+		} );
+
+		/* Attachment 2 uses the same file, like a WPML or Polylang translation. */
+		$this->wp->updateMetadata( 1, '_wp_attached_file', '2026/04/testfile.png' );
+		$this->wp->stub( 'get_posts', function ( $args ) {
+			$same_file = '2026/04/testfile.png' === $args['meta_value'];
+			$excluded  = array( 1 ) === $args['post__not_in'];
+			return $same_file && $excluded ? array( 2 ) : array();
+		} );
+
+		$tiny_plugin   = new Tiny_Plugin();
+		$ref           = new \ReflectionClass( $tiny_plugin );
+		$settings_prop = $ref->getProperty( 'settings' );
+		$settings_prop->setAccessible( true );
+		$mock_settings = $this->createMock( Tiny_Settings::class );
+		$settings_prop->setValue( $tiny_plugin, $mock_settings );
+
+		assertTrue( file_exists( $backup_path ), 'expected backup to exist before clean_attachment' );
+		$tiny_plugin->clean_attachment( 1 );
+		assertTrue( file_exists( $backup_path ), 'expected backup to be kept for the other attachment' );
+	}
+
+	public function test_clean_attachment_keeps_converted_file_when_another_attachment_uses_the_file()
+	{
+		/* realpath() does not work on vfs, so the converted file is on disk. */
+		$upload_dir = sys_get_temp_dir() . '/tiny-test-' . uniqid();
+		$webp_path  = $upload_dir . '/2026/04/testfile.webp';
+		mkdir( dirname( $webp_path ), 0755, true );
+		file_put_contents( $webp_path, 'webp content' );
+
+		$this->wp->stub( 'wp_upload_dir', function () use ( $upload_dir ) {
+			return array( 'basedir' => $upload_dir );
+		} );
+		$this->wp->stub( 'wp_get_attachment_metadata', function ( $i ) {
+			return array(
+				'file'  => '2026/04/testfile.png',
+				'sizes' => array(),
+			);
+		} );
+		$this->wp->updateMetadata( 1, Tiny_Config::META_KEY, array(
+			Tiny_Image::ORIGINAL => array(
+				'convert' => array(
+					'path' => $webp_path,
+					'type' => 'image/webp',
+					'size' => 100,
+				),
+			),
+		) );
+
+		/* Attachment 2 uses the same file, like a WPML or Polylang translation. */
+		$this->wp->updateMetadata( 1, '_wp_attached_file', '2026/04/testfile.png' );
+		$this->wp->stub( 'get_posts', function ( $args ) {
+			$same_file = '2026/04/testfile.png' === $args['meta_value'];
+			$excluded  = array( 1 ) === $args['post__not_in'];
+			return $same_file && $excluded ? array( 2 ) : array();
+		} );
+
+		$tiny_plugin   = new Tiny_Plugin();
+		$ref           = new \ReflectionClass( $tiny_plugin );
+		$settings_prop = $ref->getProperty( 'settings' );
+		$settings_prop->setAccessible( true );
+		$mock_settings = $this->createMock( Tiny_Settings::class );
+		$settings_prop->setValue( $tiny_plugin, $mock_settings );
+
+		$tiny_plugin->clean_attachment( 1 );
+		$kept = file_exists( $webp_path );
+
+		if ( $kept ) {
+			unlink( $webp_path );
+		}
+		rmdir( $upload_dir . '/2026/04' );
+		rmdir( $upload_dir . '/2026' );
+		rmdir( $upload_dir );
+
+		assertTrue( $kept, 'expected converted file to be kept for the other attachment' );
+	}
+
+	public function test_clean_attachment_deletes_backup_file_when_attachment_has_no_attached_file()
+	{
+		$this->wp->createImage( 37857, '2026/04', 'testfile.png' );
+		$this->wp->createImage( 100000, 'tinify_backup/2026/04', 'testfile.png' );
+		$backup_path = $this->vfs->url() . '/wp-content/uploads/tinify_backup/2026/04/testfile.png';
+
+		$this->wp->stub( 'wp_get_attachment_metadata', function ( $i ) {
+			return array(
+				'file'  => '2026/04/testfile.png',
+				'sizes' => array(),
+			);
+		} );
+
+		/* WordPress ignores an empty meta_value, so the query would match any attachment. */
+		$this->wp->stub( 'get_posts', function ( $args ) {
+			return array( 2 );
+		} );
+
+		$tiny_plugin   = new Tiny_Plugin();
+		$ref           = new \ReflectionClass( $tiny_plugin );
+		$settings_prop = $ref->getProperty( 'settings' );
+		$settings_prop->setAccessible( true );
+		$mock_settings = $this->createMock( Tiny_Settings::class );
+		$settings_prop->setValue( $tiny_plugin, $mock_settings );
+
+		assertTrue( file_exists( $backup_path ), 'expected backup to exist before clean_attachment' );
+		$tiny_plugin->clean_attachment( 1 );
+		assertFalse( file_exists( $backup_path ), 'expected backup to be deleted after clean_attachment' );
+	}
+
 	public function test_ajax_init_adds_restore_backup_action()
 	{
 		$tiny_plugin = new Tiny_Plugin();

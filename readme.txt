@@ -179,6 +179,9 @@ A: When the conversion feature is enabled (to convert images to AVIF or WebP), e
 A: Yes, if your site accepts JPEG XL uploads. WordPress does not accept them by default, and the plugin does not change that. WordPress cannot create thumbnails of a JPEG XL image, so only the uploaded image is compressed. Not every browser can display JPEG XL; with the conversion feature enabled, an AVIF or WebP version is created and served instead.
 
 == Changelog ==
+= 3.9.0 unreleased =
+* fix: prevents deleting a converted file or backups when it is used by another attachment
+
 = 3.8.1 =
 * feat: restore the original image from its backup in the media details modal
 * fix: converted formats are consistent across all image sizes
