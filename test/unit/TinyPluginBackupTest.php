@@ -354,12 +354,17 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 		assertTrue( $kept, 'expected converted file to be kept for the other attachment' );
 	}
 
-	public function test_clean_attachment_deletes_backup_file_when_attachment_has_no_attached_file()
+	/**
+	 * cleanup skips cleanup when file is used by a different attachment
+	 * This was the case with WPML/Polylang
+	 */
+	public function test_clean_attachment_keeps_backup_file_when_another_attachment_uses_the_metadata_file()
 	{
 		$this->wp->createImage( 37857, '2026/04', 'testfile.png' );
 		$this->wp->createImage( 100000, 'tinify_backup/2026/04', 'testfile.png' );
 		$backup_path = $this->vfs->url() . '/wp-content/uploads/tinify_backup/2026/04/testfile.png';
 
+		/* Attachment 1 has no _wp_attached_file, only the file in its image metadata. */
 		$this->wp->stub( 'wp_get_attachment_metadata', function ( $i ) {
 			return array(
 				'file'  => '2026/04/testfile.png',
@@ -367,9 +372,11 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 			);
 		} );
 
-		/* WordPress ignores an empty meta_value, so the query would match any attachment. */
+		/* Attachment 2 uses the same file, like a WPML or Polylang translation. */
 		$this->wp->stub( 'get_posts', function ( $args ) {
-			return array( 2 );
+			$same_file = '2026/04/testfile.png' === $args['meta_value'];
+			$excluded  = array( 1 ) === $args['post__not_in'];
+			return $same_file && $excluded ? array( 2 ) : array();
 		} );
 
 		$tiny_plugin   = new Tiny_Plugin();
@@ -381,7 +388,30 @@ class Tiny_Plugin_Backup_Test extends Tiny_TestCase
 
 		assertTrue( file_exists( $backup_path ), 'expected backup to exist before clean_attachment' );
 		$tiny_plugin->clean_attachment( 1 );
-		assertFalse( file_exists( $backup_path ), 'expected backup to be deleted after clean_attachment' );
+		assertTrue( file_exists( $backup_path ), 'expected backup to be kept for the other attachment' );
+	}
+
+	/**
+	 * When file does not have a attachment file, it returns emtpy
+	 * this should skip cleaning up
+	 */
+	public function test_clean_attachment_does_not_look_for_other_attachments_without_a_file()
+	{
+		$this->wp->stub( 'wp_get_attachment_metadata', function ( $i ) {
+			return array( 'sizes' => array() );
+		} );
+
+		$tiny_plugin   = new Tiny_Plugin();
+		$ref           = new \ReflectionClass( $tiny_plugin );
+		$settings_prop = $ref->getProperty( 'settings' );
+		$settings_prop->setAccessible( true );
+		$mock_settings = $this->createMock( Tiny_Settings::class );
+		$settings_prop->setValue( $tiny_plugin, $mock_settings );
+
+		$tiny_plugin->clean_attachment( 1 );
+
+		/* WordPress ignores an empty meta_value, so the query would match any attachment. */
+		assertEquals( array(), $this->wp->getCalls( 'get_posts' ) );
 	}
 
 	public function test_ajax_init_adds_restore_backup_action()

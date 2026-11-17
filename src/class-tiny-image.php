@@ -397,7 +397,7 @@ class Tiny_Image {
 	 * @return bool
 	 */
 	private function is_used_by_other_attachment() {
-		$file = get_post_meta( $this->id, '_wp_attached_file', true );
+		$file = $this->get_metadata_file();
 		if ( empty( $file ) ) {
 			return false;
 		}
