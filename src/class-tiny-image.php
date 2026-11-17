@@ -399,6 +399,10 @@ class Tiny_Image {
 	private function is_used_by_other_attachment() {
 		$file = $this->get_metadata_file();
 		if ( empty( $file ) ) {
+			// fallback to image in metadata if tiny metadata does not have an image
+			$file = get_post_meta( $this->id, '_wp_attached_file', true );
+		}
+		if ( empty( $file ) ) {
 			return false;
 		}
 
