@@ -24,17 +24,5 @@
     }
   }
 
-  // Get more credits is a second view in the same HTML. Nothing is stored, so
-  // a reload shows the main view again.
-  container.addEventListener('click', function (event) {
-    const action = event.target.closest('[data-tiny-action]');
-    if (!action) {
-      return;
-    }
-    const showCredits = action.dataset.tinyAction === 'more-credits';
-    container.querySelector('.tiny-widget-main').hidden = showCredits;
-    container.querySelector('.tiny-widget-credits').hidden = !showCredits;
-  });
-
   load();
 })();

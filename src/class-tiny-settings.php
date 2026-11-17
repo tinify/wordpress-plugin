@@ -193,9 +193,7 @@ class Tiny_Settings extends Tiny_WP_Base {
 	}
 
 	public function account_status() {
-		if ( current_user_can( 'manage_options' ) ) {
-			$this->render_account_status();
-		}
+		$this->render_account_status();
 		exit();
 	}
 
@@ -706,6 +704,22 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
+	/**
+	 * Renders the card that explains how credits are used, for pages
+	 * other than the settings page.
+	 *
+	 * @param bool $show_settings_link Whether the card links to the settings page.
+	 */
+	public function render_credits( $show_settings_link ) {
+		$tiny_sizes_count = count(
+			array_diff( $this->get_active_tinify_sizes(), array( Tiny_Image::ORIGINAL_UNSCALED ) )
+		);
+		$tiny_resize      = $this->get_resize_enabled();
+		$tiny_wr2x        = $this->compress_wr2x_images();
+		$tiny_convert     = $this->get_conversion_enabled();
+		include __DIR__ . '/views/settings-credits.php';
+	}
+
 	public function render_credits_per_image( $credits ) {
 		echo '<p>';
 		printf(
@@ -800,9 +814,13 @@ class Tiny_Settings extends Tiny_WP_Base {
 		}
 	}
 
-	public function render_account_status() {
-		$key = $this->get_api_key();
-		if ( ! empty( $key ) ) {
+	/**
+	 * @param bool $show_change_api_key Whether to show the Change API Key button.
+	 */
+	public function render_account_status( $show_change_api_key = true ) {
+		$is_allowed = current_user_can( 'manage_options' );
+		$key        = $this->get_api_key();
+		if ( $is_allowed && ! empty( $key ) ) {
 			if ( $this->refresh_api_key_pending() ) {
 				$status = (object) array(
 					'ok'      => true,

@@ -37,6 +37,26 @@ class Tiny_Plugin_Ajax_Test extends Tiny_TestCase {
 		$this->assert_bulk_queue_handlers_refuse_with_a_403();
 	}
 
+	public function test_bulk_queue_status_includes_the_compression_count() {
+		$this->wp->addOption( 'tinypng_status', 42 );
+		$this->wp->addMethod( 'update_meta_cache' );
+		$this->wp->stub( 'check_ajax_referer', function () {
+			return true;
+		} );
+		$this->wp->stub( 'current_user_can', function () {
+			return true;
+		} );
+		$response = null;
+		$this->wp->addMethod( 'wp_send_json_success' );
+		$this->wp->stub( 'wp_send_json_success', function ( $data ) use ( &$response ) {
+			$response = $data;
+		} );
+
+		$this->subject->ajax_bulk_queue_status();
+
+		$this->assertEquals( 42, $response['compression_count'] );
+	}
+
 	private function assert_bulk_queue_handlers_refuse_with_a_403() {
 		$this->wp->addMethod( 'status_header' );
 		$this->wp->addMethod( 'wp_die' );

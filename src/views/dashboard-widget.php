@@ -11,37 +11,13 @@ $bulk_url     = admin_url( 'upload.php?page=tiny-bulk-optimization' );
 $start_url    = wp_nonce_url( $bulk_url . '&start=1', 'tiny-bulk-start' );
 $settings_url = admin_url( 'options-general.php?page=tinify' );
 $upload_url   = admin_url( 'media-new.php' );
-$credits_url  = 'https://tinify.com/checkout/credits?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-credits';
-$api_url      = 'https://tinify.com/checkout/api?utm_source=wordpress-plugin&utm_medium=referral&utm_campaign=upgrade&utm_content=dashboard-widget-api';
 $strong       = array( 'strong' => array() );
 $can_manage   = current_user_can( 'manage_options' );
 
-$badges = array(
-	'not_connected'  => array( 'red', __( 'Not connected', 'tiny-compress-images' ) ),
-	'pending'        => array( 'amber', __( 'Waiting for activation', 'tiny-compress-images' ) ),
-	'empty'          => array( 'amber', __( 'Nothing to compress', 'tiny-compress-images' ) ),
-	'ready'          => array( 'green', __( 'Ready to compress', 'tiny-compress-images' ) ),
-	'compressing'    => array( 'green', __( 'Compressing', 'tiny-compress-images' ) ),
-	'done'           => array( 'green', __( 'All done', 'tiny-compress-images' ) ),
-	'credits_short'  => array( 'amber', __( 'Not enough credits', 'tiny-compress-images' ) ),
-	'out_of_credits' => array( 'red', __( 'Out of credits', 'tiny-compress-images' ) ),
-);
-
-$pandas = array(
-	'not_connected'  => 'panda-juggle',
-	'pending'        => 'panda-unbox',
-	'empty'          => 'panda-astronaut',
-	'ready'          => 'panda-skate',
-	'compressing'    => 'panda-rocket',
-	'done'           => 'panda-duck',
-	'credits_short'  => 'panda-coffee',
-	'out_of_credits' => 'panda-coffee',
-);
-
-list( $badge_colour, $badge_text ) = $badges[ $state ];
-
-// Without credits for a single image, nothing can be compressed either.
-$panda = $pandas[ $state ];
+$badge_and_panda = Tiny_Dashboard::get_state_badge_and_panda( $state );
+$badge_colour    = $badge_and_panda['badge_colour'];
+$badge_text      = $badge_and_panda['badge_text'];
+$panda           = $badge_and_panda['panda'];
 
 $has_library_bar  = ! in_array( $state, array( 'pending', 'empty' ), true );
 $has_credits_view = in_array( $state, array( 'credits_short', 'out_of_credits' ), true );
@@ -70,8 +46,8 @@ if ( null !== $widget['seconds_left'] ) {
 }
 ?>
 
-<div class="tiny-widget">
-	<div class="tiny-widget-main">
+<div class="tiny-widget" data-tiny-views>
+	<div class="tiny-widget-main" data-tiny-view="main">
 		<div class="tiny-widget-top">
 			<div class="tiny-widget-content">
 				<span class="tiny-widget-badge tiny-widget-badge-<?php echo esc_attr( $badge_colour ); ?>"><?php echo esc_html( $badge_text ); ?></span>
@@ -264,32 +240,10 @@ if ( null !== $widget['seconds_left'] ) {
 	</div>
 
 	<?php if ( $has_credits_view ) { ?>
-		<div class="tiny-widget-credits" hidden>
-			<button type="button" class="tiny-widget-link" data-tiny-action="back">&larr; <?php esc_html_e( 'Back', 'tiny-compress-images' ); ?></button>
-			<h3 class="tiny-widget-credits-heading"><?php esc_html_e( 'Get more credits', 'tiny-compress-images' ); ?></h3>
-			<div class="tiny-widget-offer">
-				<div class="tiny-widget-offer-text">
-					<strong><?php esc_html_e( 'Credit bundle', 'tiny-compress-images' ); ?></strong>
-					<span><?php esc_html_e( 'Extra credits that never expire.', 'tiny-compress-images' ); ?></span>
-				</div>
-				<a class="button button-primary button-large" href="<?php echo esc_url( $credits_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Buy a credit bundle', 'tiny-compress-images' ); ?> <span aria-hidden="true">&nearr;</span></a>
-			</div>
-			<div class="tiny-widget-offer">
-				<div class="tiny-widget-offer-text">
-					<strong><?php esc_html_e( 'Pay per compression', 'tiny-compress-images' ); ?></strong>
-					<span>
-						<?php
-						printf(
-							/* translators: %s: number of free credits per month */
-							esc_html__( 'Keep %s free credits a month, then pay for what you compress.', 'tiny-compress-images' ),
-							esc_html( number_format_i18n( Tiny_Config::MONTHLY_FREE_COMPRESSIONS ) )
-						);
-						?>
-					</span>
-				</div>
-				<a class="button button-primary button-large" href="<?php echo esc_url( $api_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Switch to pay per compression', 'tiny-compress-images' ); ?> <span aria-hidden="true">&nearr;</span></a>
-			</div>
-		</div>
+		<?php
+		$upgrade_from = 'dashboard-widget';
+		require __DIR__ . '/more-credits.php';
+		?>
 	<?php } ?>
 
 	<div class="tiny-widget-footer">

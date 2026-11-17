@@ -24,14 +24,12 @@ class Tiny_Bulk_Optimization {
 	const PAGING_SIZE = 25000;
 
 	public static function get_optimization_statistics( $settings, $result = null ) {
-		$stats                                = array();
-		$stats['uploaded-images']             = 0;
-		$stats['optimized-image-sizes']       = 0;
-		$stats['available-unoptimized-sizes'] = 0;
-		$stats['optimized-library-size']      = 0;
-		$stats['unoptimized-library-size']    = 0;
-		$stats['estimated_credit_use']        = 0;
-		$stats['available-for-optimization']  = array();
+		$stats                               = array();
+		$stats['uploaded-images']            = 0;
+		$stats['optimized-library-size']     = 0;
+		$stats['unoptimized-library-size']   = 0;
+		$stats['estimated_credit_use']       = 0;
+		$stats['available-for-optimization'] = array();
 
 		if ( is_null( $result ) ) {
 			$last_image_id = null;
@@ -127,11 +125,9 @@ class Tiny_Bulk_Optimization {
 			$image_stats = $tiny_image->get_statistics( $active_sizes, $active_tinify_sizes );
 
 			++$stats['uploaded-images'];
-			$stats['estimated_credit_use']        += $image_stats['available_uncompressed_sizes'];
-			$stats['available-unoptimized-sizes'] += $image_stats['available_unoptimized_sizes'];
-			$stats['optimized-image-sizes']       += $image_stats['image_sizes_optimized'];
-			$stats['optimized-library-size']      += $image_stats['compressed_total_size'];
-			$stats['unoptimized-library-size']    += $image_stats['initial_total_size'];
+			$stats['estimated_credit_use']     += $image_stats['available_uncompressed_sizes'];
+			$stats['optimized-library-size']   += $image_stats['compressed_total_size'];
+			$stats['unoptimized-library-size'] += $image_stats['initial_total_size'];
 
 			if ( $conversion_enabled ) {
 				$stats['estimated_credit_use'] += $image_stats['available_unconverted_sizes'];
@@ -146,10 +142,26 @@ class Tiny_Bulk_Optimization {
 				$stats['available-for-optimization'][] = array(
 					'ID'         => $result[ $i ]['ID'],
 					'post_title' => $result[ $i ]['post_title'],
+					'file'       => self::get_file_name( $wp_metadata ),
+					'sizes'      => $image_stats['available_unoptimized_sizes'],
+					'bytes'      => $image_stats['compressed_total_size'],
 				);
 			}
 		}// End for().
 
 		return $stats;
+	}
+
+	/**
+	 * The name of the file that was uploaded, also when WordPress scaled it down.
+	 */
+	private static function get_file_name( $wp_metadata ) {
+		if ( isset( $wp_metadata['original_image'] ) ) {
+			return wp_basename( $wp_metadata['original_image'] );
+		}
+		if ( isset( $wp_metadata['file'] ) ) {
+			return wp_basename( $wp_metadata['file'] );
+		}
+		return '';
 	}
 }
