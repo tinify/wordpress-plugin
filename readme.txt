@@ -181,6 +181,7 @@ A: Yes, if your site accepts JPEG XL uploads. WordPress does not accept them by 
 
 == Changelog ==
 = 3.9.0 =
+* feat: add jpegxl support
 * fix: prevents deleting a converted file or backups when it is used by another attachment
 * feat: new UI for the bulk page, settings and dashboard widget
 * feat: on first activation will guide new users through configuration
