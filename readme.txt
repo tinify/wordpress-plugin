@@ -4,7 +4,7 @@ Donate link: https://tinypng.com/
 Tags: compress images, compression, image size, page speed, performance
 Requires at least: 4.0
 Tested up to: 7.1
-Stable tag: 3.8.1
+Stable tag: 3.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,8 +180,12 @@ A: When the conversion feature is enabled (to convert images to AVIF or WebP), e
 A: Yes, if your site accepts JPEG XL uploads. WordPress does not accept them by default, and the plugin does not change that. WordPress cannot create thumbnails of a JPEG XL image, so only the uploaded image is compressed. Not every browser can display JPEG XL; with the conversion feature enabled, an AVIF or WebP version is created and served instead.
 
 == Changelog ==
-= 3.9.0 unreleased =
+= 3.9.0 =
 * fix: prevents deleting a converted file or backups when it is used by another attachment
+* feat: new UI for the bulk page, settings and dashboard widget
+* feat: on first activation will guide new users through configuration
+* feat: when possible, bulk optimization will run in the background
+* feat: new icon, banner and Screenshots
 
 = 3.8.1 =
 * feat: restore the original image from its backup in the media details modal
