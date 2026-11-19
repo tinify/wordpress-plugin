@@ -130,10 +130,11 @@ Once set up you will see a message on the *Settings > TinyPNG* page. This will w
 
 == Screenshots ==
 
-1. Register a new account or enter your existing API key. Then choose the image sizes to optimize and any other options like resizing and preserving metadata in your original image uploads.
-2. In the Media Library list view you can see the savings on your images.
-3. From the Media Library you can compress individual images and use the Bulk Actions drop-down to quickly optimize multiple images at once.
-4. Last but not least you can also use Bulk TinyPNG to optimize your entire WordPress site.
+1. Register a new account or enter your existing API key.
+2. Configure image sizes, when to compress and if you want turn on conversion.
+3. Optimize and view your savings in the Media Library.
+4. Easily optimize your whole library from the Bulk optimization page.
+5. Keep track of compression status from your Dashboard.
 
 == Frequently Asked Questions ==
 
