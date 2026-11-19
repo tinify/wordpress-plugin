@@ -914,20 +914,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 	}
 
 	/**
-	 * Will clean up converted files (if any) when the original is deleted
+	 * Deletes the converted files and the backup when an attachment is deleted,
+	 * unless another attachment uses the same file.
 	 *
 	 * Hooked to the `delete_attachment` action.
 	 *
-	 * @see https://developer.wordpress.org/reference/hooks/deleted_post/
+	 * @see https://developer.wordpress.org/reference/hooks/delete_attachment/
 	 *
-	 * @param [int] $post_id
+	 * @param int $post_id
 	 *
 	 * @return void
 	 */
 	public function clean_attachment( $post_id ) {
 		$tiny_image = new Tiny_Image( $this->settings, $post_id );
-		$tiny_image->delete_converted_image();
-		$tiny_image->delete_backup();
+		$tiny_image->cleanup_image();
 	}
 
 	/**

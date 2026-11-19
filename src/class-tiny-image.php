@@ -372,7 +372,58 @@ class Tiny_Image {
 		);
 	}
 
-	public function delete_converted_image() {
+	/**
+	 * Deletes the converted images and the backup, unless another attachment
+	 * uses the same file.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return void
+	 */
+	public function cleanup_image() {
+		if ( $this->is_used_by_other_attachment() ) {
+			return;
+		}
+
+		$this->delete_converted_image();
+		$this->delete_backup();
+	}
+
+	/**
+	 * Checks if another attachment. A trashed attachment still uses the file.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return bool
+	 */
+	private function is_used_by_other_attachment() {
+		$file = $this->get_metadata_file();
+		if ( empty( $file ) ) {
+			// fallback to image in metadata if tiny metadata does not have an image
+			$file = get_post_meta( $this->id, '_wp_attached_file', true );
+		}
+		if ( empty( $file ) ) {
+			return false;
+		}
+
+		// phpcs:disable WordPress.DB.SlowDBQuery -- Runs only when an attachment is deleted.
+		$other_attachments = get_posts(
+			array(
+				'post_type'    => 'attachment',
+				'post_status'  => array( 'inherit', 'private', 'trash' ),
+				'meta_key'     => '_wp_attached_file',
+				'meta_value'   => $file,
+				'post__not_in' => array( $this->id ),
+				'fields'       => 'ids',
+				'numberposts'  => 1,
+			)
+		);
+		// phpcs:enable
+
+		return ! empty( $other_attachments );
+	}
+
+	private function delete_converted_image() {
 		$sizes = $this->get_image_sizes();
 		foreach ( $sizes as $size ) {
 			$size->delete_converted_image_size();
@@ -929,7 +980,7 @@ class Tiny_Image {
 	 *
 	 * @return bool True on success or if no backup exists, false on deletion failure.
 	 */
-	public function delete_backup() {
+	private function delete_backup() {
 		$backup_file_path = $this->get_backup_path();
 		if ( false === $backup_file_path ) {
 			return true;
