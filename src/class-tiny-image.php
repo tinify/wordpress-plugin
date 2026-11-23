@@ -259,6 +259,14 @@ class Tiny_Image {
 		);
 
 		if ( $this->settings->get_compressor() === null || ! $this->file_type_allowed() ) {
+			Tiny_Logger::debug(
+				'compress skipped',
+				array(
+					'image_id'       => $this->id,
+					'has_compressor' => null !== $this->settings->get_compressor(),
+					'mime_type'      => $this->get_mime_type(),
+				)
+			);
 			return;
 		}
 
@@ -292,6 +300,29 @@ class Tiny_Image {
 			$unprocessed_sizes = $uncompressed_sizes + $unconverted_sizes;
 		} else {
 			$unprocessed_sizes = $this->filter_image_sizes( 'uncompressed', $active_tinify_sizes );
+		}
+
+		if ( empty( $unprocessed_sizes ) ) {
+			$sizes = array();
+			foreach ( $active_tinify_sizes as $size_name ) {
+				if ( ! isset( $this->sizes[ $size_name ] ) ) {
+					continue;
+				}
+				$size                = $this->sizes[ $size_name ];
+				$sizes[ $size_name ] = array(
+					'filename'            => $size->filename,
+					'exists'              => $size->exists(),
+					'is_duplicate'        => $size->is_duplicate(),
+					'has_been_compressed' => $size->has_been_compressed(),
+				);
+			}
+			Tiny_Logger::debug(
+				'compress found no sizes to process',
+				array(
+					'image_id' => $this->id,
+					'sizes'    => $sizes,
+				)
+			);
 		}
 
 		$compressor = $this->settings->get_compressor();

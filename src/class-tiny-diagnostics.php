@@ -161,6 +161,7 @@ class Tiny_Diagnostics {
 	 * @return array Plugin settings
 	 */
 	private function get_tiny_info() {
+		$upload_dir = wp_upload_dir();
 		return array(
 			'version'              => Tiny_Plugin::version(),
 			'status'               => $this->settings->get_status(),
@@ -170,6 +171,8 @@ class Tiny_Diagnostics {
 			'compression_timing'   => $this->settings->get_compression_timing(),
 			'conversion'           => $this->settings->get_conversion_options(),
 			'paying_state'         => $this->settings->get_paying_state(),
+			'backup_enabled'       => $this->settings->get_backup_enabled(),
+			'upload_basedir'       => $upload_dir['basedir'],
 		);
 	}
 

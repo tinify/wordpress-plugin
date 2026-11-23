@@ -951,9 +951,20 @@ class Tiny_Plugin extends Tiny_WP_Base {
 			return false;
 		}
 
-		$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $wp_metadata );
+		Tiny_Logger::debug( 'create backup', array( 'image_id' => $attachment_id ) );
 
-		return $tiny_image->create_backup();
+		$tiny_image = new Tiny_Image( $this->settings, $attachment_id, $wp_metadata );
+		$created    = $tiny_image->create_backup();
+
+		Tiny_Logger::debug(
+			'create backup finished',
+			array(
+				'image_id' => $attachment_id,
+				'created'  => $created,
+			)
+		);
+
+		return $created;
 	}
 
 	/**
