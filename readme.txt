@@ -186,7 +186,7 @@ A: Yes, if your site accepts JPEG XL uploads. WordPress does not accept them by 
 * feat: new UI for the bulk page, settings and dashboard widget
 * feat: on first activation will guide new users through configuration
 * feat: when possible, bulk optimization will run in the background
-* feat: new icon, banner and Screenshots
+* feat: new banner and screenshots
 
 = 3.8.1 =
 * feat: restore the original image from its backup in the media details modal
