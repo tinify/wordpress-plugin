@@ -306,6 +306,7 @@ class Tiny_Image {
 			$sizes = array();
 			foreach ( $active_tinify_sizes as $size_name ) {
 				if ( ! isset( $this->sizes[ $size_name ] ) ) {
+					$sizes[ $size_name ] = 'not in metadata';
 					continue;
 				}
 				$size                = $this->sizes[ $size_name ];
